@@ -1,0 +1,8 @@
+[user]
+	email = volodia.parol-guarino@proton.me
+	name = Volodia PAROL-GUARINO
+    signingkey = 72063CC9DB438B82
+[commit]
+	gpgsign = true
+[init]
+    defaultBranch = main
