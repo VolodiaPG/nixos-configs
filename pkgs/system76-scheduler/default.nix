@@ -1,7 +1,4 @@
 {
-  # pkgs, stdenv, fetchurl ? import <nixpkgs> {},
-  # lib ? pkgs.lib,
-
   stdenv
 , bcc
 , just
@@ -29,32 +26,16 @@ rustPlatform.buildRustPackage rec {
   cargoSha256 = "sha256-ZbAEeHKALp0S0RwcJOINyp7uueWnXny4Crkl+qEEKyQ=";
 
   installPhase = ''
-    ls -lia target
-    ls -lia target/x86_64-unknown-linux-gnu
-    ls -lia target/release
-    # just sysconfdir="$out/etc" \
-    #   bindir="$out/bin" \
-    #   libdir="$out/lib" \
-    #   target="x86_64-unknown-linux-gnu/release" \
-    #   install 
-    export confdir="$out/etc"
-    export bindir="$out/bin"
-    export libdir="$out/lib"
-    export target="x86_64-unknown-linux-gnu/release"
-    export binary="system76-scheduler"
-    export target_bin="$bindir/$binary"
+    mkdir -p $out/{bin,etc/dbus-1/system.d}
+    mkdir -p $out/etc/system76-scheduler/{assignments,exceptions}
 
-    mkdir $out/bin
-
-    # mkdir -p $confdir/system76-scheduler/assignments \
-    #   $confdir/system76-scheduler/exceptions
-    # cp data/config.ron $confdir/system76-scheduler/config.ron
-    # cp data/assignments.ron $confdir/system76-scheduler/assignments/default.ron
-    # cp data/exceptions.ron $confdir/system76-scheduler/exceptions/default.ron
-    cp target/$target/$binary $target_bin
-    chmod +x  $target-bin
-    # cp data/$id.service $libdir/systemd/system/$id.service
-    # cp data/$id.conf $confdir/dbus-1/system.d/$id.conf
+    install -Dm0644 data/assignments.ron $out/etc/system76-scheduler/assignments/default.ron
+    install -Dm0644 data/com.system76.Scheduler.conf $out/etc/dbus-1/system.d/com.system76.Scheduler.conf
+    install -Dm0644 data/config.ron $out/etc/system76-scheduler/config.ron
+    install -Dm0644 data/exceptions.ron $out/etc/system76-scheduler/exceptions/default.ron
+    
+    install target/x86_64-unknown-linux-gnu/release/system76-scheduler $out/bin
+    chmod +x  $out/bin/*
   '';
 
   meta = with lib; {

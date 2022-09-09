@@ -3,7 +3,7 @@
   nixpkgs.overlays = [
     (import ../dotfiles/default.nix)
   ];
-  imports = [ <home-manager/nixos> ../pkgs/symlinks/default.nix ];
+  imports = [ <home-manager/nixos> ../pkgs/symlinks/default.nix ../services/system76-scheduler/system76-scheduler.nix];
 
   # Services
   # Enable the X11 windowing system.
@@ -19,6 +19,8 @@
     xkbVariant = "oss";
     xkbOptions = "eurosign:e";
   };
+
+  services.system76Scheduler.enable = true;
 
   # Enable sound.
   hardware.pulseaudio.enable = false;
