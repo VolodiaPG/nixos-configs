@@ -44,6 +44,13 @@
   # programs.mosh.enable = true;
   # programs.mosh.withUtempter = true;
 
+  services.undervolt = {
+    enable = true;
+    gpuOffset = -95;
+    uncoreOffset = -95;
+    coreOffset = -95;
+  };
+
   # services.fail2ban = {
   #   enable = true;
   #   maxretry = 5;
