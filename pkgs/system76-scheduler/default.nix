@@ -1,7 +1,5 @@
-{
-  stdenv
+{ stdenv
 , bcc
-, just
 , linuxHeaders
 , lib
 , fetchgit
@@ -9,9 +7,13 @@
 , ...
 }:
 
+let
+  configPatch = (builtins.readFile "./config.patch");
+in
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
   version = "1.2.1";
+
 
   src = fetchgit {
     url = "https://github.com/pop-os/system76-scheduler";
@@ -19,7 +21,9 @@ rustPlatform.buildRustPackage rec {
     sha256 = "sha256-Qz4LT+YluuQj9uke2pmFL2X8CYdpOoB70MxjYCyVf+g=";
   };
 
-  nativeBuildInputs = [ just bcc ];
+  patches = [ ./higher-priority-gnome.patch ];
+  
+  nativeBuildInputs = [ bcc ];
 
   EXECSNOOP_PATH = "${bcc}/tools/execsnoop";
 
@@ -33,7 +37,7 @@ rustPlatform.buildRustPackage rec {
     install -Dm0644 data/com.system76.Scheduler.conf $out/etc/dbus-1/system.d/com.system76.Scheduler.conf
     install -Dm0644 data/config.ron $out/etc/system76-scheduler/config.ron
     install -Dm0644 data/exceptions.ron $out/etc/system76-scheduler/exceptions/default.ron
-    
+
     install target/x86_64-unknown-linux-gnu/release/system76-scheduler $out/bin
     chmod +x  $out/bin/*
   '';

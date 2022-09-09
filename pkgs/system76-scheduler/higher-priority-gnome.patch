@@ -1,0 +1,39 @@
+--- system76-scheduler/data/assignments.ron	2022-09-09 13:41:11.374594065 +0200
++++ system76-scheduler/data/assignments.ron	2022-09-09 13:41:50.427252486 +0200
+@@ -10,12 +10,14 @@
+ ],
+ // Very high
+ (-9, BestEffort(0)): [
++    "gnome-shell",
++    "Xorg",
+     "easyeffects",
++    "jamesdsp",
+ ],
+ // High priority
+ (-5, BestEffort(4)): [
+     "amsynth",
+-    "gnome-shell",
+     "kwin",
+     "sway",
+     "steam",
+@@ -23,7 +25,6 @@
+     "vrdashboard",
+     "vrmonitor",
+     "vrserver",
+-    "Xorg",
+ ],
+ // Default
+ 0: [
+@@ -100,9 +101,12 @@
+     "cpp",
+     "g++",
+     "gcc",
++    "gradle",
++    "javac",
+     "lld",
+     "make",
+     "mold",
++    "mvn",
+     "rustc",
+     "tracker-miner-fs-3",
+     "update-initramfs",
