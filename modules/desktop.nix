@@ -3,7 +3,12 @@
   nixpkgs.overlays = [
     (import ../dotfiles/default.nix)
   ];
-  imports = [ <home-manager/nixos> ../pkgs/symlinks/default.nix ../services/system76-scheduler/system76-scheduler.nix];
+  imports = [
+    <home-manager/nixos>
+    ../pkgs/symlinks/default.nix
+    ../services/system76-scheduler/system76-scheduler.nix
+    (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
+  ];
 
   # Services
   # Enable the X11 windowing system.
@@ -117,6 +122,11 @@
           position-in-panel = 3;
         };
 
+        "org/gnome/shell/extensions/pop-shell" = {
+          "active-hint-border-radius" = 20;
+          "mouse-cursor-follows-active-window" = true;
+        };
+
         # disable incompatible shortcuts
         "org/gnome/mutter/wayland/keybindings" = {
           # restore the keyboard shortcuts: disable <super>escape
@@ -194,8 +204,23 @@
     };
   };
 
+   programs.fish = {
+    # 2. Enable fish-shell if you didn't.
+    enable = true;
+
+    # 3. Declare fish plugins to be installed.
+    plugins = [
+      "jethrokuan/fzf"
+      "b4b4r07/enhancd"
+      # "IlanCosman/tide"
+    ];
+  };
 
   environment.systemPackages = with pkgs; [
+    # Fish deps
+    fzf # Required by jethrokuan/fzf.
+    fzy # Required by b4b4r07/enhancd.
+
     # Gnome extensions
     gnomeExtensions.appindicator
     gnomeExtensions.vitals

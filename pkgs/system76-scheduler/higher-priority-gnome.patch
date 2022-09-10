@@ -25,7 +25,16 @@
  ],
  // Default
  0: [
-@@ -100,9 +102,12 @@
+@@ -86,6 +88,8 @@
+ ],
+ // Absolute lowest priority
+ (19, Idle): [
++    "nix",
++    "nixos-rebuild",
+     "apt",
+     "apt-get",
+     "boinc",
+@@ -100,9 +104,12 @@
      "cpp",
      "g++",
      "gcc",

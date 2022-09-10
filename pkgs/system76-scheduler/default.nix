@@ -7,9 +7,6 @@
 , ...
 }:
 
-let
-  configPatch = (builtins.readFile "./config.patch");
-in
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
   version = "1.2.1";
