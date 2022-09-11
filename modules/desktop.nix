@@ -247,6 +247,7 @@
     nixpkgs-fmt # Nix formatter
     vscode
     insomnia
+    gitui
 
     # VM dependencies
     # qemu_kvm

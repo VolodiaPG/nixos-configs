@@ -8,6 +8,8 @@
       ../../modules/common.nix
       ../../modules/desktop.nix
       ../../modules/gaming.nix
+
+      ../../services/nbfc-linux/nbfc-linux.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
