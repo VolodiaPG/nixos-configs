@@ -1,11 +1,5 @@
 { config, pkgs, lib, ... }:
-
 {
-  # boot.extraModulePackages = with config.boot.kernelPackages; [
-  #   acpi-ec
-  # ];
-  # boot.kernelModules = [ "acpi_ec" ];
-
   systemd.services.nbfc-linux =
     let
       cfg = pkgs.writeText "nbfc.json" (builtins.toJSON {
