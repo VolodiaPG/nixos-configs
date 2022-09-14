@@ -2,6 +2,7 @@
 {
   nixpkgs.overlays = [
     (import ../dotfiles/default.nix)
+    (import ../overlays/mpv-with-vapoursynth.nix)
   ];
   imports = [
     <home-manager/nixos>
@@ -204,7 +205,7 @@
     };
   };
 
-   programs.fish = {
+  programs.fish = {
     # 2. Enable fish-shell if you didn't.
     enable = true;
 
@@ -234,11 +235,10 @@
     firefox-beta-bin
 
     # Media
-    (mpv-with-scripts.override { scripts = [ mpvScripts.mpris ]; })
+    # (mpv-with-scripts.override { scripts = [ mpvScripts.mpris ]; vapoursynthSupport = true; })
     tidal-hifi
     libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
-    (pkgs.callPackage ../pkgs/svp { })
-    # (pkgs.callPackage ../pkgs/system76-scheduler { })
+    mpv
 
     # Chat
     discord
@@ -290,17 +290,14 @@
 
   users.users.volodia.symlinks = {
     ".gitconfig" = pkgs.gitconfig;
+    ".config/mpv/mpv.conf" = pkgs.mpvconfig;
   };
 
-  nixpkgs.config.packageOverrides = pkgs: rec {
-    # mistune = pkgs.mistune_2_0;
-    mpv = (pkgs.mpv-unwrapped.override {
-      vapoursynthSupport = true;
-      vapoursynth = pkgs.vapoursynth;
-    }).overrideAttrs (old: rec {
-      wafConfigureFlags = old.wafConfigureFlags ++ [ "--enable-vapoursynth" ];
-    });
-  };
+  # environment.etc = {
+  #   "mpv/mpv.conf".source = pkgs.mpvconfig;
+  #   # "mpv/mpv.conf".source = ./etc/mpv/mpv.conf;
+  #   # "youtube-dl.conf".source = ./etc/youtube-dl.conf;
+  # };
 
   virtualisation.libvirtd.enable = true;
 

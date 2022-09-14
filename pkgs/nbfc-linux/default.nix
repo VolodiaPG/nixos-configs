@@ -6,10 +6,10 @@
 
 stdenv.mkDerivation rec {
   pname = "nbfc-linux";
-  version = "32a49117ca3ff17d7681713a8dc8812323142dcb";
+  version = "c6abef1b9f4ec4bb8a2eb4d7e70c1fccbb320677";
   src = fetchFromGitHub {
-    owner = "xddxdd";
-    repo = "nbfc-linux";
+    owner = pname;
+    repo = pname;
     rev = version;
     sha256 = "sha256-jKuCBKUm32ulgH0+/be2s+CgeBqTww+4K3RETFFCCOc=";
   };

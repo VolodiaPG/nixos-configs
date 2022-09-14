@@ -1,6 +1,7 @@
 {
   pkgs ? import <nixpkgs> {},
   lib ? pkgs.lib,
+  # ripgrep
 }:
 let
   originalPackage = pkgs.nur.repos.xddxdd.svp;
@@ -33,6 +34,15 @@ let
             (old.outputs or ["out"])
           )
       }
+ 
+      export CONTENT=$(cat "${originalPackage}"/bin/SVPManager)
+      
+      regex='symlink (.*)/bin/mpv /usr/bin/mpv'
+      [[ $CONTENT =~ $regex ]]
+
+      ln -s ''${BASH_REMATCH[1]}/bin/mpv $out/bin/mpv
+      # ln -s ${originalPackage}/bin/SVPManager $out/bin/mpv
+
 
       # Change `Exec` in the desktop entry to insert an env variable forcing wayland for QT5
       # Make the file to be not a symlink by full copying using `install` first.
