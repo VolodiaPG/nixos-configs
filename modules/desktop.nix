@@ -1,14 +1,15 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, home-manager, lib, ... }:
 {
   nixpkgs.overlays = [
     (import ../dotfiles/default.nix)
     (import ../overlays/mpv-with-vapoursynth.nix)
   ];
+  
   imports = [
-    <home-manager/nixos>
+    # <home-manager/nixos>
     ../pkgs/symlinks/default.nix
     ../services/system76-scheduler/system76-scheduler.nix
-    (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
+    # (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
   ];
 
   # Hardware acceleration
@@ -219,17 +220,17 @@
     };
   };
 
-  programs.fish = {
-    # 2. Enable fish-shell if you didn't.
-    enable = true;
+  # programs.fish = {
+  #   # 2. Enable fish-shell if you didn't.
+  #   enable = true;
 
-    # 3. Declare fish plugins to be installed.
-    plugins = [
-      "jethrokuan/fzf"
-      "b4b4r07/enhancd"
-      # "IlanCosman/tide"
-    ];
-  };
+  #   # 3. Declare fish plugins to be installed.
+  #   plugins = [
+  #     "jethrokuan/fzf"
+  #     "b4b4r07/enhancd"
+  #     # "IlanCosman/tide"
+  #   ];
+  # };
 
   environment.systemPackages = with pkgs; [
     # Fish deps
@@ -302,10 +303,10 @@
     ];
   };
 
-  users.users.volodia.symlinks = {
-    ".gitconfig" = pkgs.gitconfig;
-    ".config/mpv/mpv.conf" = pkgs.mpvconfig;
-  };
+  # users.users.volodia.symlinks = {
+  #   ".gitconfig" = pkgs.gitconfig;
+  #   ".config/mpv/mpv.conf" = pkgs.mpvconfig;
+  # };
 
   # environment.etc = {
   #   "mpv/mpv.conf".source = pkgs.mpvconfig;
