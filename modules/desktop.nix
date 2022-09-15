@@ -11,6 +11,20 @@
     (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
   ];
 
+  # Hardware acceleration
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver # LIBVA_DRIVER_NAME=iHD
+      vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
+  };
+
   # Services
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -232,7 +246,7 @@
     gnomeExtensions.gsconnect
 
     # Browser
-    firefox-beta-bin
+    (firefox-beta-bin.override { forceWayland = true; })
 
     # Media
     # (mpv-with-scripts.override { scripts = [ mpvScripts.mpris ]; vapoursynthSupport = true; })

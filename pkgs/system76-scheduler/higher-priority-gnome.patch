@@ -1,6 +1,6 @@
 --- system76-scheduler/data/assignments.ron	2022-09-09 13:41:11.374594065 +0200
 +++ system76-scheduler/data/assignments.ron	2022-09-09 13:41:50.427252486 +0200
-@@ -10,12 +10,15 @@
+@@ -10,12 +10,17 @@
  ],
  // Very high
  (-9, BestEffort(0)): [
@@ -9,6 +9,8 @@
 +    "mutter",
      "easyeffects",
 +    "jamesdsp",
++    "mpv",
++    "vlc",
  ],
  // High priority
  (-5, BestEffort(4)): [

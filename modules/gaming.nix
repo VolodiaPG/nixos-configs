@@ -5,6 +5,7 @@
     # Steam
     (steam.override { extraPkgs = pkgs: [ mono gtk3 gtk3-x11 libgdiplus zlib ]; }).run
     (pkgs.callPackage ../pkgs/popcorntime { })
+    transmission-gtk
   ];
 
   programs.steam.enable = true;
