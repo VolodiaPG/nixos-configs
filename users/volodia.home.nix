@@ -11,12 +11,26 @@
 
   home.packages = with pkgs; [ direnv ];
 
+  xdg.configFile."mpv/mpv.conf".text = ''
+    # SVP Options
+    input-ipc-server=/tmp/mpvsocket
+    hwdec=auto-copy
+    # hwdec=auto-safe
+    vo=gpu
+    profile=gpu-hq
+    # hwdec-codecs=all
+    # hr-seek-framedrop=no
+    # no-resume-playback
+
+    gpu-context=wayland
+  '';
+
   programs.git = {
     enable = true;
     userName = "Volodia P.-G.";
-    userEmail = (import ../secrets/gitmail);
+    userEmail = (builtins.readFile ../secrets/gitmail);
     signing = {
-      key = (import ../secrets/gitkeyid);
+      key = (builtins.readFile ../secrets/gitkeyid);
       signByDefault = true;
     };
     extraConfig = {

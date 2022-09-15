@@ -15,57 +15,31 @@
 # sudo nix flake update --commit-lock-file /etc/nixos
 
 {
-  description = "lun's system config";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nuxpkgs.url = "github:nix-community/NUR";
-    home-manager.url = "github:nix-community/home-manager/release-21.05";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-  };
-
-  outputs = inputs: {}:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config = { allowUnfree = true; };
-      };
-      lib = nixpkgs.lib;
-    in
-    {
-      homeManagerConfigurations = {
-        lun = home-manager.lib.homeManagerConfiguration {
-          inherit system pkgs;
-          username = "lun";
-          homeDirectory = "/home/lun";
-          stateVersion = "21.05";
-          configuration = {
-            imports = [ ./lun-home.nix ];
-          };
-        };
-      };
-      nixosConfigurations = {
-        ux430ua = lib.nixosSystem {
-          inherit system;
-          modules = [ ./machines/ux430ua/configuration.nix ];
-        };
-      };
-    };
-}
-
-
-{
   description = "Volodia P.-G'.s system config";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nurpkgs.url = github:nix-community/NUR;
-    home-manager.url = "github:nix-community/home-manager/master";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+  nixConfig = {
+    substituters = [
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+    ];
+
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
   };
 
-  outputs = inputs:
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nurpkgs.url = "github:nix-community/NUR";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware.url = "github:nixos/nixos-hardware";
+  };
+
+  outputs = inputs@{ self, nixpkgs, nurpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -75,67 +49,23 @@
       lib = nixpkgs.lib;
     in
     {
-      homeManagerConfigurations = {
-        nix.settings.experimental-features = "nix-command flakes";
-
-        volodia = home-manager.lib.homeManagerConfiguration {
-          inherit system pkgs;
-          username = "volodia";
-          homeDirectory = "/home/volodia";
-          stateVersion = "22.05";
-          configuration = {
-            imports = [ ./users/volodia.home.nix ];
-          };
-        };
-      };
       nixosConfigurations = {
         ux430ua = lib.nixosSystem {
           inherit system;
-          modules = [ ./machines/ux430ua/configuration.nix ];
+          modules = [
+            nurpkgs.nixosModules.nur
+            machines/ux430ua/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.volodia = import users/volodia.home.nix;
+
+              # Optionally, use home-manager.extraSpecialArgs to pass
+              # arguments to home.nix
+            }
+          ];
         };
       };
     };
 }
-
-#   nixosConfigurations = builtins.listToAttrs (builtins.map
-#     (system: {
-#       name = system.config.networking.hostName;
-#       value = system;
-#     })
-#     [
-#       (inputs.nixpkgs.lib.nixosSystem {
-#         system = "x86_64-linux";
-#         # Things in this set are passed to modules and accessible
-#         # in the top-level arguments (e.g. `{ pkgs, lib, inputs, ... }:`).
-#         specialArgs = {
-#           inherit inputs;
-#         };
-#         modules = [
-#           inputs.home-manager.nixosModules.home-manager
-#           inputs.nur.nixosModules.nur
-
-#           ({ pkgs, ... }: {
-#             environment.etc =
-#               {
-#                 "nix/channels/nixpkgs".source = inputs.nixpkgs.outPath;
-#                 "nix/channels/home-manager".source = inputs.home-manager.outPath;
-#                 "nix/channels/nurpkgs".source = inputs.nurpkgs.outPath;
-#               };
-
-#             nix.nixPath =
-#               [
-#                 "nixpkgs=/etc/nix/channels/nixpkgs"
-#                 "home-manager=/etc/nix/channels/home-manager"
-#                 "nurpkgs=/etc/nix/channels/nurpkgs"
-#               ];
-
-#             nix.settings.experimental-features = "nix-command flakes";
-
-#             home-manager.useGlobalPkgs = true;
-#           })
-#         ];
-#       })
-#     ]
-#   );
-# };
-# }
