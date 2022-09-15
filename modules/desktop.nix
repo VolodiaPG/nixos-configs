@@ -5,9 +5,7 @@
   ];
   
   imports = [
-    # <home-manager/nixos>
     ../services/system76-scheduler/system76-scheduler.nix
-    # (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
   ];
 
   # Hardware acceleration
