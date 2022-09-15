@@ -1,13 +1,11 @@
 { config, pkgs, home-manager, lib, ... }:
 {
   nixpkgs.overlays = [
-    (import ../dotfiles/default.nix)
     (import ../overlays/mpv-with-vapoursynth.nix)
   ];
   
   imports = [
     # <home-manager/nixos>
-    ../pkgs/symlinks/default.nix
     ../services/system76-scheduler/system76-scheduler.nix
     # (fetchTarball "https://github.com/takagiy/nixos-declarative-fish-plugin-mgr/archive/0.0.5.tar.gz")
   ];
