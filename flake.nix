@@ -45,9 +45,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
-        # overlays = [
-        #   overlays/mpv-with-vapoursynth
-        # ];
       };
       lib = nixpkgs.lib;
     in
@@ -75,6 +72,25 @@
             nixos-hardware.nixosModules.common-pc-laptop
             nixos-hardware.nixosModules.common-pc-laptop-acpi_call
             nixos-hardware.nixosModules.common-pc-laptop-ssd
+          ];
+        };
+        msi = lib.nixosSystem {
+          inherit system;
+          modules = [
+            nurpkgs.nixosModules.nur
+            machines/msi/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.volodia = import users/volodia/home.nix;
+            }
+            nixos-hardware.nixosModules.common-cpu-intel
+            nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+            nixos-hardware.nixosModules.common-gpu-nvidia
+            nixos-hardware.nixosModules.common-pc
+            nixos-hardware.nixosModules.common-pc-ssd
+            nixos-hardware.nixosModules.common-pc-hdd
           ];
         };
       };
