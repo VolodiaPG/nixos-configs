@@ -1,26 +1,8 @@
 { config, pkgs, home-manager, lib, ... }:
 {
-  nixpkgs.overlays = [
-    (import ../overlays/mpv-with-vapoursynth.nix)
-  ];
-  
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
   ];
-
-  # Hardware acceleration
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-  };
 
   # Services
   # Enable the X11 windowing system.
@@ -246,10 +228,8 @@
     (firefox-beta-bin.override { forceWayland = true; })
 
     # Media
-    # (mpv-with-scripts.override { scripts = [ mpvScripts.mpris ]; vapoursynthSupport = true; })
     tidal-hifi
     libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
-    mpv
 
     # Chat
     discord
@@ -298,17 +278,6 @@
       "Noto Serif CJK JP"
     ];
   };
-
-  # users.users.volodia.symlinks = {
-  #   ".gitconfig" = pkgs.gitconfig;
-  #   ".config/mpv/mpv.conf" = pkgs.mpvconfig;
-  # };
-
-  # environment.etc = {
-  #   "mpv/mpv.conf".source = pkgs.mpvconfig;
-  #   # "mpv/mpv.conf".source = ./etc/mpv/mpv.conf;
-  #   # "youtube-dl.conf".source = ./etc/youtube-dl.conf;
-  # };
 
   virtualisation.libvirtd.enable = true;
 

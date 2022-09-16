@@ -10,3 +10,8 @@ Migration inspired from: https://gist.github.com/misuzu/80af74212ba76d03f6a7a6f2
 https://www.lucacambiaghi.com/nixpkgs/readme.html#orga1939e8
 
 nix-build -E "with import <nixpkgs> {}; callPackage ./default.nix {}"
+
+Resources:
+Lan Tian: https://lantian.pub/en/article/modify-website/nixos-why.lantian/
+Awesome Nix: https://nix-community.github.io/awesome-nix/#community
+Hardware specifics: https://github.com/NixOS/nixos-hardware/blob/master/common/gpu/intel.nix

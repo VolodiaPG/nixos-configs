@@ -39,12 +39,15 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
   };
 
-  outputs = inputs@{ self, nixpkgs, nurpkgs, home-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nurpkgs, home-manager, nixos-hardware, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
+        # overlays = [
+        #   overlays/mpv-with-vapoursynth
+        # ];
       };
       lib = nixpkgs.lib;
     in
@@ -59,11 +62,19 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.volodia = import users/volodia.home.nix;
+              home-manager.users.volodia = import users/volodia/home.nix;
 
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
             }
+            nixos-hardware.nixosModules.common-cpu-intel
+            nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+            nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
+            nixos-hardware.nixosModules.common-gpu-intel
+            nixos-hardware.nixosModules.common-pc
+            nixos-hardware.nixosModules.common-pc-laptop
+            nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+            nixos-hardware.nixosModules.common-pc-laptop-ssd
           ];
         };
       };

@@ -1,12 +1,9 @@
 { config, pkgs, ... }:
 
 {
-  nixpkgs.config.packageOverrides = pkgs: {
-    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
-      inherit pkgs;
-    };
-  };
-
+  imports = [
+    ./elegant-boot.nix
+  ];
   environment.systemPackages = with pkgs; [
     # Terminal tools
     coreutils # Basic GNU utilities
@@ -26,6 +23,7 @@
     zoxide # smart CD that remembers
     gh # Github PRs and stuff
     git-crypt
+    python3
 
     # System monitoring
     htop # Interactive TUI process viewer
@@ -36,8 +34,6 @@
     sshfs-fuse # Mount remote filesystem over SSH with FUSE
     wget # Retrieve files from the web
   ];
-
-  hardware.cpu.intel.updateMicrocode = true;
 
   nix = {
     extraOptions = ''
@@ -54,12 +50,6 @@
 
   # Allow unfree packages to be installed.
   nixpkgs.config.allowUnfree = true;
-
-  # Select internationalisation properties.
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "fr";
-  };
 
   time.timeZone = "Europe/Paris";
 
