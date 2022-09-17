@@ -12,6 +12,12 @@ in
   home.username = "volodia";
   home.homeDirectory = "/home/volodia";
 
+  programs.nix-index =
+  {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   home.sessionVariables = {
     MOZ_ENABLE_WAYLAND = 1;
     QT_QPA_PLATFORM="wayland";

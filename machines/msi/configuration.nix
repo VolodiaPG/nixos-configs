@@ -39,18 +39,11 @@
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  hardware.nvidia.modesetting.enable = true;
-  programs.xwayland.enable = true;
+  # hardware.nvidia.modesetting.enable = true;
+  # programs.xwayland.enable = true;
   services.xserver.displayManager.gdm.wayland = true;
-  services.xserver.displayManager.gdm.nvidiaWayland = true;
 
-  services.xserver.enable = true;
-
-  services.xserver = {
-    videoDrivers = [
-      "nvidia"
-    ];
-  };
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -66,10 +59,10 @@
 
   hardware.cpu.intel.updateMicrocode = true;
 
-  nixpkgs.config.packageOverrides = pkgs: {
-    # vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-    nvidia_x11 = pkgs.nvidia_x11;
-  };
+  # nixpkgs.config.packageOverrides = pkgs: {
+  #   # vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  #   nvidia_x11 = pkgs.nvidia_x11;
+  # };
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
@@ -79,6 +72,10 @@
       libvdpau-va-gl
     ];
   };
+
+  #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+  hardware.nvidia.prime.nvidiaBusId = "PCI:1:0:0";
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

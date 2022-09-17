@@ -46,6 +46,20 @@
     package = pkgs.nixFlakes;
   };
 
+  i18n = {
+    defaultLocale = "fr_FR.UTF-8";
+    extraLocaleSettings = {
+      LANGUAGE = "en_US.UTF-8";
+      LC_ALL = "fr_FR.UTF-8";
+      LC_MONETARY = "fr_FR.UTF-8";
+      LC_PAPER = "fr_FR.UTF-8";
+      LC_MEASUREMENT = "fr_FR.UTF-8";
+      LC_TIME = "fr_FR.UTF-8";
+      LC_NUMERIC = "fr_FR.UTF-8";
+      LANG = "en_US.UTF-8";
+    };
+  };
+
   services.fail2ban = {
     enable = true;
     maxretry = 5;
