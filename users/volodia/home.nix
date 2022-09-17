@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   mpv-unwrapped = pkgs.mpv-unwrapped.override { vapoursynthSupport = true; };
-  mpv = pkgs.wrapMpv mpv-unwrapped { };
+  mpv = pkgs.wrapMpv mpv-unwrapped { youtubeSupport = true; };
 in
 {
   # Let Home Manager install and manage itself.
@@ -12,8 +12,13 @@ in
   home.username = "volodia";
   home.homeDirectory = "/home/volodia";
 
+  home.sessionVariables = {
+    MOZ_ENABLE_WAYLAND = 1;
+    QT_QPA_PLATFORM="wayland";
+  };
+
   home.packages = [ mpv ] ++ (with pkgs;
-    [ direnv ]);
+    [ direnv ff2mpv ]);
 
   home.file.".config/mpv/motioninterpolation.py".source = pkgs.substituteAll {
     src = ./motioninterpolation.py;

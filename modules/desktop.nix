@@ -225,7 +225,9 @@
     gnomeExtensions.gsconnect
 
     # Browser
-    (firefox-beta-bin.override { forceWayland = true; })
+    # (firefox-beta-bin.override { forceWayland = true; })
+    # firefox-beta-bin
+    firefox-wayland
 
     # Media
     tidal-hifi
