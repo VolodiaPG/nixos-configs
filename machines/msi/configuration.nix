@@ -39,6 +39,19 @@
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
+  hardware.nvidia.modesetting.enable = true;
+  programs.xwayland.enable = true;
+  services.xserver.displayManager.gdm.wayland = true;
+  services.xserver.displayManager.gdm.nvidiaWayland = true;
+
+  services.xserver.enable = true;
+
+  services.xserver = {
+    videoDrivers = [
+      "nvidia"
+    ];
+  };
+
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
   # programs.mosh.enable = true;
@@ -54,13 +67,14 @@
   hardware.cpu.intel.updateMicrocode = true;
 
   nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+    # vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+    nvidia_x11 = pkgs.nvidia_x11;
   };
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
       # intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      # vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
       vaapiVdpau
       libvdpau-va-gl
     ];
