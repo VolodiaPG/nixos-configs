@@ -1,8 +1,4 @@
 { config, pkgs, ... }:
-let
-  mpv-unwrapped = pkgs.mpv-unwrapped.override { vapoursynthSupport = true; };
-  mpv = pkgs.wrapMpv mpv-unwrapped { youtubeSupport = true; };
-in
 {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -13,47 +9,47 @@ in
   home.homeDirectory = "/home/volodia";
 
   programs.nix-index =
-  {
-    enable = true;
-    enableFishIntegration = true;
-  };
+    {
+      enable = true;
+      enableFishIntegration = true;
+    };
 
   home.sessionVariables = {
     MOZ_ENABLE_WAYLAND = 1;
-    QT_QPA_PLATFORM="wayland";
+    QT_QPA_PLATFORM = "wayland";
+    NIXOS_OZONE_WL = 1;
   };
 
-  home.packages = [ mpv ] ++ (with pkgs;
-    [ direnv ff2mpv ]);
-
-  home.file.".config/mpv/motioninterpolation.py".source = pkgs.substituteAll {
-    src = ./motioninterpolation.py;
-    mvtoolslib = "${pkgs.vapoursynth-mvtools}/lib/vapoursynth/";
-  };
+  # home.packages = [ mpv ] ++ (with pkgs;
+  #   [ direnv ff2mpv ]);
+  home.packages = with pkgs;
+    [ direnv ff2mpv ];
 
   home.file.".config/mpv/svp.py".source = pkgs.substituteAll {
     src = ./svp.py;
     svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
-    oclicd = "${pkgs.ocl-icd}/lib/";
-    # mvtoolslib = "${pkgs.vapoursynth-mvtools}/lib/vapoursynth/";
+  };
+  home.file.".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
+    src = ./svp_nvof.py;
+    svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
   };
 
   home.file.".config/mpv/mpv.conf".text = ''
     hwdec=auto-copy
-    # hwdec=auto-safe
-    vo=gpu
-    profile=gpu-hq
-    hwdec-codecs=all
-    hr-seek-framedrop=no
-    no-resume-playback
+    #hwdec=auto-safe
+    # vo=gpu-next
+    #profile=gpu-hq
+    #hwdec-codecs=all
+    #hr-seek-framedrop=no
+    #no-resume-playback
 
-    gpu-context=wayland
-    #vf=format=yuv420p,vapoursynth=~~/motioninterpolation.py:4:4
-    # vf=vapoursynth=~~/svp.py:2:24
+    # gpu-api=vulkan
+    # gpu-context=wayland
   '';
 
   home.file.".config/mpv/input.conf".text = ''
     h vf toggle vapoursynth=~~/svp.py:2:24
+    y vf toggle vapoursynth=~~/svp_nvof.py:2:24
   '';
 
   programs.git = {

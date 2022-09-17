@@ -45,7 +45,11 @@
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
+        overlays = [
+          (import ../overlays/mpv-master.nix) {}
+        ];
       };
+
       lib = nixpkgs.lib;
     in
     {
@@ -76,6 +80,7 @@
         };
         msi = lib.nixosSystem {
           inherit system;
+
           modules = [
             nurpkgs.nixosModules.nur
             machines/msi/configuration.nix
