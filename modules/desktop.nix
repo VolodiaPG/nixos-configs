@@ -64,6 +64,7 @@
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
+    gnome-connections # Replaced by Remmina
   ]) ++ (with pkgs.gnome; [
     cheese # webcam tool
     gnome-music
@@ -194,6 +195,9 @@
         "org/gnome/mutter" = {
           workspaces-only-on-primary = false;
         };
+        "org/gnome/desktop/remote-desktop/rdp" = {
+          screen-share-mode = "extend";
+        };
       };
     };
   };
@@ -214,6 +218,8 @@
     # Fish deps
     fzf # Required by jethrokuan/fzf.
     fzy # Required by b4b4r07/enhancd.
+
+    remmina
 
     # Gnome extensions
     gnomeExtensions.appindicator
@@ -283,14 +289,25 @@
 
   virtualisation.libvirtd.enable = true;
 
+  services.gnome.gnome-remote-desktop.enable = true;
+
   # Open up ports
   networking.firewall = {
+    enable = true;
     allowedTCPPortRanges = [
       { from = 6881; to = 6999; } # Torrents
       { from = 1714; to = 1764; } # KDEConnect
     ];
     allowedUDPPortRanges = [
       { from = 1714; to = 1764; } # KDEConnect
+    ];
+    allowedTCPPorts = [
+      22 # SSH
+      3389 # RDP
+    ];
+    allowedUDPPorts = [
+      3389 # RDP
+      # 5353 # mDNS, avahi
     ];
   };
 

@@ -39,7 +39,7 @@
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  # hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia.modesetting.enable = true;
   # programs.xwayland.enable = true;
   services.xserver.displayManager.gdm.wayland = true;
 
