@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
@@ -14,24 +15,27 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "rpool/root/nixos";
+    {
+      device = "rpool/root/nixos";
       fsType = "zfs";
     };
 
   fileSystems."/home" =
-    { device = "rpool/home";
+    {
+      device = "rpool/home";
       fsType = "zfs";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A676-DE72";
+    {
+      device = "/dev/disk/by-uuid/A676-DE72";
       fsType = "vfat";
     };
 
-   swapDevices = [
-    # {
-    #   device = "/dev/disk/by-uuid/t";
-    # }
+  swapDevices = [
+    {
+      device = "/dev/disk/by-uuid/0030ebae-1c53-4139-92d3-868519b2bd40";
+    }
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

@@ -31,73 +31,67 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nurpkgs.url = "github:nix-community/NUR";
+    # flake-utils.url = "github:numtide/flake-utils";
+    # nur.url = "github:nix-community/NUR";
+    # nur = {
+    #   # url = "github:xddxdd/nur-packages";
+    #   url = "github:nix-community/NUR";
+    #   # inputs.flake-utils.follows = "flake-utils";
+    #   # inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    nur-xddxdd = {
+      url = "github:xddxdd/nur-packages";
+      # inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.utils.follows = "flake-utils";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
+    vs-overlay.url = "github:volodiapg/vs-overlay";
+
   };
 
-  outputs = inputs@{ self, nixpkgs, nurpkgs, home-manager, nixos-hardware, ... }:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
+      mkMachine = import ./lib/mkMachine.nix;
+      
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config = { allowUnfree = true; };
-        overlays = [
-          (import ../overlays/mpv-master.nix) {}
-        ];
-      };
+      user = "volodia";
+      overlays = import ./lib/overlays.nix ++ (with inputs; [
+        vs-overlay.overlay
+        nur-xddxdd.overlay
+      ]);
 
-      lib = nixpkgs.lib;
+      modules-additionnal-sources = [
+        # inputs.nur.nixosModules.nur
+      ];
     in
     {
-      nixosConfigurations = {
-        ux430ua = lib.nixosSystem {
-          inherit system;
-          modules = [
-            nurpkgs.nixosModules.nur
-            machines/ux430ua/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.volodia = import users/volodia/home.nix;
-
-              # Optionally, use home-manager.extraSpecialArgs to pass
-              # arguments to home.nix
-            }
-            nixos-hardware.nixosModules.common-cpu-intel
-            nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-            nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
-            nixos-hardware.nixosModules.common-gpu-intel
-            nixos-hardware.nixosModules.common-pc
-            nixos-hardware.nixosModules.common-pc-laptop
-            nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-            nixos-hardware.nixosModules.common-pc-laptop-ssd
-          ];
-        };
-        msi = lib.nixosSystem {
-          inherit system;
-
-          modules = [
-            nurpkgs.nixosModules.nur
-            machines/msi/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.volodia = import users/volodia/home.nix;
-            }
-            nixos-hardware.nixosModules.common-cpu-intel
-            nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-            # nixos-hardware.nixosModules.common-gpu-nvidia
-            nixos-hardware.nixosModules.common-pc
-            nixos-hardware.nixosModules.common-pc-ssd
-            nixos-hardware.nixosModules.common-pc-hdd
-          ];
-        };
+      nixosConfigurations.ux430ua = mkMachine "ux430ua" {
+        inherit nixpkgs home-manager system overlays user;
+        additionnal-modules = modules-additionnal-sources + (with inputs; [
+          nixos-hardware.nixosModules.common-cpu-intel
+          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+          nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
+          nixos-hardware.nixosModules.common-gpu-intel
+          nixos-hardware.nixosModules.common-pc
+          nixos-hardware.nixosModules.common-pc-laptop
+          nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+          nixos-hardware.nixosModules.common-pc-laptop-ssd
+        ]);
+      };
+      nixosConfigurations.msi = mkMachine "msi" {
+        inherit nixpkgs home-manager system overlays user;
+        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
+          nixos-hardware.nixosModules.common-cpu-intel
+          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+          nixos-hardware.nixosModules.common-pc
+          nixos-hardware.nixosModules.common-pc-ssd
+          nixos-hardware.nixosModules.common-pc-hdd
+        ]);
       };
     };
 }

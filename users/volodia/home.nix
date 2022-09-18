@@ -22,8 +22,14 @@
 
   # home.packages = [ mpv ] ++ (with pkgs;
   #   [ direnv ff2mpv ]);
+  # home.packages = with pkgs; [ ];
   home.packages = with pkgs;
-    [ direnv ff2mpv ];
+    [
+      direnv
+      ff2mpv
+      vs-rife
+      # (pkgs.callPackage ../../pkgs/vs-rife { })
+    ];
 
   home.file.".config/mpv/svp.py".source = pkgs.substituteAll {
     src = ./svp.py;
@@ -32,6 +38,12 @@
   home.file.".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
     src = ./svp_nvof.py;
     svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
+  };
+  home.file.".config/mpv/rife.py".source = pkgs.substituteAll {
+    src = ./rife.py;
+    vsrife = "${pkgs.vs-rife}/lib/python3.10/site-packages/";
+    # rife = "${pkgs.callPackage ../../pkgs/vs-rife { }}/lib/";
+    # vsrife = "${pkgs.callPackage ../../pkgs/vs-rife { }}/lib/";
   };
 
   home.file.".config/mpv/mpv.conf".text = ''
@@ -50,6 +62,7 @@
   home.file.".config/mpv/input.conf".text = ''
     h vf toggle vapoursynth=~~/svp.py:2:24
     y vf toggle vapoursynth=~~/svp_nvof.py:2:24
+    n vf toggle vapoursynth=~~/rife.py:2:24
   '';
 
   programs.git = {

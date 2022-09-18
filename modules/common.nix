@@ -1,9 +1,12 @@
 { config, pkgs, ... }:
 
 {
+  nixpkgs.overlays = import ../lib/overlays.nix;
   imports = [
     ./elegant-boot.nix
   ];
+
+
   environment.systemPackages = with pkgs; [
     # Terminal tools
     coreutils # Basic GNU utilities

@@ -1,8 +1,25 @@
 { config, pkgs, home-manager, lib, ... }:
 {
+  nixpkgs.overlays = import ../lib/overlays.nix;
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
   ];
+
+
+  # nixpkgs.overlays = [
+  #   #   # (import (pkgs.fetchFromGitHub {
+  #   #   #   owner = "tadeokondrak";
+  #   #   #   repo = "vs-overlay";
+  #   #   #   rev = "7a032943f03b772636da4da785a95724b1995e8a";
+  #   #   #   sha256 = "10q8r401wg81vanwxd7v07qrh3w70gdhgv5vmvymai0flndm63cl";
+  #   #   # }))
+  #   #   # (import ../overlays/rife.nix)
+  #   #   # (import ../overlays/mpv-master.nix)
+  #   # (import (builtins.fetchTarball {
+  #   #   url = "https://github.com/volodiapg/vs-overlay/archive/master.tar.gz";
+  #   #   sha256 = "";
+  #   # }))
+  # ];
 
   # Services
   # Enable the X11 windowing system.
@@ -236,12 +253,32 @@
 
     # Browser
     # (firefox-beta-bin.override { forceWayland = true; })
-    # firefox-beta-bin
-    firefox-wayland
+    firefox-beta-bin
+    # firefox-wayland
 
     # Media
     tidal-hifi
     libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
+
+    getnative
+    # (wrapMpv
+    #   (mpv-unwrapped.override {
+    #     vapoursynthSupport = true;
+    #     vapoursynth = vapoursynth.withPlugins [
+    #       # prev.vs-rife
+    #       # pkgs.vs-overlay.packages.x86_64-linux.mvtools
+    #       pkgs.vapoursynthPlugins.mvtools
+    #       pkgs.vapoursynthPlugins.vsrife
+    #       # vs-overlay.packages.x86_64-linux.vapoursynthPlugins.vsutil
+    #     ];
+    #   })
+    #   { youtubeSupport = true; })
+    (vapoursynth-editor.withPlugins
+      [
+        pkgs.vapoursynthPlugins.mvtools
+        pkgs.vapoursynthPlugins.vsutil
+        pkgs.vs-rife
+      ])
     mpv
 
     # Chat

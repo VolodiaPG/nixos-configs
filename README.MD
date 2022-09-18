@@ -16,3 +16,6 @@ Lan Tian: https://lantian.pub/en/article/modify-website/nixos-why.lantian/
 Awesome Nix: https://nix-community.github.io/awesome-nix/#community
 Hardware specifics: https://github.com/NixOS/nixos-hardware/blob/master/common/gpu/intel.nix
 ZFS (encrypted) install: https://timklampe.cool/docs/example/nixos/nixos_install/
+
+inspiration:
+https://github.com/sandydoo/vapoursynth-on-nix
