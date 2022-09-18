@@ -28,10 +28,11 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
+    # alsa.support32Bit = true;
     pulse.enable = true;
     config.pipewire = {
       "context.properties" = {
+        "resample.quality" = 15;
         "link.max-buffers" = 16;
         "default.clock.rate" = 48000;
         "default.clock.quantum" = 1024;
@@ -218,6 +219,9 @@
     # Fish deps
     fzf # Required by jethrokuan/fzf.
     fzy # Required by b4b4r07/enhancd.
+
+    gtop
+    lm_sensors
 
     remmina
 
