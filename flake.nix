@@ -72,7 +72,7 @@
     {
       nixosConfigurations.ux430ua = mkMachine "ux430ua" {
         inherit nixpkgs home-manager system overlays user;
-        additionnal-modules = modules-additionnal-sources + (with inputs; [
+        additionnal-modules = modules-additionnal-sources ++ (with inputs; [
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
           nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
