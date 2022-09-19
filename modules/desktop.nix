@@ -252,8 +252,9 @@
     gnomeExtensions.gsconnect
 
     # Browser
-    # (firefox-beta-bin.override { forceWayland = true; })
-    firefox-beta-bin
+    (firefox-beta-bin.override { forceWayland = true; })
+    # firefox-beta-bin
+    # firefox
     # firefox-wayland
 
     # Media

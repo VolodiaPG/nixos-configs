@@ -15,10 +15,13 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 6;
+  boot.loader.systemd-boot.configurationLimit = 5;
 
   # Use XanMod kernel w/ a bunch of optimizations
-  boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  # boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  # boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+  # boot.kernelPackages = pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { };
+  boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
   boot.kernelParams = [
     "noibrs"
     "noibpb"

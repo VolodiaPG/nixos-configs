@@ -16,7 +16,8 @@
   boot.loader.systemd-boot.configurationLimit = 6;
 
   # Use XanMod kernel w/ a bunch of optimizations
-  boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  # boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
   boot.kernelParams = [
     "noibrs"
     "noibpb"
