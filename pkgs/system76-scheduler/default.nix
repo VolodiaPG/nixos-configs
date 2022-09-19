@@ -9,27 +9,20 @@
 
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
-  # version = "1.2.1";
-  version = "25a45add4300eab47ceb332b4ec07e1e74e4baaf";
-
+  version = "e93e5a161918eefbf25fd178f19db9b275838048";
 
   src = fetchFromGitHub {
-    owner = "pop-os";
+    owner = "volodiapg";
     repo = "system76-scheduler";
     rev = "${version}";
-    sha256 = "sha256-eB1Qm+ITlLM51nn7GG42bydO1SQ4ZKM0wgRl8q522vw=";
+    sha256 = "sha256-2Q3CXmIUlmRpsZa+WJ8JEhpBtvJR84wZheebFQ5O6EY=";
   };
 
-  patches = [
-    ./higher-priority-gnome.patch
-    ./daemon-branch-fix.patch
-  ];
-
+  cargoSha256 = "sha256-yyGevn1s8OwKoypKvIiZlG7pxORr3oop80MF1y/sP+M=";
+  
   nativeBuildInputs = [ bcc ];
 
   EXECSNOOP_PATH = "${bcc}/tools/execsnoop";
-
-  cargoSha256 = "sha256-ZbAEeHKALp0S0RwcJOINyp7uueWnXny4Crkl+qEEKyQ=";
 
   installPhase = ''
     mkdir -p $out/{bin,etc/dbus-1/system.d}
