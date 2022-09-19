@@ -1,17 +1,18 @@
---- system76-scheduler/data/assignments.ron	2022-09-09 13:41:11.374594065 +0200
-+++ system76-scheduler/data/assignments.ron	2022-09-09 13:41:50.427252486 +0200
-@@ -10,12 +10,17 @@
- ],
- // Very high
- (-9, BestEffort(0)): [
-+    "gnome-shell",
+--- system76-scheduler/data/assignments.ron
++++ system76-scheduler/data/assignments.ron
+@@ -7,6 +7,11 @@
+     "pipewire",
+     "pipewire-pulse",
+     "wireplumber"
 +    "Xorg",
++    "gnome-shell",
 +    "mutter",
-     "easyeffects",
-+    "jamesdsp",
 +    "mpv",
 +    "vlc",
  ],
+ // Very high
+ (-9, BestEffort(0)): [
+@@ -16,7 +21,6 @@
  // High priority
  (-5, BestEffort(4)): [
      "amsynth",
@@ -19,7 +20,7 @@
      "kwin",
      "sway",
      "steam",
-@@ -23,7 +26,6 @@
+@@ -24,7 +28,6 @@
      "vrdashboard",
      "vrmonitor",
      "vrserver",
@@ -27,25 +28,13 @@
  ],
  // Default
  0: [
-@@ -86,6 +88,8 @@
+@@ -87,6 +90,9 @@
  ],
  // Absolute lowest priority
  (19, Idle): [
 +    "nix",
++    "nixos",
 +    "nixos-rebuild",
      "apt",
      "apt-get",
      "boinc",
-@@ -100,9 +104,12 @@
-     "cpp",
-     "g++",
-     "gcc",
-+    "gradle",
-+    "javac",
-     "lld",
-     "make",
-     "mold",
-+    "mvn",
-     "rustc",
-     "tracker-miner-fs-3",
-     "update-initramfs",

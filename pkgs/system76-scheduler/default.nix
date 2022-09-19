@@ -2,24 +2,29 @@
 , bcc
 , linuxHeaders
 , lib
-, fetchgit
+, fetchFromGitHub
 , rustPlatform
 , ...
 }:
 
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
-  version = "1.2.1";
+  # version = "1.2.1";
+  version = "25a45add4300eab47ceb332b4ec07e1e74e4baaf";
 
 
-  src = fetchgit {
-    url = "https://github.com/pop-os/system76-scheduler";
+  src = fetchFromGitHub {
+    owner = "pop-os";
+    repo = "system76-scheduler";
     rev = "${version}";
-    sha256 = "sha256-Qz4LT+YluuQj9uke2pmFL2X8CYdpOoB70MxjYCyVf+g=";
+    sha256 = "sha256-eB1Qm+ITlLM51nn7GG42bydO1SQ4ZKM0wgRl8q522vw=";
   };
 
-  patches = [ ./higher-priority-gnome.patch ];
-  
+  patches = [
+    ./higher-priority-gnome.patch
+    ./daemon-branch-fix.patch
+  ];
+
   nativeBuildInputs = [ bcc ];
 
   EXECSNOOP_PATH = "${bcc}/tools/execsnoop";

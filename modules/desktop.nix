@@ -210,11 +210,20 @@
           # rotate video lock
           rotate-video-lock-static = [ ];
         };
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+          binding = [ "<Super>t" ];
+          command = "kgx";
+          name = "Terminal";
+        };
         "org/gnome/mutter" = {
           workspaces-only-on-primary = false;
         };
         "org/gnome/desktop/remote-desktop/rdp" = {
           screen-share-mode = "extend";
+        };
+        "org/gnome/settings-daemon/plugins/power" = {
+          idle-dim = false;
+          sleep-inactive-ac-type = "nothing";
         };
       };
     };
