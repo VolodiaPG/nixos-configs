@@ -60,6 +60,10 @@
 
   hardware.cpu.intel.updateMicrocode = true;
 
+  environment.systemPackages = with pkgs; [
+    nvtop
+  ];
+
   # nixpkgs.config.packageOverrides = pkgs: {
   #   # vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
   #   nvidia_x11 = pkgs.nvidia_x11;

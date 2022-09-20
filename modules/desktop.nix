@@ -27,7 +27,6 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.gdm.autoSuspend = false;
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
@@ -234,8 +233,8 @@
           idle-dim = false;
           sleep-inactive-ac-type = "nothing";
         };
-        "org/gnome/desktop/session" = {
-          idle-delay = 0;
+        "org/gnome/desktop/screensaver" = {
+          idle-activation-enabled = false; # disable screen off on idle
         };
       };
     };
