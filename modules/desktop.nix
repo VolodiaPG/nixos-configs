@@ -295,12 +295,12 @@
     #     ];
     #   })
     #   { youtubeSupport = true; })
-    (vapoursynth-editor.withPlugins
-      [
-        pkgs.vapoursynthPlugins.mvtools
-        pkgs.vapoursynthPlugins.vsutil
-        pkgs.vs-rife
-      ])
+    # (vapoursynth-editor.withPlugins
+    #   [
+    #     pkgs.vapoursynthPlugins.mvtools
+    #     pkgs.vapoursynthPlugins.vsutil
+    #     pkgs.vs-rife
+    #   ])
     mpv
 
     # Chat
