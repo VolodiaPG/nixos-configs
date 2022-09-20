@@ -258,6 +258,7 @@
     lm_sensors
 
     remmina
+    cloudflare-warp
 
     # Gnome extensions
     gnomeExtensions.appindicator
