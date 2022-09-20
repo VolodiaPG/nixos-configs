@@ -15,7 +15,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 5;
+  boot.loader.systemd-boot.configurationLimit = 16;
 
   # Use XanMod kernel w/ a bunch of optimizations
   # boot.kernelPackages = pkgs.linuxPackages_xanmod;

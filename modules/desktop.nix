@@ -196,6 +196,11 @@
           toggle-tiled-left = [ ];
           toggle-tiled-right = [ ];
         };
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+          binding = "<super>t";
+          command = "kgx";
+          name = "Terminal";
+        };
         "org/gnome/settings-daemon/plugins/media-keys" = {
           # lock screen
           screensaver = [ "<super>escape" ];
@@ -206,15 +211,17 @@
           # launch web browser
           www = [ "<super>b" ];
           # launch terminal
-          terminal = [ "<super>t" ];
+          # terminal = [ "<super>t" ];
           # rotate video lock
           rotate-video-lock-static = [ ];
+          # Next trac
+          next = [ "<Control><Alt><Super>space" ];
+          play = [ "<Alt><Super>space" ];
+          previous = [ "<Shift><Alt><Super>space" ];
+          volume-down = [ "KP_Subtract" ];
+          volume-up = [ "KP_Add" ];
+          # Terminal
           custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
-        };
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-          binding = [ "<Super>t" ];
-          command = "kgx";
-          name = "Terminal";
         };
         "org/gnome/mutter" = {
           workspaces-only-on-primary = false;
