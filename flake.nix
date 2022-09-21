@@ -51,22 +51,26 @@
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
     vs-overlay.url = "github:volodiapg/vs-overlay";
-
+    peerix = {
+      url = "github:cid-chan/peerix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       mkMachine = import ./lib/mkMachine.nix;
-      
+
       system = "x86_64-linux";
       user = "volodia";
       overlays = import ./lib/overlays.nix ++ (with inputs; [
         vs-overlay.overlay
         nur-xddxdd.overlay
+        peerix.overlay
       ]);
 
-      modules-additionnal-sources = [
-        # inputs.nur.nixosModules.nur
+      modules-additionnal-sources = with inputs;[
+        peerix.nixosModules.peerix
       ];
     in
     {
