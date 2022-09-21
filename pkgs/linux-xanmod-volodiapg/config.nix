@@ -8,9 +8,13 @@ with lib.kernel;
 
   # BBR & CAKE
   TCP_CONG_CUBIC = lib.mkForce module;
-  TCP_CONG_BBR = yes;
-  DEFAULT_BBR = yes;
+  TCP_CONG_BBR2 = yes;
+  DEFAULT_BBR2 = yes;
   NET_SCH_CAKE = module;
+
+  # FQ-PIE Packet Scheduling
+  NET_SCH_DEFAULT = yes;
+  DEFAULT_FQ_PIE = yes;
 
   # Disable unused features
   CRYPTO_842 = no;
@@ -112,18 +116,6 @@ with lib.kernel;
   # Haswell & newer
   GENERIC_CPU3 = yes;
 
-  # Set to full tickless
-  HZ_PERIODIC = no;
-  NO_HZ_IDLE = no;
-  CONTEXT_TRACKING_FORCE = no;
-  # TICK_CPU_ACCOUNTING = no;
-  # NO_HZ_FULL_NODEF = yes;
-  # NO_HZ_FULL = yes;
-  NO_HZ = yes;
-  NO_HZ_COMMON = yes;
-  CONTEXT_TRACKING = yes;
-  VIRT_CPU_ACCOUNTING_GEN = yes;
-
   # Disable some debugging
   SLUB_DEBUG = no;
   # PM_DEBUG = no;
@@ -145,6 +137,18 @@ with lib.kernel;
   # Set PCIE_BUS for performance
   PCIE_BUS_PERFORMANCE = yes;
 
+  SCHED_AUTOGROUP_DEFAULT_ENABLED = yes;
+
+  #Enable multigenerational LRU with xanmod config
+  ARCH_HAS_NONLEAF_PMD_YOUNG = yes;
+  LRU_GEN = yes;
+  # NR_LRU_GENS = freeform "4";
+  # TIERS_PER_GEN = freeform "2";
+  LRU_GEN_ENABLED = no;
+  LRU_GEN_STATS = no;
+
+  # Disabling Kyber I/O scheduler
+  # MQ_IOSCHED_KYBER = no;
 
   ################################################################
   # Below are tunes from nixpkgs (xanmod kernel)
@@ -159,12 +163,20 @@ with lib.kernel;
   NTFS3_LZX_XPRESS = yes;
   NTFS3_FS_POSIX_ACL = yes;
 
-  # Preemptive Full Tickless Kernel at 1000Hz
+  # Preemptive Full Tickless Kernel at 500Hz
   SCHED_CORE = lib.mkForce (lib.mkForce (option no));
   PREEMPT_VOLUNTARY = lib.mkForce no;
   PREEMPT = lib.mkForce yes;
   NO_HZ_FULL = yes;
-  HZ_1000 = yes;
+  HZ_500 = yes;
+  HZ = freeform "500";
+  HZ_PERIODIC = no;
+  NO_HZ_IDLE = no;
+  CONTEXT_TRACKING_FORCE = no;
+  NO_HZ = yes;
+  NO_HZ_COMMON = yes;
+  CONTEXT_TRACKING = yes;
+  VIRT_CPU_ACCOUNTING_GEN = yes;
 
   # Graysky's additional CPU optimizations
   CC_OPTIMIZE_FOR_PERFORMANCE_O3 = yes;
