@@ -9,16 +9,16 @@
 
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
-  version = "742fce98a458831eb92d88e83a84fe824a348373";
+  version = "83a442fc72493c882f7d608167518480fe7bbff8";
 
   src = fetchFromGitHub {
     owner = "volodiapg";
     repo = "system76-scheduler";
     rev = "${version}";
-    sha256 = "sha256-EdEPCf6Q5rCR1V81G9eu3WBzkAGQ6AewwlyvQuiB7tY=";
+    sha256 = "sha256-piKVySdzo/EaT7EcyU4NZ+J20OCFuMEFNgpLqFAv+AU=";
   };
 
-  cargoSha256 = "sha256-sTHlM98xVWqlI9BREVvT4boSBVvBXXa/+a1S7kjZEJQ=";
+  cargoSha256 = "sha256-lDRk6YDtpQyJUz+nEJd0k6RH+q3ez7YlFg2nEr+kYaw=";
   
   nativeBuildInputs = [ bcc ];
 

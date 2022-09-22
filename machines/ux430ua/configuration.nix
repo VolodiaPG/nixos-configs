@@ -73,7 +73,7 @@
 
   services.peerix = {
     enable = true;
-    # package = peerix;
+    package = pkgs.peerix;
     openFirewall = true; # UDP/12304
     privateKeyFile = ../../secrets/peerix-ux430ua-private;
     publicKeyFile = ../../secrets/peerix-ux430ua-public;
