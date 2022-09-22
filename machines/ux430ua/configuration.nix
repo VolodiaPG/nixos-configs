@@ -74,6 +74,8 @@
   services.peerix = {
     enable = true;
     package = pkgs.peerix;
+    user = "volodia";
+    group = "users";
     openFirewall = true; # UDP/12304
     privateKeyFile = ../../secrets/peerix-ux430ua-private;
     publicKeyFile = ../../secrets/peerix-ux430ua-public;
