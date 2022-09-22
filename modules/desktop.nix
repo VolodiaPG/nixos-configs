@@ -5,29 +5,27 @@
     ../services/system76-scheduler/system76-scheduler.nix
   ];
 
-
-  # nixpkgs.overlays = [
-  #   #   # (import (pkgs.fetchFromGitHub {
-  #   #   #   owner = "tadeokondrak";
-  #   #   #   repo = "vs-overlay";
-  #   #   #   rev = "7a032943f03b772636da4da785a95724b1995e8a";
-  #   #   #   sha256 = "10q8r401wg81vanwxd7v07qrh3w70gdhgv5vmvymai0flndm63cl";
-  #   #   # }))
-  #   #   # (import ../overlays/rife.nix)
-  #   #   # (import ../overlays/mpv-master.nix)
-  #   # (import (builtins.fetchTarball {
-  #   #   url = "https://github.com/volodiapg/vs-overlay/archive/master.tar.gz";
-  #   #   sha256 = "";
-  #   # }))
-  # ];
-
   # Services
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    autoSuspend = false;
+  };
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    # Override GNOME defaults to disable GNOME tour and disable suspend
+    extraGSettingsOverrides = ''
+      [org.gnome.desktop.session]
+      idle-delay=0
+      [org.gnome.settings-daemon.plugins.power]
+      sleep-inactive-ac-type='nothing'
+      sleep-inactive-battery-type='nothing'
+    '';
+    extraGSettingsOverridePackages = [ pkgs.gnome.gnome-settings-daemon ];
+  };
 
   # Configure keymap in X11
   services.xserver = {
@@ -229,16 +227,10 @@
         "org/gnome/desktop/remote-desktop/rdp" = {
           screen-share-mode = "extend";
         };
-        "org/gnome/settings-daemon/plugins/power" = {
-          idle-dim = false;
-          sleep-inactive-ac-type = "nothing";
-        };
-        "org/gnome/desktop/screensaver" = {
-          idle-activation-enabled = false; # disable screen off on idle
-        };
       };
     };
   };
+
 
   # programs.fish = {
   #   # 2. Enable fish-shell if you didn't.
@@ -373,6 +365,11 @@
       3389 # RDP
       # 5353 # mDNS, avahi
     ];
+  };
+
+  qt5 = {
+    enable = true;
+    platformTheme = "gnome";
   };
 
   # Enable bluetooth.
