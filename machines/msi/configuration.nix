@@ -1,9 +1,19 @@
 { config, pkgs, ... }:
 {
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  #boot.loader.systemd-boot.enable = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.systemd-boot.configurationLimit = 16;
+
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 16;
+  boot.loader.grub = {
+    enable = true;
+    version = 2;
+    device = "nodev";
+    efiSupport = true;
+    enableCryptodisk = true;
+  };
+
 
   # Use XanMod kernel w/ a bunch of optimizations
   # boot.kernelPackages = pkgs.linuxPackages_xanmod;

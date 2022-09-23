@@ -10,33 +10,49 @@
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  boot.initrd.luks.devices = {
+    crypted = {
+      device = "/dev/disk/by-uuid/00c9df14-35fa-481d-ab42-b61805f49ce9";
+      preLVM = true;
+    };
+  };
+
   fileSystems."/" =
     {
-      device = "rpool/root/nixos";
-      fsType = "zfs";
+      device = "/dev/disk/by-uuid/d01e02c1-f7df-4da3-84c7-9500a039d84f";
+      fsType = "btrfs";
+      options = [ "subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/home" =
     {
-      device = "rpool/home";
-      fsType = "zfs";
+      device = "/dev/disk/by-uuid/d01e02c1-f7df-4da3-84c7-9500a039d84f";
+      fsType = "btrfs";
+      options = [ "subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+    };
+
+  fileSystems."/nix" =
+    {
+      device = "/dev/disk/by-uuid/d01e02c1-f7df-4da3-84c7-9500a039d84f";
+      fsType = "btrfs";
+      options = [ "subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/A676-DE72";
+      device = "/dev/disk/by-uuid/C0C5-FFC0";
       fsType = "vfat";
     };
 
-  swapDevices = [
-    {
-      device = "/dev/disk/by-uuid/0030ebae-1c53-4139-92d3-868519b2bd40";
-    }
-  ];
+  swapDevices =
+    [{
+      device = "/dev/disk/by-uuid/053bf9e0-dabb-4e69-a979-53e8fc692181";
+      options = [ "noatime" ];
+    }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -46,6 +62,5 @@
   # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
-
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
