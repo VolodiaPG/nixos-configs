@@ -275,7 +275,7 @@
     tidal-hifi
     libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
 
-    getnative
+    # getnative
     # (wrapMpv
     #   (mpv-unwrapped.override {
     #     vapoursynthSupport = true;

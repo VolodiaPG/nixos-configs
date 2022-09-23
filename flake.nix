@@ -50,7 +50,7 @@
       # inputs.utils.follows = "flake-utils";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    vs-overlay.url = "github:volodiapg/vs-overlay";
+    # vs-overlay.url = "github:volodiapg/vs-overlay";
     peerix = {
       url = "github:cid-chan/peerix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -64,7 +64,7 @@
       system = "x86_64-linux";
       user = "volodia";
       overlays = import ./lib/overlays.nix ++ (with inputs; [
-        vs-overlay.overlay
+        # vs-overlay.overlay
         nur-xddxdd.overlay
         peerix.overlay
       ]);

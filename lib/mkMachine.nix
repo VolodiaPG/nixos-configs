@@ -19,7 +19,7 @@ nixpkgs.lib.nixosSystem rec {
     ../machines/${name}/hardware-configuration.nix
     ../machines/${name}/configuration.nix
 
-    ../modules/zfs.nix
+    ../modules/btrfs.nix
     ../modules/elegant-boot.nix
     ../modules/common.nix
     ../modules/desktop.nix

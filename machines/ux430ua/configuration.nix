@@ -2,13 +2,6 @@
 {
   imports =
     [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ../../modules/zfs.nix
-      ../../modules/common.nix
-      ../../modules/desktop.nix
-      ../../modules/gaming.nix
-
       ../../services/nbfc-linux/nbfc-linux.nix
     ];
 
