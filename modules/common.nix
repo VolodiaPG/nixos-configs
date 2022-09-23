@@ -79,15 +79,15 @@
 
   time.timeZone = "Europe/Paris";
 
-  systemd.services.docker.path = with pkgs; [ zfs ];
-  virtualisation.docker = {
-    enable = true;
-    extraOptions = "--storage-driver zfs --exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
-    autoPrune = {
-      enable = true;
-      dates = "weekly";
-    };
-  };
+  # systemd.services.docker.path = with pkgs; [ zfs ];
+  # virtualisation.docker = {
+  #   enable = true;
+  #   extraOptions = "--storage-driver zfs --exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
+  #   autoPrune = {
+  #     enable = true;
+  #     dates = "weekly";
+  #   };
+  # };
 
   # Enable SSH with password authentication disabled.
   services.openssh = {

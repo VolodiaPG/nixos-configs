@@ -32,7 +32,6 @@
     loader = {
       timeout = 3;
       efi.canTouchEfiVariables = true;
-      systemd-boot.enable = true;
     };
   };
 }

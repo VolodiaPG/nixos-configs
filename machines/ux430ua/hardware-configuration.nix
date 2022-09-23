@@ -5,39 +5,49 @@
 
 {
   imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  boot.initrd.luks.devices = {
+    crypted = {
+      device = "/dev/disk/by-uuid/4342bff2-4a5a-44d8-9fec-be91e252f75c";
+      preLVM = true;
+    };
+  };
+
+
   fileSystems."/" =
-    {
-      device = "sda3/root/nixos";
-      fsType = "zfs";
+    { device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      fsType = "btrfs";
+      options = [ "subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/home" =
-    {
-      device = "sda3/home";
-      fsType = "zfs";
+    { device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      fsType = "btrfs";
+      options = [ "subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+    };
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      fsType = "btrfs";
+      options = [ "subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/F725-BEAE";
+    { device = "/dev/disk/by-uuid/3DF5-C09C";
       fsType = "vfat";
     };
 
-  swapDevices = [
-    {
-      device = "/dev/disk/by-uuid/b6a020a4-0600-4157-8a1e-4acc1af94a95";
-      # size = 8192;
-    }
-  ];
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/5dce4d8a-af6c-4a30-b71d-c124508f9391";
+    options = ["noatime"]; }
+    ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -46,6 +56,6 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

@@ -250,6 +250,7 @@
     fzy # Required by b4b4r07/enhancd.
 
     gtop
+    libgtop
     lm_sensors
 
     remmina
