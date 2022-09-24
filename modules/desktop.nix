@@ -305,6 +305,10 @@
     insomnia
     gitui
 
+    # Utils
+    bottles
+    gnome.gnome-boxes
+
     # VM dependencies
     # qemu_kvm
     # qemu
