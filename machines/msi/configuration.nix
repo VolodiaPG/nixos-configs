@@ -84,12 +84,10 @@
   services.peerix = {
     enable = true;
     package = pkgs.peerix;
-    user = "volodia";
-    group = "users";
     openFirewall = true; # UDP/12304
     privateKeyFile = ../../secrets/peerix-msi-private;
     publicKeyFile = ../../secrets/peerix-msi-public;
-    publicKey = "peerix-ux430ua:n5sG6UiOmjfEPP4txuz/aIPizhruaGAQBw8FVKaLS1g="; # separated by spaces
+    publicKey = "peerix-ux430ua-nixos:n5sG6UiOmjfEPP4txuz/aIPizhruaGAQBw8FVKaLS1g="; # separated by spaces
   };
 
   # This value determines the NixOS release from which the default
