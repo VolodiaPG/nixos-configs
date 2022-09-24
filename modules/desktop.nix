@@ -350,8 +350,6 @@
     lxd.enable = true;
   };
 
-  environment."/var/lib/waydroid/waydroid_base.prop".source = "sys.use_memfd=true"; # Kernel 5.18+
-
   services.gnome.gnome-remote-desktop.enable = true;
 
   # Open up ports
