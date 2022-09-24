@@ -21,7 +21,6 @@
     wireguard-tools # Tools for Wireguard
     zip # ZIP file manipulation
     gdu # Manager files and see sizes quickly
-    topgrade # Updates any software that can be updated
     micro # text editor
     zoxide # smart CD that remembers
     gh # Github PRs and stuff
