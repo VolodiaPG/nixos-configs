@@ -4,8 +4,8 @@
   services.peerix = {
     enable = true;
     openFirewall = true; # UDP/12304
-    privateKeyFile = ../secrets/peerix-ux430ua-private;
-    publicKeyFile = ../secrets/peerix-ux430ua-public;
+    privateKeyFile = ../secrets/peerix-private;
+    publicKeyFile = ../secrets/peerix-public;
     user = "peerix";
     group = "peerix";
   };
