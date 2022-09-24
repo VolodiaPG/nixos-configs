@@ -307,7 +307,7 @@
 
     # Utils
     bottles
-    gnome.gnome-boxes
+    boxes
 
     # VM dependencies
     # qemu_kvm
