@@ -67,16 +67,6 @@
     ];
   };
 
-  services.peerix = {
-    enable = true;
-    package = pkgs.peerix;
-    openFirewall = true; # UDP/12304
-    privateKeyFile = ../../secrets/peerix-ux430ua-private;
-    publicKeyFile = ../../secrets/peerix-ux430ua-public;
-    publicKey = "peerix-msi-nixos:o9VMop4zgalELlIUmJXzF3GgIUQj2rqvPjMo3AqTyeo="; # separated by spaces
-  };
-
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

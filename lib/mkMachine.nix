@@ -22,6 +22,7 @@ nixpkgs.lib.nixosSystem rec {
     ../modules/btrfs.nix
     ../modules/elegant-boot.nix
     ../modules/common.nix
+    ../modules/peerix.nix
     ../modules/desktop.nix
     ../modules/gaming.nix
 

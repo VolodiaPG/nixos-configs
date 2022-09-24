@@ -81,15 +81,6 @@
   #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
   # hardware.nvidia.prime.nvidiaBusId = "PCI:1:0:0";
 
-  services.peerix = {
-    enable = true;
-    package = pkgs.peerix;
-    openFirewall = true; # UDP/12304
-    privateKeyFile = ../../secrets/peerix-msi-private;
-    publicKeyFile = ../../secrets/peerix-msi-public;
-    publicKey = "peerix-ux430ua-nixos:n5sG6UiOmjfEPP4txuz/aIPizhruaGAQBw8FVKaLS1g="; # separated by spaces
-  };
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
