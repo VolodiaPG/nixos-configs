@@ -9,6 +9,7 @@
 
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
+  # version = "93b7a24";
   version = "93b7a24";
 
   src = fetchFromGitHub {
@@ -19,10 +20,18 @@ rustPlatform.buildRustPackage rec {
   };
 
   cargoSha256 = "sha256-IKKBNUMCvyDxnTAHrEZ0naC+cnMe75DDNs7ESu538aY=";
-  
+
+  # cargoSha256 = lib.fakeSha256;
+  # cargoSha256 = "sha256-FOPZdWSKqrxHOdL2KFbTcPRXS5XAsOQjrvWnfguJ1UE=";
+
   nativeBuildInputs = [ bcc ];
 
   EXECSNOOP_PATH = "${bcc}/tools/execsnoop";
+
+  postPatch = ''
+    sed -i -e "s/\/etc\/system76-scheduler/\.\.\/etc\/system76-scheduler/g" daemon/src/config.rs
+    sed -i -e "s/\/usr\/share\/system76-scheduler/\.\.\/bin\/system76-scheduler/g" daemon/src/config.rs
+  '';
 
   installPhase = ''
     mkdir -p $out/{bin,etc/dbus-1/system.d}
