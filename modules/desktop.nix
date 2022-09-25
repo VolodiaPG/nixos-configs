@@ -129,7 +129,7 @@
         };
 
         "org/gnome/shell/extensions/vitals" = {
-          hot-sensors = [ "_memory_usage_" "__network-tx_max__" "__network-rx_max__" "_processor_usage_" "_processor_frequency_" "_system_load_1m_" "__temperature_avg__" ];
+          hot-sensors = [ "_memory_usage_" "__network-tx_max__" "__network-rx_max__" "_processor_usage_" "_processor_frequency_" "_system_load_1m_" "__temperature_max__" ];
           position-in-panel = 3;
         };
 
