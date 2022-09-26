@@ -14,7 +14,6 @@
     enableCryptodisk = true;
   };
 
-
   # Use XanMod kernel w/ a bunch of optimizations
   # boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
@@ -45,6 +44,8 @@
   # services.xserver.displayManager.gdm.wayland = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
+
+  environment.etc."X11/xorg.conf".source = ./xorg.conf;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
