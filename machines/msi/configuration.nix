@@ -54,9 +54,10 @@
 
   services.undervolt = {
     enable = true;
+    coreOffset = -95;
     gpuOffset = -95;
     uncoreOffset = -95;
-    coreOffset = -95;
+    analogioOffset = -95;
   };
 
   hardware.cpu.intel.updateMicrocode = true;
