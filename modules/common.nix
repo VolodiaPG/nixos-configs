@@ -45,7 +45,7 @@
     gc.automatic = true;
     gc.dates = "Sat 05:00";
     gc.options = "--delete-older-than 14d";
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
   };
 
   i18n = {
