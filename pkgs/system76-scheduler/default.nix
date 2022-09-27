@@ -9,29 +9,20 @@
 
 rustPlatform.buildRustPackage rec {
   name = "system76-scheduler-${version}";
-  # version = "93b7a24";
-  version = "93b7a24";
+  version = "f957d625045b45122fc34550980cef8183669dca";
 
   src = fetchFromGitHub {
     owner = "volodiapg";
     repo = "system76-scheduler";
     rev = "${version}";
-    sha256 = "sha256-/JgIRJFoQsFXE7mu2hkjyNDePYrbI1JIP7iwNKPSsAM=";
+    sha256 = "sha256-36UGk8X0hrP2JRArcY2ZlTVJ3hi4lUR4Xn7AHZpFd44=";
   };
 
-  cargoSha256 = "sha256-IKKBNUMCvyDxnTAHrEZ0naC+cnMe75DDNs7ESu538aY=";
+  cargoSha256 = "sha256-aOYyJjXMEWxelTsnLJby2C+vFXct9wrPrnd5sClcw8A=";
 
-  # cargoSha256 = lib.fakeSha256;
-  # cargoSha256 = "sha256-FOPZdWSKqrxHOdL2KFbTcPRXS5XAsOQjrvWnfguJ1UE=";
-
-  nativeBuildInputs = [ bcc ];
+  buildInputs = [ bcc ];
 
   EXECSNOOP_PATH = "${bcc}/tools/execsnoop";
-
-  postPatch = ''
-    sed -i -e "s/\/etc\/system76-scheduler/\.\.\/etc\/system76-scheduler/g" daemon/src/config.rs
-    sed -i -e "s/\/usr\/share\/system76-scheduler/\.\.\/bin\/system76-scheduler/g" daemon/src/config.rs
-  '';
 
   installPhase = ''
     mkdir -p $out/{bin,etc/dbus-1/system.d}

@@ -34,7 +34,10 @@
     xkbOptions = "eurosign:e";
   };
 
-  services.system76Scheduler.enable = true;
+  services.system76Scheduler = {
+    enable = true;
+    assignements = builtins.readFile ./system76-assignments.ron;
+  };
 
   # Enable sound.
   hardware.pulseaudio.enable = false;
