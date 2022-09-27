@@ -65,6 +65,9 @@
     n vf toggle vapoursynth=~~/rife.py:2:24
   '';
 
+  # https://github.com/Ashyni/mpv-scripts/
+  home.file.".config/mpv/scripts/dynamic-crop.lua".source = ./dynamic-crop.lua;
+
   programs.git = {
     enable = true;
     userName = "Volodia P.-G.";

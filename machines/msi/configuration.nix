@@ -44,7 +44,7 @@
   # services.xserver.displayManager.gdm.wayland = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
-
+  virtualisation.docker.enableNvidia = true;
   environment.etc."X11/xorg.conf".source = ./xorg.conf;
 
   # Enable the OpenSSH daemon.
