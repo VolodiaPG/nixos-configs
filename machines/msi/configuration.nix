@@ -1,10 +1,6 @@
 { config, pkgs, ... }:
 {
-  # Use the systemd-boot EFI boot loader.
-  #boot.loader.systemd-boot.enable = true;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.systemd-boot.configurationLimit = 16;
-
+  imports = [ ../../services/nvfancontrol/nvfancontrol.nix ];
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
     enable = true;
@@ -43,9 +39,7 @@
   # programs.xwayland.enable = true;
   # services.xserver.displayManager.gdm.wayland = true;
 
-  services.xserver.videoDrivers = [ "nvidia" ];
   virtualisation.docker.enableNvidia = true;
-  environment.etc."X11/xorg.conf".source = ./xorg.conf;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -58,6 +52,67 @@
     gpuOffset = -95;
     uncoreOffset = -95;
     analogioOffset = -95;
+  };
+
+  # Enable the X11 windowing system.
+  services.xserver = {
+    videoDrivers = [ "nvidia" ];
+    serverLayoutSection = ''
+      Identifier     "Layout0"
+      Screen      0  "Screen0" 0 0
+      Option         "Xinerama" "0"
+    '';
+    screenSection = ''
+      Identifier     "Screen0"
+      Device         "Device0"
+      Monitor        "Monitor0"
+      DefaultDepth    24
+      Option         "Stereo" "0"
+      Option         "nvidiaXineramaInfoOrder" "DFP-2"
+      Option         "metamodes" "3440x1440_120 +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On, AllowGSYNCCompatible=On}"
+      Option         "SLI" "Off"
+      Option         "MultiGPU" "Off"
+      Option         "BaseMosaic" "off"
+      SubSection     "Display"
+          Depth       24
+      EndSubSection
+    '';
+    deviceSection = ''
+      Identifier     "Device0"
+      Driver         "nvidia"
+      VendorName     "NVIDIA Corporation"
+      BoardName      "NVIDIA GeForce RTX 2060"
+      Option         "Coolbits" "4"
+    '';
+    monitorSection = ''
+      # HorizSync source: edid, VertRefresh source: edid
+      Identifier     "Monitor0"
+      VendorName     "Unknown"
+      ModelName      "Idek Iiyama PL3461WQ"
+      HorizSync       217.0 - 217.0
+      VertRefresh     48.0 - 144.0
+      Option         "DPMS"
+    '';
+    exportConfiguration = true;
+  };
+  hardware.nvidia.powerManagement.enable = true;
+
+  environment.etc."X11/Xwrapper.config".text = ''
+    allowed_users=anybody
+    needs_root_rights=yes
+  '';
+  services.nvfancontrol = {
+    enable = true;
+    configuration = ''
+      0     0
+      45    0
+      50    30
+      55    40
+      60    50
+      70    80
+      75    100
+    '';
+    cliArgs = "-d -f -l 0";
   };
 
   hardware.cpu.intel.updateMicrocode = true;
