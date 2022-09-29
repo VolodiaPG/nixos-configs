@@ -163,10 +163,16 @@ with lib.kernel;
   NTFS3_LZX_XPRESS = yes;
   NTFS3_FS_POSIX_ACL = yes;
 
+  PREEMPT_RCU = yes;
+  TASKS_RCU = yes;
+  UNINLINE_SPIN_UNLOCK = yes;
+
   # Preemptive Full Tickless Kernel at 500Hz
-  SCHED_CORE = lib.mkForce (lib.mkForce (option no));
+  SCHED_CORE = yes;
   PREEMPT_VOLUNTARY = lib.mkForce no;
   PREEMPT = lib.mkForce yes;
+  PREEMPTION = yes;
+  PREEMPT_BUILD = yes;
   NO_HZ_FULL = yes;
   HZ_500 = yes;
   HZ = freeform "500";
