@@ -57,42 +57,42 @@
   # Enable the X11 windowing system.
   services.xserver = {
     videoDrivers = [ "nvidia" ];
-    serverLayoutSection = ''
-      Identifier     "Layout0"
-      Screen      0  "Screen0" 0 0
-      Option         "Xinerama" "0"
-    '';
-    screenSection = ''
-      Identifier     "Screen0"
-      Device         "Device0"
-      Monitor        "Monitor0"
-      DefaultDepth    24
-      Option         "Stereo" "0"
-      Option         "nvidiaXineramaInfoOrder" "DFP-2"
-      Option         "metamodes" "3440x1440_120 +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On, AllowGSYNCCompatible=On}"
-      Option         "SLI" "Off"
-      Option         "MultiGPU" "Off"
-      Option         "BaseMosaic" "off"
-      SubSection     "Display"
-          Depth       24
-      EndSubSection
-    '';
-    deviceSection = ''
-      Identifier     "Device0"
-      Driver         "nvidia"
-      VendorName     "NVIDIA Corporation"
-      BoardName      "NVIDIA GeForce RTX 2060"
-      Option         "Coolbits" "4"
-    '';
-    monitorSection = ''
-      # HorizSync source: edid, VertRefresh source: edid
-      Identifier     "Monitor0"
-      VendorName     "Unknown"
-      ModelName      "Idek Iiyama PL3461WQ"
-      HorizSync       217.0 - 217.0
-      VertRefresh     48.0 - 144.0
-      Option         "DPMS"
-    '';
+    # serverLayoutSection = ''
+    #   Identifier     "Layout0"
+    #   Screen      0  "Screen0" 0 0
+    #   Option         "Xinerama" "0"
+    # '';
+    # screenSection = ''
+    #   Identifier     "Screen0"
+    #   Device         "Device0"
+    #   Monitor        "Monitor0"
+    #   DefaultDepth    24
+    #   Option         "Stereo" "0"
+    #   Option         "nvidiaXineramaInfoOrder" "DFP-2"
+    #   Option         "metamodes" "3440x1440_120 +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On, AllowGSYNCCompatible=On}"
+    #   Option         "SLI" "Off"
+    #   Option         "MultiGPU" "Off"
+    #   Option         "BaseMosaic" "off"
+    #   SubSection     "Display"
+    #       Depth       24
+    #   EndSubSection
+    # '';
+    # deviceSection = ''
+    #   Identifier     "Device0"
+    #   Driver         "nvidia"
+    #   VendorName     "NVIDIA Corporation"
+    #   BoardName      "NVIDIA GeForce RTX 2060"
+    #   Option         "Coolbits" "4"
+    # '';
+    # monitorSection = ''
+    #   # HorizSync source: edid, VertRefresh source: edid
+    #   Identifier     "Monitor0"
+    #   VendorName     "Unknown"
+    #   ModelName      "Idek Iiyama PL3461WQ"
+    #   HorizSync       217.0 - 217.0
+    #   VertRefresh     48.0 - 144.0
+    #   Option         "DPMS"
+    # '';
     exportConfiguration = true;
   };
   hardware.nvidia.powerManagement.enable = true;
