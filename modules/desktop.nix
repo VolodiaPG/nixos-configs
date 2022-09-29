@@ -230,6 +230,13 @@
         "org/gnome/desktop/remote-desktop/rdp" = {
           screen-share-mode = "extend";
         };
+        "org/gnome/shell/extensions/bingwallpaper" = {
+          lockscreen-blur-brightness = 60;
+          lockscreen-blur-strength = 2;
+          override-lockscreen-blur = true;
+          hide = true;
+          selected-image = "current";
+        };
       };
     };
   };
@@ -267,6 +274,7 @@
     gnomeExtensions.remove-app-menu
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
+    gnomeExtensions.bing-wallpaper-changer
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })
@@ -386,7 +394,7 @@
     wg0 = {
       address = [ "10.66.66.2/32" "fd42:42:42::2/128" ];
       listenPort = 50156; # to match firewall allowedUDPPorts (without this wg uses random port numbers)
-      dns = ["94.140.14.14" "94.140.15.15"];
+      dns = [ "94.140.14.14" "94.140.15.15" ];
       privateKey = builtins.readFile ../secrets/wireguard-private.key;
 
 
