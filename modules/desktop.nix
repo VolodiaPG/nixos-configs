@@ -128,6 +128,8 @@
             "Hide_Activities@shay.shayel.org"
             "RemoveAppMenu@Dragon8oy.com"
             "gsconnect@andyholmes.github.io"
+            "BingWallpaper@ineffable-gmail.com"
+            "blur-my-shell@aunetx"
           ];
         };
 
@@ -237,6 +239,11 @@
           hide = true;
           selected-image = "current";
         };
+        "org/gnome/shell/extensions/blur-my-shell/applications" = {
+          blur = true;
+          opacity = 230;
+          whitelist = [ "Kgx" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" ];
+        };
       };
     };
   };
@@ -275,6 +282,7 @@
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
+    gnomeExtensions.blur-my-shell
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })
