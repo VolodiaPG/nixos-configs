@@ -242,7 +242,7 @@
         "org/gnome/shell/extensions/blur-my-shell/applications" = {
           blur = true;
           opacity = 230;
-          whitelist = [ "Kgx" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" ];
+          whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" ];
         };
       };
     };
