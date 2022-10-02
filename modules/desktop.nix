@@ -286,6 +286,7 @@
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })
+    tor-browser-bundle-bin
     # firefox-beta-bin
     # firefox
     # firefox-wayland
