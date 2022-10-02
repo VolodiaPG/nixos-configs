@@ -1,13 +1,13 @@
 final: prev: {
-  # mpv-unwrapped = (super.mpv-unwrapped.overrideAttrs (old: {
-  #   version = "git";
-  #   src = super.fetchFromGitHub {
-  #     owner = "mpv-player";
-  #     repo = "mpv";
-  #     rev = "ba81e4ed88433b021282ca435c80361418d66999";
-  #     sha256 =  "sha256-10y4fNLDqVgfxackx98gD3xetC3dzMVNgE1Gd+7NaZE=";
-  #   };
-  # })).override { vapoursynthSupport = true; };
+  mpv-unwrapped = (prev.mpv-unwrapped.overrideAttrs (old: {
+    version = "git";
+    src = prev.fetchFromGitHub {
+      owner = "mpv-player";
+      repo = "mpv";
+      rev = "5e49c09";
+      sha256 = "sha256-kK9mJ/D/9UTnlmWbNE2OxlYi9o70udlBJEHLUoO4r9U=";
+    };
+  })).override { vapoursynthSupport = true; };
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [
   #   prev.vapoursynth-rife
@@ -17,16 +17,16 @@ final: prev: {
   #   python-packages.libxml2
   #   final.vs-rife
   # ]);
-  mpv-unwrapped = prev.mpv-unwrapped.override {
-    vapoursynthSupport = true;
-    # vapoursynth = prev.vapoursynth {
-    #   python3 = (prev.python3.withPackages (ps: with ps; [ sphinx cython numpy pytorch ]));
-    # };
-    # .withPlugins [
-    #   # final.vapoursynthPlugins.
-    #   # prev.vs-rife
-    #   #  prev.vs-overlay.packages.x86_64-linux
-    # ];
-  };
+  # mpv-unwrapped = prev.mpv-unwrapped.override {
+  #   vapoursynthSupport = true;
+  #   # vapoursynth = prev.vapoursynth {
+  #   #   python3 = (prev.python3.withPackages (ps: with ps; [ sphinx cython numpy pytorch ]));
+  #   # };
+  #   # .withPlugins [
+  #   #   # final.vapoursynthPlugins.
+  #   #   # prev.vs-rife
+  #   #   #  prev.vs-overlay.packages.x86_64-linux
+  #   # ];
+  # };
   mpv = final.wrapMpv final.mpv-unwrapped { youtubeSupport = true; };
 }
