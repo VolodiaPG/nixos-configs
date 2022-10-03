@@ -44,6 +44,38 @@
     g5k_login = builtins.readFile ../../secrets/grid5000.user;
   };
   home.file.".python-grid5000.yaml".source = ../../secrets/python-grid5000.yaml;
+  
+  home.file.".tmux".text = ''
+    set -g mouse
+
+    bind C-c run "tmux save-buffer - | wl-copy"
+
+    bind C-v run "tmux set-buffer "$(wl-paste)"; tmux paste-buffer"
+  '';
+
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      shell = {
+        program = "starship";
+      };
+    };
+  };
+
+  programs.starship = {
+    enable = true;
+    # Configuration written to ~/.config/starship.toml
+    settings = {
+      # add_newline = false;
+
+      # character = {
+      #   success_symbol = "[➜](bold green)";
+      #   error_symbol = "[➜](bold red)";
+      # };
+
+      # package.disabled = true;
+    };
+  };
 
   # https://github.com/Ashyni/mpv-scripts/
 

@@ -265,8 +265,9 @@
     # Fish deps
     fzf # Required by jethrokuan/fzf.
     fzy # Required by b4b4r07/enhancd.
+    tmux
 
-    gtop
+    bottom # call btm
     libgtop
     lm_sensors
 

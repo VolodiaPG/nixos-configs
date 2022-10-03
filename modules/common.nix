@@ -45,7 +45,6 @@
     gc.automatic = true;
     gc.dates = "Sat 05:00";
     gc.options = "--delete-older-than 14d";
-    package = pkgs.nixVersions.stable;
   };
 
   i18n = {
@@ -68,8 +67,7 @@
     ignoreIP = [
       "127.0.0.0/8"
       "10.0.0.0/8"
-      "172.16.0.0/12"
-      "192.168.0.0/16"
+      "192.168.1.0/16"
     ];
   };
 
