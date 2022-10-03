@@ -45,13 +45,13 @@
   # programs.mosh.enable = true;
   # programs.mosh.withUtempter = true;
 
-  services.undervolt = {
-    enable = true;
-    coreOffset = -95;
-    gpuOffset = -95;
-    uncoreOffset = -95;
-    analogioOffset = -95;
-  };
+  # services.undervolt = {
+  #   enable = true;
+  #   coreOffset = -95;
+  #   gpuOffset = -95;
+  #   uncoreOffset = -95;
+  #   analogioOffset = -95;
+  # };
 
   hardware.cpu.intel.updateMicrocode = true;
 
