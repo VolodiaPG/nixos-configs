@@ -39,6 +39,12 @@
     svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
   };
 
+  home.file.".ssh/config".source = pkgs.substituteAll {
+    src = ./config.ssh;
+    g5k_login = builtins.readFile ../../secrets/grid5000.user;
+  };
+  home.file.".python-grid5000.yaml".source = ../../secrets/python-grid5000.yaml;
+
   # https://github.com/Ashyni/mpv-scripts/
 
   programs.git = {
