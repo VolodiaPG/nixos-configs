@@ -15,6 +15,12 @@ stdenv.mkDerivation rec {
       sha256 = "sha256-qklVL7qFzyiIIm00AKRLE+uCYppTQ/S5C6exg0j2fSY=";
     };
 
+
+
+  postInstall = ''
+    ln -s ${./AsusUX430UAVolodia.json} "$out/share/nbfc/configs/Asus UX430UA Volodia.json"
+  '';
+
   makeFlags = [ "PREFIX=${placeholder "out"}" ];
 
   meta = with lib; {
