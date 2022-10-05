@@ -240,9 +240,9 @@
           selected-image = "current";
         };
         "org/gnome/shell/extensions/blur-my-shell/applications" = {
-          blur = true;
+          blur = false;
           opacity = 230;
-          whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" ];
+          whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" "lapce" ];
         };
       };
     };
@@ -291,6 +291,8 @@
     # firefox-beta-bin
     # firefox
     # firefox-wayland
+
+    lapce
 
     # Media
     tidal-hifi
