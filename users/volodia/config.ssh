@@ -10,7 +10,7 @@ Host *.g5k
   ForwardAgent no
 Host !access.grid5000.fr *.grid5000.fr
    User @g5k_login@
-   ProxyJump <login>@access.grid5000.fr
+   ProxyJump @g5k_login@@access.grid5000.fr
    StrictHostKeyChecking no
    UserKnownHostsFile /dev/null
    ForwardAgent yes
