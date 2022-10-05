@@ -126,9 +126,9 @@ with lib.kernel;
   LATENCYTOP = no;
 
   # Enable CC_OPTIMIZE_FOR_PERFORMANCE_O3
-  CC_OPTIMIZE_FOR_PERFORMANCE = no;
+  CC_OPTIMIZE_FOR_PERFORMANCE =yes;
   CC_OPTIMIZE_FOR_SIZE = no;
-  # CC_OPTIMIZE_FOR_PERFORMANCE_O3 = yes;
+  #CC_OPTIMIZE_FOR_PERFORMANCE_O3 = yes;
 
   # Set PCIEASPM DRIVER to performance
   PCIEASPM = yes;
@@ -178,14 +178,14 @@ with lib.kernel;
   HZ = freeform "500";
   HZ_PERIODIC = no;
   NO_HZ_IDLE = no;
-  CONTEXT_TRACKING_FORCE = no;
+  #CONTEXT_TRACKING_FORCE = no;
   NO_HZ = yes;
   NO_HZ_COMMON = yes;
   CONTEXT_TRACKING = yes;
   VIRT_CPU_ACCOUNTING_GEN = yes;
 
   # Graysky's additional CPU optimizations
-  CC_OPTIMIZE_FOR_PERFORMANCE_O3 = yes;
+  #CC_OPTIMIZE_FOR_PERFORMANCE_O3 = yes;
 
   # Futex WAIT_MULTIPLE implementation for Wine / Proton Fsync.
   FUTEX = yes;

@@ -8,8 +8,8 @@
 
 # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/kernel/linux-xanmod.nix
 let
-  major = "5.19";
-  minor = "12";
+  major = "6.0";
+  minor = "0";
   version = "${major}.${minor}";
   release = "1";
 
@@ -27,10 +27,10 @@ buildLinux {
     owner = "xanmod";
     repo = "linux";
     rev = "${version}-xanmod${release}";
-    sha256 = "sha256-oN9+xcHjAHt5vGg3jx9bk/VMTyPMAzw5nIqUGtybKow=";
+    sha256 = "sha256-E7T8eHwMKYShv4KWdCbHQmpn+54edJoKdimZY3GFbPU=";
   };
 
-  modDirVersion = "${version}-xanmod${release}-volodiapg";
+  modDirVersion = "${version}-volodiapg-xanmod${release}";
 
   structuredExtraConfig = import ./config.nix args;
 
