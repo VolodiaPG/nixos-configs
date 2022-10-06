@@ -248,23 +248,9 @@
     };
   };
 
-
-  # programs.fish = {
-  #   # 2. Enable fish-shell if you didn't.
-  #   enable = true;
-
-  #   # 3. Declare fish plugins to be installed.
-  #   plugins = [
-  #     "jethrokuan/fzf"
-  #     "b4b4r07/enhancd"
-  #     # "IlanCosman/tide"
-  #   ];
-  # };
-
   environment.systemPackages = with pkgs; [
     # Fish deps
     fzf # Required by jethrokuan/fzf.
-    fzy # Required by b4b4r07/enhancd.
     tmux
 
     bottom # call btm
