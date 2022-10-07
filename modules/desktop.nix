@@ -130,6 +130,7 @@
             "gsconnect@andyholmes.github.io"
             "BingWallpaper@ineffable-gmail.com"
             "blur-my-shell@aunetx"
+            "rounded-window-corners@yilozt"
           ];
         };
 
@@ -244,6 +245,10 @@
           opacity = 230;
           whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" "lapce" ];
         };
+        "org/gnome/shell/extensions/rounded-window-corners" = {
+          global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 16>, 'smoothing': <uint32 0>, 'enabled': <true>}";
+          settings-version = 5;
+        };
       };
     };
   };
@@ -270,39 +275,17 @@
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
     gnomeExtensions.blur-my-shell
+    gnomeExtensions.rounded-window-corners
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })
     tor-browser-bundle-bin
-    # firefox-beta-bin
-    # firefox
-    # firefox-wayland
 
     lapce
 
     # Media
     tidal-hifi
     libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
-
-    # getnative
-    # (wrapMpv
-    #   (mpv-unwrapped.override {
-    #     vapoursynthSupport = true;
-    #     vapoursynth = vapoursynth.withPlugins [
-    #       # prev.vs-rife
-    #       # pkgs.vs-overlay.packages.x86_64-linux.mvtools
-    #       pkgs.vapoursynthPlugins.mvtools
-    #       pkgs.vapoursynthPlugins.vsrife
-    #       # vs-overlay.packages.x86_64-linux.vapoursynthPlugins.vsutil
-    #     ];
-    #   })
-    #   { youtubeSupport = true; })
-    # (vapoursynth-editor.withPlugins
-    #   [
-    #     pkgs.vapoursynthPlugins.mvtools
-    #     pkgs.vapoursynthPlugins.vsutil
-    #     pkgs.vs-rife
-    #   ])
     mpv
 
     # Chat
@@ -317,16 +300,8 @@
     # Utils
     bottles
     boxes
+    
     spice-vdagent # copy paste for vms
-
-    # VM dependencies
-    # qemu_kvm
-    # qemu
-    # libvirt
-    # bridge-utils
-    # virt-manager
-    # virt-viewer
-    # spice-vdagent
   ];
 
   fonts.fonts = with pkgs; [
@@ -422,11 +397,4 @@
     enable = true;
     platformTheme = "gnome";
   };
-
-  # Enable bluetooth.
-  # hardware.bluetooth = {
-  #   enable = true;
-  #   package = pkgs.bluezFull;
-  #   settings.General.Enable = "Source,Sink,Media,Socket";
-  # };
 }
