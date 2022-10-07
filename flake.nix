@@ -31,26 +31,15 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # flake-utils.url = "github:numtide/flake-utils";
-    # nur.url = "github:nix-community/NUR";
-    # nur = {
-    #   # url = "github:xddxdd/nur-packages";
-    #   url = "github:nix-community/NUR";
-    #   # inputs.flake-utils.follows = "flake-utils";
-    #   # inputs.nixpkgs.follows = "nixpkgs";
-    # };
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
-      # inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-      # inputs.utils.follows = "flake-utils";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    # vs-overlay.url = "github:volodiapg/vs-overlay";
     peerix = {
       url = "github:cid-chan/peerix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -64,7 +53,6 @@
       system = "x86_64-linux";
       user = "volodia";
       overlays = import ./lib/overlays.nix ++ (with inputs; [
-        # vs-overlay.overlay
         nur-xddxdd.overlay
         peerix.overlay
       ]);
