@@ -1,7 +1,6 @@
-{
-  pkgs ? import <nixpkgs> {},
-  lib ? pkgs.lib,
-  # ripgrep
+{ pkgs ? import <nixpkgs> { }
+, lib ? pkgs.lib
+, # ripgrep
 }:
 let
   originalPackage = pkgs.nur.repos.xddxdd.svp;
@@ -52,4 +51,4 @@ let
     '';
   });
 in
-  svpOverridenWayland
+svpOverridenWayland

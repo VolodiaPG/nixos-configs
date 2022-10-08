@@ -301,7 +301,7 @@
     # Utils
     bottles
     boxes
-    
+
     spice-vdagent # copy paste for vms
   ];
 
@@ -314,11 +314,12 @@
     noto-fonts-extra
     nerdfonts
     ipafont
-
+    (callPackage ../pkgs/comic-code { })
   ];
 
   fonts.fontconfig.defaultFonts = {
     monospace = [
+      "Comic Code Ligatures"
       "Hack Nerd Font"
       "Noto Sans Mono CJK JP"
     ];

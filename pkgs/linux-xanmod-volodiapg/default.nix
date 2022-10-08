@@ -34,7 +34,7 @@ buildLinux {
 
   structuredExtraConfig = import ./config.nix args;
 
-  kernelPatches = [];
+  kernelPatches = [ ];
 
   # kernelPatches = (builtins.map
   #   (name: {

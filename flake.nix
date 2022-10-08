@@ -62,6 +62,8 @@
       ];
     in
     {
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
+
       nixosConfigurations.ux430ua = mkMachine "ux430ua" {
         inherit nixpkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [

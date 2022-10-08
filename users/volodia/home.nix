@@ -13,7 +13,7 @@
       enable = true;
       enableFishIntegration = true;
     };
-    
+
   programs.fish = {
     # 2. Enable fish-shell if you didn't.
     enable = true;
@@ -34,13 +34,13 @@
       { name = "pure"; src = pkgs.fishPlugins.pure.src; }
       # "IlanCosman/tide"
     ];
-    
+
     shellAliases = {
       cd = "z";
       ll = "ls -l";
     };
   };
-  
+
   programs.zoxide = {
     enable = true;
     enableFishIntegration = true;
@@ -76,7 +76,7 @@
     g5k_login = builtins.readFile ../../secrets/grid5000.user;
   };
   home.file.".python-grid5000.yaml".source = ../../secrets/python-grid5000.yaml;
-  
+
   home.file.".tmux".text = ''
     set -g mouse
 
