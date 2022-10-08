@@ -257,6 +257,8 @@
     # Fish deps
     fzf # Required by jethrokuan/fzf.
     grc
+    libnotify
+    notify-desktop
     tmux
 
     bottom # call btm
