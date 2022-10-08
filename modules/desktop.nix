@@ -256,6 +256,7 @@
   environment.systemPackages = with pkgs; [
     # Fish deps
     fzf # Required by jethrokuan/fzf.
+    grc
     tmux
 
     bottom # call btm
