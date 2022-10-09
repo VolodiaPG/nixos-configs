@@ -249,6 +249,9 @@
           global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 16>, 'smoothing': <uint32 0>, 'enabled': <true>}";
           settings-version = 5;
         };
+        "org/gnome/desktop/interface" = {
+          monospace-font-name = "Comic Code Ligatures";
+        };
       };
     };
   };
