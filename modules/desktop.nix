@@ -246,7 +246,7 @@
           whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" "lapce" ];
         };
         "org/gnome/shell/extensions/rounded-window-corners" = {
-          global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 16>, 'smoothing': <uint32 0>, 'enabled': <true>}";
+          global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 20>, 'smoothing': <0.10000000000000001>, 'enabled': <true>}";
           settings-version = 5;
         };
         "org/gnome/desktop/interface" = {
