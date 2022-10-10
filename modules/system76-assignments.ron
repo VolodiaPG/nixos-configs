@@ -98,6 +98,7 @@
     ".peerix-wrapped",
     "nix-serve",
     "nix-daemon",
+    "python",
     "apt",
     "apt-get",
     "boinc",
