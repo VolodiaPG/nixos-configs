@@ -3,7 +3,8 @@
   systemd.services.nbfc-linux =
     let
       cfg = pkgs.writeText "nbfc.json" (builtins.toJSON {
-        SelectedConfigId = "Asus UX430UA Volodia";
+        # SelectedConfigId = "Asus UX430UA Volodia";
+        SelectedConfigId = "Asus Zenbook UX430UA";
         EmbeddedControllerType = "ec_sys_linux";
       });
     in

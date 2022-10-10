@@ -38,6 +38,10 @@
     shellAliases = {
       cd = "z";
       ll = "ls -l";
+      l = "ls";
+      push = "git push";
+      pull = "git pull";
+      fetch = "git fetch";
     };
   };
 
