@@ -63,7 +63,7 @@
     in
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
-
+      
       nixosConfigurations.ux430ua = mkMachine "ux430ua" {
         inherit nixpkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [
@@ -85,6 +85,18 @@
           nixos-hardware.nixosModules.common-pc
           nixos-hardware.nixosModules.common-pc-ssd
           nixos-hardware.nixosModules.common-pc-hdd
+        ]);
+      };
+      nixosConfigurations.msi = mkMachine "hralaptop" {
+        inherit nixpkgs home-manager system overlays user;
+        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
+          nixos-hardware.nixosModules.common-cpu-intel
+          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+          nixos-hardware.nixosModules.common-gpu-intel
+          nixos-hardware.nixosModules.common-pc
+          nixos-hardware.nixosModules.common-pc-laptop
+          nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+          nixos-hardware.nixosModules.common-pc-laptop-ssd
         ]);
       };
     };
