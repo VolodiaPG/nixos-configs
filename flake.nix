@@ -63,7 +63,7 @@
     in
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
-      
+
       nixosConfigurations.ux430ua = mkMachine "ux430ua" {
         inherit nixpkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [
@@ -87,7 +87,7 @@
           nixos-hardware.nixosModules.common-pc-hdd
         ]);
       };
-      nixosConfigurations.msi = mkMachine "hralaptop" {
+      nixosConfigurations.hralaptop = mkMachine "hralaptop" {
         inherit nixpkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
