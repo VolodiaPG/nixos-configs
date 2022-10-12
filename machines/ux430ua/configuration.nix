@@ -2,6 +2,7 @@
 {
   imports =
     [
+      ./hardware-configuration.nix
       ../../services/nbfc-linux/nbfc-linux.nix
     ];
 

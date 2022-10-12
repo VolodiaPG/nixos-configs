@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 {
-  imports = [ ../../services/nvfancontrol/nvfancontrol.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ../../services/nvfancontrol/nvfancontrol.nix
+  ];
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
     enable = true;
