@@ -282,6 +282,7 @@
     gnomeExtensions.bing-wallpaper-changer
     gnomeExtensions.blur-my-shell
     gnomeExtensions.rounded-window-corners
+    gnomeExtensions.media-controls
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })
