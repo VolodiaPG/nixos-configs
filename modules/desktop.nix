@@ -131,6 +131,7 @@
             "BingWallpaper@ineffable-gmail.com"
             "blur-my-shell@aunetx"
             "rounded-window-corners@yilozt"
+            "mediacontrols@cliffniff.github.com"
           ];
         };
 
@@ -252,6 +253,11 @@
         "org/gnome/desktop/interface" = {
           monospace-font-name = "Comic Code Ligatures";
         };
+        "org/gnome/shell/extensions/mediacontrols" = {
+          extension-position = "right";
+          show-player-icon = false;
+          show-separators = false;
+        };
       };
     };
   };
@@ -289,6 +295,10 @@
     tor-browser-bundle-bin
 
     lapce
+    
+    # Office
+    libreoffice-fresh
+    
 
     # Media
     tidal-hifi
