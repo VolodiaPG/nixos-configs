@@ -84,6 +84,7 @@
     gnome-photos
     gnome-tour
     gnome-connections # Replaced by Remmina
+    orca
   ]) ++ (with pkgs.gnome; [
     cheese # webcam tool
     gnome-music
@@ -97,6 +98,7 @@
     hitori # sudoku game
     atomix # puzzle game
     yelp
+    logs
     gnome-maps
     gnome-contacts
   ]);
