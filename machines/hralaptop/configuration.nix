@@ -1,5 +1,11 @@
 { config, pkgs, ... }:
 {
+  imports =
+    [
+      # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+    ];
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
@@ -10,7 +16,7 @@
     enableCryptodisk = true;
   };
 
-
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
   # Use XanMod kernel w/ a bunch of optimizations
   boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
   boot.kernelParams = [
@@ -29,7 +35,7 @@
   ];
 
   networking = {
-    hostId = "30249670";
+    hostId = "30249672";
     hostName = "hralaptop-nixos";
   };
 

@@ -14,35 +14,25 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  boot.initrd.luks.devices = {
-    crypted = {
-      device = "/dev/disk/by-uuid/d17178dd-d660-4cd7-a0b8-523838c6538e";
-      preLVM = true;
-    };
-  };
-
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/3df25286-ce25-4677-8e15-9dfa7e5baf0b";
       fsType = "btrfs";
-      options = [ "subvol=root" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-
+      options = [ "subvol=root" ];
     };
 
   fileSystems."/home" =
     {
       device = "/dev/disk/by-uuid/3df25286-ce25-4677-8e15-9dfa7e5baf0b";
       fsType = "btrfs";
-      options = [ "subvol=home" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-
+      options = [ "subvol=home" ];
     };
 
   fileSystems."/nix" =
     {
       device = "/dev/disk/by-uuid/3df25286-ce25-4677-8e15-9dfa7e5baf0b";
       fsType = "btrfs";
-      options = [ "subvol=nix" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-
+      options = [ "subvol=nix" ];
     };
 
   fileSystems."/boot" =
@@ -52,18 +42,16 @@
     };
 
   swapDevices =
-    [{
-      device = "/dev/disk/by-uuid/6d4a5eba-5a8b-4508-bbf2-17adad94ad6b";
-      options = [ "noatime" ];
-    }];
+    [{ device = "/dev/disk/by-uuid/6d4a5eba-5a8b-4508-bbf2-17adad94ad6b"; }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp0s31f6.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
