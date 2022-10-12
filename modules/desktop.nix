@@ -298,7 +298,7 @@
     
     # Office
     libreoffice-fresh
-    
+    xournalpp
 
     # Media
     tidal-hifi
