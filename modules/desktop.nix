@@ -98,7 +98,7 @@
     hitori # sudoku game
     atomix # puzzle game
     yelp
-    logs
+    gnome-logs
     gnome-maps
     gnome-contacts
   ]);
@@ -301,6 +301,7 @@
     # Office
     libreoffice-fresh
     xournalpp
+    zotero
 
     # Media
     tidal-hifi
