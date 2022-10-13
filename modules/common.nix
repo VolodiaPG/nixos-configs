@@ -16,6 +16,7 @@
     gnupg # GNU Privacy Guard
     man # Documentation for everything
     p7zip # 7zip archive tools
+    lrzip # Advanced and storage efficient zip
     parallel # Much smarter xargs
     progress # View current progress of coreutils tools
     wireguard-tools # Tools for Wireguard
