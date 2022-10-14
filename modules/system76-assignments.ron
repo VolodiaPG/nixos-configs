@@ -8,13 +8,13 @@
     "pipewire-pulse",
     "wireplumber",
     "tidal-hifi",
+    "vlc",
+    "mpv",
 ],
 // Very high
 (-9, BestEffort(0)): [
     "easyeffects",
     "jamesdsp",
-    "vlc",
-    "mpv",
     "mutter",
     "Xorg",
     "gnome-shell",
