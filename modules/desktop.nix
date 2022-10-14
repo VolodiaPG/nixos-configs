@@ -109,6 +109,7 @@
       settings = {
         "org/gnome/shell" = {
           disable-user-extensions = false;
+          disable-extension-version-validation = true;
           enabled-extensions = [
             # cosmic-dock needs dash-to-dock
             #dash-to-dock@micxgx.gmail.com"
