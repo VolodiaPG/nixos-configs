@@ -18,7 +18,9 @@
 
 
   # Use XanMod kernel w/ a bunch of optimizations
-  boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
+  # boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
+  # boot.kernelPackages = pkgs.linuxPackages_latest;  
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
   boot.kernelParams = [
     "noibrs"
     "noibpb"
