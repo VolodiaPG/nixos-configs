@@ -4,15 +4,16 @@ final: prev: {
     src = prev.fetchFromGitHub {
       owner = "mpv-player";
       repo = "mpv";
-      rev = "5e49c09";
-      sha256 = "sha256-kK9mJ/D/9UTnlmWbNE2OxlYi9o70udlBJEHLUoO4r9U=";
+      rev = "cdcbd73";
+      sha256 = "sha256-8GB4VdogBjhcvFKazQV93rF9j5/dA9HQ+S32+kt/Brc=";
     };
   })).override { vapoursynthSupport = true; };
+  
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [
   #   prev.vapoursynth-rife
   # ];
-  # mpv-unwrapped = prev.mpv-unwrapped.override { vapoursynthSupport = true; vapoursynth = final.vapoursynth-pluginned; };
+  #mpv-unwrapped = prev.mpv-unwrapped.override { vapoursynthSupport = true; };
   # python3 = prev.python3.withPackages (python-packages: [
   #   python-packages.libxml2
   #   final.vs-rife
