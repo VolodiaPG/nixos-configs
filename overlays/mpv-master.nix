@@ -8,7 +8,7 @@ final: prev: {
       sha256 = "sha256-8GB4VdogBjhcvFKazQV93rF9j5/dA9HQ+S32+kt/Brc=";
     };
   })).override { vapoursynthSupport = true; };
-  
+
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [
   #   prev.vapoursynth-rife

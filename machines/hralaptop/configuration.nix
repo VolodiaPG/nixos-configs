@@ -4,8 +4,8 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../shared/default.nix    
-      ../intel.nix      
+      ../shared/default.nix
+      ../intel.nix
     ];
 
   # Use the systemd-boot EFI boot loader.

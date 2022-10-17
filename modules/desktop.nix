@@ -298,7 +298,7 @@
     tor-browser-bundle-bin
 
     lapce
-    
+
     # Office
     libreoffice-fresh
     xournalpp

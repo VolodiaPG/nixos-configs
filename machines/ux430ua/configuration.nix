@@ -4,7 +4,7 @@
     [
       ./hardware-configuration.nix
       ../shared/default.nix
-      ../intel.nix      
+      ../intel.nix
       ../../services/nbfc-linux/nbfc-linux.nix
     ];
 
