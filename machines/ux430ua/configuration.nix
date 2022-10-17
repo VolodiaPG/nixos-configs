@@ -3,6 +3,8 @@
   imports =
     [
       ./hardware-configuration.nix
+      ../shared/default.nix
+      ../intel.nix      
       ../../services/nbfc-linux/nbfc-linux.nix
     ];
 
@@ -15,26 +17,6 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-
-
-  # Use XanMod kernel w/ a bunch of optimizations
-  # boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
-  # boot.kernelPackages = pkgs.linuxPackages_latest;  
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
-  boot.kernelParams = [
-    "noibrs"
-    "noibpb"
-    "nopti"
-    "nospectre_v2"
-    "nospectre_v1"
-    "l1tf=off"
-    "nospec_store_bypass_disable"
-    "no_stf_barrier"
-    "mds=off"
-    "tsx=on"
-    "tsx_async_abort=off"
-    "mitigations=off"
-  ];
 
   networking = {
     hostId = "30249670";

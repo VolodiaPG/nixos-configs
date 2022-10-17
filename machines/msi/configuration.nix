@@ -2,6 +2,8 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../shared/default.nix
+    ../intel.nix
     ../../services/nvfancontrol/nvfancontrol.nix
   ];
   boot.loader.efi.canTouchEfiVariables = true;
@@ -12,25 +14,7 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-
-  # Use XanMod kernel w/ a bunch of optimizations
-  # boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  # boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;  
-  boot.kernelParams = [
-    "noibrs"
-    "noibpb"
-    "nopti"
-    "nospectre_v2"
-    "nospectre_v1"
-    "l1tf=off"
-    "nospec_store_bypass_disable"
-    "no_stf_barrier"
-    "mds=off"
-    "tsx=on"
-    "tsx_async_abort=off"
-    "mitigations=off"
-  ];
+  boot.blacklistedKernelModules = [ "nouveau" ];
 
   networking = {
     hostId = "30249671";
@@ -38,8 +22,6 @@
   };
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
-
-  hardware.nvidia.modesetting.enable = true;
   # programs.xwayland.enable = true;
   # services.xserver.displayManager.gdm.wayland = true;
 
@@ -61,45 +43,13 @@
   # Enable the X11 windowing system.
   services.xserver = {
     videoDrivers = [ "nvidia" ];
-    # serverLayoutSection = ''
-    #   Identifier     "Layout0"
-    #   Screen      0  "Screen0" 0 0
-    #   Option         "Xinerama" "0"
-    # '';
-    # screenSection = ''
-    #   Identifier     "Screen0"
-    #   Device         "Device0"
-    #   Monitor        "Monitor0"
-    #   DefaultDepth    24
-    #   Option         "Stereo" "0"
-    #   Option         "nvidiaXineramaInfoOrder" "DFP-2"
-    #   Option         "metamodes" "3440x1440_120 +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On, AllowGSYNCCompatible=On}"
-    #   Option         "SLI" "Off"
-    #   Option         "MultiGPU" "Off"
-    #   Option         "BaseMosaic" "off"
-    #   SubSection     "Display"
-    #       Depth       24
-    #   EndSubSection
-    # '';
-    # deviceSection = ''
-    #   Identifier     "Device0"
-    #   Driver         "nvidia"
-    #   VendorName     "NVIDIA Corporation"
-    #   BoardName      "NVIDIA GeForce RTX 2060"
-    #   Option         "Coolbits" "4"
-    # '';
-    # monitorSection = ''
-    #   # HorizSync source: edid, VertRefresh source: edid
-    #   Identifier     "Monitor0"
-    #   VendorName     "Unknown"
-    #   ModelName      "Idek Iiyama PL3461WQ"
-    #   HorizSync       217.0 - 217.0
-    #   VertRefresh     48.0 - 144.0
-    #   Option         "DPMS"
-    # '';
     exportConfiguration = true;
   };
-  hardware.nvidia.powerManagement.enable = true;
+  hardware.nvidia = {
+    powerManagement.enable = true;
+    modesetting.enable = true;
+    nvidiaPersistenced = true;
+  };
 
   environment.etc."X11/Xwrapper.config".text = ''
     allowed_users=anybody
@@ -131,6 +81,7 @@
   # };
   hardware.opengl = {
     enable = true;
+    driSupport32Bit = true;
     extraPackages = with pkgs; [
       intel-media-driver # LIBVA_DRIVER_NAME=iHD
       vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)

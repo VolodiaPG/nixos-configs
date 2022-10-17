@@ -4,6 +4,8 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../shared/default.nix    
+      ../intel.nix      
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -15,25 +17,6 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
-  # Use XanMod kernel w/ a bunch of optimizations
-  # boot.kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;  
-  boot.kernelParams = [
-    "noibrs"
-    "noibpb"
-    "nopti"
-    "nospectre_v2"
-    "nospectre_v1"
-    "l1tf=off"
-    "nospec_store_bypass_disable"
-    "no_stf_barrier"
-    "mds=off"
-    "tsx=on"
-    "tsx_async_abort=off"
-    "mitigations=off"
-  ];
 
   networking = {
     hostId = "30249672";
