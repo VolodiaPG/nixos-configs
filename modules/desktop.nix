@@ -36,7 +36,7 @@
 
   services.system76Scheduler = {
     enable = true;
-    assignements = builtins.readFile ./system76-assignments.ron;
+    assignments = builtins.readFile ./system76-assignments.ron;
   };
 
   # Enable sound.

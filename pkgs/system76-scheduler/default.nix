@@ -1,46 +1,34 @@
-{ stdenv
-, bcc
-, linuxHeaders
-, lib
-, fetchFromGitHub
-, rustPlatform
-, ...
-}:
+{ bcc, pkg-config, dbus, lib, rustPlatform, fetchFromGitHub }:
 
-rustPlatform.buildRustPackage rec {
-  name = "system76-scheduler-${version}";
-  version = "f957d625045b45122fc34550980cef8183669dca";
-
+rustPlatform.buildRustPackage {
+  pname = "system76-scheduler";
+  version = "unstable-2022-10-05";
   src = fetchFromGitHub {
-    owner = "volodiapg";
+    owner = "pop-os";
     repo = "system76-scheduler";
-    rev = "${version}";
-    sha256 = "sha256-36UGk8X0hrP2JRArcY2ZlTVJ3hi4lUR4Xn7AHZpFd44=";
+    rev = "25a45add4300eab47ceb332b4ec07e1e74e4baaf";
+    sha256 = "sha256-eB1Qm+ITlLM51nn7GG42bydO1SQ4ZKM0wgRl8q522vw=";
   };
 
-  cargoSha256 = "sha256-aOYyJjXMEWxelTsnLJby2C+vFXct9wrPrnd5sClcw8A=";
+  cargoPatches = [ ./ron-rev.diff ];
+  cargoSha256 = "sha256-EzvJEJlJzCzNEJLCE3U167LkaQHzGthPhIJ6fp0aGk8=";
 
-  buildInputs = [ bcc ];
+  nativeBuildInputs = [ pkg-config ];
+  buildInputs = [ dbus ];
 
-  EXECSNOOP_PATH = "${bcc}/tools/execsnoop";
+  EXECSNOOP_PATH = "${bcc}/bin/execsnoop";
 
-  installPhase = ''
-    mkdir -p $out/{bin,etc/dbus-1/system.d}
-    mkdir -p $out/etc/system76-scheduler/{assignments,exceptions}
-
-    install -Dm0644 data/assignments.ron $out/etc/system76-scheduler/assignments/default.ron
-    install -Dm0644 data/com.system76.Scheduler.conf $out/etc/dbus-1/system.d/com.system76.Scheduler.conf
-    install -Dm0644 data/config.ron $out/etc/system76-scheduler/config.ron
-    install -Dm0644 data/exceptions.ron $out/etc/system76-scheduler/exceptions/default.ron
-
-    install target/x86_64-unknown-linux-gnu/release/system76-scheduler $out/bin
-    chmod +x  $out/bin/*
+  postInstall = ''
+    install -D -m 0644 data/com.system76.Scheduler.conf $out/etc/dbus-1/system.d/com.system76.Scheduler.conf
+    mkdir -p $out/data
+    install -D -m 0644 data/*.ron $out/data/
   '';
 
   meta = with lib; {
-    homepage = https://github.com/pop-os/system76-scheduler/blob/master/justfile;
-    description = "System76's userspace scheduler";
-    platforms = platforms.linux;
-    maintainers = with maintainers; [ volodiapg ];
+    description = "System76 Scheduler";
+    homepage = "https://github.com/pop-os/system76-scheduler";
+    license = licenses.mpl20;
+    platforms = [ "i686-linux" "x86_64-linux" ];
+    maintainers = [ maintainers.cmm ];
   };
 }

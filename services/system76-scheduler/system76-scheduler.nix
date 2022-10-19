@@ -14,8 +14,8 @@ let scheduler = pkgs.callPackage ../../pkgs/system76-scheduler { }; in
         default = scheduler;
       };
 
-      assignements = mkOption {
-        description = "Priority Assignements";
+      assignments = mkOption {
+        description = "Priority Assignments";
         type = lines;
         default = builtins.readFile "${scheduler}/etc/system76-scheduler/assignments/default.ron";
       };
@@ -45,7 +45,7 @@ let scheduler = pkgs.callPackage ../../pkgs/system76-scheduler { }; in
       environment.etc = {
         "system76-scheduler/config.ron".source = "${cfg.package}/etc/system76-scheduler/config.ron";
         "system76-scheduler/exceptions/default.ron".source = "${cfg.package}/etc/system76-scheduler/exceptions/default.ron";
-        "system76-scheduler/assignements/default.ron".text = cfg.assignements;
+        "system76-scheduler/assignments/default.ron".text = cfg.assignments;
       };
 
       environment.systemPackages = [
