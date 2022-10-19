@@ -16,10 +16,11 @@
     "Xorg",
     ".gnome-shell-wr",
     ".gnome-shell-ca",
-    ".gnome-session-",
     "gdm-wayland-ses",
     ".gnome-session-",
     "gnome-shell",
+    "gnome-session",
+    "gdm-wayland-session",
 ],
 // High priority
 (-5, BestEffort(4)): [
