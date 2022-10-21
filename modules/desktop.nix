@@ -50,7 +50,7 @@
     pulse.enable = true;
     config.pipewire = {
       "context.properties" = {
-        "resample.quality" = 15;
+        "resample.quality" = 10;
         "link.max-buffers" = 16;
         "default.clock.rate" = 48000;
         "default.clock.quantum" = 1024;
