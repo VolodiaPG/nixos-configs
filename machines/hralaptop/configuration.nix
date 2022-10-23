@@ -20,7 +20,7 @@
   # Fix the screen off issue where the PC would keep screen off event after wake up
   boot.kernelParams = [
     "acpi_enforce_resources=lax"
-    "i915.enable_dc=0"        
+    "i915.enable_dc=0"
   ];
 
   networking = {
