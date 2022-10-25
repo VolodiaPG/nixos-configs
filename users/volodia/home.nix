@@ -70,6 +70,10 @@
     src = ./svp.py;
     svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
   };
+  home.file.".config/mpv/svp_max.py".source = pkgs.substituteAll {
+    src = ./svp_max.py;
+    svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
+  };
   home.file.".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
     src = ./svp_nvof.py;
     svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
