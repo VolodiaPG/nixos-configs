@@ -58,13 +58,18 @@
   services.nvfancontrol = {
     enable = true;
     configuration = ''
-      0     0
-      45    0
-      50    30
-      55    40
-      60    50
-      70    80
-      75    100
+      [[gpu]]
+      id = 0
+      
+      points = [
+          [50,0],
+          [54,0],
+          [57,46],
+          [62,62],
+          [66,75],
+          [75,85],
+          [80,100],
+      ]
     '';
     cliArgs = "-d -f -l 0";
   };

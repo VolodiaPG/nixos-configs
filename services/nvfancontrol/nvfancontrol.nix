@@ -16,7 +16,6 @@
       configuration = mkOption {
         description = "configuration";
         type = lines;
-        default = builtins.readFile ./nvfancontrol.conf;
       };
 
       cliArgs = mkOption {
@@ -34,12 +33,13 @@
       cfg = config.services.nvfancontrol;
     in
     lib.mkIf cfg.enable {
-      systemd.user.services.foo = {
+      systemd.services.nvfancontrol = {
         enable = cfg.enable;
         description = "Nvidia fan control startup";
         wantedBy = [ "graphical-session.target" ];
         partOf = [ "graphical-session.target" ];
-        script = "${cfg.package}/bin/nvfancontrol ${cfg.cliArgs}";
+        environment = { DISPLAY = ":0"; };
+        script = "echo $DISPLAY && ${cfg.package}/bin/nvfancontrol ${cfg.cliArgs}";
       };
 
       environment.etc = {
@@ -49,6 +49,12 @@
       environment.systemPackages = [
         (cfg.package)
       ];
+
+      services.xserver = {
+        deviceSection = ''
+          Option     "Coolbits" "4"
+        '';
+      };
     };
 }
 
