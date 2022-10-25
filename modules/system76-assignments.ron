@@ -9,18 +9,18 @@
     "wireplumber",
     "vlc",
     "mpv",
+    ".gnome-shell-wr",
 ],
 // Very high
 (-9, BestEffort(0)): [
     "easyeffects",
     "jamesdsp",
-    "Xwayland",
-    "Xorg",
-    ".gnome-shell-wr",
-    ".gnome-session-",
-    "gdm",
-    "gdm-session-wor",
-    "gdm-wayland-ses",
+    //"Xwayland",
+    //"Xorg",
+    //".gnome-session-",
+    //"gdm",
+    //"gdm-session-wor",
+    //"gdm-wayland-ses",
 ],
 // High priority
 (-5, BestEffort(4)): [
@@ -122,6 +122,7 @@
     "mold",
     "mvn",
     "rustc",
+    "rust-analyzer",
     "tracker-miner-fs-3",
     "update-initramfs",
     "packagekitd",

@@ -27,6 +27,7 @@
     gh # Github PRs and stuff
     git-crypt
     python3
+    ecryptfs
 
     # System monitoring
     htop # Interactive TUI process viewer
