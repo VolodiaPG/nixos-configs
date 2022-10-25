@@ -1,6 +1,7 @@
 .idea
 .vscode
 *.qcow2
+.direnv/
 
 result*
 
