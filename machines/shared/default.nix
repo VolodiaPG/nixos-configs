@@ -30,10 +30,10 @@
       "kernel.sched_fake_interactive_win_time_ms" = 1000;
       "kernel.unprivileged_userns_clone" = 1;
       "net.core.default_qdisc" = "fq_pie";
-      "vm.dirty_ratio" = 60;
+      "vm.dirty_ratio" = 3;
       "vm.dirty_background_ratio" = 2;
       "vm.swappiness" = 10;
-      "vm.vfs_cache_pressure" = 75;
+      "vm.vfs_cache_pressure" = 50;
       "net.core.netdev_max_backlog" = 16384;
       "net.core.somaxconn" = 8192;
       "net.core.rmem_default" = 1048576;

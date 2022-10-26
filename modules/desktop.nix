@@ -312,6 +312,7 @@
 
     # Chat
     discord
+    signal-desktop
 
     # Development
     nixpkgs-fmt # Nix formatter
