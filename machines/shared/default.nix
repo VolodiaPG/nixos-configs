@@ -5,7 +5,8 @@
       NOTE: replace this with your desired kernel, see: https://nixos.wiki/wiki/Linux_kernel for reference.
       If you're not me or a XanMod kernel maintainer in Nixpkgs, use pkgs.linuxKernel.packages.linux_xanmod instead to avoid compilation.
     */
-    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+    # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_tt;
     #kernelPackages = pkgs.linuxKernel.packages.linux_zen;
     kernelParams = [
       "noibrs"
@@ -54,6 +55,8 @@
       "net.ipv4.tcp_mtu_probing" = 1;
       "net.ipv4.tcp_syncookies" = 1;
       "net.ipv4.tcp_congestion_control" = "bbr2";
+
+      "kernel.sched_tt_balancer_opt" = "1";
     };
   };
 }
