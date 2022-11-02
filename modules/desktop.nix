@@ -34,10 +34,10 @@
     xkbOptions = "eurosign:e";
   };
 
-  # services.system76Scheduler = {
-  #   enable = false;
-  #   assignments = builtins.readFile ./system76-assignments.ron;
-  # };
+  services.system76Scheduler = {
+    enable = true;
+    assignments = builtins.readFile ./system76-assignments.ron;
+  };
 
   # Enable sound.
   hardware.pulseaudio.enable = false;

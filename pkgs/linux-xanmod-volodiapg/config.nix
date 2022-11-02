@@ -150,6 +150,8 @@ with lib.kernel;
   # Disabling Kyber I/O scheduler
   # MQ_IOSCHED_KYBER = no;
 
+  SCHED_BORE = yes;
+
   ################################################################
   # Below are tunes from nixpkgs (xanmod kernel)
   ################################################################
@@ -167,15 +169,15 @@ with lib.kernel;
   TASKS_RCU = yes;
   UNINLINE_SPIN_UNLOCK = yes;
 
-  # Preemptive Full Tickless Kernel at 500Hz
+  # Preemptive Full Tickless Kernel at 1000Hz
   SCHED_CORE = yes;
   PREEMPT_VOLUNTARY = lib.mkForce no;
   PREEMPT = lib.mkForce yes;
   PREEMPTION = yes;
   PREEMPT_BUILD = yes;
   NO_HZ_FULL = yes;
-  HZ_500 = yes;
-  HZ = freeform "500";
+  HZ_1000 = yes;
+  HZ = freeform "1000";
   HZ_PERIODIC = no;
   NO_HZ_IDLE = no;
   #CONTEXT_TRACKING_FORCE = no;
