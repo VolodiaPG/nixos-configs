@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -14,7 +14,10 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.blacklistedKernelModules = [
+    "nouveau"
+    "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
+  ];
 
   networking = {
     hostId = "30249671";
@@ -55,6 +58,8 @@
     allowed_users=anybody
     needs_root_rights=yes
   '';
+  environment.etc."X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
+
   services.nvfancontrol = {
     enable = true;
     configuration = ''

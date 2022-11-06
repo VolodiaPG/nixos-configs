@@ -5,7 +5,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
-      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nur-volodiapg = {
+      url = "github:volodiapg/nur-packages";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -20,6 +22,13 @@
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   };
 
+  nixConfig = {
+    # Adapted From: https://github.com/divnix/digga/blob/main/examples/devos/flake.nix#L4
+    extra-substituters = "https://cache.nixos.org https://nix-community.cachix.org https://volodiapg.cachix.org";
+    extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
+    # extra-experimental-features = "nix-command flakes";
+  };
+
   outputs = { self, nixpkgs, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
     let
       mkMachine = import ./lib/mkMachine.nix;
@@ -29,6 +38,7 @@
 
       overlays = import ./lib/overlays.nix ++ (with inputs; [
         nur-xddxdd.overlay
+        nur-volodiapg.overlay
         peerix.overlay
       ]);
 

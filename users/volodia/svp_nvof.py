@@ -6,7 +6,7 @@ core.std.LoadPlugin("@svpflow@libsvpflow2_vs64.so")
 
 clip = video_in
 
-smoothfps_params = "{rate:{num:2,den:1,abs:false},algo:21,block:false,cubic:1,mask:{area:25},scene:{mode:0},light:{aspect:0,lights:29,border:107,length:187,cell:5}}"
+smoothfps_params = "{rate:{num:2,den:1,abs:false},algo:13,block:false,cubic:1,mask:{area:25},scene:{mode:0},light:{aspect:0,lights:29,border:107,length:187,cell:5}}"
 
 src_fps     = container_fps if container_fps>0.1 else 29.97
 demo_mode   = 0

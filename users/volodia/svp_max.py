@@ -8,7 +8,7 @@ clip = video_in
 
 super_params     = "{scale:{up:0},gpu:0,pel:1}"
 analyse_params   = "{block:{w:32,h:32,overlap:2},main:{search:{type:4,distance:4,coarse:{type:4,distance:4,bad:{sad:2000,range:-24},penalty:{lambda:10,lsad:16000,pglobal:50,plevel:4,pnbour:100,pnew:100,prev:0,pzero:75},refine:{search:{distance:-1}}},type:2}},refine:[{thsad:0}]}"
-smoothfps_params = "{rate:{num:3,den:1,abs:false},algo:13,block:false,mask:{cover:0,area:0},scene:{},light:{aspect:0,lights:29,border:107,length:187,cell:5}}"
+smoothfps_params = "{rate:{num:2,den:1,abs:false},algo:13,block:true,mask:{cover:0,area:0},scene:{},light:{aspect:0,lights:29,border:107,length:187,cell:5}}"
 
 src_fps     = container_fps if container_fps>0.1 else 29.97
 demo_mode   = 0

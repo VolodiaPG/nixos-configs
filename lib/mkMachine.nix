@@ -26,8 +26,6 @@ nixpkgs.lib.nixosSystem rec {
     ../modules/desktop.nix
     ../modules/gaming.nix
 
-    # ../users/${user}/nixos.nix
-
     home-manager.nixosModules.home-manager
     {
       home-manager.useGlobalPkgs = true;

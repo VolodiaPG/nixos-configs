@@ -135,6 +135,7 @@
             "blur-my-shell@aunetx"
             "rounded-window-corners@yilozt"
             "mediacontrols@cliffniff.github.com"
+            "impatience@gfxmonk.net"
           ];
         };
 
@@ -280,6 +281,7 @@
     remmina
     cloudflare-warp
     veracrypt
+    pavucontrol
 
     # Gnome extensions
     gnomeExtensions.appindicator
@@ -293,6 +295,7 @@
     gnomeExtensions.blur-my-shell
     gnomeExtensions.rounded-window-corners
     gnomeExtensions.media-controls
+    gnomeExtensions.impatience
 
     # Browser
     (firefox-beta-bin.override { forceWayland = true; })

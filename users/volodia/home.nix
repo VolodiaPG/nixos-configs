@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -32,7 +32,6 @@
       { name = "grc"; src = pkgs.fishPlugins.grc.src; }
       { name = "done"; src = pkgs.fishPlugins.done.src; }
       { name = "pure"; src = pkgs.fishPlugins.pure.src; }
-      # "IlanCosman/tide"
     ];
 
     shellAliases = {
@@ -50,11 +49,11 @@
     enableFishIntegration = true;
   };
 
-  home.sessionVariables = {
-    MOZ_ENABLE_WAYLAND = 1;
-    QT_QPA_PLATFORM = "wayland";
-    NIXOS_OZONE_WL = 1;
-  };
+  # home.sessionVariables = {
+  #   MOZ_ENABLE_WAYLAND = 1;
+  #   QT_QPA_PLATFORM = "wayland";
+  #   NIXOS_OZONE_WL = 1;
+  # };
 
   home.packages = with pkgs;
     [
@@ -68,15 +67,15 @@
   };
   home.file.".config/mpv/svp.py".source = pkgs.substituteAll {
     src = ./svp.py;
-    svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
+    svpflow = "${pkgs.svpflow}/lib/";
   };
   home.file.".config/mpv/svp_max.py".source = pkgs.substituteAll {
     src = ./svp_max.py;
-    svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
+    svpflow = "${pkgs.svpflow}/lib/";
   };
   home.file.".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
     src = ./svp_nvof.py;
-    svpflow = "${pkgs.callPackage ../../pkgs/svpflow { }}/lib/";
+    svpflow = "${pkgs.svpflow}/lib/";
   };
 
   home.file.".ssh/config".source = pkgs.substituteAll {
@@ -92,8 +91,6 @@
 
     bind C-v run "tmux set-buffer "$(wl-paste)"; tmux paste-buffer"
   '';
-
-  # https://github.com/Ashyni/mpv-scripts/
 
   programs.git = {
     enable = true;
