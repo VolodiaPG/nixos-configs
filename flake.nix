@@ -23,10 +23,8 @@
   };
 
   nixConfig = {
-    # Adapted From: https://github.com/divnix/digga/blob/main/examples/devos/flake.nix#L4
     extra-substituters = "https://cache.nixos.org https://nix-community.cachix.org https://volodiapg.cachix.org";
     extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
-    # extra-experimental-features = "nix-command flakes";
   };
 
   outputs = { self, nixpkgs, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
@@ -36,25 +34,25 @@
       system = "x86_64-linux";
       user = "volodia";
 
-      overlays = import ./lib/overlays.nix ++ (with inputs; [
+      overlays = (with inputs; [
         nur-xddxdd.overlay
         nur-volodiapg.overlay
         peerix.overlay
-      ]);
+      ]) ++ import ./lib/overlays.nix;
 
-      modules-additionnal-sources = with inputs;[
-        peerix.nixosModules.peerix
-      ];
+      modules-additionnal-sources = with inputs;
+        [
+          peerix.nixosModules.peerix
+        ];
 
       pkgs = import nixpkgs {
         inherit system overlays;
+        config.allowUnfree = true;
       };
     in
     {
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
-
       nixosConfigurations.ux430ua-nixos = mkMachine "ux430ua" {
-        inherit nixpkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -67,7 +65,7 @@
         ]);
       };
       nixosConfigurations.msi-nixos = mkMachine "msi" {
-        inherit nixpkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -77,7 +75,7 @@
         ]);
       };
       nixosConfigurations.hralaptop-nixos = mkMachine "hralaptop" {
-        inherit nixpkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system overlays user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -91,6 +89,8 @@
       };
     } // flake-utils.lib.eachDefaultSystem (system:
       {
+        formatter = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
+
         checks = {
           pre-commit-check = pre-commit-hooks.lib.${system}.run {
             src = ./.;
@@ -99,6 +99,7 @@
             };
           };
         };
+
         devShell = nixpkgs.legacyPackages.${system}.mkShell {
           inherit (self.checks.${system}.pre-commit-check) shellHook;
           buildInputs = with pkgs; [ just ];

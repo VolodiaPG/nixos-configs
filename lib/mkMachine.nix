@@ -1,26 +1,28 @@
 # This function creates a NixOS system based on our VM setup for a
 # particular architecture.
-name: { nixpkgs, home-manager, system, user, overlays, additionnal-modules }:
-
+name: { nixpkgs, pkgs, home-manager, system, user, overlays, additionnal-modules }:
 nixpkgs.lib.nixosSystem rec {
-  inherit system;
+  inherit system pkgs;
 
   modules = additionnal-modules ++ [
-    # Apply our overlays. Overlays are keyed by system type so we have
-    # to go through and apply our system type. We do this first so
-    # the overlays are available globally.
-    {
-      nixpkgs = {
-        inherit overlays;
-        config.allowUnfree = true;
-      };
-    }
+    # # Apply our overlays. Overlays are keyed by system type so we have
+    # # to go through and apply our system type. We do this first so
+    # # the overlays are available globally.
+    # {
+    #   nixpkgs = {
+    #     inherit overlays;
+    #     config.allowUnfree = true;
+    #   };
+    # }
 
     ../machines/${name}/hardware-configuration.nix
     ../machines/${name}/configuration.nix
 
+    ../modules/kernel.nix
+    ../modules/intel.nix
     ../modules/btrfs.nix
     ../modules/elegant-boot.nix
+
     ../modules/common.nix
     ../modules/peerix.nix
     ../modules/desktop.nix

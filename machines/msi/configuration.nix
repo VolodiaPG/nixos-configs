@@ -1,9 +1,6 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ./hardware-configuration.nix
-    ../shared/default.nix
-    ../intel.nix
     ../../services/nvfancontrol/nvfancontrol.nix
   ];
   boot.loader.efi.canTouchEfiVariables = true;

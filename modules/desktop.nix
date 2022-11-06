@@ -1,6 +1,5 @@
 { config, pkgs, home-manager, lib, ... }:
 {
-  nixpkgs.overlays = import ../lib/overlays.nix;
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
   ];

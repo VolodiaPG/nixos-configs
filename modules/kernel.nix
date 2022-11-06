@@ -1,4 +1,4 @@
-{ config, lib, pkgs, options, inputs, system, ... }:
+{ pkgs, ... }:
 {
   powerManagement.cpuFreqGovernor = "performance";
   boot = {
@@ -6,11 +6,8 @@
       NOTE: replace this with your desired kernel, see: https://nixos.wiki/wiki/Linux_kernel for reference.
       If you're not me or a XanMod kernel maintainer in Nixpkgs, use pkgs.linuxKernel.packages.linux_xanmod instead to avoid compilation.
     */
-    # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
-    # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_tt;
-    kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.callPackage ../../pkgs/linux-xanmod-volodiapg { }));
+    kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor (pkgs.linux-cachyos));
 
-    #kernelPackages = pkgs.linuxKernel.packages.linux_zen;
     kernelParams = [
       "noibrs"
       "noibpb"
@@ -105,7 +102,7 @@
       "net.core.somaxconn" = 8192;
 
       # Increase the memory dedicated to the network interfaces
-      # The default the Linux network stack is not configured for high speed large file transfer across WAN links (i.e. handle more network packets) and setting the correct values may save memory resources: 
+      # The default the Linux network stack is not high, rces: 
       "net.core.rmem_default" = 1048576;
       "net.core.rmem_max" = 16777216;
       "net.core.wmem_default" = 1048576;

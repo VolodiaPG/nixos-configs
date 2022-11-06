@@ -1,13 +1,5 @@
 { config, pkgs, ... }:
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ../shared/default.nix
-      ../intel.nix
-    ];
-
   # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
