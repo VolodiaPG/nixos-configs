@@ -49,6 +49,7 @@
     powerManagement.enable = true;
     modesetting.enable = true;
     nvidiaPersistenced = true;
+    nvidiaSettings = false;
   };
 
   environment.etc."X11/Xwrapper.config".text = ''
