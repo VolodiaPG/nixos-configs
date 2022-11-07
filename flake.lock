@@ -216,11 +216,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1667767682,
-        "narHash": "sha256-ehyUst+uPTAhNx6I7wvdD9db22h9i49iWq/XttBfdIo=",
+        "lastModified": 1667777904,
+        "narHash": "sha256-os59xgfAZCFi5a0OI09NstiPpALIsjX/BsgmhwhGZHM=",
         "owner": "volodiapg",
         "repo": "nur-packages",
-        "rev": "6983e0ab0d5169cbe557bff07aa961e91ece554b",
+        "rev": "b9874ba1b8a8368c204abaca82bf7c0c813f5510",
         "type": "github"
       },
       "original": {
