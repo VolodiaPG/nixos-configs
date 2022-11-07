@@ -40,7 +40,7 @@
     '';
     gc.automatic = true;
     gc.dates = "Sat 05:00";
-    gc.options = "--delete-older-than 14d";
+    gc.options = "--delete-older-than 30d";
   };
 
   i18n = {
