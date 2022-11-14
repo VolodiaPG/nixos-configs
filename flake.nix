@@ -85,7 +85,18 @@
           nixos-hardware.nixosModules.common-pc-laptop-acpi_call
           nixos-hardware.nixosModules.common-pc-laptop-ssd
         ]);
-
+      };
+      nixosConfigurations.precision-3571-nixos = mkMachine "precision-3571" {
+        inherit nixpkgs pkgs home-manager system overlays user;
+        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
+          nixos-hardware.nixosModules.common-cpu-intel
+          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+          nixos-hardware.nixosModules.common-gpu-intel
+          nixos-hardware.nixosModules.common-pc
+          nixos-hardware.nixosModules.common-pc-laptop
+          nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+          nixos-hardware.nixosModules.common-pc-laptop-ssd
+        ]);
       };
     } // flake-utils.lib.eachDefaultSystem (system:
       {
