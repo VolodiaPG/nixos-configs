@@ -1,4 +1,4 @@
-default: switch
+default: boot
     
 switch:
     sudo nixos-rebuild switch --flake .#$(hostname)
