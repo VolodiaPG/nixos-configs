@@ -30,7 +30,7 @@ let scheduler = pkgs.callPackage ../../pkgs/system76-scheduler { }; in
     in
     lib.mkIf cfg.enable {
       systemd.services.system76Scheduler = {
-        enable = cfg.enable;
+        inherit (cfg.enable);
         wantedBy = [ "multi-user.target" ];
 
         description = "Automatically configure CPU scheduler for responsiveness on AC";
@@ -48,8 +48,6 @@ let scheduler = pkgs.callPackage ../../pkgs/system76-scheduler { }; in
         "system76-scheduler/assignments/default.ron".text = cfg.assignments;
       };
 
-      environment.systemPackages = [
-        (cfg.package)
-      ];
+      environment.systemPackages = [ cfg.package ];
     };
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, lib, ... }:
+{ config, pkgs, home-manager, ... }:
 {
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
@@ -102,7 +102,7 @@
     gnome-contacts
   ]);
 
-  home-manager.users.volodia = { pkgs, ... }: {
+  home-manager.users.volodia = _: {
     dconf = {
       enable = true;
       settings = {
@@ -303,7 +303,7 @@
     lapce
 
     # Office
-    libreoffice-fresh
+    # libreoffice-fresh
     xournalpp
     zotero
 

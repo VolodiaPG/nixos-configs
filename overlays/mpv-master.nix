@@ -1,16 +1,5 @@
 final: prev: {
-  mpv-unwrapped = (
-    prev.mpv-unwrapped
-    #.overrideAttrs (old: {
-    #version = "git";
-    #src = prev.fetchFromGitHub {
-    #  owner = "mpv-player";
-    #  repo = "mpv";
-    # rev = "d3a28f1";
-    #  sha256 = "sha256-2lEItmVl2jRZY1RVcsNNODixK2OWreqCdPYJR0V15ic=";
-    #};
-    #})
-  ).override { vapoursynthSupport = true; };
+  mpv-unwrapped = prev.mpv-unwrapped.override { vapoursynthSupport = true; };
 
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [

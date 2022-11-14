@@ -29,9 +29,9 @@
           sha256 = "sha256-28QW/WTLckR4lEfHv6dSotwkAKpNJFCShxmKFGQQ1Ew=";
         };
       }
-      { name = "grc"; src = pkgs.fishPlugins.grc.src; }
-      { name = "done"; src = pkgs.fishPlugins.done.src; }
-      { name = "pure"; src = pkgs.fishPlugins.pure.src; }
+      { name = "grc"; inherit (pkgs.fishPlugins.grc) src; }
+      { name = "done"; inherit (pkgs.fishPlugins.done) src; }
+      { name = "pure"; inherit (pkgs.fishPlugins.pure) src; }
     ];
 
     shellAliases = {
@@ -48,12 +48,6 @@
     enable = true;
     enableFishIntegration = true;
   };
-
-  # home.sessionVariables = {
-  #   MOZ_ENABLE_WAYLAND = 1;
-  #   QT_QPA_PLATFORM = "wayland";
-  #   NIXOS_OZONE_WL = 1;
-  # };
 
   home.packages = with pkgs;
     [
@@ -95,9 +89,9 @@
   programs.git = {
     enable = true;
     userName = "Volodia P.-G.";
-    userEmail = (builtins.readFile ../../secrets/gitmail);
+    userEmail = builtins.readFile ../../secrets/gitmail;
     signing = {
-      key = (builtins.readFile ../../secrets/gitkeyid);
+      key = builtins.readFile ../../secrets/gitkeyid;
       signByDefault = true;
     };
     extraConfig = {

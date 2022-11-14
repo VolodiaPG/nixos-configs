@@ -34,7 +34,7 @@
     in
     lib.mkIf cfg.enable {
       systemd.services.nvfancontrol = {
-        enable = cfg.enable;
+        inherit (cfg.enable);
         description = "Nvidia fan control startup";
         wantedBy = [ "graphical-session.target" ];
         partOf = [ "graphical-session.target" ];
@@ -46,9 +46,7 @@
         "xdg/nvfancontrol.conf".text = "${cfg.configuration}";
       };
 
-      environment.systemPackages = [
-        (cfg.package)
-      ];
+      environment.systemPackages = [ cfg.package ];
 
       services.xserver = {
         deviceSection = ''
