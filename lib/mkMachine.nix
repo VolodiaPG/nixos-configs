@@ -1,6 +1,6 @@
 # This function creates a NixOS system based on our VM setup for a
 # particular architecture.
-name: { nixpkgs, pkgs, home-manager, system, user, overlays, additionnal-modules }:
+name: { nixpkgs, pkgs, home-manager, system, user, additionnal-modules }:
 nixpkgs.lib.nixosSystem rec {
   inherit system pkgs;
 
@@ -24,7 +24,6 @@ nixpkgs.lib.nixosSystem rec {
     ../modules/elegant-boot.nix
 
     ../modules/common.nix
-    ../modules/peerix.nix
     ../modules/desktop.nix
     ../modules/gaming.nix
 

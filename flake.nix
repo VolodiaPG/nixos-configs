@@ -20,6 +20,10 @@
     };
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
 
   nixConfig = {
@@ -42,7 +46,7 @@
 
       modules-additionnal-sources = with inputs;
         [
-          peerix.nixosModules.peerix
+          # peerix.nixosModules.peerix
         ];
 
       pkgs = import nixpkgs {
@@ -52,7 +56,7 @@
     in
     {
       nixosConfigurations.ux430ua-nixos = mkMachine "ux430ua" {
-        inherit nixpkgs pkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -65,7 +69,7 @@
         ]);
       };
       nixosConfigurations.msi-nixos = mkMachine "msi" {
-        inherit nixpkgs pkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -75,7 +79,7 @@
         ]);
       };
       nixosConfigurations.hralaptop-nixos = mkMachine "hralaptop" {
-        inherit nixpkgs pkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
@@ -87,7 +91,7 @@
         ]);
       };
       nixosConfigurations.precision-3571-nixos = mkMachine "precision-3571" {
-        inherit nixpkgs pkgs home-manager system overlays user;
+        inherit nixpkgs pkgs home-manager system user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs;[
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
