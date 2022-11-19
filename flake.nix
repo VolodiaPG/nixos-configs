@@ -15,7 +15,7 @@
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
     peerix = {
-      url = "github:cid-chan/peerix";
+      url = "github:volodiapg/peerix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
@@ -46,7 +46,7 @@
 
       modules-additionnal-sources = with inputs;
         [
-          # peerix.nixosModules.peerix
+          peerix.nixosModules.peerix
         ];
 
       pkgs = import nixpkgs {

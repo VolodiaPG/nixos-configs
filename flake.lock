@@ -274,15 +274,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1661429880,
-        "narHash": "sha256-7/m468XZW82O7KhDtRdQ7RnPsh83+tA8N4U0FncFo1U=",
-        "owner": "cid-chan",
+        "lastModified": 1668895615,
+        "narHash": "sha256-yK1g9PFDEu756A+1KGpWSth1EbAQI8tE/ak0FXvkzSU=",
+        "owner": "volodiapg",
         "repo": "peerix",
-        "rev": "32cd1b098b83c90726848bd6726f74e72c557abb",
+        "rev": "c012e350695e825bc17a1fc3dbcfed98a2ccef92",
         "type": "github"
       },
       "original": {
-        "owner": "cid-chan",
+        "owner": "volodiapg",
         "repo": "peerix",
         "type": "github"
       }

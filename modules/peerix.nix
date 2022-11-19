@@ -1,5 +1,4 @@
-{ pkgs, config, ... }:
-{
+_: {
   services.peerix = {
     enable = true;
     openFirewall = true; # UDP/12304
@@ -7,6 +6,8 @@
     publicKeyFile = ../secrets/peerix-public;
     user = "peerix";
     group = "peerix";
+    extraHosts = [ "ux430ua-nixos" "msi-nixos" ];
+    disableBroadcast = true;
   };
   users.users.peerix = {
     isSystemUser = true;

@@ -26,6 +26,8 @@
     extraGSettingsOverridePackages = [ pkgs.gnome.gnome-settings-daemon ];
   };
 
+  services.lorri.enable = true; # fast direnv
+
   # Configure keymap in X11
   services.xserver = {
     layout = "fr";

@@ -23,6 +23,8 @@ nixpkgs.lib.nixosSystem rec {
     ../modules/btrfs.nix
     ../modules/elegant-boot.nix
 
+    ../modules/peerix.nix
+
     ../modules/common.nix
     ../modules/desktop.nix
     ../modules/vpn.nix
