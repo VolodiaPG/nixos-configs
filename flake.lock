@@ -274,11 +274,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1668895615,
-        "narHash": "sha256-yK1g9PFDEu756A+1KGpWSth1EbAQI8tE/ak0FXvkzSU=",
+        "lastModified": 1668898657,
+        "narHash": "sha256-B8DXBc7p7dLT/vE7tIl4FelLZ26rCzARNKrDeRx7mKM=",
         "owner": "volodiapg",
         "repo": "peerix",
-        "rev": "c012e350695e825bc17a1fc3dbcfed98a2ccef92",
+        "rev": "1f13eda78b1a3d303b307b7d81e2d7abfed707b4",
         "type": "github"
       },
       "original": {
