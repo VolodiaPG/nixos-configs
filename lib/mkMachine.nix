@@ -25,6 +25,7 @@ nixpkgs.lib.nixosSystem rec {
 
     ../modules/common.nix
     ../modules/desktop.nix
+    ../modules/vpn.nix
     ../modules/gaming.nix
 
     home-manager.nixosModules.home-manager
