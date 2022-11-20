@@ -416,40 +416,8 @@
     ];
     allowedUDPPorts = [
       3389 # RDP
-      50156 # Wireguard
       5353 # mDNS, avahi
     ];
-  };
-
-  # Enable WireGuard
-  networking.wg-quick.interfaces = {
-    # "wg0" is the network interface name. You can name the interface arbitrarily.
-    wg0 = {
-      address = [ "10.66.66.2/32" "fd42:42:42::2/128" ];
-      listenPort = 50156; # to match firewall allowedUDPPorts (without this wg uses random port numbers)
-      dns = [ "94.140.14.14" "94.140.15.15" ];
-      privateKey = builtins.readFile ../secrets/wireguard-private.key;
-
-
-      peers = [
-        # For a client configuration, one peer entry for the server will suffice.
-
-        {
-          # Public key of the server (not a file path).
-          publicKey = "HICBhGxQiUQ4TAtoHRsDsukpPMRwVxtO7yU8xKKaqjc=";
-          presharedKey = builtins.readFile ../secrets/wireguard-preshared.key;
-
-          # allowedIPs = [ "0.0.0.0/0" "::/0"];
-          allowedIPs = [ "10.66.66.1/32" ];
-
-          # Set this to the server IP and port.
-          endpoint = builtins.readFile ../secrets/wireguard-endpoint.ip; # ToDo: route to endpoint not automatically configured https://wiki.archlinux.org/index.php/WireGuard#Loop_routing https://discourse.nixos.org/t/solved-minimal-firewall-setup-for-wireguard-client/7577
-
-          # Send keepalives every 25 seconds. Important to keep NAT tables alive.
-          persistentKeepalive = 25;
-        }
-      ];
-    };
   };
 
   qt5 = {

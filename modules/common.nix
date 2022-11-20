@@ -13,7 +13,6 @@
     lrzip # Advanced and storage efficient zip
     parallel # Much smarter xargs
     progress # View current progress of coreutils tools
-    wireguard-tools # Tools for Wireguard
     zip # ZIP file manipulation
     gdu # Manager files and see sizes quickly
     micro # text editor
