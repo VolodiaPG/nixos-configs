@@ -299,7 +299,7 @@
     gnomeExtensions.impatience
 
     # Browser
-    (firefox-beta-bin.override { forceWayland = true; })
+    firefox-beta-bin
     tor-browser-bundle-bin
 
     lapce
