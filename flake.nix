@@ -55,6 +55,7 @@
       };
     in
     {
+      # Do not forget to also add to peerix to share the derivations
       nixosConfigurations.ux430ua-nixos = mkMachine "ux430ua" {
         inherit nixpkgs pkgs home-manager system user;
         additionnal-modules = modules-additionnal-sources ++ (with inputs; [

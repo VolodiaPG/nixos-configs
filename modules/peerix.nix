@@ -6,8 +6,8 @@ _: {
     publicKeyFile = ../secrets/peerix-public;
     user = "peerix";
     group = "peerix";
-    extraHosts = [ "ux430ua-nixos" "msi-nixos" ];
     disableBroadcast = true;
+    extraHosts = [ "ux430ua-nixos" "msi-nixos" "precision-3571-nixos" ];
   };
   users.users.peerix = {
     isSystemUser = true;
