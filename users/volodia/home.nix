@@ -51,7 +51,6 @@
 
   home.packages = with pkgs;
     [
-      direnv
       ff2mpv
     ];
 

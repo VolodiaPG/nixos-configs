@@ -13,7 +13,11 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-  
+  boot.blacklistedKernelModules = [
+    "nouveau"
+    "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
+  ];
+
   networking = {
     hostId = "30249675";
     hostName = "precision-3571-nixos";
@@ -36,6 +40,18 @@
       vaapiVdpau
       libvdpau-va-gl
     ];
+  };
+
+  # Enable the X11 windowing system.
+  services.xserver = {
+    videoDrivers = [ "nvidia" ];
+    exportConfiguration = true;
+  };
+  hardware.nvidia = {
+    powerManagement.enable = true;
+    modesetting.enable = true;
+    nvidiaPersistenced = true;
+    nvidiaSettings = false;
   };
 
   # This value determines the NixOS release from which the default
