@@ -19,6 +19,7 @@
     zoxide # smart CD that remembers
     gh # Github PRs and stuff
     git-crypt
+    cocogitto
     python3
     ecryptfs
 
