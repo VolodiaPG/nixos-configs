@@ -8,7 +8,10 @@ boot:
 
 test:
     sudo nixos-rebuild test --flake .#$(hostname)
-    
+
+update:
+    nix flake update
+
 fmt:
     nix fmt .
     

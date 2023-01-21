@@ -120,7 +120,7 @@
 
         devShell = nixpkgs.legacyPackages.${system}.mkShell {
           inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = with pkgs; [ just ];
+          buildInputs = with pkgs; [ just git git-crypt cocogitto ];
         };
       }
     );
