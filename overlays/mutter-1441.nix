@@ -1,3 +1,3 @@
 final: prev: {
-  gnome = final.gnome-smooth;
+  # gnome = final.gnome-smooth;
 }
