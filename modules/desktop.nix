@@ -284,6 +284,8 @@
     veracrypt
     pavucontrol
 
+    distrobox
+
     # Gnome extensions
     gnomeExtensions.appindicator
     gnomeExtensions.vitals
@@ -420,7 +422,7 @@
     ];
   };
 
-  qt5 = {
+  qt = {
     enable = true;
     platformTheme = "gnome";
   };

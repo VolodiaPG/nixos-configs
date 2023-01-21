@@ -88,7 +88,7 @@
   services.openssh = {
     enable = true;
     allowSFTP = true;
-    passwordAuthentication = false;
+    PasswordAuthentication = false;
   };
 
   # security.polkit.extraConfig = ''
