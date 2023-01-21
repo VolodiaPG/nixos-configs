@@ -16,7 +16,7 @@
 
   boot.initrd.luks.devices = {
     crypted = {
-      device = "/dev/disk/by-uuid/4342bff2-4a5a-44d8-9fec-be91e252f75c";
+      device = "/dev/disk/by-uuid/3c7cadea-eece-4982-b52f-f17fc996204b";
       preLVM = true;
     };
   };
@@ -24,34 +24,34 @@
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = [ "subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/home" =
     {
-      device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = [ "subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/nix" =
     {
-      device = "/dev/disk/by-uuid/f586b8bc-b555-40b5-b2cd-04f866a60d28";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = [ "subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/3DF5-C09C";
+      device = "/dev/disk/by-uuid/DA73-7E25";
       fsType = "vfat";
     };
 
   swapDevices =
     [{
-      device = "/dev/disk/by-uuid/5dce4d8a-af6c-4a30-b71d-c124508f9391";
+      device = "/dev/disk/by-uuid/78410e51-556c-451f-829e-eddf32c9b315";
       options = [ "noatime" ];
     }];
 
