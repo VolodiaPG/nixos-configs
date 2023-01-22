@@ -301,7 +301,7 @@
     gnomeExtensions.impatience
 
     # Browser
-    brave
+    firefox-beta-bin
     tor-browser-bundle-bin
 
     lapce
