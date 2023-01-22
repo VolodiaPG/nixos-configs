@@ -307,10 +307,10 @@
     lapce
     (vscode-with-extensions.override {
       vscodeExtensions = with vscode-extensions; [
-        vadimcn.vscode-lldb
+        # vadimcn.vscode-lldb
         matklad.rust-analyzer
         jnoortheen.nix-ide
-        ms-python.python
+        # ms-python.python
         skellock.just
         arrterian.nix-env-selector
         eamodio.gitlens
