@@ -136,7 +136,7 @@
             "blur-my-shell@aunetx"
             "rounded-window-corners@yilozt"
             "mediacontrols@cliffniff.github.com"
-            "impatience@gfxmonk.net"
+            # "impatience@gfxmonk.net"
           ];
         };
 
