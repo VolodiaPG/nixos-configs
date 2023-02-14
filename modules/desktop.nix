@@ -125,7 +125,7 @@
 
     # Browser
     # firefox-beta-bin
-    # brave
+    brave
     chromium
     # tor-browser-bundle-bin
 
@@ -183,8 +183,8 @@
     gitui
 
     # Utils
-    bottles
-    boxes
+    # bottles
+    # boxes
 
     spice-vdagent # copy paste for vms
   ];
