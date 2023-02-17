@@ -1,5 +1,8 @@
 default: boot
-    
+
+updateindex:
+    updateindex
+
 switch:
     sudo nixos-rebuild switch --flake .#$(hostname)
 
@@ -9,7 +12,7 @@ boot:
 test:
     sudo nixos-rebuild test --flake .#$(hostname)
 
-update:
+update: updateindex
     nix flake update
 
 fmt:

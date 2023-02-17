@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 {
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
@@ -84,12 +84,6 @@
     };
   };
 
-  home-manager.users.volodia = _: {
-    dconf = {
-      enable = true;
-    };
-  };
-
   environment.systemPackages = with pkgs; [
     # Fish deps
     fzf # Required by jethrokuan/fzf.
@@ -130,8 +124,8 @@
     # tor-browser-bundle-bin
 
     # lapce
-    (vscode-with-extensions.override {
-      vscodeExtensions = with vscode-extensions; [
+    (pkgs-unstable.vscode-with-extensions.override {
+      vscodeExtensions = with pkgs-unstable.vscode-extensions; [
         # vadimcn.vscode-lldb
         matklad.rust-analyzer
         jnoortheen.nix-ide
@@ -140,7 +134,7 @@
         arrterian.nix-env-selector
         eamodio.gitlens
         usernamehw.errorlens
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+      ] ++ pkgs-unstable.vscode-utils.extensionsFromVscodeMarketplace [
         {
           publisher = "vscode-icons-team";
           name = "vscode-icons";
@@ -247,8 +241,8 @@
     ];
   };
 
-  qt = {
-    enable = true;
-    platformTheme = "kde";
-  };
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "kde";
+  # };
 }

@@ -2,7 +2,9 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable-small.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
     };
@@ -16,7 +18,6 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
     peerix = {
       url = "github:volodiapg/peerix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -31,10 +32,8 @@
     extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
   };
 
-  outputs = { self, nixpkgs, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-unstable-small, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
     let
-      mkMachine = import ./lib/mkMachine.nix;
-
       system = "x86_64-linux";
       user = "volodia";
 
@@ -44,21 +43,45 @@
         peerix.overlay
       ]) ++ import ./lib/overlays.nix;
 
-      modules-additionnal-sources = with inputs;
-        [
-          peerix.nixosModules.peerix
-        ];
-
       pkgs = import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
       };
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
+
+      specialArgs = {
+        inherit pkgs-unstable overlays;
+      };
+      defaultModules = [
+        { nix.registry.self.flake = inputs.self; }
+        {
+          nixpkgs.overlays = overlays;
+        }
+        inputs.peerix.nixosModules.peerix
+        inputs.nur-xddxdd.nixosModules.setupOverlay
+        home-manager.nixosModules.home-manager
+        ./modules
+        {
+          nix.registry.self.flake = inputs.self;
+          home-manager.users.volodia = import ./users/volodia/home.nix;
+          home-manager.useGlobalPkgs = false;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = {
+            inherit pkgs-unstable overlays;
+          };
+        }
+      ];
     in
     {
       # Do not forget to also add to peerix to share the derivations
-      nixosConfigurations.ux430ua-nixos = mkMachine "ux430ua" {
-        inherit nixpkgs pkgs home-manager system user;
-        additionnal-modules = modules-additionnal-sources ++ (with inputs; [
+      nixosConfigurations."ux430ua-nixos" = nixpkgs.lib.nixosSystem {
+        inherit system specialArgs;
+        modules = defaultModules ++ (with inputs; [
+          ./machines/ux430ua/hardware-configuration.nix
+          ./machines/ux430ua/configuration.nix
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
           nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
@@ -69,9 +92,11 @@
           nixos-hardware.nixosModules.common-pc-laptop-ssd
         ]);
       };
-      nixosConfigurations.msi-nixos = mkMachine "msi" {
-        inherit nixpkgs pkgs home-manager system user;
-        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
+      nixosConfigurations."msi-nixos" = nixpkgs.lib.nixosSystem {
+        inherit system specialArgs;
+        modules = defaultModules ++ (with inputs;[
+          ./machines/msi/hardware-configuration.nix
+          ./machines/msi/configuration.nix
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
           nixos-hardware.nixosModules.common-pc
@@ -79,30 +104,18 @@
           nixos-hardware.nixosModules.common-pc-hdd
         ]);
       };
-      nixosConfigurations.hralaptop-nixos = mkMachine "hralaptop" {
-        inherit nixpkgs pkgs home-manager system user;
-        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
-          nixos-hardware.nixosModules.common-cpu-intel
-          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-          nixos-hardware.nixosModules.common-gpu-intel
-          nixos-hardware.nixosModules.common-pc
-          nixos-hardware.nixosModules.common-pc-laptop
-          nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-          nixos-hardware.nixosModules.common-pc-laptop-ssd
-        ]);
-      };
-      nixosConfigurations.precision-3571-nixos = mkMachine "precision-3571" {
-        inherit nixpkgs pkgs home-manager system user;
-        additionnal-modules = modules-additionnal-sources ++ (with inputs;[
-          nixos-hardware.nixosModules.common-cpu-intel
-          nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-          nixos-hardware.nixosModules.common-gpu-intel
-          nixos-hardware.nixosModules.common-pc
-          nixos-hardware.nixosModules.common-pc-laptop
-          nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-          nixos-hardware.nixosModules.common-pc-laptop-ssd
-        ]);
-      };
+      # nixosConfigurations.precision-3571-nixos = mkMachine "precision-3571" {
+      #   inherit nixpkgs pkgs pkgs-unstable home-manager system user;
+      #   additionnal-modules = modules-additionnal-sources ++ (with inputs;[
+      #     nixos-hardware.nixosModules.common-cpu-intel
+      #     nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+      #     nixos-hardware.nixosModules.common-gpu-intel
+      #     nixos-hardware.nixosModules.common-pc
+      #     nixos-hardware.nixosModules.common-pc-laptop
+      #     nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+      #     nixos-hardware.nixosModules.common-pc-laptop-ssd
+      #   ]);
+      # };
     } // flake-utils.lib.eachDefaultSystem (system:
       {
         formatter = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
@@ -120,7 +133,7 @@
 
         devShell = nixpkgs.legacyPackages.${system}.mkShell {
           inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = with pkgs; [ just git git-crypt cocogitto ];
+          buildInputs = with pkgs-unstable; [ just git git-crypt cocogitto ];
         };
       }
     );

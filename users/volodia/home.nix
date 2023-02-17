@@ -1,5 +1,6 @@
-{ pkgs, ... }:
+{ pkgs, overlays, ... }:
 {
+  nixpkgs.overlays = overlays;
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -51,8 +52,23 @@
 
   home.packages = with pkgs;
     [
-      ff2mpv
+      # ff2mpv
     ];
+
+  home.file.".config/discord/settings.json".text = ''
+    {
+      "BACKGROUND_COLOR": "#202225",
+      "IS_MAXIMIZED": false,
+      "IS_MINIMIZED": true,
+      "SKIP_HOST_UPDATE": true,
+      "WINDOW_BOUNDS": {
+        "x": 307,
+        "y": 127,
+        "width": 1280,
+        "height": 725
+      }
+    }
+  '';
 
   home.file.".config/mpv" = {
     source = ./mpv;

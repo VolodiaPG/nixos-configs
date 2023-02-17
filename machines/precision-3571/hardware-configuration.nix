@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
 
@@ -13,44 +14,48 @@
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  
-    boot.initrd.luks.devices = {
-      root = {
-        # Use https://nixos.wiki/wiki/Full_Disk_Encryption
-        device = "/dev/disk/by-uuid/83a73390-cbec-47be-86d5-e40cd843493d";
-        preLVM = true;
-      };
+
+  boot.initrd.luks.devices = {
+    root = {
+      # Use https://nixos.wiki/wiki/Full_Disk_Encryption
+      device = "/dev/disk/by-uuid/83a73390-cbec-47be-86d5-e40cd843493d";
+      preLVM = true;
+    };
   };
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+    {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
       fsType = "btrfs";
       options = [ "subvol=root" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
 
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+    {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
       fsType = "btrfs";
       options = [ "subvol=home" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+    {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
       fsType = "btrfs";
       options = [ "subvol=nix" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag" ]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/528D-40D7";
+    {
+      device = "/dev/disk/by-uuid/528D-40D7";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/99ce6d62-c6bc-4a69-a145-3b33e2c46311";
+    [{
+      device = "/dev/disk/by-uuid/99ce6d62-c6bc-4a69-a145-3b33e2c46311";
       options = [ "noatime" ];
-     }
-    ];
+    }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

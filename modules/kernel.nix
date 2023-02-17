@@ -3,7 +3,7 @@
   powerManagement.cpuFreqGovernor = "ondemand";
   powerManagement.powertop.enable = true;
   powerManagement.enable = true;
-  
+
   boot = {
     /*
       NOTE: replace this with your desired kernel, see: https://nixos.wiki/wiki/Linux_kernel for reference.
@@ -12,6 +12,8 @@
     # kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor pkgs.linux-cachyos);
     #kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor pkgs.linux-xanmod-volodiapg);
     # kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_xanmod;
 
     resumeDevice = "/dev/mapper/lvm-swap";
 
@@ -165,19 +167,19 @@
       "kernel.core_pattern" = "/dev/null";
 
       # Set as default CFS Candidate Balancer - it provides better performance
-      "kernel.sched_tt_balancer_opt" = 2;
+      # "kernel.sched_tt_balancer_opt" = 2;
 
       # Change PELT multiplier to 16 ms instead of 32ms
       # 1 = 32ms
       # 2 = 16ms
       # 4 = 8ms
-      "kernel.sched_pelt_multiplier" = 2;
+      # "kernel.sched_pelt_multiplier" = 2;
 
       # This feature enable CFS priority load balance to reduce
       # non-idle tasks latency interferenced by SCHED_IDLE tasks.
       # It prefer migrating non-idle tasks firstly and
       #  migrating SCHED_IDLE tasks lastly.
-      "kernel.sched_prio_load_balance_enabled" = 1;
+      # "kernel.sched_prio_load_balance_enabled" = 1;
 
       # "kernel.sched_tt_balancer_opt" = "1";
     };
