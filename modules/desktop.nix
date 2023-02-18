@@ -186,38 +186,39 @@
   fonts.fonts = with pkgs; [
     powerline-fonts
     corefonts
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    noto-fonts-extra
+    # noto-fonts
+    # noto-fonts-cjk
+    # noto-fonts-emoji
+    # noto-fonts-extra
+    ubuntu_font_family
+    joypixels
     nerdfonts
-    ipafont
     (callPackage ../pkgs/comic-code { })
   ];
+
+  nixpkgs.config.joypixels.acceptLicense = true; # Personal use only
 
   fonts.fontconfig.defaultFonts = {
     monospace = [
       "Comic Code Ligatures"
-      "Hack Nerd Font"
-      "Noto Sans Mono CJK JP"
     ];
 
-    sansSerif = [
-      "Noto Sans"
-      "Noto Sans CJK JP"
-    ];
+    # sansSerif = [
+    #   "Noto Sans"
+    #   "Noto Sans CJK JP"
+    # ];
 
-    serif = [
-      "Noto Serif"
-      "Noto Serif CJK JP"
-    ];
+    # serif = [
+    #   "Noto Serif"
+    #   "Noto Serif CJK JP"
+    # ];
   };
 
   # virtualisation.libvirtd.enable = true;
-  virtualisation = {
-    waydroid.enable = true;
-    lxd.enable = true;
-  };
+  # virtualisation = {
+  #   waydroid.enable = true;
+  #   # lxd.enable = true;
+  # };
 
   # services.gnome.gnome-remote-desktop.enable = true;
 
