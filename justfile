@@ -15,6 +15,10 @@ test:
 update: updateindex
     nix flake update
 
+bump: update switch
+    git add flake.lock
+    cog commit chore "Update" lock
+
 fmt:
     nix fmt .
     

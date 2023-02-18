@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-unstable-small.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
@@ -21,10 +20,8 @@
     };
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
+    # nix-software-center.url = "github:vlinkz/nix-software-center";
+    # nix-conf-editor.url = "github:vlinkz/nixos-conf-editor";
   };
 
   nixConfig = {
@@ -32,7 +29,7 @@
     extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-unstable-small, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils, pre-commit-hooks, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       user = "volodia";
@@ -56,9 +53,15 @@
         inherit pkgs-unstable overlays;
       };
       defaultModules = [
-        { nix.registry.self.flake = inputs.self; }
         {
+          nix.registry.self.flake = inputs.self;
           nixpkgs.overlays = overlays;
+        }
+        {
+          environment.systemPackages = [
+            # inputs.nix-software-center.packages.${system}.nix-software-center
+            # inputs.nix-conf-editor.packages.${system}.nixos-conf-editor
+          ];
         }
         inputs.peerix.nixosModules.peerix
         inputs.nur-xddxdd.nixosModules.setupOverlay
