@@ -157,7 +157,7 @@
     })
 
     # Office
-    # libreoffice-fresh
+    libreoffice
     xournalpp
     zotero
 
