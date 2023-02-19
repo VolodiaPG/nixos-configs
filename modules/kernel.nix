@@ -37,13 +37,13 @@
     kernel.sysctl = {
       # "kernel.sched_migration_cost_ns" = 5000000;
       # "kernel.sched_nr_fork_threshold" = 3;
-      # "kernel.sched_fake_interactive_win_time_ms" = 1000;
+      "kernel.sched_fake_interactive_win_time_ms" = 1000;
       # "net.ipv4.tcp_keepalive_time" = 60;
       # "net.ipv4.tcp_keepalive_intvl" = 10;
       # "net.ipv4.tcp_keepalive_probes" = 6;
       # "net.ipv4.conf.default.log_martians" = 1;
       # "net.ipv4.conf.all.log_martians" = 1;
-      # "net.ipv4.tcp_mtu_probing" = 1;
+      "net.ipv4.tcp_mtu_probing" = 1;
 
       # The swappiness sysctl parameter represents the kernel's preference (or avoidance) of swap space. Swappiness can have a value between 0 and 100, the default value is 60. 
       # A low value causes the kernel to avoid swapping, a higher value causes the kernel to try to use swap space. Using a low value on sufficient memory is known to improve responsiveness on many systems.
@@ -130,6 +130,13 @@
       # Using the value 3 instead of the default 1 allows TCP Fast Open for both incoming and outgoing connections: 
       "net.ipv4.tcp_fastopen" = 3;
 
+      "net.ipv4.tcp_fin_timeout" = 15;
+
+      # Decrease the time default value for connections to keep alive
+      "net.ipv4.tcp_keepalive_time" = 300;
+      "net.ipv4.tcp_keepalive_probes" = 5;
+      "net.ipv4.tcp_keepalive_intvl" = 15;
+
       # Enable BBR
       # The BBR congestion control algorithm can help achieve higher bandwidths and lower latencies for internet traffic
       "net.core.default_qdisc" = "cake"; # "fq_pie"
@@ -138,6 +145,9 @@
       # TCP SYN cookie protection
       # Helps protect against SYN flood attacks. Only kicks in when net.ipv4.tcp_max_syn_backlog is reached: 
       "net.ipv4.tcp_syncookies" = 1;
+
+      # Number of times SYNACKs for passive TCP connection.
+      "net.ipv4.tcp_synack_retries" = 2;
 
       # Protect against tcp time-wait assassination hazards, drop RST packets for sockets in the time-wait state. Not widely supported outside of Linux, but conforms to RFC: 
       "net.ipv4.tcp_rfc1337" = 1;
@@ -167,6 +177,11 @@
 
       # disable core dumps
       "kernel.core_pattern" = "/dev/null";
+
+      "kernel.sched_cfs_bandwidth_slice_us" = 3000;
+
+      # Sets the time before the kernel considers migrating a proccess to another core
+      "kernel.sched_migration_cost_ns" = 5000000;
 
       # Set as default CFS Candidate Balancer - it provides better performance
       # "kernel.sched_tt_balancer_opt" = 2;
