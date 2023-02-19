@@ -184,15 +184,16 @@
   ];
 
   fonts.fonts = with pkgs; [
-    powerline-fonts
+    # powerline-fonts
     corefonts
     # noto-fonts
     # noto-fonts-cjk
     # noto-fonts-emoji
     # noto-fonts-extra
-    ubuntu_font_family
+    # ubuntu_font_family
+    roboto
     joypixels
-    nerdfonts
+    # nerdfonts
     (callPackage ../pkgs/comic-code { })
   ];
 
@@ -203,10 +204,11 @@
       "Comic Code Ligatures"
     ];
 
-    # sansSerif = [
-    #   "Noto Sans"
-    #   "Noto Sans CJK JP"
-    # ];
+    sansSerif = [
+      "Roboto"
+      # "Noto Sans"
+      # "Noto Sans CJK JP"
+    ];
 
     # serif = [
     #   "Noto Serif"
