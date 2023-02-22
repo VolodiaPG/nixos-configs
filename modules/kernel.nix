@@ -4,6 +4,18 @@
   powerManagement.powertop.enable = true;
   powerManagement.enable = true;
 
+  systemd.services.cfs-zen-tweaks = {
+    description = "Zen CFS tweaks";
+
+    wantedBy = [ "multi-user.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" "suspend-then-hibernate.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${pkgs.cfs-zen-tweaks}/lib/cfs-zen-tweaks/set-cfs-zen-tweaks.bash";
+    };
+  };
+
+
   boot = {
     cleanTmpDir = true;
 
@@ -14,7 +26,7 @@
     # kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor pkgs.linux-cachyos);
     #kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor pkgs.linux-xanmod-volodiapg);
     # kernelPackages = pkgs.linuxPackages_latest;
-    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_zen;
     # kernelPackages = pkgs.linuxPackages_xanmod;
 
     resumeDevice = "/dev/mapper/lvm-swap";
@@ -181,7 +193,7 @@
       "kernel.sched_cfs_bandwidth_slice_us" = 3000;
 
       # Sets the time before the kernel considers migrating a proccess to another core
-      "kernel.sched_migration_cost_ns" = 5000000;
+      # "kernel.sched_migration_cost_ns" = 5000000;
 
       # Set as default CFS Candidate Balancer - it provides better performance
       # "kernel.sched_tt_balancer_opt" = 2;
