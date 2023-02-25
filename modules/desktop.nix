@@ -103,6 +103,8 @@
 
     distrobox
 
+    powerstat
+
     # Gnome extensions
     # gnomeExtensions.appindicator
     # gnomeExtensions.vitals
@@ -177,10 +179,13 @@
     gitui
 
     # Utils
-    # bottles
     # boxes
 
     spice-vdagent # copy paste for vms
+  ] ++ [
+    pkgs-unstable.bottles
+    pkgs-unstable.lapce
+    pkgs-unstable.powertop
   ];
 
   fonts.fonts = with pkgs; [
