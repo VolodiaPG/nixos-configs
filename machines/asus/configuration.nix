@@ -17,7 +17,7 @@
 
   networking = {
     hostId = "30249670";
-    hostName = "ux430ua-nixos";
+    hostName = "asus";
   };
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.

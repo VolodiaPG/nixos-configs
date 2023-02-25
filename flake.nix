@@ -80,11 +80,11 @@
     in
     {
       # Do not forget to also add to peerix to share the derivations
-      nixosConfigurations."ux430ua-nixos" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."asus" = nixpkgs.lib.nixosSystem {
         inherit system specialArgs;
         modules = defaultModules ++ (with inputs; [
-          ./machines/ux430ua/hardware-configuration.nix
-          ./machines/ux430ua/configuration.nix
+          ./machines/asus/hardware-configuration.nix
+          ./machines/asus/configuration.nix
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-cpu-intel-cpu-only
           nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
