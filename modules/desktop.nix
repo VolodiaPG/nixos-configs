@@ -8,26 +8,46 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
-
   # Enable the GNOME Desktop Environment.
-  # services.xserver.displayManager.gdm = {
-  #   enable = true;
-  #   autoSuspend = false;
-  # };
-  # services.xserver.desktopManager.gnome = {
-  #   enable = true;
-  #   # Override GNOME defaults to disable GNOME tour and disable suspend
-  #   extraGSettingsOverrides = ''
-  #     [org.gnome.desktop.session]
-  #     idle-delay=0
-  #     [org.gnome.settings-daemon.plugins.power]
-  #     sleep-inactive-ac-type='nothing'
-  #     sleep-inactive-battery-type='nothing'
-  #   '';
-  #   extraGSettingsOverridePackages = [ pkgs.gnome.gnome-settings-daemon ];
-  # };
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    autoSuspend = false;
+  };
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    # Override GNOME defaults to disable GNOME tour and disable suspend
+    extraGSettingsOverrides = ''
+      [org.gnome.desktop.session]
+      idle-delay=0
+      [org.gnome.settings-daemon.plugins.power]
+      sleep-inactive-ac-type='nothing'
+      sleep-inactive-battery-type='nothing'
+    '';
+    extraGSettingsOverridePackages = [ pkgs.gnome.gnome-settings-daemon ];
+  };
+
+  environment.gnome.excludePackages = (with pkgs; [
+    gnome-photos
+    gnome-tour
+    gnome-connections # Replaced by Remmina
+    orca
+  ]) ++ (with pkgs.gnome; [
+    cheese # webcam tool
+    gnome-music
+    gnome-terminal
+    epiphany # web browser
+    geary # email reader
+    gnome-characters
+    totem # video player
+    tali # poker game
+    iagno # go game
+    hitori # sudoku game
+    atomix # puzzle game
+    yelp
+    gnome-logs
+    gnome-maps
+    gnome-contacts
+  ]);
 
   services.lorri.enable = true; # fast direnv
 
@@ -39,62 +59,7 @@
   };
 
   # services.system76Scheduler = {
-  #   enable = true;
-  #   assignments = builtins.readFile ./system76-assignments.ron;
-  # };
-
-  # Enable sound.
-  hardware.pulseaudio.enable = false;
-  sound.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    # alsa.support32Bit = true;
-    pulse.enable = true;
-    config.pipewire = {
-      "context.properties" = {
-        "resample.quality" = 15;
-        "link.max-buffers" = 16;
-        "default.clock.rate" = 96000;
-        "default.clock.quantum" = 1024;
-        "default.clock.min-quantum" = 32;
-        "default.clock.max-quantum" = 8192;
-      };
-    };
-  };
-
-  # Thermal management
-  services.thermald.enable = true;
-
-  # ACPId
-  services.acpid.enable = true;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
-
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
-
-  programs = {
-    dconf.enable = true;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryFlavor = "gnome3";
-    };
-  };
-
-  environment.systemPackages = with pkgs; [
-    # Fish deps
-    fzf # Required by jethrokuan/fzf.
-    grc
-    libnotify
-    notify-desktop
-    tmux
-
-    bottom # call btm
-    libgtop
-    lm_sensors
+services.touchegg.enable
 
     remmina
     cloudflare-warp
@@ -105,21 +70,6 @@
 
     powerstat
 
-    # Gnome extensions
-    # gnomeExtensions.appindicator
-    # gnomeExtensions.vitals
-    # gnomeExtensions.pop-shell
-    # gnomeExtensions.hide-activities-button
-    # gnomeExtensions.remove-app-menu
-    # gnomeExtensions.gnome-40-ui-improvements
-    # gnomeExtensions.gsconnect
-    # gnomeExtensions.bing-wallpaper-changer
-    # gnomeExtensions.blur-my-shell
-    # gnomeExtensions.rounded-window-corners
-    # gnomeExtensions.media-controls
-    # gnomeExtensions.impatience
-
-    # Browser
     # firefox-beta-bin
     brave
     chromium

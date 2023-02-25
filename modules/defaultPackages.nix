@@ -30,5 +30,15 @@
     # File transfer
     sshfs-fuse # Mount remote filesystem over SSH with FUSE
     wget # Retrieve files from the web
+
+    # Fish deps
+    fzf # Required by jethrokuan/fzf.
+    grc
+    libnotify
+    notify-desktop
+    tmux
+
+    bottom # call btm
+    libgtop
   ];
 }
