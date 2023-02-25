@@ -3,6 +3,15 @@
   powerManagement.cpuFreqGovernor = "ondemand";
   powerManagement.powertop.enable = true;
   powerManagement.enable = true;
+  services.power-profiles-daemon.enable = false;
+  services.tlp.enable = true;
+  services.tlp.settings = {
+    CPU_BOOST_ON_BAT = 0;
+    CPU_SCALING_GOVERNOR_ON_BATTERY = "powersave";
+    START_CHARGE_THRESH_BAT0 = 90;
+    STOP_CHARGE_THRESH_BAT0 = 97;
+    RUNTIME_PM_ON_BAT = "auto";
+  };
 
   systemd.services.cfs-zen-tweaks = {
     description = "Zen CFS tweaks";
@@ -14,7 +23,6 @@
       ExecStart = "${pkgs.bash}/bin/bash ${pkgs.cfs-zen-tweaks}/lib/cfs-zen-tweaks/set-cfs-zen-tweaks.bash";
     };
   };
-
 
   boot = {
     cleanTmpDir = true;
