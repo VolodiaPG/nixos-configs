@@ -7,7 +7,7 @@ _: {
     user = "peerix";
     group = "peerix";
     disableBroadcast = true;
-    extraHosts = [ "asus" "msi-nixos" "precision-3571-nixos" ];
+    extraHosts = [ "asus" "msi" "dell" ]; # hostnames
   };
   users.users.peerix = {
     isSystemUser = true;

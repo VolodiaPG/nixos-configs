@@ -95,7 +95,7 @@
           nixos-hardware.nixosModules.common-pc-laptop-ssd
         ]);
       };
-      nixosConfigurations."msi-nixos" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."msi" = nixpkgs.lib.nixosSystem {
         inherit system specialArgs;
         modules = defaultModules ++ (with inputs;[
           ./machines/msi/hardware-configuration.nix
@@ -107,7 +107,7 @@
           nixos-hardware.nixosModules.common-pc-hdd
         ]);
       };
-      # nixosConfigurations.precision-3571-nixos = mkMachine "precision-3571" {
+      # nixosConfigurations.dell = mkMachine "dell" {
       #   inherit nixpkgs pkgs pkgs-unstable home-manager system user;
       #   additionnal-modules = modules-additionnal-sources ++ (with inputs;[
       #     nixos-hardware.nixosModules.common-cpu-intel
