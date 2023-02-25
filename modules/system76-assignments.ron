@@ -10,13 +10,13 @@
     "vlc",
     "mpv",
     ".gnome-shell-wr",
+    "Xorg",
 ],
 // Very high
 (-9, BestEffort(0)): [
     "easyeffects",
     "jamesdsp",
     //"Xwayland",
-    //"Xorg",
     //".gnome-session-",
     //"gdm",
     //"gdm-session-wor",
@@ -31,7 +31,7 @@
     "vrcompositor",
     "vrdashboard",
     "vrmonitor",
-    "vrserver",
+    "vrserver"
 ],
 // Default
 (0, Standard): [

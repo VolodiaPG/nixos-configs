@@ -58,9 +58,13 @@
     xkbOptions = "eurosign:e";
   };
 
-  # services.system76Scheduler = {
-services.touchegg.enable
+  services.system76Scheduler = {
+    enable = true;
+    assignments = builtins.readFile ./system76-assignments.ron;
+  };
+  services.touchegg.enable = true;
 
+  environment.systemPackages = with pkgs; [
     remmina
     cloudflare-warp
     veracrypt
