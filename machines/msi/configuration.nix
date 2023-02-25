@@ -18,7 +18,7 @@
 
   networking = {
     hostId = "30249671";
-    hostName = "msi-nixos";
+    hostName = "msi";
   };
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.

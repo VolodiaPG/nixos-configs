@@ -1,6 +1,10 @@
+# Edit this configuration file to define what should be installed on
+# your system.  Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running ‘nixos-help’).
+
 { config, pkgs, ... }:
+
 {
-  # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
     enable = true;
@@ -9,31 +13,19 @@
     efiSupport = true;
     enableCryptodisk = true;
   };
-  # Fix the screen off issue where the PC would keep screen off event after wake up
-  boot.kernelParams = [
-    "acpi_enforce_resources=lax"
-    "i915.enable_dc=0"
+  boot.blacklistedKernelModules = [
+    "nouveau"
+    "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
   ];
 
   networking = {
-    hostId = "30249672";
-    hostName = "hralaptop-nixos";
+    hostId = "30249675";
+    hostName = "dell";
   };
 
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  # programs.mosh.enable = true;
-  # programs.mosh.withUtempter = true;
-
-  # services.undervolt = {
-  #   enable = true;
-  #   coreOffset = -95;
-  #   gpuOffset = -95;
-  #   uncoreOffset = -95;
-  #   analogioOffset = -95;
-  # };
 
   hardware.cpu.intel.updateMicrocode = true;
 
@@ -50,9 +42,17 @@
     ];
   };
 
-  # environment.sessionVariables = {
-  #   LIBVA_DRIVER_NAME = "iHD";
-  # };
+  # Enable the X11 windowing system.
+  services.xserver = {
+    videoDrivers = [ "nvidia" ];
+    exportConfiguration = true;
+  };
+  hardware.nvidia = {
+    powerManagement.enable = true;
+    modesetting.enable = true;
+    nvidiaPersistenced = true;
+    nvidiaSettings = false;
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -61,4 +61,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.05"; # Did you read the comment?
+
 }
+
