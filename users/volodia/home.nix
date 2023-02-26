@@ -114,7 +114,8 @@
       };
 
       "org/gnome/shell/extensions/pop-shell" = {
-        "active-hint-border-radius" = 20;
+        "active-hint-border-radius" = 15;
+        "active-hint" = false;
         "mouse-cursor-follows-active-window" = true;
       };
 
@@ -237,22 +238,27 @@
     enable = true;
 
     iconTheme = {
-      name = "Pop";
-      package = pkgs.pop-icon-theme;
+      name = "Fluent-dark";
+      package = pkgs.fluent-icon-theme;
     };
 
     theme = {
-      name = "Pop";
-      package = pkgs.pop-gtk-theme;
+      name = "Orchis-Dark-Compact";
+
+      package = (pkgs.callPackage ../../pkgs/orchis-theme { }).override {
+        border-radius = 15;
+        sizeVariants = [ "compact" ];
+        tweaks = [ "macos" "submenu" ];
+      };
     };
 
-    cursorTheme = {
-      name = "Numix-Cursor";
-      package = pkgs.numix-cursor-theme;
-    };
+    # cursorTheme = {
+    #   name = "Yaru";
+    #   # package = pkgs.numix-cursor-theme;
+    # };
 
   };
-  home.sessionVariables.GTK_THEME = "popos";
+  home.sessionVariables.GTK_THEME = "Orchis-Dark-Compact";
 
   home.file.".config/discord/settings.json".text = ''
     {
