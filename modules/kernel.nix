@@ -1,13 +1,15 @@
 { pkgs, ... }:
 {
-  powerManagement.cpuFreqGovernor = "ondemand";
+  powerManagement.cpuFreqGovernor = "performance";
   powerManagement.powertop.enable = true;
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
   services.tlp.settings = {
-    CPU_BOOST_ON_BAT = 0;
+    CPU_BOOST_ON_BAT = 1;
+    CPU_BOOST_ON_AC = 1;
     CPU_SCALING_GOVERNOR_ON_BATTERY = "powersave";
+    CPU_SCALING_GOVERNOR_ON_AC = "performance";
     START_CHARGE_THRESH_BAT0 = 90;
     STOP_CHARGE_THRESH_BAT0 = 97;
     RUNTIME_PM_ON_BAT = "auto";

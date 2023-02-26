@@ -1,4 +1,4 @@
-default: boot
+default: switch
 
 updateindex:
     updateindex

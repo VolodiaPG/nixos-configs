@@ -9,13 +9,13 @@
     "wireplumber",
     "vlc",
     "mpv",
-    ".gnome-shell-wr",
-    "Xorg",
 ],
 // Very high
 (-9, BestEffort(0)): [
     "easyeffects",
     "jamesdsp",
+    ".gnome-shell-wr",
+    "Xorg",
     //"Xwayland",
     //".gnome-session-",
     //"gdm",

@@ -17,7 +17,7 @@
   nixpkgs.overlays = overlays;
   nixpkgs.config = {
     allowUnfree = true;
-    allowUnfreePredicate = (pkg: true);
+    allowUnfreePredicate = _pkg: true;
   };
 
   nix = {
@@ -77,6 +77,13 @@
     enable = true;
     allowSFTP = true;
   };
+
+  # GnuPG
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  services.pcscd.enable = true;
 
   # security.polkit.extraConfig = ''
   #     polkit.addRule(function(action, subject) {
