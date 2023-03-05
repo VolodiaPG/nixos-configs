@@ -79,6 +79,9 @@
       gnomeExtensions.impatience
       gnomeExtensions.hibernate-status-button
       gnomeExtensions.x11-gestures
+
+      gnome-obfuscate
+
       play-with-mpv
     ]
     ++ [
