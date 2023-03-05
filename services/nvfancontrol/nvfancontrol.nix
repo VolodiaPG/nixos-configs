@@ -1,9 +1,12 @@
-{ config, pkgs, lib, ... }:
-
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   options = {
-    services.nvfancontrol = with lib; with types; {
+    services.nvfancontrol = with lib;
+    with types; {
       enable = mkEnableOption "nvfancontrol";
 
       package = mkOption {
@@ -28,17 +31,16 @@
 
   ### Implementation ###
 
-  config =
-    let
-      cfg = config.services.nvfancontrol;
-    in
+  config = let
+    cfg = config.services.nvfancontrol;
+  in
     lib.mkIf cfg.enable {
       systemd.services.nvfancontrol = {
         inherit (cfg.enable);
         description = "Nvidia fan control startup";
-        wantedBy = [ "graphical-session.target" ];
-        partOf = [ "graphical-session.target" ];
-        environment = { DISPLAY = ":0"; };
+        wantedBy = ["graphical-session.target"];
+        partOf = ["graphical-session.target"];
+        environment = {DISPLAY = ":0";};
         script = "echo $DISPLAY && ${cfg.package}/bin/nvfancontrol ${cfg.cliArgs}";
       };
 
@@ -46,7 +48,7 @@
         "xdg/nvfancontrol.conf".text = "${cfg.configuration}";
       };
 
-      environment.systemPackages = [ cfg.package ];
+      environment.systemPackages = [cfg.package];
 
       services.xserver = {
         deviceSection = ''
@@ -55,4 +57,3 @@
       };
     };
 }
-

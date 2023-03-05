@@ -1,5 +1,5 @@
 final: prev: {
-  mpv-unwrapped = prev.mpv-unwrapped.override { vapoursynthSupport = true; };
+  mpv-unwrapped = prev.mpv-unwrapped.override {vapoursynthSupport = true;};
 
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [
@@ -21,5 +21,5 @@ final: prev: {
   #   #   #  prev.vs-overlay.packages.x86_64-linux
   #   # ];
   # };
-  mpv = final.wrapMpv final.mpv-unwrapped { youtubeSupport = true; };
+  mpv = final.wrapMpv final.mpv-unwrapped {youtubeSupport = true;};
 }

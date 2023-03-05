@@ -1,5 +1,11 @@
-{ bcc, pkg-config, dbus, lib, rustPlatform, fetchFromGitHub }:
-
+{
+  bcc,
+  pkg-config,
+  dbus,
+  lib,
+  rustPlatform,
+  fetchFromGitHub,
+}:
 rustPlatform.buildRustPackage {
   pname = "system76-scheduler";
   version = "unstable-2022-10-05";
@@ -10,11 +16,11 @@ rustPlatform.buildRustPackage {
     sha256 = "sha256-eB1Qm+ITlLM51nn7GG42bydO1SQ4ZKM0wgRl8q522vw=";
   };
 
-  cargoPatches = [ ./ron-rev.diff ];
+  cargoPatches = [./ron-rev.diff];
   cargoSha256 = "sha256-EzvJEJlJzCzNEJLCE3U167LkaQHzGthPhIJ6fp0aGk8=";
 
-  nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ dbus ];
+  nativeBuildInputs = [pkg-config];
+  buildInputs = [dbus];
 
   EXECSNOOP_PATH = "${bcc}/bin/execsnoop";
 
@@ -28,7 +34,7 @@ rustPlatform.buildRustPackage {
     description = "System76 Scheduler";
     homepage = "https://github.com/pop-os/system76-scheduler";
     license = licenses.mpl20;
-    platforms = [ "i686-linux" "x86_64-linux" ];
-    maintainers = [ maintainers.cmm ];
+    platforms = ["i686-linux" "x86_64-linux"];
+    maintainers = [maintainers.cmm];
   };
 }

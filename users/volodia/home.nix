@@ -1,5 +1,9 @@
-{ pkgs, overlays, ... }:
 {
+  pkgs,
+  pkgs-unstable,
+  overlays,
+  ...
+}: {
   nixpkgs.overlays = overlays;
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -9,11 +13,10 @@
   home.username = "volodia";
   home.homeDirectory = "/home/volodia";
 
-  programs.nix-index =
-    {
-      enable = true;
-      enableFishIntegration = true;
-    };
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+  };
 
   programs.fish = {
     # 2. Enable fish-shell if you didn't.
@@ -30,9 +33,18 @@
           sha256 = "sha256-28QW/WTLckR4lEfHv6dSotwkAKpNJFCShxmKFGQQ1Ew=";
         };
       }
-      { name = "grc"; inherit (pkgs.fishPlugins.grc) src; }
-      { name = "done"; inherit (pkgs.fishPlugins.done) src; }
-      { name = "pure"; inherit (pkgs.fishPlugins.pure) src; }
+      {
+        name = "grc";
+        inherit (pkgs.fishPlugins.grc) src;
+      }
+      {
+        name = "done";
+        inherit (pkgs.fishPlugins.done) src;
+      }
+      {
+        name = "pure";
+        inherit (pkgs.fishPlugins.pure) src;
+      }
     ];
 
     shellAliases = {
@@ -67,9 +79,28 @@
       gnomeExtensions.impatience
       gnomeExtensions.hibernate-status-button
       gnomeExtensions.x11-gestures
+      play-with-mpv
+    ]
+    ++ [
+      pkgs-unstable.mpv
     ];
 
-
+  systemd.user.services = {
+    play-with-mpv = {
+      Service = {
+        Requires = ["xdg-desktop-autostart.target"];
+        ExecStart = let
+          script = pkgs.writeShellScript "play-with-mpv-script" ''
+            ${pkgs.systemd}/share/factory/etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+            ${pkgs.play-with-mpv}/bin/play-with-mpv
+          '';
+        in "${script}";
+      };
+      Install = {
+        WantedBy = ["default.target"];
+      };
+    };
+  };
   dconf = {
     enable = true;
     settings = {
@@ -109,7 +140,7 @@
       };
 
       "org/gnome/shell/extensions/vitals" = {
-        hot-sensors = [ "_memory_usage_" "__network-tx_max__" "__network-rx_max__" "_processor_usage_" "_processor_frequency_" "_system_load_1m_" "__temperature_max__" ];
+        hot-sensors = ["_memory_usage_" "__network-tx_max__" "__network-rx_max__" "_processor_usage_" "_processor_frequency_" "_system_load_1m_" "__temperature_max__"];
         position-in-panel = 3;
       };
 
@@ -122,58 +153,58 @@
       # disable incompatible shortcuts
       "org/gnome/mutter/wayland/keybindings" = {
         # restore the keyboard shortcuts: disable <super>escape
-        restore-shortcuts = [ ];
+        restore-shortcuts = [];
       };
       "org/gnome/desktop/wm/preferences" = {
         focus-mode = "mouse";
       };
       "org/gnome/desktop/wm/keybindings" = {
         # hide window: disable <super>h
-        minimize = [ ];
+        minimize = [];
         # switch to workspace left: disable <super>left
-        switch-to-workspace-left = [ "<primary><super>left" ];
+        switch-to-workspace-left = ["<primary><super>left"];
         # switch to workspace right: disable <super>right
-        switch-to-workspace-right = [ "<primary><super>right" ];
+        switch-to-workspace-right = ["<primary><super>right"];
         # maximize window: disable <super>up
-        maximize = [ ];
+        maximize = [];
         # restore window: disable <super>down
-        unmaximize = [ ];
+        unmaximize = [];
         # move to monitor up: disable <super><shift>up
-        move-to-monitor-up = [ ];
+        move-to-monitor-up = [];
         # move to monitor down: disable <super><shift>down
-        move-to-monitor-down = [ ];
+        move-to-monitor-down = [];
         # super + direction keys, move window left and right monitors, or up and down workspaces
         # move window one monitor to the left
-        move-to-monitor-left = [ ];
-        move-to-workspace-left = [ "<primary><super><shift>left" ];
+        move-to-monitor-left = [];
+        move-to-workspace-left = ["<primary><super><shift>left"];
         # move window one workspace down
-        move-to-workspace-down = [ ];
+        move-to-workspace-down = [];
         # move window one workspace up
-        move-to-workspace-up = [ ];
+        move-to-workspace-up = [];
         # move window one monitor to the right
-        move-to-monitor-right = [ ];
-        move-to-workspace-right = [ "<primary><super><shift>right" ];
+        move-to-monitor-right = [];
+        move-to-workspace-right = ["<primary><super><shift>right"];
         # super + ctrl + direction keys, change workspaces, move focus between monitors
         # move to workspace below
-        switch-to-workspace-down = [ "<primary><super>down" "<primary><super>j" ];
+        switch-to-workspace-down = ["<primary><super>down" "<primary><super>j"];
         # move to workspace above
-        switch-to-workspace-up = [ "<primary><super>up" "<primary><super>k" ];
+        switch-to-workspace-up = ["<primary><super>up" "<primary><super>k"];
         # toggle maximization state
-        toggle-maximized = [ ];
+        toggle-maximized = [];
         # close window
-        close = [ "<super>q" "<alt>f4" ];
+        close = ["<super>q" "<alt>f4"];
       };
       "org/gnome/shell/keybindings" = {
-        open-application-menu = [ ];
+        open-application-menu = [];
         # toggle message tray: disable <super>m
-        toggle-message-tray = [ "<super>v" ];
+        toggle-message-tray = ["<super>v"];
         # show the activities overview: disable <super>s
-        toggle-overview = [ ];
+        toggle-overview = [];
       };
       "org/gnome/mutter/keybindings" = {
         # disable tiling to left / right of screen
-        toggle-tiled-left = [ ];
-        toggle-tiled-right = [ ];
+        toggle-tiled-left = [];
+        toggle-tiled-right = [];
       };
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         binding = "<super>t";
@@ -182,25 +213,25 @@
       };
       "org/gnome/settings-daemon/plugins/media-keys" = {
         # lock screen
-        screensaver = [ "<super>escape" ];
+        screensaver = ["<super>escape"];
         # home folder
-        home = [ "<super>f" ];
+        home = ["<super>f"];
         # launch email client
-        email = [ "<super>e" ];
+        email = ["<super>e"];
         # launch web browser
-        www = [ "<super>b" ];
+        www = ["<super>b"];
         # launch terminal
         # terminal = [ "<super>t" ];
         # rotate video lock
-        rotate-video-lock-static = [ ];
+        rotate-video-lock-static = [];
         # Next trac
-        next = [ "<Control><Alt><Super>space" ];
-        play = [ "<Alt><Super>space" ];
-        previous = [ "<Shift><Alt><Super>space" ];
-        volume-down = [ "KP_Subtract" ];
-        volume-up = [ "KP_Add" ];
+        next = ["<Control><Alt><Super>space"];
+        play = ["<Alt><Super>space"];
+        previous = ["<Shift><Alt><Super>space"];
+        volume-down = ["KP_Subtract"];
+        volume-up = ["KP_Add"];
         # Terminal
-        custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
+        custom-keybindings = ["/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"];
       };
       "org/gnome/mutter" = {
         workspaces-only-on-primary = false;
@@ -218,7 +249,7 @@
       "org/gnome/shell/extensions/blur-my-shell/applications" = {
         blur = false;
         opacity = 230;
-        whitelist = [ "Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" "lapce" ];
+        whitelist = ["Kgx" "org.gnome.Console" "Org.gnome.Nautilus" "Code" "gnome-control-center" "tidal-hifi" "discord" "lapce"];
       };
       "org/gnome/shell/extensions/rounded-window-corners" = {
         global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 20>, 'smoothing': <0.10000000000000001>, 'enabled': <true>}";
@@ -238,27 +269,32 @@
     enable = true;
 
     iconTheme = {
-      name = "Fluent-dark";
+      name = "Fluent";
       package = pkgs.fluent-icon-theme;
     };
 
-    theme = {
-      name = "Orchis-Dark-Compact";
+    #theme = {
+    #  name = "Orchis";
 
-      package = (pkgs.callPackage ../../pkgs/orchis-theme { }).override {
-        border-radius = 15;
-        sizeVariants = [ "compact" ];
-        tweaks = [ "macos" "submenu" ];
-      };
-    };
+    #package = (pkgs.callPackage ../../pkgs/orchis-theme { }).override {
+    #  border-radius = 2;
+    #  sizeVariants = [ "compact" ];
+    #  tweaks = [ "macos" ];
+    #};
+    #};
 
     # cursorTheme = {
     #   name = "Yaru";
     #   # package = pkgs.numix-cursor-theme;
     # };
-
   };
-  home.sessionVariables.GTK_THEME = "Orchis-Dark-Compact";
+
+  qt = {
+    enable = true;
+    platformTheme = "gtk";
+    style.name = "gtk2";
+  };
+  # home.sessionVariables.GTK_THEME = "Orchis";
 
   home.file.".config/discord/settings.json".text = ''
     {

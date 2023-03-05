@@ -1,12 +1,15 @@
-{ pkgs, ... }: {
-
+{pkgs, ...}: {
   # enable the tailscale daemon; this will do a variety of tasks:
   # 1. create the TUN network device
   # 2. setup some IP routes to route through the TUN
-  services.tailscale = { enable = true; };
+  services.tailscale = {enable = true;};
+
+  networking.nameservers = ["1.1.1.1" "1.0.0.1"];
+
+  networking.firewall.checkReversePath = "loose";
 
   # Let's open the UDP port with which the network is tunneled through
-  networking.firewall.allowedUDPPorts = [ 41641 ];
+  networking.firewall.allowedUDPPorts = [41641];
 
   # Disable SSH access through the firewall
   # Only way into the machine will be through
@@ -15,9 +18,8 @@
   # Better to rely on EC2 SecurityGroups
   # services.openssh.openFirewall = false;
 
-
   # trace: warning: Strict reverse path filtering breaks Tailscale exit node use and some subnet routing setups. Consider setting `networking.firewall.checkReversePath` = 'loose'
 
   # Let's make the tailscale binary available to all users
-  environment.systemPackages = [ pkgs.tailscale ];
+  environment.systemPackages = [pkgs.tailscale];
 }

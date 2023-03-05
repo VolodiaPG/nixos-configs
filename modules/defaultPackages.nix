@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   environment.systemPackages = with pkgs; [
     # Terminal tools
     coreutils # Basic GNU utilities
@@ -12,7 +12,7 @@
     parallel # Much smarter xargs
     progress # View current progress of coreutils tools
     zip # ZIP file manipulation
-    unzip 
+    unzip
     gdu # Manager files and see sizes quickly
     micro # text editor
     zoxide # smart CD that remembers

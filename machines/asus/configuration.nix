@@ -1,9 +1,7 @@
-{ config, pkgs, ... }:
-{
-  imports =
-    [
-      ../../services/nbfc-linux/nbfc-linux.nix
-    ];
+{pkgs, ...}: {
+  imports = [
+    ../../services/nbfc-linux/nbfc-linux.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -37,16 +35,16 @@
 
   hardware.cpu.intel.updateMicrocode = true;
 
-  # nixpkgs.config.packageOverrides = pkgs: {
-  #   vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  # };
+  #nixpkgs.config.packageOverrides = pkgs: {
+  #  vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  #};
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
+      #vaapiVdpau
       intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      # vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      # vaapiVdpau
-      # libvdpau-va-gl
+      #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      #libvdpau-va-gl
     ];
   };
 

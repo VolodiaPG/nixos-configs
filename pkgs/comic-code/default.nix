@@ -1,5 +1,7 @@
-{ stdenv, lib }:
-
+{
+  stdenv,
+  lib,
+}:
 stdenv.mkDerivation rec {
   version = "1.0.0";
   name = "comic-code-${version}";
@@ -20,7 +22,7 @@ stdenv.mkDerivation rec {
       combinations.
     '';
     license = licenses.ofl;
-    maintainers = [ maintainers.rycee ];
+    maintainers = [maintainers.rycee];
     platforms = platforms.all;
   };
 }

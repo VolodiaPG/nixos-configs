@@ -7,15 +7,11 @@
     "pipewire",
     "pipewire-pulse",
     "wireplumber",
-    "vlc",
-    "mpv",
 ],
 // Very high
 (-9, BestEffort(0)): [
     "easyeffects",
     "jamesdsp",
-    ".gnome-shell-wr",
-    "Xorg",
     //"Xwayland",
     //".gnome-session-",
     //"gdm",
@@ -24,6 +20,8 @@
 ],
 // High priority
 (-5, BestEffort(4)): [
+    ".gnome-shell-wr",
+    "Xorg",
     "amsynth",
     "kwin",
     "sway",
@@ -32,6 +30,8 @@
     "vrdashboard",
     "vrmonitor",
     "vrserver"
+    "vlc",
+    "mpv",
 ],
 // Default
 (0, Standard): [

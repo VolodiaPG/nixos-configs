@@ -7,11 +7,11 @@ _: {
     user = "peerix";
     group = "peerix";
     disableBroadcast = true;
-    extraHosts = [ "asus" "msi" "dell" ]; # hostnames
+    extraHosts = ["asus" "msi" "dell"]; # hostnames
   };
   users.users.peerix = {
     isSystemUser = true;
     group = "peerix";
   };
-  users.groups.peerix = { };
+  users.groups.peerix = {};
 }

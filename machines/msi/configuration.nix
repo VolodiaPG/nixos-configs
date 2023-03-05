@@ -1,5 +1,8 @@
-{ config, pkgs, lib, ... }:
 {
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ../../services/nvfancontrol/nvfancontrol.nix
   ];
@@ -42,7 +45,7 @@
 
   # Enable the X11 windowing system.
   services.xserver = {
-    videoDrivers = [ "nvidia" ];
+    videoDrivers = ["nvidia"];
     exportConfiguration = true;
   };
   hardware.nvidia = {
@@ -63,7 +66,7 @@
     configuration = ''
       [[gpu]]
       id = 0
-      
+
       points = [
           [50,0],
           [54,0],

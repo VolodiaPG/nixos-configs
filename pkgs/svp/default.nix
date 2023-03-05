@@ -1,8 +1,8 @@
-{ pkgs ? import <nixpkgs> { }
-, lib ? pkgs.lib
-, # ripgrep
-}:
-let
+{
+  pkgs ? import <nixpkgs> {},
+  lib ? pkgs.lib,
+  # ripgrep
+}: let
   originalPackage = pkgs.nur.repos.xddxdd.svp;
 
   # We use `overrideAttrs` instead of defining a new `mkDerivation` to keep
@@ -21,21 +21,22 @@ let
         # to save disk space.
         # We could alternatiively also copy (`cp -a --no-preserve=mode`).
         lib.concatStringsSep "\n"
-          (map
-            (outputName:
-              ''
-                echo "Copying output ${outputName}"
-                set -x
-                cp -rs --no-preserve=mode "${originalPackage.${outputName}}" "''$${outputName}"
-                set +x
-              ''
-            )
-            (old.outputs or ["out"])
+        (
+          map
+          (
+            outputName: ''
+              echo "Copying output ${outputName}"
+              set -x
+              cp -rs --no-preserve=mode "${originalPackage.${outputName}}" "''$${outputName}"
+              set +x
+            ''
           )
+          (old.outputs or ["out"])
+        )
       }
- 
+
       export CONTENT=$(cat "${originalPackage}"/bin/SVPManager)
-      
+
       regex='symlink (.*)/bin/mpv /usr/bin/mpv'
       [[ $CONTENT =~ $regex ]]
 
@@ -51,4 +52,4 @@ let
     '';
   });
 in
-svpOverridenWayland
+  svpOverridenWayland

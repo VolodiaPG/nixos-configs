@@ -1,5 +1,9 @@
-{ config, pkgs, pkgs-unstable, ... }:
 {
+  config,
+  pkgs,
+  pkgs-unstable,
+  ...
+}: {
   imports = [
     ../services/system76-scheduler/system76-scheduler.nix
   ];
@@ -23,31 +27,33 @@
       sleep-inactive-ac-type='nothing'
       sleep-inactive-battery-type='nothing'
     '';
-    extraGSettingsOverridePackages = [ pkgs.gnome.gnome-settings-daemon ];
+    extraGSettingsOverridePackages = [pkgs.gnome.gnome-settings-daemon];
   };
 
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-    gnome-connections # Replaced by Remmina
-    orca
-  ]) ++ (with pkgs.gnome; [
-    cheese # webcam tool
-    gnome-music
-    gnome-terminal
-    epiphany # web browser
-    geary # email reader
-    gnome-characters
-    totem # video player
-    tali # poker game
-    iagno # go game
-    hitori # sudoku game
-    atomix # puzzle game
-    yelp
-    gnome-logs
-    gnome-maps
-    gnome-contacts
-  ]);
+  environment.gnome.excludePackages =
+    (with pkgs; [
+      gnome-photos
+      gnome-tour
+      gnome-connections # Replaced by Remmina
+      orca
+    ])
+    ++ (with pkgs.gnome; [
+      cheese # webcam tool
+      gnome-music
+      gnome-terminal
+      epiphany # web browser
+      geary # email reader
+      gnome-characters
+      totem # video player
+      tali # poker game
+      iagno # go game
+      hitori # sudoku game
+      atomix # puzzle game
+      yelp
+      gnome-logs
+      gnome-maps
+      gnome-contacts
+    ]);
 
   services.lorri.enable = true; # fast direnv
 
@@ -64,83 +70,89 @@
   };
   services.touchegg.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    remmina
-    cloudflare-warp
-    veracrypt
-    pavucontrol
+  environment.systemPackages = with pkgs;
+    [
+      remmina
+      cloudflare-warp
+      veracrypt
+      pavucontrol
 
-    distrobox
+      distrobox
 
-    powerstat
+      powerstat
 
-    # firefox-beta-bin
-    brave
-    chromium
-    # tor-browser-bundle-bin
+      # firefox-beta-bin
+      brave
+      # chromium
+      #ungoogled-chromium
+      #firefox-bin
+      # tor-browser-bundle-bin
 
-    # lapce
-    (pkgs-unstable.vscode-with-extensions.override {
-      vscodeExtensions = with pkgs-unstable.vscode-extensions; [
-        # vadimcn.vscode-lldb
-        matklad.rust-analyzer
-        jnoortheen.nix-ide
-        # ms-python.python
-        skellock.just
-        arrterian.nix-env-selector
-        eamodio.gitlens
-        usernamehw.errorlens
-      ] ++ pkgs-unstable.vscode-utils.extensionsFromVscodeMarketplace [
-        {
-          publisher = "vscode-icons-team";
-          name = "vscode-icons";
-          version = "12.0.1";
-          sha256 = "sha256-zxKD+8PfuaBaNoxTP1IHwG+25v0hDkYBj4RPn7mSzzU=";
-        }
-        {
-          publisher = "teabyii";
-          name = "ayu";
-          version = "1.0.5";
-          sha256 = "sha256-+IFqgWliKr+qjBLmQlzF44XNbN7Br5a119v9WAnZOu4=";
-        }
-        {
-          publisher = "iliazeus";
-          name = "vscode-ansi";
-          version = "1.1.2";
-          sha256 = "sha256-sQfaykUy3bqL2QFicxR6fyZQtOXtL/BqV0dbAPMh+lA=";
-        }
-      ];
-    })
+      # lapce
+      (pkgs-unstable.vscode-with-extensions.override {
+        vscodeExtensions = with pkgs-unstable.vscode-extensions;
+          [
+            # vadimcn.vscode-lldb
+            matklad.rust-analyzer
+            jnoortheen.nix-ide
+            # ms-python.python
+            skellock.just
+            arrterian.nix-env-selector
+            eamodio.gitlens
+            usernamehw.errorlens
+          ]
+          ++ pkgs-unstable.vscode-utils.extensionsFromVscodeMarketplace [
+            {
+              publisher = "vscode-icons-team";
+              name = "vscode-icons";
+              version = "12.0.1";
+              sha256 = "sha256-zxKD+8PfuaBaNoxTP1IHwG+25v0hDkYBj4RPn7mSzzU=";
+            }
+            {
+              publisher = "teabyii";
+              name = "ayu";
+              version = "1.0.5";
+              sha256 = "sha256-+IFqgWliKr+qjBLmQlzF44XNbN7Br5a119v9WAnZOu4=";
+            }
+            {
+              publisher = "iliazeus";
+              name = "vscode-ansi";
+              version = "1.1.2";
+              sha256 = "sha256-sQfaykUy3bqL2QFicxR6fyZQtOXtL/BqV0dbAPMh+lA=";
+            }
+          ];
+      })
 
-    # Office
-    libreoffice
-    xournalpp
-    zotero
+      # Office
+      libreoffice
+      xournalpp
+      zotero
 
-    # Media
-    tidal-hifi
-    libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
-    mpv
-    vlc
+      # Media
+      tidal-hifi
+      libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
+      # mpv
+      vlc
 
-    # Chat
-    discord
-    signal-desktop
+      # Chat
+      discord
+      signal-desktop
 
-    # Development
-    nixpkgs-fmt # Nix formatter
-    insomnia
-    gitui
+      # Development
+      nixpkgs-fmt # Nix formatter
+      insomnia
+      gitui
 
-    # Utils
-    # boxes
+      # Utils
+      # boxes
 
-    spice-vdagent # copy paste for vms
-  ] ++ [
-    pkgs-unstable.bottles
-    pkgs-unstable.lapce
-    pkgs-unstable.powertop
-  ];
+      spice-vdagent # copy paste for vms
+    ]
+    ++ [
+      pkgs-unstable.bottles
+      pkgs-unstable.lapce
+      pkgs-unstable.powertop
+    ];
 
   fonts.fonts = with pkgs; [
     # powerline-fonts
@@ -153,7 +165,7 @@
     roboto
     joypixels
     # nerdfonts
-    (callPackage ../pkgs/comic-code { })
+    (callPackage ../pkgs/comic-code {})
   ];
 
   nixpkgs.config.joypixels.acceptLicense = true; # Personal use only
@@ -187,11 +199,20 @@
   networking.firewall = {
     enable = true;
     allowedTCPPortRanges = [
-      { from = 6881; to = 6999; } # Torrents
-      { from = 1714; to = 1764; } # KDEConnect
+      {
+        from = 6881;
+        to = 6999;
+      } # Torrents
+      {
+        from = 1714;
+        to = 1764;
+      } # KDEConnect
     ];
     allowedUDPPortRanges = [
-      { from = 1714; to = 1764; } # KDEConnect
+      {
+        from = 1714;
+        to = 1764;
+      } # KDEConnect
     ];
     allowedTCPPorts = [
       22 # SSH
