@@ -4,7 +4,7 @@
   overlays,
   ...
 }: {
-  nixpkgs.overlays = overlays;
+  nixpkgs.overlays = overlays; #import ../../lib/overlays.nix;
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -82,7 +82,9 @@
 
       gnome-obfuscate
 
+      #mpv
       play-with-mpv
+      yt-dlp
     ]
     ++ [
       pkgs-unstable.mpv
@@ -90,7 +92,7 @@
 
   systemd.user.services = {
     play-with-mpv = {
-      serviceConfig = {
+      Service = {
         ExecStart = let
           script = pkgs.writeShellScript "play-with-mpv-script" ''
             PATH=$PATH:${pkgs-unstable.mpv}/bin
@@ -99,7 +101,7 @@
           '';
         in "${script}";
       };
-      Install = {
+      Unit = {
         Requires = ["xdg-desktop-autostart.target"];
         WantedBy = ["default.target"];
       };

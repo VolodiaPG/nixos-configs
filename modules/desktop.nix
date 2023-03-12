@@ -12,6 +12,8 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # services.xserver.desktopManager.plasma5.enable = true;
+  # services.xserver.displayManager.sddm.enable = true;
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm = {
     enable = true;
@@ -68,7 +70,39 @@
     enable = true;
     assignments = builtins.readFile ./system76-assignments.ron;
   };
-  services.touchegg.enable = true;
+  # services.touchegg.enable = true;
+  # Enable sound.
+
+  hardware.pulseaudio.enable = false;
+  sound.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    # alsa.support32Bit = true;
+    pulse.enable = true;
+    config.pipewire = {
+      "context.properties" = {
+        "resample.quality" = 15;
+        "link.max-buffers" = 16;
+        "default.clock.rate" = 96000;
+        "default.clock.quantum" = 1024;
+        "default.clock.min-quantum" = 32;
+        "default.clock.max-quantum" = 8192;
+      };
+    };
+  };
+
+  services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+
+  programs = {
+    dconf.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+      pinentryFlavor = "gnome3";
+    };
+  };
 
   environment.systemPackages = with pkgs;
     [

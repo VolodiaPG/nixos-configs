@@ -1,9 +1,10 @@
 {pkgs, ...}: {
-  powerManagement.cpuFreqGovernor = "performance";
+  powerManagement.cpuFreqGovernor = "powersave";
   powerManagement.powertop.enable = true;
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
   services.thermald.enable = true;
+  services.acpid.enable = true;
   # services.tlp.enable = true;
   # services.tlp.settings = {
   #   CPU_BOOST_ON_BAT = 1;
@@ -35,7 +36,7 @@
     */
     # kernelPackages = pkgs.recurseIntoAttrs (pkgs.linuxPackagesFor pkgs.linux-cachyos);
     #kernelPackages = pkgs-unstable.recurseIntoAttrs (pkgs-unstable.linuxPackagesFor pkgs-unstable.linux-xanmod-volodiapg);
-    # kernelPackages = pkgs.linuxPackages-rt_latest;
+    #kernelPackages = pkgs.linuxPackages-rt_latest;
     # kernelPackages = pkgs.linuxPackages_zen;
     # kernelPackages = pkgs.linuxPackages_xanmod_latest;
     kernelPackages = pkgs.linuxPackages_latest;
@@ -57,10 +58,11 @@
     #   "mitigations=off"
     #];
 
-    # kernelParams = [
-    #   "ahci.mobile_lpm_policy=3"
-    #   "intel_pstate=active"
-    # ];
+    kernelParams = [
+      # "ahci.mobile_lpm_policy=3"
+      # "intel_pstate=disable" # switch to acpi-cpufreq instead
+      # "enable_guc=3"
+    ];
 
     # kernel.sysctl = {
     #   # "kernel.sched_migration_cost_ns" = 5000000;

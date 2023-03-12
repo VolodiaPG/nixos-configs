@@ -5,8 +5,11 @@
 // Prevent audio crackling from sound services.
 (-11, Realtime(0)): [
     "pipewire",
+    "pulseaudio",
     "pipewire-pulse",
     "wireplumber",
+    "vlc",
+    "mpv",
 ],
 // Very high
 (-9, BestEffort(0)): [
@@ -22,6 +25,7 @@
 (-5, BestEffort(4)): [
     ".gnome-shell-wr",
     "Xorg",
+    "gdm",
     "amsynth",
     "kwin",
     "sway",
@@ -30,8 +34,6 @@
     "vrdashboard",
     "vrmonitor",
     "vrserver"
-    "vlc",
-    "mpv",
 ],
 // Default
 (0, Standard): [
@@ -94,6 +96,7 @@
 ],
 // Absolute lowest priority
 (19, Idle): [
+    "nbfc_service",
     "nix",
     "nix-build",
     "nixos",
