@@ -1,12 +1,15 @@
-default: switch
+_default: homemanager
+
+homemanager:
+    home-manager switch --flake .#volodia
 
 updateindex:
     updateindex
 
-switch:
+switch: homemanager
     sudo nixos-rebuild switch --flake .#$(hostname)
 
-boot:
+boot: homemanager
     sudo nixos-rebuild boot --flake .#$(hostname)
 
 test:

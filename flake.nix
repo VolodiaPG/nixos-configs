@@ -53,6 +53,10 @@
         ])
         ++ import ./lib/overlays.nix;
 
+      pkgs = import nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
       pkgs-unstable = import nixpkgs-unstable {
         inherit system overlays;
         config.allowUnfree = true;
@@ -61,11 +65,22 @@
       specialArgs = {
         inherit pkgs-unstable overlays;
       };
+      # homeManagerModule = {
+      #   nix.registry.self.flake = inputs.self;
+      #   home-manager.users.volodia = import ./users/volodia/home.nix;
+      #   home-manager.useGlobalPkgs = false;
+      #   home-manager.useUserPackages = true;
+      #   home-manager.extraSpecialArgs = {
+      #     inherit pkgs-unstable overlays;
+      #   };
+      # };
+      # home-manager.nixosModules.home-manager
       defaultModules = [
         {
           nix.registry.self.flake = inputs.self;
           nixpkgs.overlays = overlays;
         }
+        inputs.nur-xddxdd.nixosModules.setupOverlay
         {
           environment.systemPackages = [
             # inputs.nix-software-center.packages.${system}.nix-software-center
@@ -73,21 +88,15 @@
           ];
         }
         inputs.peerix.nixosModules.peerix
-        inputs.nur-xddxdd.nixosModules.setupOverlay
-        home-manager.nixosModules.home-manager
         ./modules
-        {
-          nix.registry.self.flake = inputs.self;
-          home-manager.users.volodia = import ./users/volodia/home.nix;
-          home-manager.useGlobalPkgs = false;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = {
-            inherit pkgs-unstable overlays;
-          };
-        }
       ];
     in
       {
+        homeConfigurations."volodia" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [./users/volodia/home.nix];
+          extraSpecialArgs = specialArgs;
+        };
         # Do not forget to also add to peerix to share the derivations
         nixosConfigurations."asus" = nixpkgs.lib.nixosSystem {
           inherit system specialArgs;
@@ -151,7 +160,7 @@
 
           devShell = nixpkgs.legacyPackages.${system}.mkShell {
             inherit (self.checks.${system}.pre-commit-check) shellHook;
-            buildInputs = with pkgs-unstable; [just git git-crypt cocogitto];
+            buildInputs = with pkgs-unstable; [just git git-crypt cocogitto home-manager];
           };
         }
       );
