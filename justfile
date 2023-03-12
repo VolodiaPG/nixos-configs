@@ -6,11 +6,12 @@ homemanager:
 updateindex:
     updateindex
 
-switch: homemanager
-    sudo nixos-rebuild switch --flake .#$(hostname)
-
-boot: homemanager
+boot: 
     sudo nixos-rebuild boot --flake .#$(hostname)
+    just homemanager
+
+switch: boot
+    sudo nixos-rebuild switch --flake .#$(hostname)
 
 test:
     sudo nixos-rebuild test --flake .#$(hostname)
