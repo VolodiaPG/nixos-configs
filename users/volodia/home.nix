@@ -2,15 +2,13 @@
   lib,
   pkgs,
   overlays,
-  graphical ? "none",
+  graphical,
+  apps,
   ...
 }: {
   imports =
-    [
-      ./packages.nix
-      ./mpv.nix
-    ]
-    ++ lib.optional (graphical == "gnome") ./gnome.nix;
+    lib.optional (graphical == "gnome") ./gnome.nix
+    ++ lib.optional (apps != "no-apps") ./packages;
 
   nixpkgs.overlays = overlays;
   nixpkgs.config.allowUnfree = true;

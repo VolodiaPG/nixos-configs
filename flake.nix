@@ -90,44 +90,30 @@
         inputs.peerix.nixosModules.peerix
         ./modules
       ];
-      # hmConfigurations =
-      # builtins.listToAttrs
-      #       (
-      #         builtins.map
-      #           (
-      #             graphical:
-      #             home-manager.lib.homeManagerConfiguration {
-      #               inherit pkgs;
-      #               modules = [./users/volodia/home.nix];
-      #               extraSpecialArgs = specialArgs // { inherit graphical; };
-      #             }
-      #           )
-      #           ["gnome" "none"]
-      #       );
     in
       {
-        # homeConfigurations."volodia" = home-manager.lib.homeManagerConfiguration {
-        #   inherit pkgs;
-        #   modules = [./users/volodia/home.nix];
-        #   extraSpecialArgs = specialArgs;
-        # };
-        # homeConfigurations."volodia.gnome" = hmConfigurations.gnome;
-        # homeConfigurations."volodia.none" = hmConfigurations.none;
+        # Configurations, option are obtained by .#volodia.<de>.<apps>
         homeConfigurations =
           builtins.listToAttrs
           (
             builtins.map
             (
-              graphical: {
-                name = "volodia.${graphical}";
+              settings: {
+                name = "volodia.${settings.graphical}.${settings.apps}";
                 value = home-manager.lib.homeManagerConfiguration {
                   inherit pkgs;
                   modules = [./users/volodia/home.nix];
-                  extraSpecialArgs = specialArgs // {inherit graphical;};
+                  extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
                 };
               }
             )
-            ["default" "gnome"]
+            (
+              nixpkgs.lib.attrsets.cartesianProductOfSets
+              {
+                graphical = ["no-de" "gnome"];
+                apps = ["no-apps" "work" "personal"];
+              }
+            )
           );
         # Do not forget to also add to peerix to share the derivations
         nixosConfigurations."asus" = nixpkgs.lib.nixosSystem {
