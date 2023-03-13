@@ -90,13 +90,45 @@
         inputs.peerix.nixosModules.peerix
         ./modules
       ];
+      # hmConfigurations =
+      # builtins.listToAttrs
+      #       (
+      #         builtins.map
+      #           (
+      #             graphical:
+      #             home-manager.lib.homeManagerConfiguration {
+      #               inherit pkgs;
+      #               modules = [./users/volodia/home.nix];
+      #               extraSpecialArgs = specialArgs // { inherit graphical; };
+      #             }
+      #           )
+      #           ["gnome" "none"]
+      #       );
     in
       {
-        homeConfigurations."volodia" = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [./users/volodia/home.nix];
-          extraSpecialArgs = specialArgs;
-        };
+        # homeConfigurations."volodia" = home-manager.lib.homeManagerConfiguration {
+        #   inherit pkgs;
+        #   modules = [./users/volodia/home.nix];
+        #   extraSpecialArgs = specialArgs;
+        # };
+        # homeConfigurations."volodia.gnome" = hmConfigurations.gnome;
+        # homeConfigurations."volodia.none" = hmConfigurations.none;
+        homeConfigurations =
+          builtins.listToAttrs
+          (
+            builtins.map
+            (
+              graphical: {
+                name = "volodia.${graphical}";
+                value = home-manager.lib.homeManagerConfiguration {
+                  inherit pkgs;
+                  modules = [./users/volodia/home.nix];
+                  extraSpecialArgs = specialArgs // {inherit graphical;};
+                };
+              }
+            )
+            ["default" "gnome"]
+          );
         # Do not forget to also add to peerix to share the derivations
         nixosConfigurations."asus" = nixpkgs.lib.nixosSystem {
           inherit system specialArgs;
@@ -160,7 +192,7 @@
 
           devShell = nixpkgs.legacyPackages.${system}.mkShell {
             inherit (self.checks.${system}.pre-commit-check) shellHook;
-            buildInputs = with pkgs-unstable; [just git git-crypt cocogitto home-manager];
+            buildInputs = with pkgs-unstable; [just git git-crypt home-manager];
           };
         }
       );
