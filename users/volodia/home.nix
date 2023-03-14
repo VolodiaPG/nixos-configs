@@ -26,23 +26,15 @@
   };
 
   programs.fish = {
-    # 2. Enable fish-shell if you didn't.
     enable = true;
-
-    # 3. Declare fish plugins to be installed.
     plugins = [
       {
         name = "fzf";
-        src = pkgs.fetchFromGitHub {
-          owner = "jethrokuan";
-          repo = "fzf";
-          rev = "479fa67d7439b23095e01b64987ae79a91a4e283";
-          sha256 = "sha256-28QW/WTLckR4lEfHv6dSotwkAKpNJFCShxmKFGQQ1Ew=";
-        };
+        inherit (pkgs.fzf) src;
       }
       {
         name = "grc";
-        inherit (pkgs.fishPlugins.grc) src;
+        inherit (pkgs.grc) src;
       }
       {
         name = "done";
