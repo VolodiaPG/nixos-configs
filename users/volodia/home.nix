@@ -19,6 +19,7 @@
   # paths it should manage.
   home.username = "volodia";
   home.homeDirectory = "/home/volodia";
+  # home.homeDirectory = "/Users/volodia";
 
   programs.nix-index = {
     enable = true;

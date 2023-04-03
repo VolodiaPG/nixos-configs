@@ -43,8 +43,7 @@
 
   outputs = inputs:
     with inputs; let
-      system = "x86_64-linux";
-
+      # system = if system_raw == "aarch64-darwin" then "x86_64-darwin" else system;
       overlays =
         (with inputs; [
           nur-xddxdd.overlay
@@ -52,29 +51,16 @@
           peerix.overlay
         ])
         ++ import ./lib/overlays.nix;
+      pkgsFor = nixpkgs_type: system:
+        import nixpkgs_type {
+          inherit overlays system;
+          config.allowUnfree = true;
+        };
 
-      pkgs = import nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
+      specialArgsFor = system: {
+        inherit overlays;
+        pkgs-unstable = pkgsFor nixpkgs-unstable system;
       };
-      pkgs-unstable = import nixpkgs-unstable {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
-
-      specialArgs = {
-        inherit pkgs-unstable overlays;
-      };
-      # homeManagerModule = {
-      #   nix.registry.self.flake = inputs.self;
-      #   home-manager.users.volodia = import ./users/volodia/home.nix;
-      #   home-manager.useGlobalPkgs = false;
-      #   home-manager.useUserPackages = true;
-      #   home-manager.extraSpecialArgs = {
-      #     inherit pkgs-unstable overlays;
-      #   };
-      # };
-      # home-manager.nixosModules.home-manager
       defaultModules = [
         {
           nix.registry.self.flake = inputs.self;
@@ -99,12 +85,19 @@
             builtins.map
             (
               settings: {
-                name = "volodia.${settings.graphical}.${settings.apps}";
-                value = home-manager.lib.homeManagerConfiguration {
-                  inherit pkgs;
-                  modules = [./users/volodia/home.nix];
-                  extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
-                };
+                name = "volodia.${settings.graphical}.${settings.apps}.${settings.system}";
+                # value = home-manager.lib.homeManagerConfiguration (flake-utils.lib.eachDefaultSystem (
+                value = home-manager.lib.homeManagerConfiguration (
+                  with settings; let
+                    pkgs = pkgsFor nixpkgs system;
+                    specialArgs = specialArgsFor system;
+                  in {
+                    inherit pkgs;
+                    # inherit (pkgs) lib;
+                    modules = [./users/volodia/home.nix];
+                    extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
+                  }
+                );
               }
             )
             (
@@ -112,41 +105,50 @@
               {
                 graphical = ["no-de" "gnome"];
                 apps = ["no-apps" "work" "personal"];
+                system = ["x86_64-linux" "aarch64-darwin"];
               }
             )
           );
         # Do not forget to also add to peerix to share the derivations
-        nixosConfigurations."asus" = nixpkgs.lib.nixosSystem {
-          inherit system specialArgs;
-          modules =
-            defaultModules
-            ++ (with inputs; [
-              ./machines/asus/hardware-configuration.nix
-              ./machines/asus/configuration.nix
-              nixos-hardware.nixosModules.common-cpu-intel
-              nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-              nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
-              nixos-hardware.nixosModules.common-gpu-intel
-              nixos-hardware.nixosModules.common-pc
-              nixos-hardware.nixosModules.common-pc-laptop
-              nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-              nixos-hardware.nixosModules.common-pc-laptop-ssd
-            ]);
-        };
-        nixosConfigurations."msi" = nixpkgs.lib.nixosSystem {
-          inherit system specialArgs;
-          modules =
-            defaultModules
-            ++ (with inputs; [
-              ./machines/msi/hardware-configuration.nix
-              ./machines/msi/configuration.nix
-              nixos-hardware.nixosModules.common-cpu-intel
-              nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-              nixos-hardware.nixosModules.common-pc
-              nixos-hardware.nixosModules.common-pc-ssd
-              nixos-hardware.nixosModules.common-pc-hdd
-            ]);
-        };
+        nixosConfigurations."asus" = let
+          system = "x86_64-linux";
+        in
+          nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = specialArgsFor system;
+            modules =
+              defaultModules
+              ++ (with inputs; [
+                ./machines/asus/hardware-configuration.nix
+                ./machines/asus/configuration.nix
+                nixos-hardware.nixosModules.common-cpu-intel
+                nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+                nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
+                nixos-hardware.nixosModules.common-gpu-intel
+                nixos-hardware.nixosModules.common-pc
+                nixos-hardware.nixosModules.common-pc-laptop
+                nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+                nixos-hardware.nixosModules.common-pc-laptop-ssd
+              ]);
+          };
+        nixosConfigurations."msi" = let
+          system = "x86_64-linux";
+        in
+          nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = specialArgsFor system;
+            modules =
+              defaultModules
+              ++ (with inputs; [
+                ./machines/msi/hardware-configuration.nix
+                ./machines/msi/configuration.nix
+                nixos-hardware.nixosModules.common-cpu-intel
+                nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+                nixos-hardware.nixosModules.common-pc
+                nixos-hardware.nixosModules.common-pc-ssd
+                nixos-hardware.nixosModules.common-pc-hdd
+              ]);
+          };
         # nixosConfigurations.dell = mkMachine "dell" {
         #   inherit nixpkgs pkgs pkgs-unstable home-manager system user;
         #   additionnal-modules = modules-additionnal-sources ++ (with inputs;[
@@ -164,21 +166,19 @@
         system: {
           formatter = alejandra.defaultPackage.${system};
 
-          checks = {
-            pre-commit-check = pre-commit-hooks.lib.${system}.run {
-              src = ./.;
-              hooks = {
-                alejandra.enable = true;
-                statix.enable = true;
-                deadnix.enable = true;
-                commitizen.enable = true;
-              };
+          checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              alejandra.enable = true;
+              statix.enable = true;
+              deadnix.enable = true;
+              commitizen.enable = true;
             };
           };
 
-          devShell = nixpkgs.legacyPackages.${system}.mkShell {
+          devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
             inherit (self.checks.${system}.pre-commit-check) shellHook;
-            buildInputs = with pkgs-unstable; [just git git-crypt home-manager];
+            buildInputs = with (pkgsFor nixpkgs system); [just git git-crypt home-manager];
           };
         }
       );
