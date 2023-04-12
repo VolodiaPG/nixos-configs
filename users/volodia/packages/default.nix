@@ -6,9 +6,7 @@
   ...
 }: {
   imports =
-    [
-      ./mpv.nix
-    ]
+    lib.optional (apps == "personal") ./mpv.nix
     ++ lib.optional (apps == "personal") ./personal.nix;
 
   # Common apps
@@ -20,7 +18,7 @@
       p7zip # 7zip archive tools
       lrzip # Advanced and storage efficient zip
       parallel # Much smarter xargs
-      progress # View current progress of coreutils tools
+      # progress # View current progress of coreutils tools
       zip # ZIP file manipulation
       unzip
       gdu # Manager files and see sizes quickly
@@ -30,11 +28,11 @@
       git-crypt
       cocogitto
       python3
-      ecryptfs
+      # ecryptfs
 
       # System monitoring
       htop # Interactive TUI process viewer
-      lm_sensors # Read hardware sensors
+      # lm_sensors # Read hardware sensors
       nmap # Network scanning and more
 
       # File transfer
@@ -51,29 +49,29 @@
       bottom # call btm
       libgtop
 
-      remmina
-      cloudflare-warp
-      veracrypt
-      pavucontrol
+      # remmina
+      # cloudflare-warp
+      # veracrypt
+      # pavucontrol
 
-      distrobox
+      # distrobox
 
-      powerstat
+      # powerstat
 
       # Office
-      libreoffice
-      xournalpp
+      # libreoffice
+      # xournalpp
 
       gitui
 
       # Utils
       # boxes
 
-      spice-vdagent # copy paste for vms
+      # spice-vdagent # copy paste for vms
     ])
     ++ (with pkgs-unstable; [
-      bottles
+      # bottles
       lapce
-      powertop
+      # powertop
     ]);
 }

@@ -102,7 +102,7 @@
     extraConfig = {
       rebase.autostash = true;
       init.defaultBranch = "main";
-      core.editor = "micro";
+      core.editor = "nano";
     };
   };
 
