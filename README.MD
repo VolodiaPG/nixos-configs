@@ -28,3 +28,6 @@ https://gist.github.com/hadilq/a491ca53076f38201a8aa48a0c6afef5 (encrypted = htt
 
 
 https://www.reddit.com/r/linux/comments/l1re17/psa_by_default_firefox_on_linux_doesnt_match_with/
+
+MacOS fix
+sudo chown -R volodia:staff /nix

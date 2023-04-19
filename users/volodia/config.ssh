@@ -1,4 +1,9 @@
 # Alias for the gateway (not really needed, but convenient)
+Host *
+    UseKeychain yes
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_rsa
+
 Host g5k
   User @g5k_login@
   Hostname access.grid5000.fr
