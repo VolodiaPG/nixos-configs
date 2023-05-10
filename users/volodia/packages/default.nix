@@ -9,6 +9,24 @@
     lib.optional (apps == "personal") ./mpv.nix
     ++ lib.optional (apps == "personal") ./personal.nix;
 
+  # programs.firefox ={
+  #   enable = true;
+  #   userChrome = ''
+  #   /* hides the native tabs */
+  #   #TabsToolbar {
+  #     visibility: collapse;
+  #   }
+
+  #   #titlebar {
+  #     visibility: collapse;
+  #   }
+
+  #   #sidebar-header {
+  #     visibility: collapse !important;
+  #   }
+  #   '';
+  # };
+
   # Common apps
   home.packages =
     (with pkgs; [

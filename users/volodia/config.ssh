@@ -13,9 +13,14 @@ Host *.g5k
   User @g5k_login@
   ProxyCommand ssh g5k -W "$(basename %h .g5k):%p"
   ForwardAgent no
+Host access.grid5000.fr
+  User @g5k_login@
+  ControlMaster auto
+  ControlPath /dev/shm/ssh-%h
+  ControlPersist 30
 Host !access.grid5000.fr *.grid5000.fr
    User @g5k_login@
-   ProxyJump @g5k_login@@access.grid5000.fr
+   ProxyJump access.grid5000.fr
    StrictHostKeyChecking no
    UserKnownHostsFile /dev/null
    ForwardAgent yes
