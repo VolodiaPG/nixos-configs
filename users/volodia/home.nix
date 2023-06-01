@@ -51,9 +51,6 @@
       cd = "z";
       ll = "ls -l";
       l = "ls";
-      push = "git push";
-      pull = "git pull";
-      fetch = "git fetch";
     };
   };
 
@@ -106,8 +103,13 @@
       rebase.autostash = true;
       init.defaultBranch = "main";
       core.editor = "nano";
-      aliases.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
     };
+    aliases.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+  };
+
+  home.file.".config/mpv/scripts" = {
+    source = ./packages/scripts;
+    recursive = true;
   };
 
   # This value determines the Home Manager release that your
