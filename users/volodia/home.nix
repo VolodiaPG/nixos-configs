@@ -52,6 +52,10 @@
       ll = "ls -l";
       l = "ls";
     };
+
+    shellInit = ''
+      set GPG_TTY "$(tty)"
+    '';
   };
 
   programs.zoxide = {
@@ -85,11 +89,21 @@
 
   home.file.".tmux".text = ''
     set -g mouse
+    setw -g mouse on
 
     bind C-c run "tmux save-buffer - | wl-copy"
 
     bind C-v run "tmux set-buffer "$(wl-paste)"; tmux paste-buffer"
   '';
+
+  services.gpg-agent = {
+    enable = true;
+    grabKeyboardAndMouse = false;
+    pinentryFlavor = "tty";
+    extraConfig = ''
+      allow-loopback-pinentry
+    '';
+  };
 
   programs.git = {
     enable = true;
