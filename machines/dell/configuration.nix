@@ -6,53 +6,58 @@
   pkgs,
   ...
 }: {
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    version = 2;
-    device = "nodev";
-    efiSupport = true;
-    enableCryptodisk = true;
+  boot = {
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        version = 2;
+        device = "nodev";
+        efiSupport = true;
+        enableCryptodisk = true;
+      };
+    };
+    blacklistedKernelModules = [
+      "nouveau"
+      "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
+    ];
   };
-  boot.blacklistedKernelModules = [
-    "nouveau"
-    "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
-  ];
 
   networking = {
     hostId = "30249675";
     hostName = "dell";
+    networkmanager.enable = true; # Easiest to use and most distros use this by default.
   };
-
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
-
-  services.openssh.enable = true;
-
-  hardware.cpu.intel.updateMicrocode = true;
 
   nixpkgs.config.packageOverrides = pkgs: {
     vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
   };
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
+  hardware = {
+    cpu.intel.updateMicrocode = true;
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # LIBVA_DRIVER_NAME=iHD
+        vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
+    nvidia = {
+      powerManagement.enable = true;
+      modesetting.enable = true;
+      nvidiaPersistenced = true;
+      nvidiaSettings = false;
+    };
   };
+  services = {
+    openssh.enable = true;
 
-  # Enable the X11 windowing system.
-  services.xserver = {
-    videoDrivers = ["nvidia"];
-    exportConfiguration = true;
-  };
-  hardware.nvidia = {
-    powerManagement.enable = true;
-    modesetting.enable = true;
-    nvidiaPersistenced = true;
-    nvidiaSettings = false;
+    # Enable the X11 windowing system.
+    xserver = {
+      videoDrivers = ["nvidia"];
+      exportConfiguration = true;
+    };
   };
 
   # This value determines the NixOS release from which the default

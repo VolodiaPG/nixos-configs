@@ -18,49 +18,168 @@
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "volodia";
-  home.homeDirectory = "/home/volodia";
-  # home.homeDirectory = "/Users/volodia";
+  home.homeDirectory =
+    if pkgs.stdenv.isLinux
+    then "/home/volodia"
+    else "/Users/volodia";
+
+  fonts.fontconfig.enable = true;
 
   programs.nix-index = {
     enable = true;
     enableFishIntegration = true;
   };
 
-  programs.fish = {
-    enable = true;
-    plugins = [
-      {
-        name = "fzf";
-        inherit (pkgs.fzf) src;
-      }
-      {
-        name = "grc";
-        inherit (pkgs.grc) src;
-      }
-      {
-        name = "done";
-        inherit (pkgs.fishPlugins.done) src;
-      }
-      {
-        name = "pure";
-        inherit (pkgs.fishPlugins.pure) src;
-      }
-    ];
+  # programs.fish = {
+  #   enable = true;
+  #   plugins = [
+  #     {
+  #       name = "fzf";
+  #       inherit (pkgs.fzf) src;
+  #     }
+  #     {
+  #       name = "grc";
+  #       inherit (pkgs.grc) src;
+  #     }
+  #     {
+  #       name = "done";
+  #       inherit (pkgs.fishPlugins.done) src;
+  #     }
+  #     {
+  #       name = "pure";
+  #       inherit (pkgs.fishPlugins.pure) src;
+  #     }
+  #   ];
 
-    shellAliases = {
-      cd = "z";
-      ll = "ls -l";
-      l = "ls";
+  #   shellAliases = {
+  #     cd = "z";
+  #     ll = "ls -l";
+  #     l = "ls";
+  #   };
+  # };
+
+  home.shellAliases = {
+    cd = "z";
+    ll = "ls -l";
+    l = "ls";
+    g = "git";
+    j = "just";
+  };
+
+  programs.bash.enable = true;
+  # programs.bash.shellInit = ''
+  #   set GPG_TTY "$(tty)"
+  # '';
+
+  programs.starship.enable = true;
+  programs.starship.settings = {
+    add_newline = false;
+    format = "$shlvl$shell$username$hostname$nix_shell$custom$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
+    shlvl = {
+      disabled = false;
+      symbol = "ﰬ";
+      style = "bright-red bold";
     };
 
     shellInit = ''
       set GPG_TTY "$(tty)"
     '';
+    shell = {
+      disabled = false;
+      format = "$indicator";
+      fish_indicator = "";
+      bash_indicator = "[BASH](bright-white) ";
+      zsh_indicator = "[ZSH](bright-white) ";
+    };
+    username = {
+      style_user = "bright-white bold";
+      style_root = "bright-red bold";
+    };
+    hostname = {
+      style = "bright-green bold";
+      ssh_only = true;
+    };
+    nix_shell = {
+      symbol = "";
+      format = "[$symbol]($style) ";
+      style = "bright-purple bold";
+    };
+    git_branch = {
+      only_attached = true;
+      format = "[$symbol$branch]($style) ";
+      symbol = "שׂ";
+      style = "bright-yellow bold";
+    };
+    git_commit = {
+      only_detached = true;
+      format = "[ﰖ$hash]($style) ";
+      style = "bright-yellow bold";
+    };
+    git_state = {
+      style = "bright-purple bold";
+    };
+    git_status = {
+      style = "bright-green bold";
+    };
+    directory = {
+      read_only = " ";
+      truncation_length = 0;
+    };
+    cmd_duration = {
+      format = "[$duration]($style) ";
+      style = "bright-blue";
+    };
+    jobs = {
+      style = "bright-green bold";
+    };
+    character = {
+      success_symbol = "[>](bright-green bold)";
+      error_symbol = "[!](bright-red bold)";
+    };
+    custom.direnv = {
+      format = "[\\[direnv\\]]($style) ";
+      style = "fg:yellow dimmed";
+      when = "env | grep -E '^DIRENV_FILE='";
+    };
+  };
+
+  programs.dircolors.enable = true;
+  programs.dircolors.enableZshIntegration = true;
+  programs.dircolors.enableBashIntegration = true;
+
+  # # programs.dircolors.extraConfig = ''
+  # #   TERM alacritty
+  # # '';
+  programs.dircolors.settings = {
+    ".iso" = "01;31"; # .iso files bold red like .zip and other archives
+    ".gpg" = "01;33"; # .gpg files bold yellow
+    # Images to non-bold magenta instead of bold magenta like videos
+    ".bmp" = "00;35";
+    ".gif" = "00;35";
+    ".jpeg" = "00;35";
+    ".jpg" = "00;35";
+    ".mjpeg" = "00;35";
+    ".mjpg" = "00;35";
+    ".mng" = "00;35";
+    ".pbm" = "00;35";
+    ".pcx" = "00;35";
+    ".pgm" = "00;35";
+    ".png" = "00;35";
+    ".ppm" = "00;35";
+    ".svg" = "00;35";
+    ".svgz" = "00;35";
+    ".tga" = "00;35";
+    ".tif" = "00;35";
+    ".tiff" = "00;35";
+    ".webp" = "00;35";
+    ".xbm" = "00;35";
+    ".xpm" = "00;35";
   };
 
   programs.zoxide = {
     enable = true;
-    enableFishIntegration = true;
+    # enableFishIntegration = true;
+    enableBashIntegration = true;
   };
 
   home.file.".config/discord/settings.json".text = ''
@@ -105,6 +224,23 @@
     '';
   };
 
+  programs.zsh = {
+    enable = true;
+    envExtra = ''
+      # Make Nix and home-manager installed things available in PATH.
+      export DIRENV_LOG_FORMAT=""
+      export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:$PATH
+      export GPG_TTY="$(tty)"
+      bash
+      exit $?
+    '';
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   programs.git = {
     enable = true;
     userName = "Volodia P.-G.";
@@ -126,6 +262,13 @@
     recursive = true;
   };
 
+  home.packages = with pkgs; [
+    fontconfig
+    (nerdfonts.override {fonts = ["FiraCode"];})
+  ];
+
+  home.file.".yabairc".source = ./packages/.yabairc;
+  home.file.".skhdrc".source = ./packages/.skhdrc;
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards

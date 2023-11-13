@@ -4,6 +4,11 @@ Host *
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_rsa
 
+Host pro
+  User volodia
+  #Hostname vparolgu-p
+  Hostname fedora
+
 Host g5k
   User @g5k_login@
   Hostname access.grid5000.fr
@@ -15,12 +20,16 @@ Host *.g5k
   ForwardAgent no
 Host access.grid5000.fr
   User @g5k_login@
-  ControlMaster auto
-  ControlPath /dev/shm/ssh-%h
-  ControlPersist 30
+  ProxyCommand ssh g5k -W "$(basename %h .g5k):%p"
+  ForwardAgent no
 Host !access.grid5000.fr *.grid5000.fr
    User @g5k_login@
    ProxyJump access.grid5000.fr
    StrictHostKeyChecking no
    UserKnownHostsFile /dev/null
    ForwardAgent yes
+
+Host linux-builder
+  Hostname 127.0.0.1
+  HostKeyAlias linux-builder
+  Port 31022

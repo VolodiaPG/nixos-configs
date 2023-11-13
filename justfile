@@ -3,6 +3,9 @@ _default: homemanager
 homemanager:
     home-manager switch --flake .#volodia
 
+homemanager-basic:
+    home-manager switch --flake .#volodia.no-de.personal
+
 updateindex:
     updateindex
 
@@ -22,6 +25,9 @@ update: updateindex
 bump: update switch
     git add flake.lock
     cog commit chore "Update" lock
+
+darwin:
+    darwin-rebuild switch --flake .
 
 fmt:
     nix fmt .

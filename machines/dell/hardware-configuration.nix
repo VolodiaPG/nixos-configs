@@ -11,17 +11,20 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "thunderbolt" "vmd" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
-  boot.initrd.kernelModules = ["dm-snapshot"];
-  boot.kernelModules = ["kvm-intel"];
-  boot.extraModulePackages = [];
-
-  boot.initrd.luks.devices = {
-    root = {
-      # Use https://nixos.wiki/wiki/Full_Disk_Encryption
-      device = "/dev/disk/by-uuid/83a73390-cbec-47be-86d5-e40cd843493d";
-      preLVM = true;
+  boot = {
+    initrd = {
+      availableKernelModules = ["xhci_pci" "thunderbolt" "vmd" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
+      luks.devices = {
+        root = {
+          # Use https://nixos.wiki/wiki/Full_Disk_Encryption
+          device = "/dev/disk/by-uuid/83a73390-cbec-47be-86d5-e40cd843493d";
+          preLVM = true;
+        };
+      };
+      kernelModules = ["dm-snapshot"];
     };
+    kernelModules = ["kvm-intel"];
+    extraModulePackages = [];
   };
 
   fileSystems."/" = {
