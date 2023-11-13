@@ -76,19 +76,15 @@
     add_newline = false;
     format = "$shlvl$shell$username$hostname$nix_shell$custom$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
     shlvl = {
-      disabled = false;
-      symbol = "ﰬ";
+      disabled = true;
+      symbol = "󰓠";
       style = "bright-red bold";
     };
-
-    shellInit = ''
-      set GPG_TTY "$(tty)"
-    '';
     shell = {
       disabled = false;
       format = "$indicator";
       fish_indicator = "";
-      bash_indicator = "[BASH](bright-white) ";
+      bash_indicator = "[](bright-white) ";
       zsh_indicator = "[ZSH](bright-white) ";
     };
     username = {
@@ -100,29 +96,46 @@
       ssh_only = true;
     };
     nix_shell = {
-      symbol = "";
+      symbol = "󱄅";
       format = "[$symbol]($style) ";
       style = "bright-purple bold";
     };
     git_branch = {
       only_attached = true;
-      format = "[$symbol$branch]($style) ";
-      symbol = "שׂ";
+      format = "[$symbol $branch]($style) ";
+      symbol = "";
       style = "bright-yellow bold";
     };
     git_commit = {
       only_detached = true;
-      format = "[ﰖ$hash]($style) ";
+      format = "[ $hash]($style) ";
       style = "bright-yellow bold";
     };
     git_state = {
       style = "bright-purple bold";
     };
     git_status = {
-      style = "bright-green bold";
+      style = "bright-green";
+      conflicted = "[](orange bold)";
+      deleted = "[-](red bold)";
+      modified = "[](green bold)";
+      stashed = "[󰛄](bright-grey bold)";
+      staged = "[](green bold)";
+      renamed = "[](purple bold)";
+      untracked = "[?](yellow bold)";
+      # prefix = "|";
+      # suffix = " | ";
+      # show_sync_count = true;
+      # conflicted_count.enabled = true;
+      # deleted_count.enabled = true;
+      # modified_count.enabled = true;
+      # stashed_count.enabled = true;
+      # staged_count.enabled = true;
+      # renamed_count.enabled = true;
+      # untracked_count.enabled = true;
     };
     directory = {
-      read_only = " ";
+      read_only = " ";
       truncation_length = 0;
     };
     cmd_duration = {
@@ -133,8 +146,8 @@
       style = "bright-green bold";
     };
     character = {
-      success_symbol = "[>](bright-green bold)";
-      error_symbol = "[!](bright-red bold)";
+      success_symbol = "[](bright-green bold)";
+      error_symbol = "[](bright-red bold)";
     };
     custom.direnv = {
       format = "[\\[direnv\\]]($style) ";
@@ -233,6 +246,14 @@
       export GPG_TTY="$(tty)"
       bash
       exit $?
+    '';
+  };
+  programs.bash = {
+    bashrcExtra = ''
+      # Make Nix and home-manager installed things available in PATH.
+      export DIRENV_LOG_FORMAT=""
+      export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/opt/homebrew/bin:$PATH
+      export GPG_TTY="$(tty)"
     '';
   };
 
