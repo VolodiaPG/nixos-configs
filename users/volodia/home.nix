@@ -213,6 +213,10 @@
   home.file.".ssh/config".source = pkgs.substituteAll {
     src = ./config.ssh;
     g5k_login = builtins.readFile ../../secrets/grid5000.user;
+    keychain =
+      if pkgs.stdenv.isLinux
+      then ""
+      else "UseKeychain yes";
   };
   home.file.".ssh/authorized_keys".text = ''
     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi
@@ -241,7 +245,6 @@
     enable = true;
     envExtra = ''
       # Make Nix and home-manager installed things available in PATH.
-      export DIRENV_LOG_FORMAT=""
       export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:$PATH
       export GPG_TTY="$(tty)"
       bash
@@ -250,8 +253,9 @@
   };
   programs.bash = {
     bashrcExtra = ''
+      # Fix local warning with bash and perl
+      export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n1 | cut -d ' ' -f4)/lib/locale/locale-archive"
       # Make Nix and home-manager installed things available in PATH.
-      export DIRENV_LOG_FORMAT=""
       export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/opt/homebrew/bin:$PATH
       export GPG_TTY="$(tty)"
     '';
@@ -260,6 +264,9 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+    stdlib = ''
+      export DIRENV_LOG_FORMAT=""
+    '';
   };
 
   programs.git = {
