@@ -1,10 +1,10 @@
-_default: homemanager
+_default: homemanager-basic
 
 homemanager:
     home-manager switch --flake .#volodia
 
 homemanager-basic:
-    home-manager switch --flake .#volodia.no-de.personal
+    nix develop .# -c home-manager switch --flake .#volodia.no-de.no-apps
 
 updateindex:
     updateindex

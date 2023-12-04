@@ -233,7 +233,7 @@
   '';
 
   services.gpg-agent = {
-    enable = true;
+    enable = pkgs.stdenv.isLinux;
     grabKeyboardAndMouse = false;
     pinentryFlavor = "tty";
     extraConfig = ''
@@ -243,11 +243,10 @@
 
   programs.zsh = {
     enable = true;
-    envExtra = ''
+    initExtra = ''
       # Make Nix and home-manager installed things available in PATH.
       export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:$PATH
-      export GPG_TTY="$(tty)"
-      bash
+      ${pkgs.bashInteractive}/bin/bash
       exit $?
     '';
   };

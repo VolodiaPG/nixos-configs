@@ -2,24 +2,22 @@
 Host *
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_rsa
+    ForwardAgent yes
     @keychain@ #UseKeychain yes
 
 Host pro
   User volodia
   #Hostname vparolgu-p
   Hostname fedora
-  ForwardAgent yes
 
 Host access.grid5000.fr
   User @g5k_login@
-  ForwardAgent no
 
 Host !access.grid5000.fr *.grid5000.fr
    User @g5k_login@
    ProxyJump access.grid5000.fr
    StrictHostKeyChecking no
    UserKnownHostsFile /dev/null
-   ForwardAgent yes
 
 Host linux-builder
   Hostname 127.0.0.1
