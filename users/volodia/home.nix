@@ -251,9 +251,44 @@
     '';
   };
   programs.bash = {
+    initExtra = ''
+      # Perform file completion in a case insensitive fashion
+      bind "set completion-ignore-case on"
+
+      # Treat hyphens and underscores as equivalent
+      bind "set completion-map-case on"
+
+      # Display matches for ambiguous patterns at first tab press
+      bind "set show-all-if-ambiguous on"
+
+      # Enable incremental history search with up/down arrows (also Readline goodness)
+      # Learn more about this here: http://codeinthehole.com/writing/the-most-important-command-line-tip-incremental-history-searching-with-inputrc/
+      bind '"\e[A": history-search-backward'
+      bind '"\e[B": history-search-forward'
+      bind '"\e[C": forward-char'
+      bind '"\e[D": backward-char'
+      bind '"\e\e[D": backward-word'
+      bind '"\e\e[C": forward-word'
+
+      # Attempt to add completions for _all_ aliases
+      source ${pkgs.complete-alias}/bin/complete_alias
+      complete -F _complete_alias "''${!BASH_ALIASES[@]}"
+    '';
+
     bashrcExtra = ''
       # Fix local warning with bash and perl
       export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n1 | cut -d ' ' -f4)/lib/locale/locale-archive"
+
+      if [[ -a ~/.localrc ]]
+      then
+        source "$HOME/.localrc"
+      fi
+
+      # This helps bash-completion work, since bash-completion will look here for
+      # other installed completions. Other packages that include bash completion
+      # scripts will link them here.
+      export XDG_DATA_DIRS="$HOME/.nix-profile/share:''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
       # Make Nix and home-manager installed things available in PATH.
       export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/opt/homebrew/bin:$PATH
       export GPG_TTY="$(tty)"
