@@ -222,8 +222,6 @@
                         trusted-public-keys = [
                           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
                         ];
-                        allowed-users = ["root" "volodia" "@admin"];
-                        trusted-users = ["root" "volodia" "@admin"];
                       };
                       configureBuildUsers = true;
 
@@ -238,14 +236,12 @@
                       StandardErrorPath = "/var/log/linux-builder.log";
                     };
 
-                    # virtualisation.rosetta.enable = true;
                     system.activationScripts.extraActivation.text = ''
-                      softwareupdate --install-rosetta --agree-to-license
+                      /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
                     '';
 
                     services.nix-daemon.enable = true;
 
-                    # programs.nix-index.enable = true;
                     # Add ability to used TouchID for sudo authentication
                     security.pam.enableSudoTouchIdAuth = true;
                   }
