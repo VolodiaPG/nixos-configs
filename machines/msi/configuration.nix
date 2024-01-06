@@ -6,103 +6,106 @@
   imports = [
     ../../services/nvfancontrol/nvfancontrol.nix
   ];
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    version = 2;
-    device = "nodev";
-    efiSupport = true;
-    enableCryptodisk = true;
+  boot = {
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        version = 2;
+        device = "nodev";
+        efiSupport = true;
+        enableCryptodisk = true;
+      };
+    };
+    blacklistedKernelModules = [
+      "nouveau"
+      "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
+    ];
   };
-  boot.blacklistedKernelModules = [
-    "nouveau"
-    "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
-  ];
 
   networking = {
     hostId = "30249671";
     hostName = "msi";
+    networkmanager.enable = true; # Easiest to use and most distros use this by default.
   };
 
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
   # programs.xwayland.enable = true;
   # services.xserver.displayManager.gdm.wayland = true;
 
   virtualisation.docker.enableNvidia = true;
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-  # programs.mosh.enable = true;
-  # programs.mosh.withUtempter = true;
+  services = {
+    openssh.enable = true;
 
-  services.undervolt = {
-    enable = true;
-    coreOffset = -95;
-    gpuOffset = -95;
-    uncoreOffset = -95;
-    analogioOffset = -95;
+    undervolt = {
+      enable = true;
+      coreOffset = -95;
+      gpuOffset = -95;
+      uncoreOffset = -95;
+      analogioOffset = -95;
+    };
+
+    # Enable the X11 windowing system.
+    xserver = {
+      videoDrivers = ["nvidia"];
+      exportConfiguration = true;
+    };
+
+    nvfancontrol = {
+      enable = true;
+      configuration = ''
+        [[gpu]]
+        id = 0
+
+        points = [
+            [50,0],
+            [54,0],
+            [57,46],
+            [62,62],
+            [66,75],
+            [75,85],
+            [80,100],
+        ]
+      '';
+      cliArgs = "-d -f -l 0";
+    };
   };
 
-  # Enable the X11 windowing system.
-  services.xserver = {
-    videoDrivers = ["nvidia"];
-    exportConfiguration = true;
-  };
-  hardware.nvidia = {
-    powerManagement.enable = true;
-    modesetting.enable = true;
-    nvidiaPersistenced = true;
-    nvidiaSettings = false;
-  };
-
-  environment.etc."X11/Xwrapper.config".text = ''
-    allowed_users=anybody
-    needs_root_rights=yes
-  '';
-  environment.etc."X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
-
-  services.nvfancontrol = {
-    enable = true;
-    configuration = ''
-      [[gpu]]
-      id = 0
-
-      points = [
-          [50,0],
-          [54,0],
-          [57,46],
-          [62,62],
-          [66,75],
-          [75,85],
-          [80,100],
-      ]
-    '';
-    cliArgs = "-d -f -l 0";
+  hardware = {
+    nvidia = {
+      powerManagement.enable = true;
+      modesetting.enable = true;
+      nvidiaPersistenced = true;
+      nvidiaSettings = false;
+    };
+    cpu.intel.updateMicrocode = true;
+    opengl = {
+      enable = true;
+      driSupport32Bit = true;
+      extraPackages = with pkgs; [
+        #intel-media-driver # LIBVA_DRIVER_NAME=iHD
+        #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
   };
 
-  hardware.cpu.intel.updateMicrocode = true;
-
-  environment.systemPackages = with pkgs; [
-    nvtop
-  ];
-
-  # nixpkgs.config.packageOverrides = pkgs: {
-  #   # vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  #   nvidia_x11 = pkgs.nvidia_x11;
-  # };
-  hardware.opengl = {
-    enable = true;
-    driSupport32Bit = true;
-    extraPackages = with pkgs; [
-      #intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
+  environment = {
+    etc = {
+      "X11/Xwrapper.config".text = ''
+        allowed_users=anybody
+        needs_root_rights=yes
+      '';
+      "X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
+    };
+    systemPackages = with pkgs; [
+      nvtop
     ];
-  };
-
-  environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "nvidia";
+    sessionVariables = {
+      LIBVA_DRIVER_NAME = "nvidia";
+    };
   };
 
   #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA

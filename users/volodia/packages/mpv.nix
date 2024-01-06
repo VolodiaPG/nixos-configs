@@ -3,14 +3,34 @@
   pkgs-unstable,
   ...
 }: {
-  home.packages = with pkgs;
-    [
-      #mpv
-      play-with-mpv
-    ]
-    ++ [
-      pkgs-unstable.mpv
-    ];
+  home = {
+    packages = with pkgs;
+      [
+        #mpv
+        play-with-mpv
+      ]
+      ++ [
+        pkgs-unstable.mpv
+      ];
+    file = {
+      ".config/mpv" = {
+        source = ./mpv;
+        recursive = true;
+      };
+      ".config/mpv/svp.py".source = pkgs.substituteAll {
+        src = ./svp.py;
+        svpflow = "${pkgs.svpflow}/lib/";
+      };
+      ".config/mpv/svp_max.py".source = pkgs.substituteAll {
+        src = ./svp_max.py;
+        svpflow = "${pkgs.svpflow}/lib/";
+      };
+      ".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
+        src = ./svp_nvof.py;
+        svpflow = "${pkgs.svpflow}/lib/";
+      };
+    };
+  };
 
   systemd.user.services = {
     play-with-mpv = {
@@ -28,22 +48,5 @@
         WantedBy = ["default.target"];
       };
     };
-  };
-
-  home.file.".config/mpv" = {
-    source = ./mpv;
-    recursive = true;
-  };
-  home.file.".config/mpv/svp.py".source = pkgs.substituteAll {
-    src = ./svp.py;
-    svpflow = "${pkgs.svpflow}/lib/";
-  };
-  home.file.".config/mpv/svp_max.py".source = pkgs.substituteAll {
-    src = ./svp_max.py;
-    svpflow = "${pkgs.svpflow}/lib/";
-  };
-  home.file.".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
-    src = ./svp_nvof.py;
-    svpflow = "${pkgs.svpflow}/lib/";
   };
 }

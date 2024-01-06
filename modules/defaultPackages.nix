@@ -4,5 +4,6 @@
     coreutils # Basic GNU utilities
     gitAndTools.gitFull # Git core installation
     gnupg # GNU Privacy Guard
+    direnv
   ];
 }

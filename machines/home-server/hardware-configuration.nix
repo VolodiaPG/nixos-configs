@@ -13,15 +13,8 @@
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
+      availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod"];
       kernelModules = ["dm-snapshot"];
-
-      luks.devices = {
-        crypted = {
-          device = "/dev/disk/by-uuid/1b8e6078-068b-4ba6-a5c8-1d58637e6f08";
-          preLVM = true;
-        };
-      };
     };
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
@@ -29,32 +22,32 @@
 
   fileSystems = {
     "/" = {
-      device = "/dev/disk/by-uuid/50554ba5-e150-4f4a-bed3-4bad7ad73327";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = ["subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/home" = {
-      device = "/dev/disk/by-uuid/50554ba5-e150-4f4a-bed3-4bad7ad73327";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = ["subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/nix" = {
-      device = "/dev/disk/by-uuid/50554ba5-e150-4f4a-bed3-4bad7ad73327";
+      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
       options = ["subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/boot" = {
-      device = "/dev/disk/by-uuid/D88D-B091";
+      device = "/dev/disk/by-uuid/DA73-7E25";
       fsType = "vfat";
     };
   };
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/42481ec9-3e13-4349-b497-d9d8ac1e8262";
+      device = "/dev/disk/by-uuid/78410e51-556c-451f-829e-eddf32c9b315";
       options = ["noatime"];
     }
   ];
@@ -64,8 +57,8 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

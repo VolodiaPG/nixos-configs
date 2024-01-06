@@ -27,27 +27,29 @@
     extraModulePackages = [];
   };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
-    fsType = "btrfs";
-    options = ["subvol=root" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-  };
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+      fsType = "btrfs";
+      options = ["subvol=root" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+    };
 
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
-    fsType = "btrfs";
-    options = ["subvol=home" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-  };
+    "/home" = {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+      fsType = "btrfs";
+      options = ["subvol=home" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+    };
 
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
-    fsType = "btrfs";
-    options = ["subvol=nix" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-  };
+    "/nix" = {
+      device = "/dev/disk/by-uuid/85640e3f-b564-4c21-ac08-693098a45c8c";
+      fsType = "btrfs";
+      options = ["subvol=nix" "ssd" "compress-force=zstd:1" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+    };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/528D-40D7";
-    fsType = "vfat";
+    "/boot" = {
+      device = "/dev/disk/by-uuid/528D-40D7";
+      fsType = "vfat";
+    };
   };
 
   swapDevices = [
