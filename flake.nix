@@ -43,6 +43,7 @@
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   nixConfig = {
@@ -95,11 +96,20 @@
                 nixpkgs.overlays = overlays;
 
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+
                 # system.autoUpgrade.flake = "github:volodiapg/nixos-configs";
               }
               ./modules
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) {
+              services.autoUpgrade = {
+                enable = true;
+                flakeURL = "github:volodiapg/nixos-configs";
+                inherit inputs;
+              };
+            })
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
         in {
           nixosModules.default = defaultModules;
@@ -137,39 +147,39 @@
         (flake-utils.lib.eachSystem ["x86_64-linux"] (system: {
           # Do not forget to also add to peerix to share the derivations
           nixosConfigurations = {
-            "asus" = nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor system;
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/asus/hardware-configuration.nix
-                  ./machines/asus/configuration.nix
-                  nixos-hardware.nixosModules.common-cpu-intel
-                  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-                  nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
-                  nixos-hardware.nixosModules.common-gpu-intel
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-laptop
-                  nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-                  nixos-hardware.nixosModules.common-pc-laptop-ssd
-                ]);
-            };
-            "msi" = nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor system;
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/msi/hardware-configuration.nix
-                  ./machines/msi/configuration.nix
-                  nixos-hardware.nixosModules.common-cpu-intel
-                  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-ssd
-                  nixos-hardware.nixosModules.common-pc-hdd
-                ]);
-            };
+            # "asus" = nixpkgs.lib.nixosSystem {
+            #   inherit system;
+            #   specialArgs = specialArgsFor system;
+            #   modules =
+            #     outputs.nixosModules.${system}.default
+            #     ++ (with inputs; [
+            #       ./machines/asus/hardware-configuration.nix
+            #       ./machines/asus/configuration.nix
+            #       nixos-hardware.nixosModules.common-cpu-intel
+            #       nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+            #       nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
+            #       nixos-hardware.nixosModules.common-gpu-intel
+            #       nixos-hardware.nixosModules.common-pc
+            #       nixos-hardware.nixosModules.common-pc-laptop
+            #       nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+            #       nixos-hardware.nixosModules.common-pc-laptop-ssd
+            #     ]);
+            # };
+            # "msi" = nixpkgs.lib.nixosSystem {
+            #   inherit system;
+            #   specialArgs = specialArgsFor system;
+            #   modules =
+            #     outputs.nixosModules.${system}.default
+            #     ++ (with inputs; [
+            #       ./machines/msi/hardware-configuration.nix
+            #       ./machines/msi/configuration.nix
+            #       nixos-hardware.nixosModules.common-cpu-intel
+            #       nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+            #       nixos-hardware.nixosModules.common-pc
+            #       nixos-hardware.nixosModules.common-pc-ssd
+            #       nixos-hardware.nixosModules.common-pc-hdd
+            #     ]);
+            # };
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor system;
@@ -186,18 +196,21 @@
                   srvos.nixosModules.server
                 ]);
             };
-            # dell = mkMachine "dell" {
-            #   inherit nixpkgs pkgs pkgs-unstable home-manager system user;
-            #   additionnal-modules = modules-additionnal-sources ++ (with inputs;[
-            #     nixos-hardware.nixosModules.common-cpu-intel
-            #     nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-            #     nixos-hardware.nixosModules.common-gpu-intel
-            #     nixos-hardware.nixosModules.common-pc
-            #     nixos-hardware.nixosModules.common-pc-laptop
-            #     nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-            #     nixos-hardware.nixosModules.common-pc-laptop-ssd
-            #   ]);
-            # };
+            dell = mkMachine "dell" {
+              inherit nixpkgs pkgs pkgs-unstable home-manager system user;
+              additionnal-modules =
+                modules-additionnal-sources
+                ++ (with inputs; [
+                  nixos-hardware.nixosModules.common-cpu-intel
+                  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+                  nixos-hardware.nixosModules.common-gpu-intel
+                  nixos-hardware.nixosModules.common-pc
+                  nixos-hardware.nixosModules.common-pc-laptop
+                  nixos-hardware.nixosModules.common-pc-laptop-acpi_call
+                  nixos-hardware.nixosModules.common-pc-laptop-ssd
+                  srvos.nixosModules.server
+                ]);
+            };
           };
         }))
         (flake-utils.lib.eachSystem ["x86_64-darwin" "aarch64-darwin"] (
