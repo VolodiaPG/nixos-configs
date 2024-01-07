@@ -13,33 +13,27 @@
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "thunderbolt" "vmd" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
-      luks.devices = {
-        root = {
-          # Use https://nixos.wiki/wiki/Full_Disk_Encryption
-          device = "/dev/disk/by-uuid/83a73390-cbec-47be-86d5-e40cd843493d";
-          preLVM = true;
-        };
-      };
-      kernelModules = ["dm-snapshot"];
+      availableKernelModules = ["xhci_pci" "thunderbolt" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
+      kernelModules = [];
     };
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
+    #loader.grub.device = "nodev";
   };
 
   fileSystems = {
     "/boot" = {
-      device = "/dev/disk/by-uuid/528D-40D7";
+      device = "/dev/disk/by-uuid/D83C-1680";
       fsType = "vfat";
     };
   };
 
-  swapDevices = [
-    {
-      device = "/dev/disk/by-uuid/99ce6d62-c6bc-4a69-a145-3b33e2c46311";
-      options = ["noatime"];
-    }
-  ];
+  #swapDevices = [
+  # {
+  #   device = "/dev/disk/by-uuid/99ce6d62-c6bc-4a69-a145-3b33e2c46311";
+  #   options = ["noatime"];
+  # }
+  #];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

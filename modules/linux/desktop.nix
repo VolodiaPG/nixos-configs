@@ -14,9 +14,9 @@ in {
   };
 
   config = mkIf cfg.enable {
-    imports = [
-      ../services/system76-scheduler/system76-scheduler.nix
-    ];
+    #imports = [
+    #  ../services/system76-scheduler/system76-scheduler.nix
+    #];
 
     # Services
     # Enable the X11 windowing system.
@@ -45,26 +45,26 @@ in {
         };
       };
 
-      system76Scheduler = {
-        enable = true;
-        assignments = builtins.readFile ./system76-assignments.ron;
-      };
+      #system76Scheduler = {
+      # enable = true;
+      # assignments = builtins.readFile ./system76-assignments.ron;
+      #};
       udev.packages = with pkgs; [gnome.gnome-settings-daemon];
       pipewire = {
         enable = true;
         alsa.enable = true;
         # alsa.support32Bit = true;
         pulse.enable = true;
-        config.pipewire = {
-          "context.properties" = {
-            "resample.quality" = 15;
-            "link.max-buffers" = 16;
-            "default.clock.rate" = 96000;
-            "default.clock.quantum" = 1024;
-            "default.clock.min-quantum" = 32;
-            "default.clock.max-quantum" = 8192;
-          };
-        };
+        #  config.pipewire = {
+        #   "context.properties" = {
+        #    "resample.quality" = 15;
+        #   "link.max-buffers" = 16;
+        #  "default.clock.rate" = 96000;
+        #  "default.clock.quantum" = 1024;
+        #  "default.clock.min-quantum" = 32;
+        #  "default.clock.max-quantum" = 8192;
+        # };
+        #};
       };
     };
 
@@ -120,7 +120,7 @@ in {
         roboto
         joypixels
         # nerdfonts
-        (callPackage ../pkgs/comic-code {})
+        (callPackage ../../pkgs/comic-code {})
       ];
       fontconfig.defaultFonts = {
         monospace = [

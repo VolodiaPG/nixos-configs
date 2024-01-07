@@ -56,9 +56,7 @@ in {
   # systemd.services.docker.path = with pkgs; [ zfs ];
   virtualisation.docker = {
     enable = true;
-    extraOptions =
-      (mkIf services.btrfs.enable "--storage-driver btrfs")
-      + "--exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
+    extraOptions = "--storage-driver btrfs --exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
     autoPrune = {
       enable = true;
       dates = "weekly";

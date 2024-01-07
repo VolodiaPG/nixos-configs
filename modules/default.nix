@@ -27,11 +27,7 @@ in {
     package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
-      interval = {
-        Weekday = 5;
-        Hour = 0;
-        Minute = 0;
-      };
+      dates = "weekly";
       options = "--delete-older-than 7d";
     };
 

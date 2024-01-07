@@ -19,16 +19,16 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.peerix = {
-      enable = true;
-      openFirewall = true; # UDP/12304
-      privateKeyFile = ../secrets/peerix-private;
-      publicKeyFile = ../secrets/peerix-public;
-      user = "peerix";
-      group = "peerix";
-      disableBroadcast = true;
-      inherit (cfg) extraHosts; # hostnames
-    };
+    #services.peerix = {
+    # enable = true;
+    # openFirewall = true; # UDP/12304
+    # privateKeyFile = ../secrets/peerix-private;
+    # publicKeyFile = ../secrets/peerix-public;
+    # user = "peerix";
+    # group = "peerix";
+    # disableBroadcast = true;
+    # inherit (cfg) extraHosts; # hostnames
+    #};
     users = {
       users.peerix = {
         isSystemUser = true;

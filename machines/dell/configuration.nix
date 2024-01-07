@@ -11,10 +11,10 @@
       efi.canTouchEfiVariables = true;
       grub = {
         enable = true;
-        version = 2;
+        #    version = 2;
         device = "nodev";
         efiSupport = true;
-        enableCryptodisk = true;
+        #    enableCryptodisk = true;
       };
     };
     blacklistedKernelModules = [
@@ -38,25 +38,26 @@
       enable = true;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
-        vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-        vaapiVdpau
-        libvdpau-va-gl
+        #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        # vaapiVdpau
+        # libvdpau-va-gl
       ];
     };
-    nvidia = {
-      powerManagement.enable = true;
-      modesetting.enable = true;
-      nvidiaPersistenced = true;
-      nvidiaSettings = false;
-    };
+    #nvidia = {
+    # powerManagement.enable = true;
+    # modesetting.enable = true;
+    # nvidiaPersistenced = true;
+    # nvidiaSettings = false;
+    #};
   };
   services = {
     openssh.enable = true;
 
     # Enable the X11 windowing system.
     xserver = {
-      videoDrivers = ["nvidia"];
-      exportConfiguration = true;
+      enable = true;
+      #  videoDrivers = ["nvidia"];
+      #  exportConfiguration = true;
     };
   };
 

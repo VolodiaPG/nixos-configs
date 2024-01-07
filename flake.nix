@@ -11,6 +11,7 @@
       # Alternativly we also support the latest nixos release and unstable
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    vscode-server.url = "github:nix-community/nixos-vscode-server";
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,13 +57,12 @@
   outputs = inputs:
     with inputs; let
       inherit (self) outputs;
-      overlays =
-        (with inputs; [
-          nur-xddxdd.overlay
-          nur-volodiapg.overlay
-          peerix.overlay
-        ])
-        ++ import ./lib/overlays.nix;
+      overlays = with inputs; [
+        nur-xddxdd.overlay
+        nur-volodiapg.overlay
+        peerix.overlay
+      ];
+      #++ import ./lib/overlays.nix;
 
       pkgsFor = nixpkgs_type: system:
         import nixpkgs_type {
@@ -146,7 +146,7 @@
         }))
         (flake-utils.lib.eachSystem ["x86_64-linux"] (system: {
           # Do not forget to also add to peerix to share the derivations
-          nixosConfigurations = {
+          packages.nixosConfigurations = {
             # "asus" = nixpkgs.lib.nixosSystem {
             #   inherit system;
             #   specialArgs = specialArgsFor system;
@@ -196,11 +196,14 @@
                   srvos.nixosModules.server
                 ]);
             };
-            dell = mkMachine "dell" {
-              inherit nixpkgs pkgs pkgs-unstable home-manager system user;
-              additionnal-modules =
-                modules-additionnal-sources
+            "dell" = nixpkgs.lib.nixosSystem {
+              inherit system;
+              specialArgs = specialArgsFor system;
+              modules =
+                outputs.nixosModules.${system}.default
                 ++ (with inputs; [
+                  ./machines/dell/configuration.nix
+                  ./machines/dell/hardware-configuration.nix
                   nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-gpu-intel
@@ -208,7 +211,20 @@
                   nixos-hardware.nixosModules.common-pc-laptop
                   nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  srvos.nixosModules.server
+                  vscode-server.nixosModules.default
+                  #srvos.nixosModules.server
+                  {
+                    services = {
+                      desktop.enable = true;
+                      kernel.enable = true;
+                      intel.enable = true;
+                      impermanence.enable = true;
+                      impermanence.rootVolume = "nvme0n1p11";
+                      elegantBoot.enable = false;
+                      vpn.enable = true;
+                      vscode-server.enable = true;
+                    };
+                  }
                 ]);
             };
           };
