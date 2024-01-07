@@ -212,17 +212,20 @@
                   nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   vscode-server.nixosModules.default
-                  #srvos.nixosModules.server
+                  srvos.nixosModules.server
                   {
                     services = {
-                      desktop.enable = true;
+                      desktop.enable = false;
                       kernel.enable = true;
                       intel.enable = true;
-                      impermanence.enable = true;
-                      impermanence.rootVolume = "nvme0n1p11";
+                      impermanence = {
+                        enable = true;
+                        rootVolume = "nvme0n1p11";
+                      };
                       elegantBoot.enable = false;
                       vpn.enable = true;
                       vscode-server.enable = true;
+                      laptopServer.enable = true;
                     };
                   }
                 ]);

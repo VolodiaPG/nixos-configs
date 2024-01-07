@@ -54,11 +54,11 @@
     openssh.enable = true;
 
     # Enable the X11 windowing system.
-    xserver = {
-      enable = true;
-      #  videoDrivers = ["nvidia"];
-      #  exportConfiguration = true;
-    };
+    # xserver = {
+    #   enable = true;
+    #   #  videoDrivers = ["nvidia"];
+    #   #  exportConfiguration = true;
+    # };
   };
 
   # This value determines the NixOS release from which the default
