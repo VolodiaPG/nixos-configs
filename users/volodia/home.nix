@@ -54,8 +54,8 @@
       '';
 
       bashrcExtra = ''
-        # Fix local warning with bash and perl
-        export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n1 | cut -d ' ' -f4)/lib/locale/locale-archive"
+        # # Fix local warning with bash and perl
+        # export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n1 | cut -d ' ' -f4)/lib/locale/locale-archive"
 
         if [[ -a ~/.localrc ]]
         then
