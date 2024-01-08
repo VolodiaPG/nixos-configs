@@ -22,7 +22,6 @@ in {
         wantedBy = ["multi-user.target"];
         path = [pkgs.coreutils];
         script = ''
-          #!/usr/bin/env sh
           echo "1" | tee /sys/class/graphics/fb0/blank
           echo "0" | tee /sys/class/backlight/intel_backlight/brightness
         '';

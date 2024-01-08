@@ -5,5 +5,6 @@
     gitAndTools.gitFull # Git core installation
     gnupg # GNU Privacy Guard
     direnv
+    git-crypt
   ];
 }

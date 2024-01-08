@@ -144,6 +144,7 @@ in {
               "Documents"
               "Videos"
               ".local/state/nix/profiles"
+              ".config/cachix"
               {
                 directory = ".gnupg";
                 mode = "0700";

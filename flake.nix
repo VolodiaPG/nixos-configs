@@ -226,6 +226,11 @@
                       vpn.enable = true;
                       vscode-server.enable = true;
                       laptopServer.enable = true;
+                      changeMAC = {
+                        enable = true;
+                        mac = builtins.readFile ./secrets/dellmac;
+                        interface = "enp0s31f6";
+                      };
                     };
                   }
                 ]);

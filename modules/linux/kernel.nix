@@ -68,7 +68,7 @@ in {
         # kernelPackages = pkgs.linuxPackages_xanmod_latest;
         kernelPackages = pkgs.linuxPackages_latest;
 
-        #resumeDevice = "/dev/mapper/lvm-swap";
+        # resumeDevice = "/dev/mapper/lvm-swap";
 
         #kernelParams = [
         #noibrs"
