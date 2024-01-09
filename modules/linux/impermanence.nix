@@ -125,6 +125,7 @@ in {
             "/var/lib/docker/containerd"
             "/var/lib/tailscale"
             "/root"
+            "/etc/ssh/"
             "/etc/NetworkManager/system-connections"
             {
               directory = "/var/lib/colord";

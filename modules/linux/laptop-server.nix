@@ -22,25 +22,21 @@ in {
         wantedBy = ["multi-user.target"];
         path = [pkgs.coreutils];
         script = ''
-          echo "1" | tee /sys/class/graphics/fb0/blank
-          echo "0" | tee /sys/class/backlight/intel_backlight/brightness
+          echo "0" > /sys/class/backlight/intel_backlight/brightness
+          echo "1" > /sys/class/graphics/fb0/blank
         '';
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
         };
       };
-      timers = {
-        turnOffBacklightTimer = {
-          description = "Timer for turning off the screen backlight at midnight";
+      timers.turnOffBacklightTimer = {
+        description = "Timer for turning off the screen backlight at midnight";
 
-          wantedBy = ["timers.target"];
-          timerConfig = {
-            OnCalendar = "*-*-* 00:00:00";
-          };
-          unitConfig = {
-            PartOf = ["turnOffBacklight.service"];
-          };
+        wantedBy = ["timers.target"];
+        timerConfig = {
+          OnCalendar = "*-*-* 00:00:00";
+          Unit = ["turnOffBacklight.service"];
         };
       };
     };
