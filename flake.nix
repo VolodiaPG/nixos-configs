@@ -73,6 +73,10 @@
         inherit overlays;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
       };
+      specialArgsForNixos = system: (
+        (specialArgsFor system)
+        // self.outputs.packages.${system}.homeConfigurations."volodia.no-de.no-apps".config
+      );
     in
       nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate {}
       [
@@ -87,11 +91,11 @@
                 };
                 # nix.settings = {
                 #   # Pin channels to flake inputs.
-                #   # registry.nixpkgs.flake = inputs.nixpkgs;
-                #   # registry.self.flake = inputs.self;
+                #   registry.nixpkgs.flake = inputs.nixpkgs;
+                #   registry.self.flake = inputs.self;
 
-                #   # substituters = self.substituters;
-                #   # trusted-public-keys = self.trusted-public-keys;
+                #   substituters = self.substituters;
+                #   trusted-public-keys = self.trusted-public-keys;
                 # };
                 nixpkgs.overlays = overlays;
 
@@ -102,6 +106,7 @@
               ./modules
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) {
               services.autoUpgrade = {
@@ -109,6 +114,7 @@
                 flakeURL = "github:volodiapg/nixos-configs";
                 inherit inputs;
               };
+              # hmConfig = outputs.packages.${system}.homeConfigurations."volodia.no-de.no-apps".config;
             })
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
         in {
@@ -182,7 +188,7 @@
             # };
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor system;
+              specialArgs = specialArgsForNixos system;
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [

@@ -166,6 +166,7 @@ in {
             ];
             files = [
               ".bash_history"
+              ".local/share/zoxide/db.zo"
             ];
           };
         }
