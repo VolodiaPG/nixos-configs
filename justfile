@@ -4,7 +4,7 @@ homemanager:
     home-manager switch --flake .#volodia
 
 homemanager-basic:
-    nix develop .# -c home-manager switch --flake .#volodia.no-de.no-apps
+    nix develop .# -c home-manager switch --flake .#volodia.no-de.no-apps.no-machine
 
 updateindex:
     updateindex

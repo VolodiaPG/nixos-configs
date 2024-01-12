@@ -109,7 +109,7 @@ in {
     environment.persistence."/persistent" =
       foldl recursiveUpdate {}
       [
-        #(cfg.persistent)
+        cfg.persistent
         {
           hideMounts = true;
           directories = [
@@ -144,7 +144,8 @@ in {
               "Pictures"
               "Documents"
               "Videos"
-              ".local/state/nix/profiles"
+              # ".local/state/nix/profiles"
+              # ".nix-profile"
               ".config/cachix"
               {
                 directory = ".gnupg";

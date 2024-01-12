@@ -47,12 +47,12 @@
     impermanence.url = "github:nix-community/impermanence";
   };
 
-  nixConfig = {
-    # extra-substituters = "https://cache.nixos.org https://nix-community.cachix.org https://volodiapg.cachix.org";
-    # extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
-    substituters = "https://cache.nixos.org";
-    trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
-  };
+  # nixConfig = {
+  #   # extra-substituters = "https://cache.nixos.org https://nix-community.cachix.org https://volodiapg.cachix.org";
+  #   # extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
+  #   substituters = "https://cache.nixos.org";
+  #   trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
+  # };
 
   outputs = inputs:
     with inputs; let
@@ -73,10 +73,6 @@
         inherit overlays;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
       };
-      specialArgsForNixos = system: (
-        (specialArgsFor system)
-        // self.outputs.packages.${system}.homeConfigurations."volodia.no-de.no-apps".config
-      );
     in
       nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate {}
       [
@@ -89,19 +85,14 @@
                   "nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
                   "nix/inputs/self".source = "${inputs.self}";
                 };
-                # nix.settings = {
-                #   # Pin channels to flake inputs.
-                #   registry.nixpkgs.flake = inputs.nixpkgs;
-                #   registry.self.flake = inputs.self;
-
-                #   substituters = self.substituters;
-                #   trusted-public-keys = self.trusted-public-keys;
-                # };
+                nix = {
+                  # Pin channels to flake inputs.
+                  # registry.nixpkgs.flake = inputs.nixpkgs;
+                  registry.self.flake = inputs.self;
+                };
                 nixpkgs.overlays = overlays;
 
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-
-                # system.autoUpgrade.flake = "github:volodiapg/nixos-configs";
               }
               ./modules
             ]
@@ -114,7 +105,17 @@
                 flakeURL = "github:volodiapg/nixos-configs";
                 inherit inputs;
               };
-              # hmConfig = outputs.packages.${system}.homeConfigurations."volodia.no-de.no-apps".config;
+              home-manager = {
+                users.volodia = import ./users/volodia/home.nix;
+                useGlobalPkgs = false;
+                useUserPackages = true;
+                extraSpecialArgs =
+                  (specialArgsFor system)
+                  // {
+                    graphical = "no-de";
+                    apps = "no-apps";
+                  };
+              };
             })
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
         in {
@@ -126,15 +127,13 @@
               builtins.map
               (
                 settings: {
-                  name = "volodia.${settings.graphical}.${settings.apps}";
-                  # value = home-manager.lib.homeManagerConfiguration (flake-utils.lib.eachDefaultSystem (
+                  name = with settings; "volodia.${graphical}.${apps}.${machine}";
                   value = home-manager.lib.homeManagerConfiguration (
                     with settings; let
                       pkgs = pkgsFor nixpkgs system;
-                      specialArgs = specialArgsFor system;
+                      specialArgs = specialArgsFor system; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
                     in {
                       inherit pkgs;
-                      # inherit (pkgs) lib;
                       modules = [./users/volodia/home.nix];
                       extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
                     }
@@ -146,6 +145,7 @@
                 {
                   graphical = ["no-de" "gnome"];
                   apps = ["no-apps" "work" "personal"];
+                  machine = ["no-machine" "dell"];
                 }
               )
             );
@@ -188,7 +188,7 @@
             # };
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsForNixos system;
+              specialArgs = specialArgsFor system;
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -204,7 +204,7 @@
             };
             "dell" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor system;
+              specialArgs = specialArgsFor "${system}";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -246,8 +246,6 @@
         (flake-utils.lib.eachSystem ["x86_64-darwin" "aarch64-darwin"] (
           system: let
             inherit (darwin.lib) darwinSystem;
-            # pkgs = nixpkgs-darwin.legacyPackages.${system};
-            # linuxSystem = builtins.replaceStrings ["darwin"] ["linux"] system;
           in {
             packages.darwinConfigurations."Volodias-MacBook-Pro" = darwinSystem {
               inherit system;

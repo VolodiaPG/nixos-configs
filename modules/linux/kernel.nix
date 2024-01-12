@@ -55,7 +55,7 @@ in {
       };
 
       boot = {
-        cleanTmpDir = true;
+        tmp.cleanOnBoot = true;
 
         /*
         NOTE: replace this with your desired kernel, see: https://nixos.wiki/wiki/Linux_kernel for reference.
