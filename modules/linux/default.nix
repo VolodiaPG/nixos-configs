@@ -54,12 +54,20 @@ in {
   time.timeZone = "Europe/Paris";
 
   # systemd.services.docker.path = with pkgs; [ zfs ];
-  virtualisation.docker = {
-    enable = true;
-    extraOptions = "--storage-driver btrfs --exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
-    autoPrune = {
+  virtualisation = {
+    docker = {
       enable = true;
-      dates = "weekly";
+      extraOptions = "--storage-driver btrfs --exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
+      autoPrune = {
+        enable = true;
+        dates = "weekly";
+      };
+    };
+    podman = {
+      enable = true;
+      autoPrune = {
+        dates = "weekly";
+      };
     };
   };
 
@@ -68,6 +76,8 @@ in {
     enable = true;
     enableSSHSupport = true;
   };
+
+  environment.systemPackages = [pkgs.sshx];
 
   # security.polkit.extraConfig = ''
   #     polkit.addRule(function(action, subject) {

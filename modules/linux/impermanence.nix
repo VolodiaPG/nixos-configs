@@ -164,10 +164,11 @@ in {
                 mode = "0700";
               }
               ".local/share/direnv"
+              ".local/share/zoxide"
+              ".docker"
             ];
             files = [
               ".bash_history"
-              ".local/share/zoxide/db.zo"
             ];
           };
         }
