@@ -27,7 +27,6 @@ in {
         description = "Change MAC Address";
         wantedBy = ["multi-user.target"];
         path = [pkgs.busybox];
-        # mac=$(head -n 1 ${cfg.mac})
         script = ''
           ip link set dev ${cfg.interface} down
           sleep 1
