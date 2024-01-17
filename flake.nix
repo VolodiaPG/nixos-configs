@@ -45,14 +45,11 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     impermanence.url = "github:nix-community/impermanence";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-
-  # nixConfig = {
-  #   # extra-substituters = "https://cache.nixos.org https://nix-community.cachix.org https://volodiapg.cachix.org";
-  #   # extra-trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI=";
-  #   substituters = "https://cache.nixos.org";
-  #   trusted-public-keys = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
-  # };
 
   outputs = inputs:
     with inputs; let
@@ -72,6 +69,11 @@
       specialArgsFor = system: {
         inherit overlays;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
+        inherit inputs;
+        homeDirectory =
+          if nixpkgs.lib.strings.hasSuffix "linux" system
+          then "/home/volodia"
+          else "/Users/volodia";
       };
     in
       nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate {}
@@ -79,6 +81,7 @@
         (flake-utils.lib.eachDefaultSystem (system: let
           defaultModules =
             [
+              sops-nix.nixosModules.sops
               {
                 # Inherit everyhting we can from the flake
                 environment.etc = {
@@ -95,6 +98,7 @@
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
               }
               ./modules
+              ./secrets/nixos.nix
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
@@ -107,8 +111,12 @@
               };
               home-manager = {
                 users.volodia = import ./users/volodia/home.nix;
-                useGlobalPkgs = false;
+                useGlobalPkgs = true;
                 useUserPackages = true;
+                sharedModules = [
+                  sops-nix.homeManagerModules.sops
+                  ./secrets/home-manager.nix
+                ];
                 extraSpecialArgs =
                   (specialArgsFor system)
                   // {
@@ -134,7 +142,11 @@
                       specialArgs = specialArgsFor system; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
                     in {
                       inherit pkgs;
-                      modules = [./users/volodia/home.nix];
+                      modules = [
+                        sops-nix.homeManagerModules.sops
+                        ./secrets/home-manager.nix
+                        ./users/volodia/home.nix
+                      ];
                       extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
                     }
                   );
@@ -219,7 +231,7 @@
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   vscode-server.nixosModules.default
                   srvos.nixosModules.server
-                  {
+                  ({config, ...}: {
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
@@ -234,11 +246,11 @@
                       laptopServer.enable = true;
                       changeMAC = {
                         enable = true;
-                        mac = builtins.readFile ./secrets/dellmac;
+                        mac = config.sops.secrets.dellmac.path;
                         interface = "enp0s31f6";
                       };
                     };
-                  }
+                  })
                 ]);
             };
           };
@@ -312,7 +324,7 @@
                 shellHook
                 ;
               packages =
-                (with pkgs; [just git git-crypt home-manager])
+                (with pkgs; [just git git-crypt sops home-manager])
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }

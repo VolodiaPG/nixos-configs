@@ -1,19 +1,20 @@
 {
   lib,
   pkgs,
-  overlays,
   graphical,
   apps,
+  config,
+  homeDirectory,
   ...
 }: {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
     ++ lib.optional (apps != "no-apps") ./packages;
 
-  nixpkgs = {
-    inherit overlays;
-    config.allowUnfree = true;
-  };
+  # nixpkgs = {
+  #   inherit overlays;
+  #   config.allowUnfree = true;
+  # };
 
   fonts.fontconfig.enable = true;
 
@@ -215,9 +216,9 @@
     git = {
       enable = true;
       userName = "Volodia P.-G.";
-      userEmail = builtins.readFile ../../secrets/gitmail;
+      userEmail = "volodia.parol-guarino@proton.me";
       signing = {
-        key = builtins.readFile ../../secrets/gitkeyid;
+        key = "B566FD4E11A22B543B82520B72063CC9DB438B82";
         signByDefault = true;
       };
       extraConfig = {
@@ -240,12 +241,47 @@
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
+
+  systemd.user.services.UseSecrets = let
+    script = pkgs.writeShellScript "sops-nix-user" ''
+      echo ${config.sops.secrets.pythong5k.path}
+    '';
+  in
+    lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      Unit = {
+        Description = "test";
+      };
+      Service = {
+        ExecStart = script;
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      Install.WantedBy = ["default.target"];
+    };
+
+  #   launchd.agents.sops-nix = {
+  #     enable = true;
+  #     config = {
+  #       ProgramArguments = [ script ];
+  #       KeepAlive = {
+  #         Crashed = false;
+  #         SuccessfulExit = false;
+  #       };
+  #       ProcessType = "Background";
+  #       StandardOutPath = "${config.home.homeDirectory}/Library/Logs/SopsNix/stdout";
+  #       StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/SopsNix/stderr";
+  #     };
+  #   };
+  # };
+
   home = {
+    inherit homeDirectory;
+    # activation = {
+    #   pythong5k = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    #     cat ${config.sops.secrets.pythong5k.path} > ${homeDirectory}/.python-grid5000.yaml
+    #   '';
+    # };
     username = "volodia";
-    homeDirectory =
-      if pkgs.stdenv.isLinux
-      then "/home/volodia"
-      else "/Users/volodia";
     shellAliases = {
       cd = "z";
       ll = "ls -l";
@@ -276,7 +312,8 @@
 
       ".ssh/config".source = pkgs.substituteAll {
         src = ./config.ssh;
-        g5k_login = builtins.readFile ../../secrets/grid5000.user;
+        # g5k_login = builtins.readFile ../../secrets/grid5000.user;
+        g5k_login = "volparolguarino";
         keychain =
           if pkgs.stdenv.isLinux
           then ""
@@ -285,7 +322,6 @@
       ".ssh/authorized_keys".text = ''
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi
       '';
-      ".python-grid5000.yaml".source = ../../secrets/python-grid5000.yaml;
 
       ".tmux".text = ''
         set -g mouse
