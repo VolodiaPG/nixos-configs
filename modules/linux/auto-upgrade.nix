@@ -35,7 +35,7 @@ in {
         flags = [
           "--refresh"
         ];
-        # flake = cfg.flakeURL;
+        flake = cfg.flakeURL;
         # flake = "git://m7.rs/nix-config?ref=release-${hostName}";
       };
 
