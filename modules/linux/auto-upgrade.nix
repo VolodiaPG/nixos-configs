@@ -28,8 +28,12 @@ in {
     isClean = cfg.inputs.self ? rev;
   in
     mkIf cfg.enable {
-      system.autoUpgrade.allowReboot = true;
       system.autoUpgrade = {
+        allowReboot = true;
+        rebootWindow = {
+          lower = "12:00";
+          upper = "13:00";
+        };
         enable = isClean;
         dates = "hourly";
         flags = [
