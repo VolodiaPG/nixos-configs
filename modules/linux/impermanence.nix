@@ -127,6 +127,8 @@ in {
             "/root"
             "/etc/ssh/"
             "/etc/NetworkManager/system-connections"
+            #"/run/secrets.d"
+            #"/run/secrets"
             {
               directory = "/var/lib/colord";
               user = "colord";

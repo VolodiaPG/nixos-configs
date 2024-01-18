@@ -28,9 +28,14 @@ in {
         wantedBy = ["multi-user.target"];
         path = [pkgs.busybox];
         script = ''
+          while ! [ -f "${cfg.mac}" ] ; do
+            sleep 1
+          done
+
+          mac=$(head -n 1 "${cfg.mac}")
+
           ip link set dev ${cfg.interface} down
           sleep 1
-          mac=$(head -n 1 ${cfg.mac})
           ifconfig ${cfg.interface} hw ether "$mac"
           sleep 1
           ip link set dev ${cfg.interface} up

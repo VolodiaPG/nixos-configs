@@ -3,9 +3,9 @@
     defaultSopsFile = ./secrets.yaml;
     defaultSopsFormat = "yaml";
 
-    gnupg = {
-      home = "${homeDirectory}/.gnupg";
-      sshKeyPaths = [];
+    age = {
+      generateKey = true;
+      sshKeyPaths = ["/persistent${homeDirectory}/.ssh/id_ed25519" "${homeDirectory}/.ssh/id_ed25519"];
     };
   };
 }
