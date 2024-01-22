@@ -317,6 +317,7 @@
                 statix.enable = true;
                 deadnix.enable = true;
                 commitizen.enable = true;
+                actionlint.enable = true;
               };
             };
 
