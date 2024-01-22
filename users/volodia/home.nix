@@ -8,11 +8,37 @@
   inputs,
   ...
 }: let
-  isClean = inputs.self ? lib.rev;
+  isClean = inputs.self ? rev;
+  date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
+    get_relative_time() {
+      current_epoch=$(date +%s)
+      target_epoch=$1
+      diff=$(( (current_epoch - target_epoch) / 86400 ))
+
+      if [ $diff -lt 7 ]; then
+          case $diff in
+              0)
+                  echo "today"
+                  ;;
+              1)
+                  echo "yesterday"
+                  ;;
+              *)
+                  echo $(date -d "$1" +%A)
+                  ;;
+          esac
+      else
+          echo "more than a week ago"
+      fi
+    }
+    last_modif=$(${lib.getExe pkgs.nix} flake metadata "self" --json --refresh | ${lib.getExe pkgs.jq} '.lastModified')
+
+    printf "(%s)" $(get_relative_time $last_modif)
+  '';
   status =
     if isClean
-    then "@${lib.rev}"
-    else " dirty";
+    then ''${lib.getExe date_script}''
+    else ''printf "dirty"'';
   status_style =
     if isClean
     then "bright-green bold"
@@ -21,11 +47,6 @@ in {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
     ++ lib.optional (apps != "no-apps") ./packages;
-
-  # nixpkgs = {
-  #   inherit overlays;
-  #   config.allowUnfree = true;
-  # };
 
   fonts.fontconfig.enable = true;
 
@@ -91,7 +112,7 @@ in {
       enable = true;
       settings = {
         add_newline = false;
-        format = "$shlvl$shell$username$hostname$nix_shell$custom$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
+        format = "$shlvl$shell$username$hostname$\{custom.update_status}$nix_shell$\{custom.direnv}$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
         shlvl = {
           disabled = true;
           symbol = "󰓠";
@@ -105,11 +126,12 @@ in {
           zsh_indicator = "[ZSH](bright-white) ";
         };
         username = {
+          format = "[$user]($style)\@";
           style_user = "bright-white bold";
           style_root = "bright-red bold";
         };
         hostname = {
-          format = "[($hostname)${status} ]($style)";
+          format = "[$hostname]($style) ";
           style = status_style;
           ssh_only = false;
         };
@@ -141,16 +163,6 @@ in {
           staged = "[](green bold)";
           renamed = "[](purple bold)";
           untracked = "[?](yellow bold)";
-          # prefix = "|";
-          # suffix = " | ";
-          # show_sync_count = true;
-          # conflicted_count.enabled = true;
-          # deleted_count.enabled = true;
-          # modified_count.enabled = true;
-          # stashed_count.enabled = true;
-          # staged_count.enabled = true;
-          # renamed_count.enabled = true;
-          # untracked_count.enabled = true;
         };
         directory = {
           read_only = " ";
@@ -167,10 +179,18 @@ in {
           success_symbol = "[](bright-green bold)";
           error_symbol = "[](bright-red bold)";
         };
-        custom.direnv = {
-          format = "[\\[direnv\\]]($style) ";
-          style = "fg:yellow dimmed";
-          when = "env | grep -E '^DIRENV_FILE='";
+        custom = {
+          direnv = {
+            format = "[\\[direnv\\]]($style) ";
+            style = "fg:yellow dimmed";
+            when = "env | grep -E '^DIRENV_FILE='";
+          };
+          update_status = {
+            format = "[$output]($style) in ";
+            command = "${status}";
+            style = status_style;
+            when = "true";
+          };
         };
       };
     };
