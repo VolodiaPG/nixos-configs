@@ -3,12 +3,13 @@ Host *
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_rsa
     ForwardAgent yes
-    @keychain@ #UseKeychain yes
+    IgnoreUnknown UseKeychain
+    @keychain@
 
 Host pro
   User volodia
   #Hostname vparolgu-p
-  Hostname fedora
+  Hostname dell
 
 Host access.grid5000.fr
   User @g5k_login@
