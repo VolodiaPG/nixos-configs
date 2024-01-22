@@ -5,8 +5,19 @@
   apps,
   config,
   homeDirectory,
+  inputs,
   ...
-}: {
+}: let
+  isClean = inputs.self ? lib.rev;
+  status =
+    if isClean
+    then "@${lib.rev}"
+    else " dirty";
+  status_style =
+    if isClean
+    then "bright-green bold"
+    else "bright-red bold";
+in {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
     ++ lib.optional (apps != "no-apps") ./packages;
@@ -98,8 +109,9 @@
           style_root = "bright-red bold";
         };
         hostname = {
-          style = "bright-green bold";
-          ssh_only = true;
+          format = "[($hostname)${status} ]($style)";
+          style = status_style;
+          ssh_only = false;
         };
         nix_shell = {
           symbol = "󱄅";
