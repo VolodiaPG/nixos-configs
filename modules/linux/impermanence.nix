@@ -149,6 +149,7 @@ in {
               # ".local/state/nix/profiles"
               # ".nix-profile"
               ".config/cachix"
+              ".vscode-server"
               {
                 directory = ".gnupg";
                 mode = "0700";
