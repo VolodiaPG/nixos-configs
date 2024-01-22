@@ -244,7 +244,6 @@
                       vpn.enable = true;
                       vscode-server = {
                         enable = true;
-                        installPath = "/persistent/vscode-server";
                       };
                       laptopServer.enable = true;
                       changeMAC = {
