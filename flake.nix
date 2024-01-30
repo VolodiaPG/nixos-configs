@@ -224,6 +224,7 @@
                       impermanence = {
                         enable = true;
                         rootVolume = "sda";
+                        disko = true;
                       };
                       elegantBoot.enable = false;
                       vpn.enable = true;
