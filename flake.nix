@@ -217,6 +217,7 @@
                   srvos.nixosModules.server
                   disko.nixosModules.disko
                   {
+                    _module.args.disks = ["/dev/sda"];
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
