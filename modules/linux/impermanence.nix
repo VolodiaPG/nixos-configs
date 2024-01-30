@@ -101,6 +101,7 @@ in {
     #     options = ["subvol=root"] ++ cfg.btrfsOptions;
     #   };
 
+    fileSystems."/persistent".neededForBoot = true;
     #   "/persistent" = {
     #     device = "/dev/${cfg.rootVolume}";
     #     neededForBoot = true;
