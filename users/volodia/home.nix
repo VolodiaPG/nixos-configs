@@ -31,7 +31,7 @@
 
     # Calculate the difference in days using date command
     diff_days=$(echo $(( ($(date --date=$current_date +%s) - $(date --date=$formatted_version_date +%s) )/(60*60*24) )))
-    diff_days=5
+
     # Color codes
     yellow='33'
     yellow_bold='1;33'
@@ -40,22 +40,22 @@
 
     case $diff_days in
         0)
-            echo "(last updated today)"
+            echo "(today's version)"
             ;;
         1)
-            print_colored $yellow "(last updated yesterday)"
+            print_colored $yellow "(yesterday's version)"
             ;;
         2)
-            print_colored $yellow_bold "(last updated $diff_days days ago)"
+            print_colored $yellow_bold "(version last updated $diff_days days ago)"
             ;;
         3)
-            print_colored $orange "(last updated $diff_days days ago)"
+            print_colored $orange "(version last updated $diff_days days ago)"
             ;;
         4)
-            print_colored $orange "(last updated $diff_days days ago)"
+            print_colored $orange "(version last updated $diff_days days ago)"
             ;;
         *)
-            print_colored $red "(last updated $diff_days days ago)"
+            print_colored $red "(version last updated $diff_days days ago)"
             ;;
     esac
   '';
