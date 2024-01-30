@@ -94,26 +94,26 @@ in {
           umount /btrfs_tmp
         '';
     };
-    fileSystems = mkIf (!cfg.disko) {
-      "/" = {
-        device = "/dev/${cfg.rootVolume}";
-        fsType = "btrfs";
-        options = ["subvol=root"] ++ cfg.btrfsOptions;
-      };
+    # fileSystems = mkIf (!cfg.disko) {
+    #   "/" = {
+    #     device = "/dev/${cfg.rootVolume}";
+    #     fsType = "btrfs";
+    #     options = ["subvol=root"] ++ cfg.btrfsOptions;
+    #   };
 
-      "/persistent" = {
-        device = "/dev/${cfg.rootVolume}";
-        neededForBoot = true;
-        fsType = "btrfs";
-        options = ["subvol=persistent"] ++ cfg.btrfsOptions;
-      };
+    #   "/persistent" = {
+    #     device = "/dev/${cfg.rootVolume}";
+    #     neededForBoot = true;
+    #     fsType = "btrfs";
+    #     options = ["subvol=persistent"] ++ cfg.btrfsOptions;
+    #   };
 
-      "/nix" = {
-        device = "/dev/${cfg.rootVolume}";
-        fsType = "btrfs";
-        options = ["subvol=nix"] ++ cfg.btrfsOptions;
-      };
-    };
+    #   "/nix" = {
+    #     device = "/dev/${cfg.rootVolume}";
+    #     fsType = "btrfs";
+    #     options = ["subvol=nix"] ++ cfg.btrfsOptions;
+    #   };
+    # };
     environment.persistence."/persistent" =
       foldl recursiveUpdate {}
       [
