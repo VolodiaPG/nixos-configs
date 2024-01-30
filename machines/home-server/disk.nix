@@ -33,17 +33,17 @@
                   };
                   # Subvolume name is the same as the mountpoint
                   "/nix" = {
-                    mountOptions = ["ssd" "compress-force=zstd:9" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
+                    mountOptions = ["ssd" "compress=zstd:9" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
                     mountpoint = "/nix";
                   };
                   # Parent is not mounted so the mountpoint must be set
                   "/persistent" = {
-                    mountOptions = ["ssd" "compress-force=zstd:9" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
+                    mountOptions = ["ssd" "compress=zstd:9" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
                     mountpoint = "/persistent";
                   };
 
                   "/private" = {
-                    mountOptions = ["ssd" "compress-force=zstd:15" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
+                    mountOptions = ["ssd" "compress=zstd:15" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
                     mountpoint = "/private";
                   };
                 };
