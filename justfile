@@ -14,6 +14,9 @@ boot:
 
 _switch:
     sudo nixos-rebuild switch --flake .#$(hostname)
+
+mount hostname:
+    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode mount {{justfile_directory()}}/machines/{{hostname}}/disk.nix
     
 switch:
     #!/usr/bin/env bash
