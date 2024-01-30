@@ -209,6 +209,7 @@
                 ++ (with inputs; [
                   ./machines/home-server/hardware-configuration.nix
                   ./machines/home-server/configuration.nix
+                  ./machines/home-server/disk.nix
                   nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-pc
