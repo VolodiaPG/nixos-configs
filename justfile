@@ -12,12 +12,15 @@ updateindex:
 boot: 
     sudo nixos-rebuild boot --flake .#$(hostname)
 
+_switch:
+    sudo nixos-rebuild switch --flake .#$(hostname)
+    
 switch:
     #!/usr/bin/env bash
     (setsid nohup sudo bash -c "sleep 60 ; sudo nix-env --rollback --profile /nix/var/nix/profiles/system ; echo \"Rollbacked $(date)\"")& disown
     nohup_command_pid=$!
     
-    sudo nixos-rebuild switch --flake .#$(hostname)
+    just _switch
 
     echo "--> 60 seconds before rollback..."
 

@@ -30,10 +30,10 @@ in {
     mkIf cfg.enable {
       system.autoUpgrade = {
         allowReboot = true;
-        rebootWindow = {
-          lower = "12:00";
-          upper = "13:00";
-        };
+        # rebootWindow = {
+        #   lower = "12:00";
+        #   upper = "13:30";
+        # };
         enable = isClean;
         dates = "hourly";
         flags = [

@@ -10,38 +10,62 @@
 }: let
   isClean = inputs.self ? rev;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
-    get_relative_time() {
-      current_epoch=$(date +%s)
-      target_epoch=$1
-      diff=$(( (current_epoch - target_epoch) / 86400 ))
-
-      if [ $diff -lt 7 ]; then
-          case $diff in
-              0)
-                  echo "today"
-                  ;;
-              1)
-                  echo "yesterday"
-                  ;;
-              *)
-                  echo $(date -d "$1" +%A)
-                  ;;
-          esac
-      else
-          echo "more than a week ago"
-      fi
+    # Function to print colored text
+    # $1: Color code
+    # $2: Message
+    print_colored() {
+        echo -e "\033[''${1}m''${2}\033[0m"
     }
-    last_modif=$(${lib.getExe pkgs.nix} flake metadata "self" --json --refresh | ${lib.getExe pkgs.jq} '.lastModified')
 
-    printf "(%s)" $(get_relative_time $last_modif)
+    # Get the full version string from nixos-version
+    version_string=$(nixos-version)
+
+    # Extract the date part (assuming it's in the format YYYYMMDD as in "20.09.20201022.abcdefg")
+    version_date=$(echo $version_string | grep -oP '\d{8}')
+
+    # Convert the extracted date to a more standard format (YYYY-MM-DD)
+    formatted_version_date=$(echo "''${version_date:0:4}-''${version_date:4:2}-''${version_date:6:2}")
+
+    # Get the current date in the same format
+    current_date=$(date '+%Y-%m-%d')
+
+    # Calculate the difference in days using date command
+    diff_days=$(echo $(( ($(date --date=$current_date +%s) - $(date --date=$formatted_version_date +%s) )/(60*60*24) )))
+    diff_days=5
+    # Color codes
+    yellow='33'
+    yellow_bold='1;33'
+    orange='1;38;5;208' # There's no standard orange in ANSI, this is a close approximation
+    red='1;31;5'
+
+    case $diff_days in
+        0)
+            echo "(last updated today)"
+            ;;
+        1)
+            print_colored $yellow "(last updated yesterday)"
+            ;;
+        2)
+            print_colored $yellow_bold "(last updated $diff_days days ago)"
+            ;;
+        3)
+            print_colored $orange "(last updated $diff_days days ago)"
+            ;;
+        4)
+            print_colored $orange "(last updated $diff_days days ago)"
+            ;;
+        *)
+            print_colored $red "(last updated $diff_days days ago)"
+            ;;
+    esac
   '';
   status =
     if isClean
-    then ''${lib.getExe date_script}''
-    else ''printf "dirty"'';
+    then ''''
+    else ''printf "(dirty)"'';
   status_style =
     if isClean
-    then "bright-green bold"
+    then ""
     else "bright-red bold";
 in {
   imports =
@@ -105,6 +129,8 @@ in {
         export PATH=$HOME/.nix-profile/bin:/opt/homebrew/bin:$PATH
         export GPG_TTY="$(tty)"
         EDITOR=nano
+
+        echo "Running Nixos $(nixos-version) $(${lib.getExe date_script})"
       '';
     };
     # Status bar in the shell and stuff
