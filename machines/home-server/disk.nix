@@ -1,7 +1,7 @@
 {
   disko.devices = {
     disk = {
-      vdb = {
+      sda = {
         type = "disk";
         device = "/dev/sda";
         content = {
@@ -47,14 +47,14 @@
                     mountpoint = "/private";
                   };
                 };
+              };
+            };
 
-                # mountpoint = "/root";
-                plainSwap = {
-                  size = "8G";
-                  content = {
-                    type = "swap";
-                  };
-                };
+            # mountpoint = "/root";
+            plainSwap = {
+              size = "8G";
+              content = {
+                type = "swap";
               };
             };
           };
