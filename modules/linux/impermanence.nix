@@ -15,11 +15,19 @@ in {
         type = str;
         default = "root_vg";
       };
+
+      disko = mkOption {
+        description = "Is disko enabled";
+        type = bool;
+        default = false;
+      };
+
       deleteAfterDays = mkOption {
         description = "delete older roots after number of days";
         type = str;
         default = "7";
       };
+
       btrfsOptions = mkOption {
         description = "optimization options for the subvolume";
         type = listOf str;
@@ -86,7 +94,7 @@ in {
           umount /btrfs_tmp
         '';
     };
-    fileSystems = {
+    fileSystems = mkIf (!cfg.disko) {
       "/" = {
         device = "/dev/${cfg.rootVolume}";
         fsType = "btrfs";
