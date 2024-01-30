@@ -207,7 +207,7 @@
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
                   ./machines/home-server/hardware-configuration.nix
-                  ./machines/home-server/confwiguration.nix
+                  ./machines/home-server/configuration.nix
                   nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-pc
