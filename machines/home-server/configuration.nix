@@ -1,12 +1,20 @@
 {pkgs, ...}: {
   # Use the systemd-boot EFI boot loader.
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    version = 2;
-    device = "nodev";
-    efiSupport = true;
-    enableCryptodisk = true;
+
+  boot = {
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        #    version = 2;
+        device = "nodev";
+        efiSupport = true;
+        #    enableCryptodisk = true;
+      };
+    };
+    blacklistedKernelModules = [
+      "iTCO_wdt" # iTCO_wdt module sometimes block kernel.nmi_watchdog = 0
+    ];
   };
 
   networking = {
