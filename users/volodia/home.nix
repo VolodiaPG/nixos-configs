@@ -6,6 +6,7 @@
   config,
   homeDirectory,
   inputs,
+  username,
   ...
 }: let
   isClean = inputs.self ? rev;
@@ -333,13 +334,12 @@ in {
   # };
 
   home = {
-    inherit homeDirectory;
+    inherit homeDirectory username;
     # activation = {
     #   pythong5k = lib.hm.dag.entryAfter ["writeBoundary"] ''
     #     cat ${config.sops.secrets.pythong5k.path} > ${homeDirectory}/.python-grid5000.yaml
     #   '';
     # };
-    username = "volodia";
     shellAliases = {
       cd = "z";
       ll = "ls -l";

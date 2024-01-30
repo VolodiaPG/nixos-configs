@@ -66,14 +66,15 @@
           inherit overlays system;
           config.allowUnfree = true;
         };
-      specialArgsFor = system: {
+      specialArgsFor = system: username: {
         inherit overlays;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
         inherit inputs;
         homeDirectory =
           if nixpkgs.lib.strings.hasSuffix "linux" system
-          then "/home/volodia"
-          else "/Users/volodia";
+          then "/home/${username}"
+          else "/Users/${username}";
+        inherit username;
       };
     in
       nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate {}
@@ -118,7 +119,7 @@
                   ./secrets/home-manager.nix
                 ];
                 extraSpecialArgs =
-                  (specialArgsFor system)
+                  (specialArgsFor system "volodia")
                   // {
                     graphical = "no-de";
                     apps = "no-apps";
@@ -135,11 +136,11 @@
               builtins.map
               (
                 settings: {
-                  name = with settings; "volodia.${graphical}.${apps}.${machine}";
+                  name = with settings; "${username}.${graphical}.${apps}.${machine}";
                   value = home-manager.lib.homeManagerConfiguration (
                     with settings; let
                       pkgs = pkgsFor nixpkgs system;
-                      specialArgs = specialArgsFor system; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
+                      specialArgs = specialArgsFor system username; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
                     in {
                       inherit pkgs;
                       modules = [
@@ -155,6 +156,7 @@
               (
                 nixpkgs.lib.attrsets.cartesianProductOfSets
                 {
+                  username = ["volodia" "volparolguarino"];
                   graphical = ["no-de" "gnome"];
                   apps = ["no-apps" "work" "personal"];
                   machine = ["no-machine" "dell"];
@@ -200,7 +202,7 @@
             # };
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor system;
+              specialArgs = specialArgsFor system "volodia";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -216,7 +218,7 @@
             };
             "dell" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor "${system}";
+              specialArgs = specialArgsFor "${system}" "volodia";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
