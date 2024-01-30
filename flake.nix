@@ -49,6 +49,7 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko.url = "github:nix-community/disko";
   };
 
   outputs = inputs:
@@ -214,6 +215,7 @@
                   nixos-hardware.nixosModules.common-pc-ssd
                   nixos-hardware.nixosModules.common-pc-hdd
                   srvos.nixosModules.server
+                  disko.nixosModules.disko
                   {
                     services = {
                       desktop.enable = false;
