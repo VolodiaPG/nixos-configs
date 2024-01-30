@@ -214,6 +214,20 @@
                   nixos-hardware.nixosModules.common-pc-ssd
                   nixos-hardware.nixosModules.common-pc-hdd
                   srvos.nixosModules.server
+                  {
+                    services = {
+                      desktop.enable = false;
+                      kernel.enable = true;
+                      intel.enable = true;
+                      impermanence = {
+                        enable = true;
+                        rootVolume = "sda";
+                      };
+                      elegantBoot.enable = false;
+                      vpn.enable = true;
+                      laptopServer.enable = true;
+                    };
+                  }
                 ]);
             };
             "dell" = nixpkgs.lib.nixosSystem {

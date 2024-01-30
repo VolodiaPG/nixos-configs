@@ -21,27 +21,15 @@
   };
 
   fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
-      fsType = "btrfs";
-      options = ["subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-    };
-
-    "/home" = {
-      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
-      fsType = "btrfs";
-      options = ["subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-    };
-
-    "/nix" = {
-      device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
-      fsType = "btrfs";
-      options = ["subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
-    };
-
     "/boot" = {
       device = "/dev/disk/by-uuid/DA73-7E25";
       fsType = "vfat";
+    };
+
+    "/private" = {
+      device = "/dev/${config.services.impermanence.rootVolume}";
+      fsType = "btrfs";
+      options = ["subvol=private" "ssd" "compress-force=zstd:15" "noatime" "discard=async" "space_cache=v2" "autodefrag"];
     };
   };
 
