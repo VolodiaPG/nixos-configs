@@ -31,6 +31,7 @@ in {
         checkReversePath = "loose";
         # Let's open the UDP port with which the network is tunneled through
         allowedUDPPorts = [41641];
+        allowedTCPPorts = [22];
       };
     };
 
