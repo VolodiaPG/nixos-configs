@@ -44,7 +44,7 @@
             echo "(today's version)"
             ;;
         1)
-            print_colored $yellow "(yesterday's version)"
+            echo "(yesterday's version)"
             ;;
         2)
             print_colored $yellow_bold "(version last updated $diff_days days ago)"
