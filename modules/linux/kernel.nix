@@ -22,6 +22,7 @@ in {
   config =
     mkIf cfg.enable
     {
+      boot.kernelModules = ["ecryptfs"];
       powerManagement = {
         enable = true;
         cpuFreqGovernor = "powersave";
