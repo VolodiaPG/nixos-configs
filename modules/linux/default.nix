@@ -13,9 +13,12 @@
 in {
   inherit imports;
 
-  nix.optimise = {
-    automatic = true;
-    dates = ["weekly"];
+  nix = {
+    gc.dates = "weekly";
+    optimise = {
+      automatic = true;
+      dates = ["weekly"];
+    };
   };
   i18n = {
     defaultLocale = "fr_FR.UTF-8";

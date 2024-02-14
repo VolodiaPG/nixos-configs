@@ -83,7 +83,6 @@
         (flake-utils.lib.eachDefaultSystem (system: let
           defaultModules =
             [
-              sops-nix.nixosModules.sops
               {
                 # Inherit everyhting we can from the flake
                 environment.etc = {
@@ -100,8 +99,9 @@
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
               }
               ./modules
-              ./secrets/nixos.nix
             ]
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/common.nix)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) sops-nix.nixosModules.sops)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
@@ -168,39 +168,6 @@
         (flake-utils.lib.eachSystem ["x86_64-linux"] (system: {
           # Do not forget to also add to peerix to share the derivations
           packages.nixosConfigurations = {
-            # "asus" = nixpkgs.lib.nixosSystem {
-            #   inherit system;
-            #   specialArgs = specialArgsFor system;
-            #   modules =
-            #     outputs.nixosModules.${system}.default
-            #     ++ (with inputs; [
-            #       ./machines/asus/hardware-configuration.nix
-            #       ./machines/asus/configuration.nix
-            #       nixos-hardware.nixosModules.common-cpu-intel
-            #       nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-            #       nixos-hardware.nixosModules.common-cpu-intel-kaby-lake
-            #       nixos-hardware.nixosModules.common-gpu-intel
-            #       nixos-hardware.nixosModules.common-pc
-            #       nixos-hardware.nixosModules.common-pc-laptop
-            #       nixos-hardware.nixosModules.common-pc-laptop-acpi_call
-            #       nixos-hardware.nixosModules.common-pc-laptop-ssd
-            #     ]);
-            # };
-            # "msi" = nixpkgs.lib.nixosSystem {
-            #   inherit system;
-            #   specialArgs = specialArgsFor system;
-            #   modules =
-            #     outputs.nixosModules.${system}.default
-            #     ++ (with inputs; [
-            #       ./machines/msi/hardware-configuration.nix
-            #       ./machines/msi/configuration.nix
-            #       nixos-hardware.nixosModules.common-cpu-intel
-            #       nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-            #       nixos-hardware.nixosModules.common-pc
-            #       nixos-hardware.nixosModules.common-pc-ssd
-            #       nixos-hardware.nixosModules.common-pc-hdd
-            #     ]);
-            # };
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor system "volodia";
@@ -284,6 +251,7 @@
           in {
             packages.darwinConfigurations."Volodias-MacBook-Pro" = darwinSystem {
               inherit system;
+              specialArgs = specialArgsFor "${system}" "volodia";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ [

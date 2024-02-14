@@ -5,7 +5,7 @@
 
     age = {
       generateKey = true;
-      sshKeyPaths = ["/persistent${homeDirectory}/.ssh/id_ed25519" "${homeDirectory}/.ssh/id_ed25519"];
+      sshKeyPaths = ["${homeDirectory}/.ssh/id_ed25519"];
     };
   };
 }

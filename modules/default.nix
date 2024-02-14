@@ -2,21 +2,7 @@
   config,
   pkgs,
   ...
-}: let
-  # Path to the current directory
-  currentDir = ./.;
-
-  # Read the current directory to get a list of files
-  readDir = builtins.readDir currentDir;
-
-  # Filter out non-Nix files and default.nix, then import the rest
-  imports =
-    builtins.map (name: import (currentDir + "/${name}"))
-    (builtins.filter (name: name != "default.nix" && builtins.match ".*\\.nix$" name != null)
-      (builtins.attrNames readDir));
-in {
-  inherit imports;
-
+}: {
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _pkg: true;
@@ -27,7 +13,7 @@ in {
     package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
-      dates = "weekly";
+      # dates = "weekly";
       options = "--delete-older-than 7d";
     };
 
