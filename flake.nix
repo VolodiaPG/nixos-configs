@@ -198,6 +198,7 @@
                       elegantBoot.enable = false;
                       vpn.enable = true;
                       laptopServer.enable = true;
+                      qbitorrent.enable = true;
                     };
                   }
                 ]);
