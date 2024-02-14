@@ -184,6 +184,7 @@
                   nixos-hardware.nixosModules.common-pc-hdd
                   srvos.nixosModules.server
                   disko.nixosModules.disko
+                  vscode-server.nixosModules.default
                   {
                     _module.args.disks = ["/dev/sda"];
                     services = {
