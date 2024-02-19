@@ -100,7 +100,7 @@
               }
               ./modules
             ]
-            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/common.nix)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) sops-nix.nixosModules.sops)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
