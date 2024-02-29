@@ -44,6 +44,8 @@ in {
     ];
   };
 
+  programs.mosh.enable = true;
+
   # Enable SSH with password authentication disabled.
   services = {
     openssh = {
