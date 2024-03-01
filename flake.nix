@@ -60,13 +60,14 @@
       mosh-overlay = _final: prev: {
         mosh =
           prev.mosh.overrideAttrs
-          (_old: let
+          (old: let
+            # Remove a patch already merged in master
             patches =
-              nixpkgs.lib.list.remove (prev.fetchpatch {
+              nixpkgs.lib.lists.remove (prev.fetchpatch {
                 url = "https://github.com/mobile-shell/mosh/commit/eee1a8cf413051c2a9104e8158e699028ff56b26.patch";
                 hash = "sha256-CouLHWSsyfcgK3k7CvTK3FP/xjdb1pfsSXYYQj3NmCQ=";
               })
-              prev.patches;
+              old.patches;
           in {
             inherit patches;
             src = inputs.mosh;
