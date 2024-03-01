@@ -50,17 +50,27 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
+    mosh.url = "https://github.com/mobile-shell/mosh";
+    mosh.flake = false;
   };
 
   outputs = inputs:
     with inputs; let
       inherit (self) outputs;
+      mosh-overlay = _final: prev: {
+        mosh =
+          prev.mosh.overrideAttrs
+          (_old: {
+            src = inputs.mosh;
+          });
+      };
+
       overlays = with inputs; [
         nur-xddxdd.overlay
         nur-volodiapg.overlay
         peerix.overlay
+        mosh-overlay
       ];
-      #++ import ./lib/overlays.nix;
 
       pkgsFor = nixpkgs_type: system:
         import nixpkgs_type {

@@ -227,6 +227,18 @@
         "type": "github"
       }
     },
+    "mosh": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-+J0koaAvlVtadXDOaFM17U3fGgTiPSM1fGWAPly5ziQ=",
+        "type": "file",
+        "url": "https://github.com/mobile-shell/mosh"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/mobile-shell/mosh"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1709147990,
@@ -436,6 +448,7 @@
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "impermanence": "impermanence",
+        "mosh": "mosh",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-darwin": "nixpkgs-darwin",
