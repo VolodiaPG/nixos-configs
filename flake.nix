@@ -50,7 +50,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
-    mosh.url = "https://github.com/mobile-shell/mosh";
+    mosh.url = "github:mobile-shell/mosh";
     mosh.flake = false;
   };
 

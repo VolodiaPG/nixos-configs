@@ -230,13 +230,17 @@
     "mosh": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-+J0koaAvlVtadXDOaFM17U3fGgTiPSM1fGWAPly5ziQ=",
-        "type": "file",
-        "url": "https://github.com/mobile-shell/mosh"
+        "lastModified": 1691460706,
+        "narHash": "sha256-1djIUK6mgkIt9ZSugkBkz37yCWc0iBB+snyDUYZnUmY=",
+        "owner": "mobile-shell",
+        "repo": "mosh",
+        "rev": "1105d481bb9143dad43adf768f58da7b029fd39c",
+        "type": "github"
       },
       "original": {
-        "type": "file",
-        "url": "https://github.com/mobile-shell/mosh"
+        "owner": "mobile-shell",
+        "repo": "mosh",
+        "type": "github"
       }
     },
     "nixos-hardware": {
