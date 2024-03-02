@@ -3,6 +3,7 @@ Host *
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_ed25519
     ForwardAgent yes
+    Compression yes
     IgnoreUnknown UseKeychain
     @keychain@
 
