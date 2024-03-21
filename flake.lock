@@ -266,13 +266,13 @@
       "locked": {
         "lastModified": 1691460706,
         "narHash": "sha256-1djIUK6mgkIt9ZSugkBkz37yCWc0iBB+snyDUYZnUmY=",
-        "owner": "mobile-shell",
+        "owner": "zhaofengli",
         "repo": "mosh",
         "rev": "1105d481bb9143dad43adf768f58da7b029fd39c",
         "type": "github"
       },
       "original": {
-        "owner": "mobile-shell",
+        "owner": "zhaofengli",
         "repo": "mosh",
         "type": "github"
       }

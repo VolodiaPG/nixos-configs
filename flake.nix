@@ -50,7 +50,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
-    mosh.url = "github:mobile-shell/mosh";
+    mosh.url = "github:zhaofengli/mosh";
     mosh.flake = false;
   };
 
@@ -314,7 +314,7 @@
         ))
         (flake-utils.lib.eachDefaultSystem (
           system: let
-            pkgs = nixpkgs.legacyPackages.${system};
+            pkgs = pkgsFor nixpkgs system;
           in {
             formatter = pkgs.alejandra;
 
@@ -328,6 +328,8 @@
                 actionlint.enable = true;
               };
             };
+
+            packages.mosh = pkgs.mosh;
 
             devShells.default = pkgs.mkShell {
               inherit
