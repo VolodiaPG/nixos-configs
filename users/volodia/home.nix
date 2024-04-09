@@ -20,6 +20,9 @@
 
     # Get the full version string from nixos-version
     version_string=$(nixos-version)
+    if [ $? -ne 0 ]; then
+      exit 0
+    fi
 
     # Extract the date part (assuming it's in the format YYYYMMDD as in "20.09.20201022.abcdefg")
     version_date=$(echo $version_string | grep -oP '\d{8}')
@@ -367,7 +370,8 @@ in {
           }
         }
       '';
-
+      ".config/kitty/kitty.conf".source = ./kitty.conf;
+      ".config/kitty/theme.conf".source = ./theme.conf;
       ".ssh/config".source = pkgs.substituteAll {
         src = ./config.ssh;
         # g5k_login = builtins.readFile ../../secrets/grid5000.user;
