@@ -8,10 +8,9 @@
     srvos = {
       url = "github:nix-community/srvos";
       # Use the version of nixpkgs that has been tested to work with SrvOS
-      # Alternativly we also support the latest nixos release and unstable
+      # Alternatively we also support the latest nixos release and unstable
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    vscode-server.url = "github:nix-community/nixos-vscode-server";
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -103,7 +102,7 @@
           defaultModules =
             [
               {
-                # Inherit everyhting we can from the flake
+                # Inherit everything we can from the flake
                 environment.etc = {
                   "nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
                   "nix/inputs/self".source = "${inputs.self}";
@@ -236,7 +235,6 @@
                   nixos-hardware.nixosModules.common-pc-laptop
                   nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  vscode-server.nixosModules.default
                   srvos.nixosModules.server
                   ({config, ...}: {
                     services = {
@@ -249,9 +247,6 @@
                       };
                       elegantBoot.enable = false;
                       vpn.enable = true;
-                      vscode-server = {
-                        enable = true;
-                      };
                       laptopServer.enable = true;
                       changeMAC = {
                         enable = true;
