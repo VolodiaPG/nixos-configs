@@ -13,8 +13,8 @@
     package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
-      # dates = "weekly";
-      options = "--delete-older-than 30d";
+      gc.dates = "03:15";
+      options = "--delete-older-than 10d";
     };
 
     # package = pkgs.nix;
@@ -29,6 +29,7 @@
       max-jobs = "auto";
       cores = 0;
       log-lines = 50;
+      fallback = true;
 
       allowed-users = ["root" "volodia" "@admin" "@wheel"];
       trusted-users = ["root" "volodia" "@admin" "@wheel"];
