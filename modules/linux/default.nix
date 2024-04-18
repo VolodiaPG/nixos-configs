@@ -13,6 +13,8 @@
 in {
   inherit imports;
 
+  boot.loader.grub.configurationLimit = 5;
+
   nix = {
     gc.dates = "weekly";
     optimise = {
