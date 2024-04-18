@@ -13,7 +13,6 @@
     package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
-      gc.dates = "03:15";
       options = "--delete-older-than 10d";
     };
 
