@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
-    mosh.url = "github:zhaofengli/mosh";
+    mosh.url = "github:zhaofengli/mosh/fish-wcwidth";
     mosh.flake = false;
   };
 
