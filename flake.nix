@@ -228,7 +228,7 @@
                 ++ (with inputs; [
                   ./machines/dell/configuration.nix
                   ./machines/dell/hardware-configuration.nix
-                  nixos-hardware.nixosModules.common-cpu-intel
+                  #nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-gpu-intel
                   nixos-hardware.nixosModules.common-pc

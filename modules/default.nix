@@ -9,8 +9,8 @@
   };
 
   nix = {
-    # package = pkgs.nixFlakes;
-    package = pkgs.nixVersions.unstable;
+    package = pkgs.nixFlakes;
+    #package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
       options = "--delete-older-than 10d";
