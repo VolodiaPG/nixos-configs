@@ -191,6 +191,7 @@ in {
             ];
             files = [
               ".bash_history"
+              ".local/share/nvim/harpoon.json"
             ];
           };
         }
