@@ -306,7 +306,18 @@
                       /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
                     '';
 
-                    services.nix-daemon.enable = true;
+                    services = {
+                      nix-daemon.enable = true;
+                      yabai = {
+                        enable = true;
+                        extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
+                        enableScriptingAddition = true;
+                      };
+                      skhd = {
+                        enable = true;
+                        skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
+                      };
+                    };
 
                     # Add ability to used TouchID for sudo authentication
                     security.pam.enableSudoTouchIdAuth = true;
