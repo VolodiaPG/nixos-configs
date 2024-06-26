@@ -284,16 +284,15 @@
     "mosh": {
       "flake": false,
       "locked": {
-        "lastModified": 1692310098,
-        "narHash": "sha256-E5z/3UV1U+kq6lyFuEYRPe+hjkFHVR/6qA8iIQ0SkZc=",
+        "lastModified": 1691460706,
+        "narHash": "sha256-1djIUK6mgkIt9ZSugkBkz37yCWc0iBB+snyDUYZnUmY=",
         "owner": "zhaofengli",
         "repo": "mosh",
-        "rev": "b3536cfd2dc768c5f903bea901a15cec5f2fa29b",
+        "rev": "1105d481bb9143dad43adf768f58da7b029fd39c",
         "type": "github"
       },
       "original": {
         "owner": "zhaofengli",
-        "ref": "fish-wcwidth",
         "repo": "mosh",
         "type": "github"
       }

@@ -49,7 +49,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
-    mosh.url = "github:zhaofengli/mosh/fish-wcwidth";
+    mosh.url = "github:zhaofengli/mosh";
     mosh.flake = false;
   };
 
@@ -281,11 +281,19 @@
                           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
                         ];
                       };
+                      extraOptions = ''
+                        extra-platforms = x86_64-darwin aarch64-darwin
+                      '';
+
                       configureBuildUsers = true;
 
                       linux-builder = {
                         enable = true;
-                        maxJobs = 4;
+                        maxJobs = 8;
+                        supportedFeatures = ["kvm" "benchmark" "big-parallel"];
+                        config.virtualisation = {
+                          darwin-builder.diskSize = 60 * 1024;
+                        };
                       };
                     };
 
