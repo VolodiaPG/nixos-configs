@@ -352,6 +352,9 @@ in {
     };
     packages = with pkgs; [
       fontconfig
+      nvim
+      tmux
+      mosh
       (nerdfonts.override {fonts = ["FiraCode"];})
     ];
 

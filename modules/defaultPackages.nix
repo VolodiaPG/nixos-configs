@@ -6,5 +6,7 @@
     gnupg # GNU Privacy Guard
     direnv
     mosh
+    nvim
+    tmux
   ];
 }

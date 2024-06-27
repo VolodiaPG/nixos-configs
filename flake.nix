@@ -43,6 +43,7 @@
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
+    vim.url = "github:volodiapg/vim";
     impermanence.url = "github:nix-community/impermanence";
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -51,6 +52,15 @@
     disko.url = "github:nix-community/disko";
     mosh.url = "github:zhaofengli/mosh";
     mosh.flake = false;
+  };
+
+  nixConfig = {
+    extra-substituters = [
+      "https://volodiapg.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
+    ];
   };
 
   outputs = inputs:
@@ -78,6 +88,7 @@
         nur-volodiapg.overlay
         peerix.overlay
         mosh-overlay
+        vim.overlay
       ];
 
       pkgsFor = nixpkgs_type: system:
