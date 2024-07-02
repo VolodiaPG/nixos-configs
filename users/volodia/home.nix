@@ -66,11 +66,7 @@
   status =
     if isClean
     then ''''
-    else ''printf "(dirty)"'';
-  status_style =
-    if isClean
-    then ""
-    else "bright-red bold";
+    else ''"(dirty)" '';
 in {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
@@ -85,187 +81,64 @@ in {
       enable = true;
       enableBashIntegration = true;
     };
-    # Shell
-    bash = {
-      enable = true;
-      historyControl = ["ignoredups" "ignorespace"];
-
-      initExtra = ''
-        # Perform file completion in a case insensitive fashion
-        bind "set completion-ignore-case on"
-
-        # Treat hyphens and underscores as equivalent
-        bind "set completion-map-case on"
-
-        # Display matches for ambiguous patterns at first tab press
-        bind "set show-all-if-ambiguous on"
-
-        # Enable incremental history search with up/down arrows (also Readline goodness)
-        # Learn more about this here: http://codeinthehole.com/writing/the-most-important-command-line-tip-incremental-history-searching-with-inputrc/
-        bind '"\e[A": history-search-backward'
-        bind '"\e[B": history-search-forward'
-        bind '"\e[C": forward-char'
-        bind '"\e[D": backward-char'
-        bind '"\e\e[D": backward-word'
-        bind '"\e\e[C": forward-word'
-
-        # Attempt to add completions for _all_ aliases
-        source ${pkgs.complete-alias}/bin/complete_alias
-        complete -F _complete_alias "''${!BASH_ALIASES[@]}"
-      '';
-
-      bashrcExtra = ''
-        # # Fix local warning with bash and perl
-        # export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n1 | cut -d ' ' -f4)/lib/locale/locale-archive"
-
-        if [[ -a ~/.localrc ]]
-        then
-          source "$HOME/.localrc"
-        fi
-
-        # This helps bash-completion work, since bash-completion will look here for
-        # other installed completions. Other packages that include bash completion
-        # scripts will link them here.
-        export XDG_DATA_DIRS="$HOME/.nix-profile/share:''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
-
-        # Make Nix and home-manager installed things available in PATH.
-        # export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/opt/homebrew/bin:$PATH
-        export PATH=$HOME/.nix-profile/bin:/opt/homebrew/bin:$PATH
-        export GPG_TTY="$(tty)"
-        EDITOR=nano
-
-        echo "Running Nixos $(nixos-version) $(${lib.getExe date_script})"
-      '';
-    };
-    # Status bar in the shell and stuff
-    starship = {
-      enable = true;
-      settings = {
-        add_newline = false;
-        format = "$shlvl$shell$username$hostname$\{custom.update_status}$nix_shell$\{custom.direnv}$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
-        shlvl = {
-          disabled = true;
-          symbol = "󰓠";
-          style = "bright-red bold";
-        };
-        shell = {
-          disabled = false;
-          format = "$indicator";
-          fish_indicator = "";
-          bash_indicator = "[](bright-white) ";
-          zsh_indicator = "[ZSH](bright-white) ";
-        };
-        username = {
-          format = "[$user]($style)\@";
-          style_user = "bright-white bold";
-          style_root = "bright-red bold";
-        };
-        hostname = {
-          format = "[$hostname]($style) ";
-          style = status_style;
-          ssh_only = false;
-        };
-        nix_shell = {
-          symbol = "󱄅";
-          format = "[$symbol]($style) ";
-          style = "bright-purple bold";
-        };
-        git_branch = {
-          only_attached = true;
-          format = "[$symbol $branch]($style) ";
-          symbol = "";
-          style = "bright-yellow bold";
-        };
-        git_commit = {
-          only_detached = true;
-          format = "[ $hash]($style) ";
-          style = "bright-yellow bold";
-        };
-        git_state = {
-          style = "bright-purple bold";
-        };
-        git_status = {
-          style = "bright-green";
-          conflicted = "[](orange bold)";
-          deleted = "[-](red bold)";
-          modified = "[](green bold)";
-          stashed = "[󰛄](bright-grey bold)";
-          staged = "[](green bold)";
-          renamed = "[](purple bold)";
-          untracked = "[?](yellow bold)";
-        };
-        directory = {
-          read_only = " ";
-          truncation_length = 0;
-        };
-        cmd_duration = {
-          format = "[$duration]($style) ";
-          style = "bright-blue";
-        };
-        jobs = {
-          style = "bright-green bold";
-        };
-        character = {
-          success_symbol = "[](bright-green bold)";
-          error_symbol = "[](bright-red bold)";
-        };
-        custom = {
-          direnv = {
-            format = "[\\[direnv\\]]($style) ";
-            style = "fg:yellow dimmed";
-            when = "env | grep -E '^DIRENV_FILE='";
-          };
-          update_status = {
-            format = "[$output]($style) in ";
-            command = "${status}";
-            style = status_style;
-            when = "true";
-          };
-        };
-      };
-    };
-    dircolors = {
-      enable = true;
-      enableZshIntegration = true;
-      enableBashIntegration = true;
-      settings = {
-        ".iso" = "01;31"; # .iso files bold red like .zip and other archives
-        ".gpg" = "01;33"; # .gpg files bold yellow
-        # Images to non-bold magenta instead of bold magenta like videos
-        ".bmp" = "00;35";
-        ".gif" = "00;35";
-        ".jpeg" = "00;35";
-        ".jpg" = "00;35";
-        ".mjpeg" = "00;35";
-        ".mjpg" = "00;35";
-        ".mng" = "00;35";
-        ".pbm" = "00;35";
-        ".pcx" = "00;35";
-        ".pgm" = "00;35";
-        ".png" = "00;35";
-        ".ppm" = "00;35";
-        ".svg" = "00;35";
-        ".svgz" = "00;35";
-        ".tga" = "00;35";
-        ".tif" = "00;35";
-        ".tiff" = "00;35";
-        ".webp" = "00;35";
-        ".xbm" = "00;35";
-        ".xpm" = "00;35";
-      };
-    };
     zoxide = {
       enable = true;
-      # enableFishIntegration = true;
-      enableBashIntegration = true;
+      enableFishIntegration = true;
+      options = [
+        "--cmd cd"
+      ];
+      #enableBashIntegration = true;
+    };
+    fish = {
+      enable = true;
+      plugins = [
+        {
+          name = "fzf";
+          inherit (pkgs.fzf) src;
+        }
+        {
+          name = "grc";
+          inherit (pkgs.grc) src;
+        }
+        {
+          name = "done";
+          inherit (pkgs.fishPlugins.done) src;
+        }
+        {
+          name = "pure";
+          inherit (pkgs.fishPlugins.pure) src;
+        }
+      ];
+      shellInit = ''
+        set -g GPG_TTY (tty)
+        set -g EDITOR nvim
+
+        set --universal pure_enable_nixdevshell true
+        set --universal pure_symbol_nixdevshell_prefix ❄
+      '';
+
+      interactiveShellInit = ''
+        if type -q nixos-version
+            echo Running ${status}Nixos (nixos-version) (${lib.getExe date_script})
+        else
+          echo Running ${status}Nix
+        end
+      '';
+
+      shellAliases = {
+        ll = "ls -l";
+        l = "ls";
+        j = "just";
+        jl = "just --list";
+        g = "git";
+      };
     };
     zsh = {
       enable = true;
       initExtra = ''
         # Make Nix and home-manager installed things available in PATH.
         export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:$PATH
-        ${pkgs.bashInteractive}/bin/bash
-        exit $?
+        exec ${pkgs.fish}/bin/fish
       '';
     };
     direnv = {
@@ -343,13 +216,6 @@ in {
     #     cat ${config.sops.secrets.pythong5k.path} > ${homeDirectory}/.python-grid5000.yaml
     #   '';
     # };
-    shellAliases = {
-      cd = "z";
-      ll = "ls -l";
-      l = "ls";
-      g = "git";
-      j = "just";
-    };
     packages = with pkgs; [
       fontconfig
       nvim

@@ -110,10 +110,10 @@ in {
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"
       ];
       hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
-      shell = pkgs.bash;
+      shell = pkgs.fish;
     };
     users.root = {
-      shell = pkgs.bash;
+      shell = pkgs.fish;
     };
   };
 }
