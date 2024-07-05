@@ -13,7 +13,19 @@
 in {
   inherit imports;
 
-  boot.loader.grub.configurationLimit = 5;
+  boot = {
+    loader.grub.configurationLimit = 5;
+    kernel.sysctl = {
+      "kernel.threads-max" = 2000000;
+      "kernel.pid-max" = 2000000;
+      "fs.file-max" = 204708;
+      "vm.max_map_count" = 6000000;
+      "net.core.default_qdisc" = lib.mkForce "cake"; #fq_codel also works but is older
+      "net.ipv4.tcp_ecn" = 1;
+      "net.ipv4.tcp_sack" = 1;
+      "net.ipv4.tcp_dsack" = 1;
+    };
+  };
 
   nix = {
     gc.dates = "weekly";
