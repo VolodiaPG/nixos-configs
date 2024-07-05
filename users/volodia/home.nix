@@ -267,7 +267,7 @@ in {
         source = ./packages/scripts;
         recursive = true;
       };
-      ".yabairc".source = ./packages/.yabairc;
+      #".yabairc".source = ./packages/.yabairc;
       ".skhdrc".source = ./packages/.skhdrc;
     };
 
