@@ -131,6 +131,7 @@ in {
         j = "just";
         jl = "just --list";
         g = "git";
+        c = "clear";
       };
     };
     zsh = {
