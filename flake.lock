@@ -885,7 +885,8 @@
         "pre-commit-hooks": "pre-commit-hooks",
         "sops-nix": "sops-nix",
         "srvos": "srvos",
-        "vim": "vim"
+        "vim": "vim",
+        "yabai": "yabai"
       }
     },
     "sops-nix": {
@@ -1073,6 +1074,22 @@
       "original": {
         "owner": "volodiapg",
         "repo": "vim",
+        "type": "github"
+      }
+    },
+    "yabai": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1720538881,
+        "narHash": "sha256-boxkPbeGO+wgDtmIVcR3sxOcOmickxrn2r7cAqCPepI=",
+        "owner": "koekeishiya",
+        "repo": "yabai",
+        "rev": "cee556de6c98f7647aa866c43e504cdb44be793e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "koekeishiya",
+        "repo": "yabai",
         "type": "github"
       }
     }

@@ -52,6 +52,10 @@
     disko.url = "github:nix-community/disko";
     mosh.url = "github:zhaofengli/mosh/fish-wcwidth";
     mosh.flake = false;
+    yabai = {
+      flake = false;
+      url = "github:koekeishiya/yabai";
+    };
   };
 
   nixConfig = {
@@ -160,6 +164,10 @@
         in {
           nixosModules.default = defaultModules;
           # Configurations, option are obtained by .#volodia.<de>.<apps>
+          packages.yabai = let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in
+            pkgs.callPackage ./yabai.nix {src = yabai;};
           packages.homeConfigurations =
             builtins.listToAttrs
             (
@@ -321,6 +329,7 @@
                       nix-daemon.enable = true;
                       yabai = {
                         enable = true;
+                        package = outputs.packages.${system}.yabai;
                         extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                         enableScriptingAddition = true;
                       };
