@@ -665,11 +665,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1721042250,
-        "narHash": "sha256-CEOGzI9WFGezwJ3lok0F//1UEq5crzE2kZDLQK2EtfE=",
+        "lastModified": 1721421992,
+        "narHash": "sha256-4Mu+O2/S5XU1D8HLTU53pv20hEH6aiTkUqjLHowYdY8=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "b9ed90003273f0a75151b32948e16b44891f403c",
+        "rev": "e80a8874accd45cac90616a7b5faa49c5a68e6b9",
         "type": "github"
       },
       "original": {
@@ -993,11 +993,11 @@
     "tmux-catppuccin": {
       "flake": false,
       "locked": {
-        "lastModified": 1721082902,
-        "narHash": "sha256-ON76ZbuMq1WhvzeW2gVN/32SO0bSg0SKCrBDbvO3g90=",
+        "lastModified": 1721382621,
+        "narHash": "sha256-fmSvaqpRpA/COfT9xlhrANAnZAJo4o5SKQdm3A2gzeY=",
         "owner": "catppuccin",
         "repo": "tmux",
-        "rev": "735363e7a02b347e5c48977faae7e308b51ec9c5",
+        "rev": "408c02ccf44d0a59a7a63ce2b65c5c29982c5c0e",
         "type": "github"
       },
       "original": {
@@ -1064,11 +1064,11 @@
         "tmux-catppuccin": "tmux-catppuccin"
       },
       "locked": {
-        "lastModified": 1721203404,
-        "narHash": "sha256-7wXyJMXzfNRVxSQWAVxuZnQnDIsn5miHNARjDlElMG8=",
+        "lastModified": 1721545374,
+        "narHash": "sha256-YOr1ObQkhr6bAgVWtI6UnpAC9TrpGeX6CC76aim228Y=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "3f61564d99b87c9d963ab21e3b28232fa3fc98ec",
+        "rev": "8f2ff98933ca8d280451df5a742032f47f2f48db",
         "type": "github"
       },
       "original": {
