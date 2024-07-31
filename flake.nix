@@ -56,6 +56,10 @@
       flake = false;
       url = "github:koekeishiya/yabai";
     };
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -255,6 +259,7 @@
                   nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   srvos.nixosModules.server
+                  microvm.nixosModules.host
                   ({config, ...}: {
                     services = {
                       desktop.enable = false;
@@ -308,10 +313,26 @@
 
                       linux-builder = {
                         enable = true;
+                        ephemeral = true;
                         maxJobs = 8;
                         supportedFeatures = ["kvm" "benchmark" "big-parallel"];
-                        config.virtualisation = {
-                          darwin-builder.diskSize = 60 * 1024;
+                        systems = ["aarch64-linux" "x86_64-linux"];
+                        config = {
+                          # This can't include aarch64-linux when building on aarch64,
+                          # for reasons I don't fully understand
+                          boot.binfmt.emulatedSystems = ["x86_64-linux"];
+                          virtualisation = {
+                            darwin-builder.diskSize = 60 * 1024;
+                          };
+                          nix.settings = {
+                            substituters = [
+                              "https://nix-community.cachix.org"
+                            ];
+                            trusted-public-keys = [
+                              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+                            ];
+                            extra-platforms = ["aarch64-linux" "x86_64-linux"];
+                          };
                         };
                       };
                     };
