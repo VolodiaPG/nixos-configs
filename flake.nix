@@ -261,12 +261,43 @@
                   srvos.nixosModules.server
                   microvm.nixosModules.host
                   ({config, ...}: {
+                    networking.useDHCP = false;
                     networking.nat = {
                       enable = true;
                       enableIPv6 = true;
-                      # Change this to the interface with upstream Internet access
-                      externalInterface = "tailscale0";
                       internalInterfaces = ["microvm"];
+                    };
+                    systemd.network = {
+                      enable = true;
+                      wait-online.anyInterface = true;
+                      netdevs = {
+                        "10-microvm".netdevConfig = {
+                          Kind = "bridge";
+                          Name = "microvm";
+                        };
+                      };
+                      networks = {
+                        "10-lan" = {
+                          matchConfig.Name = ["enp*" "wlan*" "wlp*"];
+                          networkConfig.DHCP = "ipv4";
+                        };
+                        "10-microvm" = {
+                          matchConfig.Name = "microvm";
+                          networkConfig = {
+                            DHCPServer = true;
+                            IPv6SendRA = true;
+                          };
+                          addresses = [
+                            {
+                              addressConfig.Address = "10.100.100.1/24";
+                            }
+                          ];
+                        };
+                        "11-microvm" = {
+                          matchConfig.Name = "vm-*";
+                          networkConfig.Bridge = "microvm";
+                        };
+                      };
                     };
                     services = {
                       desktop.enable = false;
