@@ -261,6 +261,13 @@
                   srvos.nixosModules.server
                   microvm.nixosModules.host
                   ({config, ...}: {
+                    networking.nat = {
+                      enable = true;
+                      enableIPv6 = true;
+                      # Change this to the interface with upstream Internet access
+                      externalInterface = "tailscale0";
+                      internalInterfaces = ["microvm"];
+                    };
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
