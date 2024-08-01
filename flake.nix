@@ -265,11 +265,14 @@
                     pkgs,
                     ...
                   }: {
-                    networking.useDHCP = false;
-                    networking.nat = {
-                      enable = true;
-                      enableIPv6 = true;
-                      internalInterfaces = ["microvm"];
+                    networking = {
+                      useDHCP = false;
+                      nat = {
+                        enable = true;
+                        enableIPv6 = true;
+                        internalInterfaces = ["microvm"];
+                      };
+                      useNetworkd = true;
                     };
                     systemd.network = {
                       enable = true;
@@ -289,7 +292,7 @@
                           matchConfig.Name = "microvm";
                           networkConfig = {
                             DHCPServer = true;
-                            #IPv6SendRA = true;
+                            IPv6SendRA = true;
                           };
                           addresses = [
                             {
