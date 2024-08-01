@@ -260,20 +260,18 @@
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   srvos.nixosModules.server
                   microvm.nixosModules.host
-                  ({
-                    config,
-                    pkgs,
-                    ...
-                  }: {
+                  ({config, ...}: {
                     networking = {
                       useDHCP = false;
                       nat = {
                         enable = true;
                         enableIPv6 = true;
                         internalInterfaces = ["microvm"];
+                        externalInterface = "enp0s31f6";
                       };
                       useNetworkd = true;
                     };
+                    boot.kernelModules = ["macvtap" "xt_MASQUERADE"];
                     systemd.network = {
                       enable = true;
                       wait-online.anyInterface = true;
@@ -296,7 +294,15 @@
                           };
                           addresses = [
                             {
-                              addressConfig.Address = "10.100.100.1/24";
+                              addressConfig.Address = "10.0.0.1/24";
+                            }
+                            {
+                              addressConfig.Address = "fd12:3456:789a::1/64";
+                            }
+                          ];
+                          ipv6Prefixes = [
+                            {
+                              ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
                             }
                           ];
                         };
@@ -307,25 +313,25 @@
                       };
                     };
 
-                    systemd.services.nat = {
-                      description = "Configure NAT for VMs";
-                      after = ["network.target"];
+                    #systemd.services.nat = {
+                    #  description = "Configure NAT for VMs";
+                    #  after = ["network.target"];
 
-                      serviceConfig = {
-                        Type = "oneshot";
-                        ExecStart = let
-                          script = pkgs.writeShellScript "setup-nat" ''
-                            ${pkgs.iptables}/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-                            {pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -j ACCEPT
-                            ${pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -m state --state RELATED,ESTABLISHED -j ACCEPT
-                            ${pkgs.procps}/bin/sysctl -w net.ipv4.ip_forward=1
-                          '';
-                        in "${script}";
-                        RemainAfterExit = true;
-                      };
+                    #  serviceConfig = {
+                    #    Type = "oneshot";
+                    #    ExecStart = let
+                    #      script = pkgs.writeShellScript "setup-nat" ''
+                    #        ${pkgs.iptables}/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+                    #        {pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -j ACCEPT
+                    #        ${pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -m state --state RELATED,ESTABLISHED -j ACCEPT
+                    #        ${pkgs.procps}/bin/sysctl -w net.ipv4.ip_forward=1
+                    #      '';
+                    #    in "${script}";
+                    #    RemainAfterExit = true;
+                    #  };
 
-                      wantedBy = ["multi-user.target"];
-                    };
+                    #  wantedBy = ["multi-user.target"];
+                    #};
 
                     services = {
                       desktop.enable = false;
