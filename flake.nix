@@ -260,7 +260,11 @@
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   srvos.nixosModules.server
                   microvm.nixosModules.host
-                  ({config, ...}: {
+                  ({
+                    config,
+                    pkgs,
+                    ...
+                  }: {
                     networking.useDHCP = false;
                     networking.nat = {
                       enable = true;
@@ -285,7 +289,7 @@
                           matchConfig.Name = "microvm";
                           networkConfig = {
                             DHCPServer = true;
-                            IPv6SendRA = true;
+                            #IPv6SendRA = true;
                           };
                           addresses = [
                             {
@@ -299,6 +303,27 @@
                         };
                       };
                     };
+
+                    systemd.services.nat = {
+                      description = "Configure NAT for VMs";
+                      after = ["network.target"];
+
+                      serviceConfig = {
+                        Type = "oneshot";
+                        ExecStart = let
+                          script = pkgs.writeShellScript "setup-nat" ''
+                            ${pkgs.iptables}/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+                            {pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -j ACCEPT
+                            ${pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -m state --state RELATED,ESTABLISHED -j ACCEPT
+                            ${pkgs.procps}/bin/sysctl -w net.ipv4.ip_forward=1
+                          '';
+                        in "${script}";
+                        RemainAfterExit = true;
+                      };
+
+                      wantedBy = ["multi-user.target"];
+                    };
+
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
