@@ -285,6 +285,7 @@
                         "10-lan" = {
                           matchConfig.Name = ["enp*" "wlan*" "wlp*"];
                           networkConfig.DHCP = "ipv4";
+                          linkConfig.RequiredForOnline = "routable";
                         };
                         "10-microvm" = {
                           matchConfig.Name = "microvm";
@@ -296,15 +297,12 @@
                             {
                               addressConfig.Address = "10.0.0.1/24";
                             }
-                            {
-                              addressConfig.Address = "fd12:3456:789a::1/64";
-                            }
                           ];
-                          ipv6Prefixes = [
-                            {
-                              ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
-                            }
-                          ];
+                          #ipv6Prefixes = [
+                          #    {
+                          #      ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
+                          #    }
+                          #  ];
                         };
                         "11-microvm" = {
                           matchConfig.Name = "vm-*";
@@ -312,6 +310,8 @@
                         };
                       };
                     };
+
+                    networking.firewall.trustedInterfaces = ["tailscale0" "microvm"];
 
                     #systemd.services.nat = {
                     #  description = "Configure NAT for VMs";
