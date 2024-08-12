@@ -251,7 +251,6 @@
                 ++ (with inputs; [
                   ./machines/dell/configuration.nix
                   ./machines/dell/hardware-configuration.nix
-                  #nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-gpu-intel
                   nixos-hardware.nixosModules.common-pc
@@ -266,29 +265,27 @@
                       nat = {
                         enable = true;
                         enableIPv6 = true;
-                        internalInterfaces = ["microvm"];
+                        internalInterfaces = ["microvmbr0"];
                         externalInterface = "enp0s31f6";
                       };
                       useNetworkd = true;
                     };
-                    boot.kernelModules = ["macvtap" "xt_MASQUERADE"];
                     systemd.network = {
                       enable = true;
                       wait-online.anyInterface = true;
                       netdevs = {
                         "10-microvm".netdevConfig = {
                           Kind = "bridge";
-                          Name = "microvm";
+                          Name = "microvmbr0";
                         };
                       };
                       networks = {
                         "10-lan" = {
-                          matchConfig.Name = ["enp*" "wlan*" "wlp*"];
-                          networkConfig.DHCP = "ipv4";
-                          linkConfig.RequiredForOnline = "routable";
+                          matchConfig.Name = ["enp*" "wlp*"];
+                          networkConfig.DHCP = true;
                         };
                         "10-microvm" = {
-                          matchConfig.Name = "microvm";
+                          matchConfig.Name = "microvmbr0";
                           networkConfig = {
                             DHCPServer = true;
                             IPv6SendRA = true;
@@ -306,41 +303,15 @@
                               ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
                             }
                           ];
-                          #ipv6Prefixes = [
-                          #    {
-                          #      ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
-                          #    }
-                          #  ];
                         };
                         "11-microvm" = {
                           matchConfig.Name = "vm-*";
-                          networkConfig.Bridge = "microvm";
+                          networkConfig.Bridge = "microvmbr0";
                         };
                       };
                     };
 
                     networking.firewall.trustedInterfaces = ["tailscale0" "microvm"];
-
-                    #systemd.services.nat = {
-                    #  description = "Configure NAT for VMs";
-                    #  after = ["network.target"];
-
-                    #  serviceConfig = {
-                    #    Type = "oneshot";
-                    #    ExecStart = let
-                    #      script = pkgs.writeShellScript "setup-nat" ''
-                    #        ${pkgs.iptables}/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-                    #        {pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -j ACCEPT
-                    #        ${pkgs.iptables}/sbin/iptables -A FORWARD -i microvm -o microvm -m state --state RELATED,ESTABLISHED -j ACCEPT
-                    #        ${pkgs.procps}/bin/sysctl -w net.ipv4.ip_forward=1
-                    #      '';
-                    #    in "${script}";
-                    #    RemainAfterExit = true;
-                    #  };
-
-                    #  wantedBy = ["multi-user.target"];
-                    #};
-
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
