@@ -265,7 +265,7 @@
                       nat = {
                         enable = true;
                         enableIPv6 = true;
-                        internalInterfaces = ["microvmbr0"];
+                        internalInterfaces = ["vbr0"];
                         externalInterface = "enp0s31f6";
                       };
                       useNetworkd = true;
@@ -276,7 +276,7 @@
                       netdevs = {
                         "10-microvm".netdevConfig = {
                           Kind = "bridge";
-                          Name = "microvmbr0";
+                          Name = "vbr0";
                         };
                       };
                       networks = {
@@ -285,7 +285,7 @@
                           networkConfig.DHCP = true;
                         };
                         "10-microvm" = {
-                          matchConfig.Name = "microvmbr0";
+                          matchConfig.Name = "vbr0";
                           networkConfig = {
                             DHCPServer = true;
                             IPv6SendRA = true;
@@ -306,12 +306,13 @@
                         };
                         "11-microvm" = {
                           matchConfig.Name = "vm-*";
-                          networkConfig.Bridge = "microvmbr0";
+                          networkConfig.Bridge = "vbr0";
                         };
                       };
                     };
+                    networking.firewall.allowedUDPPorts = [67];
 
-                    networking.firewall.trustedInterfaces = ["tailscale0" "microvm"];
+                    networking.firewall.trustedInterfaces = ["tailscale0" "vbr0"];
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
