@@ -35,7 +35,7 @@ in {
         #   upper = "13:30";
         # };
         enable = isClean;
-        dates = "hourly";
+        #dates = "hourly";
         flags = [
           "--refresh"
         ];
