@@ -9,7 +9,7 @@
   };
 
   nix = {
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.latest;
     #package = pkgs.nixVersions.unstable;
     gc = {
       automatic = true;
