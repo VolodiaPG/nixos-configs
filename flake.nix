@@ -60,6 +60,7 @@
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   nixConfig = {
@@ -155,6 +156,7 @@
                 sharedModules = [
                   sops-nix.homeManagerModules.sops
                   ./secrets/home-manager.nix
+                  catppuccin.homeManagerModules.catppuccin
                 ];
                 extraSpecialArgs =
                   (specialArgsFor system "volodia")
@@ -164,6 +166,7 @@
                   };
               };
             })
+            ++ [catppuccin.nixosModules.catppuccin]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
         in {
           nixosModules.default = defaultModules;
@@ -186,6 +189,7 @@
                     in {
                       inherit pkgs;
                       modules = [
+                        catppuccin.homeManagerModules.catppuccin
                         sops-nix.homeManagerModules.sops
                         ./secrets/home-manager.nix
                         ./users/volodia/home.nix

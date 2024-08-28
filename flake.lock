@@ -1,5 +1,20 @@
 {
   "nodes": {
+    "catppuccin": {
+      "locked": {
+        "lastModified": 1724469296,
+        "narHash": "sha256-p3R4LUNk6gC+fTKRUm9ByXaoRIocnQMwVuJSIxECQ8o=",
+        "owner": "catppuccin",
+        "repo": "nix",
+        "rev": "874e668ddaf3687e8d38ccd0188a641ffefe1cfb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "catppuccin",
+        "repo": "nix",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -972,6 +987,7 @@
     },
     "root": {
       "inputs": {
+        "catppuccin": "catppuccin",
         "darwin": "darwin",
         "disko": "disko",
         "flake-utils": "flake-utils",
@@ -1216,11 +1232,11 @@
         "tmux-catppuccin": "tmux-catppuccin"
       },
       "locked": {
-        "lastModified": 1724339048,
-        "narHash": "sha256-0R+l4zYdOXSvXPboDOzKKfNpkMp1KSmY3zysKiBOzmQ=",
+        "lastModified": 1724834650,
+        "narHash": "sha256-6vOEBCDwqazB1KFnSdpAET2DEOGRKfSB2xoHW5YBGmw=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "60ec2e605e59b166c3cd8571c6d01e4a4d11461a",
+        "rev": "0a3d551f46d71a9e0c162d510a1ff8287946c6b2",
         "type": "github"
       },
       "original": {

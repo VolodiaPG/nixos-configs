@@ -74,6 +74,8 @@ in {
 
   fonts.fontconfig.enable = true;
 
+  catppuccin.enable = true;
+
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
@@ -241,7 +243,7 @@ in {
         }
       '';
       ".config/kitty/kitty.conf".source = ./kitty.conf;
-      ".config/kitty/theme.conf".source = ./theme.conf;
+      #".config/kitty/theme.conf".source = ./theme.conf;
       ".ssh/config".source = pkgs.substituteAll {
         src = ./config.ssh;
         # g5k_login = builtins.readFile ../../secrets/grid5000.user;
