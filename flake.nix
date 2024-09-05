@@ -2,14 +2,16 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.follows = "srvos/nixpkgs";
+    nixpkgs-darwin.follows = "srvos/nixpkgs";
+    #nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     srvos = {
       url = "github:nix-community/srvos";
       # Use the version of nixpkgs that has been tested to work with SrvOS
       # Alternatively we also support the latest nixos release and unstable
-      inputs.nixpkgs.follows = "nixpkgs";
+      #inputs.nixpkgs.follows = "nixpkgs";
     };
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
@@ -145,6 +147,7 @@
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) catppuccin.nixosModules.catppuccin)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) {
               services.autoUpgrade = {
                 enable = true;
@@ -168,7 +171,6 @@
                   };
               };
             })
-            ++ [catppuccin.nixosModules.catppuccin]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
         in {
           nixosModules.default = defaultModules;
