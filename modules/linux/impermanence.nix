@@ -188,6 +188,7 @@ in {
               ".local/share/direnv"
               ".local/share/zoxide"
               ".docker"
+              ".tmux/resurrect"
             ];
             files = [
               ".bash_history"
