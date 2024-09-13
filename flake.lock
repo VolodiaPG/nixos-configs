@@ -596,11 +596,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1725956241,
-        "narHash": "sha256-UL8WJvT+67ZNNc0GmfhygDzggq/lidyRRSN1jPXzr+0=",
+        "lastModified": 1726133505,
+        "narHash": "sha256-5Q7Io0J98z7UOswrruOuO/jJNduSB3PKFw/sDz0NX1A=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "faa2e6306c0a1ae8e67dfdb0d75cd5ecd427ca5d",
+        "rev": "4697b96a0124944929ecefa09d488c7997419e43",
         "type": "github"
       },
       "original": {
@@ -982,22 +982,6 @@
         "type": "github"
       }
     },
-    "tmux-catppuccin": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1725703424,
-        "narHash": "sha256-ici0+G2Wot4O9sBM4o5hNIA1AI/k60UNkLaNjBz0AZQ=",
-        "owner": "catppuccin",
-        "repo": "tmux",
-        "rev": "8276c5a5e33dbbbae3d370db2f6129e20b402f8a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "catppuccin",
-        "repo": "tmux",
-        "type": "github"
-      }
-    },
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
@@ -1030,15 +1014,14 @@
         "nixvim": "nixvim",
         "plugin-inlay-hints": "plugin-inlay-hints",
         "plugin-ltex-extra": "plugin-ltex-extra",
-        "plugin-staline": "plugin-staline",
-        "tmux-catppuccin": "tmux-catppuccin"
+        "plugin-staline": "plugin-staline"
       },
       "locked": {
-        "lastModified": 1725969922,
-        "narHash": "sha256-1Cr2K+dM3cPmJS6/FoYypPtNMlpwVPNwQigHAxxRxcE=",
+        "lastModified": 1726215689,
+        "narHash": "sha256-lHk6KNUhn4RRjOPSFKiWL4jJiiFyDcz3RN9B4v5+IxE=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "1276f15f5276dd7b321cf37bb9643c60fdd0a158",
+        "rev": "e47270213a3d12cc4315027e93ae50ea630887d3",
         "type": "github"
       },
       "original": {
