@@ -258,14 +258,6 @@ in {
         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me
       '';
 
-      ".tmux".text = ''
-        set -g mouse
-        setw -g mouse on
-
-        bind C-c run "tmux save-buffer - | wl-copy"
-
-        bind C-v run "tmux set-buffer "$(wl-paste)"; tmux paste-buffer"
-      '';
       ".config/mpv/scripts" = {
         source = ./packages/scripts;
         recursive = true;
