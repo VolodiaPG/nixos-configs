@@ -63,7 +63,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     catppuccin.url = "github:catppuccin/nix";
-    vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
   nixConfig = {
@@ -268,9 +267,8 @@
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   srvos.nixosModules.server
                   microvm.nixosModules.host
-                  vscode-server.nixosModules.default
                   ({config, ...}: {
-                    services.vscode-server.enable = true;
+                    programs.nix-ld.enable = true;
                     networking = {
                       useDHCP = false;
                       nat = {
