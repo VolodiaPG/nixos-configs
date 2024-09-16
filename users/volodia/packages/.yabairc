@@ -40,9 +40,9 @@ yabai -m config \
 
 # mission-control desktop labels
 yabai -m space 1 --label web
-yabai -m space 2 --label mail
+yabai -m space 2 --label code
 yabai -m space 3 --label social
-yabai -m space 4 --label code
+yabai -m space 4 --label terminal
 yabai -m space 5 --label misc
 yabai -m space 6 --label music
 yabai -m space 7 --label notes
@@ -50,12 +50,13 @@ yabai -m space 8 --label bib
 yabai -m space 9 --label doc
 
 # window rules
-yabai -m rule --add app="^Mail$" space=mail
+yabai -m rule --add app="^Mail$" space=social
 yabai -m rule --add app="^Arc$" title="!^.*littlearc.*$" space=web
 yabai -m rule --add app="^Orion$" space=web
 yabai -m rule --add app="^Obsidian$" space=notes
 yabai -m rule --add app="^Signal$" space=social
-yabai -m rule --add app="^kitty$" space=code
+yabai -m rule --add app="^kitty$" space=terminal
+yabai -m rule --add app="^Cursor$" space=code
 yabai -m rule --add app="^TIDAL$" space=music
 yabai -m rule --add app="^Discord$" space=social
 yabai -m rule --add app="^Zotero$" space=bib
@@ -63,7 +64,7 @@ yabai -m rule --add app="^Calendar$" space=mail
 yabai -m rule --add app="^(Calculator|System Preferences|Archive Utility)$" manage=off
 
 # specific space settings
-yabai -m config --space mail  layout stack
+#yabai -m config --space mail  layout stack
 #yabai -m config --space misc layout float
 
 yabai -m signal --add event=window_destroyed active=yes action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse &> /dev/null || yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id) &> /dev/null"
