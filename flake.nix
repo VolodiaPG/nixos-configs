@@ -357,6 +357,7 @@
                 outputs.nixosModules.${system}.default
                 ++ [
                   {
+                    system.stateVersion = 5;
                     nixpkgs.hostPlatform = system;
 
                     nix = {

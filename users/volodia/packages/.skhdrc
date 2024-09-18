@@ -14,15 +14,15 @@ ctrl + alt - l : yabai -m window --warp east
 #lctrl + à : yabai -m space --focus last
 #shift + alt - p : yabai -m window --space prev
 #shift + alt - n : yabai -m window --space next
-ctrl - 0x12 : yabai -m space --focus 1
-ctrl - 0x13 : yabai -m space --focus 2
-ctrl - 0x14 : yabai -m space --focus 3
-ctrl - 0x15 : yabai -m space --focus 4
-ctrl - 0x17 : yabai -m space --focus 5
-ctrl - 0x16 : yabai -m space --focus 6
-ctrl - 0x1A : yabai -m space --focus 7
-ctrl - 0x1C : yabai -m space --focus 8
-ctrl - 0x19 : yabai -m space --focus 9
+#ctrl - 0x12 : yabai -m space --focus 1
+#ctrl - 0x13 : yabai -m space --focus 2
+#ctrl - 0x14 : yabai -m space --focus 3
+#ctrl - 0x15 : yabai -m space --focus 4
+#ctrl - 0x17 : yabai -m space --focus 5
+#ctrl - 0x16 : yabai -m space --focus 6
+#ctrl - 0x1A : yabai -m space --focus 7
+#ctrl - 0x1C : yabai -m space --focus 8
+#ctrl - 0x19 : yabai -m space --focus 9
 
 # Toggle focus follows mouse
 ctrl - backspace : yabai
