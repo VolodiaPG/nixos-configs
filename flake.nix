@@ -4,9 +4,10 @@
   inputs = {
     #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.follows = "srvos/nixpkgs";
+    nixpkgs.follows = "srvos/nixpkgs";
     nixpkgs-darwin.follows = "srvos/nixpkgs";
     #nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     srvos = {
       url = "github:nix-community/srvos";
       # Use the version of nixpkgs that has been tested to work with SrvOS
