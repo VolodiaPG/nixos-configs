@@ -32,6 +32,7 @@ in {
   };
 
   nix = {
+    settings.experimental-features = "nix-command flakes";
     gc.dates = "weekly";
     optimise = {
       automatic = true;
@@ -69,7 +70,7 @@ in {
     openssh = {
       enable = true;
       allowSFTP = true;
-      settings.PermitRootLogin = "prohibit-password";
+      settings.PermitRootLogin = lib.mkForce "prohibit-password";
     };
     fwupd.enable = true;
     pcscd.enable = true;

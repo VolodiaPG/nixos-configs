@@ -96,7 +96,6 @@ in {
     # Enable sound.
 
     hardware.pulseaudio.enable = false;
-    sound.enable = false;
     security.rtkit.enable = true;
 
     programs = {
@@ -120,7 +119,7 @@ in {
         roboto
         joypixels
         # nerdfonts
-        (callPackage ../../pkgs/comic-code {})
+        #(callPackage ../../pkgs/comic-code {})
       ];
       fontconfig.defaultFonts = {
         monospace = [

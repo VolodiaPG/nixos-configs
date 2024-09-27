@@ -14,7 +14,7 @@
         version = 2;
         device = "nodev";
         efiSupport = true;
-        enableCryptodisk = true;
+        #enableCryptodisk = true;
       };
     };
     blacklistedKernelModules = [
@@ -47,10 +47,10 @@
     };
 
     # Enable the X11 windowing system.
-    xserver = {
-      videoDrivers = ["nvidia"];
-      exportConfiguration = true;
-    };
+    #xserver = {
+    #  videoDrivers = ["nvidia"];
+    #  exportConfiguration = true;
+    #};
 
     nvfancontrol = {
       enable = true;
@@ -74,6 +74,7 @@
 
   hardware = {
     nvidia = {
+      open = true;
       powerManagement.enable = true;
       modesetting.enable = true;
       nvidiaPersistenced = true;
@@ -109,7 +110,8 @@
   };
 
   #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-  # hardware.nvidia.prime.nvidiaBusId = "PCI:1:0:0";
+  hardware.nvidia.prime.offload.enable = false;
+  #hardware.nvidia.prime.nvidiaBusId = "PCI:1:0:0";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
