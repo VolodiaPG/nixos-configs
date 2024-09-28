@@ -31,3 +31,6 @@ https://www.reddit.com/r/linux/comments/l1re17/psa_by_default_firefox_on_linux_d
 
 MacOS fix
 sudo chown -R volodia:staff /nix
+
+
+mount -o subvol=,ssd,compress-force=zstd:2,noatime,discard=async,space_cache=v2,autodefrag /dev/disk/by-label/root /mnt
