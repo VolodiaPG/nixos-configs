@@ -273,7 +273,7 @@
                         enable = true;
                         enableIPv6 = true;
                         internalInterfaces = ["vbr0"];
-                        externalInterface = "enp0s31f6";
+                        externalInterface = "enp3s0";
                       };
                       useNetworkd = true;
                     };
@@ -327,7 +327,7 @@
                       intel.enable = true;
                       impermanence = {
                         enable = true;
-                        rootVolume = "nvme0n1p11";
+                        rootVolume = "sda";
                       };
                       elegantBoot.enable = false;
                       vpn.enable = true;
