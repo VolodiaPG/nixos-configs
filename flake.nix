@@ -329,7 +329,7 @@
                         enable = true;
                         rootVolume = "disk/by-label/root";
                       };
-                      elegantBoot.enable = false;
+                      elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = false;
                     };

@@ -168,6 +168,7 @@ in {
               ".config/cachix"
               ".vscode-server"
               ".cursor-server"
+              ".config/dconf"
               {
                 directory = ".gnupg";
                 mode = "0700";

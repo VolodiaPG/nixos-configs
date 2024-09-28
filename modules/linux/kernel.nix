@@ -25,7 +25,7 @@ in {
       boot.kernelModules = ["ecryptfs"];
       powerManagement = {
         enable = true;
-        cpuFreqGovernor = "powersave";
+        cpuFreqGovernor = "performance";
         powertop.enable = true;
       };
       services = {
@@ -56,7 +56,7 @@ in {
       };
 
       boot = {
-        tmp.cleanOnBoot = true;
+        #tmp.cleanOnBoot = true;
 
         /*
         NOTE: replace this with your desired kernel, see: https://nixos.wiki/wiki/Linux_kernel for reference.
