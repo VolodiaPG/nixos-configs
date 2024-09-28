@@ -30,7 +30,7 @@
   fileSystems = {
     "/boot" = {
       device = "/dev/disk/by-label/BOOT";
-      fsType = "fat32";
+      fsType = "vfat";
     };
   };
 
