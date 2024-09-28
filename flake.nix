@@ -167,8 +167,8 @@
                 extraSpecialArgs =
                   (specialArgsFor system "volodia")
                   // {
-                    graphical = "no-de";
-                    apps = "no-apps";
+                    graphical = lib.mkDefault "no-de";
+                    apps = lib.mkDefault "no-apps";
                   };
               };
             })
@@ -329,9 +329,13 @@
                         enable = true;
                         rootVolume = "disk/by-label/root";
                       };
-                      elegantBoot.enable = true;
+                      elegantBoot.enable = false;
                       vpn.enable = true;
                       laptopServer.enable = false;
+                    };
+                    extraSpecialArgs = {
+                      graphical = "gnome";
+                      apps = "personal";
                     };
                   })
                 ]);
