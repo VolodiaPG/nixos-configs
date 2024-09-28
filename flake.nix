@@ -327,7 +327,7 @@
                       intel.enable = true;
                       impermanence = {
                         enable = true;
-                        rootVolume = "by-label/root";
+                        rootVolume = "disk/by-label/root";
                       };
                       elegantBoot.enable = false;
                       vpn.enable = true;
