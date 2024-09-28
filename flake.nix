@@ -259,7 +259,7 @@
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
                   ./machines/msi/configuration.nix
-                  #                 ./machines/msi/hardware-configuration.nix
+                  ./machines/msi/hardware-configuration.nix
                   nixos-hardware.nixosModules.common-cpu-intel
                   nixos-hardware.nixosModules.common-gpu-nvidia
                   nixos-hardware.nixosModules.common-pc
