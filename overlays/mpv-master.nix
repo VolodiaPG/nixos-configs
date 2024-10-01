@@ -1,15 +1,15 @@
-final: prev: {
-  mpv-unwrapped = (prev.mpv-unwrapped.overrideAttrs
-    (_old: {
-      version = "9880b06";
-      src = prev.fetchFromGitHub {
-        owner = "mpv-player";
-        repo = "mpv";
-        rev = "9880b06";
-        hash = "sha256-cH1Se1fNgCHSbtblkQ5Sip70JVRpTedPqA3YgieYHW0=";
-      };
-    }))
-  .override {vapoursynthSupport = true;};
+_final: _prev: {
+  #mpv-unwrapped = (prev.mpv-unwrapped.overrideAttrs
+  #    (_old: {
+  #      version = "9880b06";
+  #      src = prev.fetchFromGitHub {
+  #        owner = "mpv-player";
+  #        repo = "mpv";
+  #        rev = "9880b06";
+  #        hash = "sha256-cH1Se1fNgCHSbtblkQ5Sip70JVRpTedPqA3YgieYHW0=";
+  #      };
+  #    }))
+  #  .override {vapoursynthSupport = true;};
 
   # vapoursynth-rife = prev.callPackage ../pkgs/vapoursynth-rife { };
   # vapoursynth = prev.vapoursynth.withPlugins [
@@ -31,5 +31,5 @@ final: prev: {
   #   #   #  prev.vs-overlay.packages.x86_64-linux
   #   # ];
   # };
-  mpv = final.wrapMpv final.mpv-unwrapped {youtubeSupport = true;};
+  #mpv = final.wrapMpv final.mpv-unwrapped {youtubeSupport = true;};
 }

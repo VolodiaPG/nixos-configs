@@ -10,11 +10,10 @@
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
     gnomeExtensions.blur-my-shell
-    gnomeExtensions.rounded-window-corners
     gnomeExtensions.media-controls
     gnomeExtensions.impatience
     gnomeExtensions.hibernate-status-button
-    gnomeExtensions.x11-gestures
+    gnomeExtensions.brightness-control-using-ddcutil
 
     gnome-obfuscate
   ];
@@ -53,6 +52,7 @@
           "user-theme@gnome-shell-extensions.gcampax.github.com"
           "hibernate-status@dromi"
           "x11gestures@joseexposito.github.io"
+          "display-brightness-ddcutil@themightydeity.github.com"
         ];
       };
 
@@ -207,8 +207,8 @@
   };
 
   qt = {
-    enable = true;
-    platformTheme = "gtk";
-    style.name = "gtk2";
+    #enable = true;
+    platformTheme = "kvantum";
+    style.name = "kvantum";
   };
 }

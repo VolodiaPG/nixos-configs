@@ -165,10 +165,12 @@ in {
               "Videos"
               # ".local/state/nix/profiles"
               # ".nix-profile"
-              ".config/cachix"
               ".vscode-server"
               ".cursor-server"
-              ".config/dconf"
+              ".cursor"
+              ".cursor-tutor"
+              ".config"
+              ".local/share/fonts/ComicCode"
               {
                 directory = ".gnupg";
                 mode = "0700";
@@ -189,6 +191,7 @@ in {
               ".local/share/zoxide"
               ".docker"
               ".tmux/resurrect"
+              ".mozilla"
             ];
             files = [
               ".bash_history"

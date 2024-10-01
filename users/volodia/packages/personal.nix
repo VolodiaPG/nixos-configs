@@ -1,7 +1,10 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
+    code-cursor
+    freecad
+    inkscape
     # firefox-beta-bin
-    brave
+    #brave
     # chromium
     #ungoogled-chromium
     #firefox-bin

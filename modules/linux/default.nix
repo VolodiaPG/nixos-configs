@@ -105,7 +105,11 @@ in {
     fish.enable = true;
   };
 
-  environment.systemPackages = [pkgs.sshx pkgs.docker-compose];
+  environment.systemPackages = [
+    pkgs.sshx
+    pkgs.docker-compose
+    pkgs.lm_sensors
+  ];
 
   # security.polkit.extraConfig = ''
   #     polkit.addRule(function(action, subject) {

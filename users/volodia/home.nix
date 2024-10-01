@@ -244,14 +244,17 @@ in {
       '';
       ".config/kitty/kitty.conf".source = ./kitty.conf;
       #".config/kitty/theme.conf".source = ./theme.conf;
-      ".ssh/config".source = pkgs.substituteAll {
-        src = ./config.ssh;
-        # g5k_login = builtins.readFile ../../secrets/grid5000.user;
-        g5k_login = "volparolguarino";
-        keychain =
-          if pkgs.stdenv.isLinux
-          then ""
-          else "UseKeychain yes";
+      ".ssh/config" = {
+        source = pkgs.substituteAll {
+          src = ./config.ssh;
+          # g5k_login = builtins.readFile ../../secrets/grid5000.user;
+          g5k_login = "volparolguarino";
+          keychain =
+            if pkgs.stdenv.isLinux
+            then ""
+            else "UseKeychain yes";
+        };
+        mode = "0600";
       };
       ".ssh/authorized_keys".text = ''
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi

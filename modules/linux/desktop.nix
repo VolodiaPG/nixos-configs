@@ -25,7 +25,7 @@ in {
         enable = true;
         layout = "fr";
         xkbVariant = "oss";
-        xkbOptions = "eurosign:e";
+        xkbOptions = "eurosign:e,ctrl:swapcaps";
 
         displayManager.gdm = {
           enable = true;
@@ -93,6 +93,20 @@ in {
         gnome-contacts
       ]);
 
+    #Enable ddc
+    environment.systemPackages = with pkgs; [
+      ddcutil
+    ];
+
+    services.udev.extraRules = ''
+      KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
+    '';
+    # Load i2c kernel module
+    boot.kernelModules = ["i2c-dev"];
+
+    users.groups.i2c = {};
+
+    users.users.volodia.extraGroups = ["i2c"];
     # Enable sound.
 
     hardware.pulseaudio.enable = false;

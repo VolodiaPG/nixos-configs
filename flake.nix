@@ -2,17 +2,11 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.follows = "srvos/nixpkgs";
     nixpkgs.follows = "srvos/nixpkgs";
     nixpkgs-darwin.follows = "srvos/nixpkgs";
-    #nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     srvos = {
       url = "github:nix-community/srvos";
-      # Use the version of nixpkgs that has been tested to work with SrvOS
-      # Alternatively we also support the latest nixos release and unstable
-      #inputs.nixpkgs.follows = "nixpkgs";
     };
     nur-xddxdd = {
       url = "github:xddxdd/nur-packages";
@@ -40,8 +34,6 @@
         flake-utils.follows = "flake-utils";
       };
     };
-    # nix-software-center.url = "github:vlinkz/nix-software-center";
-    # nix-conf-editor.url = "github:vlinkz/nixos-conf-editor";
     darwin = {
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -165,11 +157,7 @@
                   catppuccin.homeManagerModules.catppuccin
                 ];
                 extraSpecialArgs =
-                  (specialArgsFor system "volodia")
-                  // {
-                    graphical = lib.mkDefault "no-de";
-                    apps = lib.mkDefault "no-apps";
-                  };
+                  specialArgsFor system "volodia";
               };
             })
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
@@ -248,6 +236,10 @@
                       elegantBoot.enable = false;
                       vpn.enable = true;
                       laptopServer.enable = true;
+                    };
+                    home-manager.extraSpecialArgs = {
+                      graphical = "no-de";
+                      apps = "no-apps";
                     };
                   }
                 ]);
@@ -333,7 +325,7 @@
                       vpn.enable = true;
                       laptopServer.enable = false;
                     };
-                    extraSpecialArgs = {
+                    home-manager.extraSpecialArgs = {
                       graphical = "gnome";
                       apps = "personal";
                     };
@@ -428,6 +420,10 @@
                         mac = config.sops.secrets.dellmac.path;
                         interface = "enp0s31f6";
                       };
+                    };
+                    home-manager.extraSpecialArgs = {
+                      graphical = "no-de";
+                      apps = "no-apps";
                     };
                   })
                 ]);
