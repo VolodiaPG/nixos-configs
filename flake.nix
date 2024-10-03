@@ -257,62 +257,7 @@
                   nixos-hardware.nixosModules.common-pc
                   nixos-hardware.nixosModules.common-pc-ssd
                   microvm.nixosModules.host
-                  ({lib, ...}: {
-                    programs.nix-ld.enable = true;
-                    networking = {
-                      useDHCP = false;
-                      nat = {
-                        enable = true;
-                        enableIPv6 = true;
-                        internalInterfaces = ["vbr0"];
-                        externalInterface = "enp3s0";
-                      };
-                      useNetworkd = true;
-                    };
-                    systemd.network = {
-                      enable = true;
-                      wait-online.anyInterface = true;
-                      netdevs = {
-                        "10-microvm".netdevConfig = {
-                          Kind = "bridge";
-                          Name = "vbr0";
-                        };
-                      };
-                      networks = {
-                        "10-lan" = {
-                          matchConfig.Name = ["enp*" "wlp*"];
-                          networkConfig.DHCP = true;
-                        };
-                        "10-microvm" = {
-                          matchConfig.Name = "vbr0";
-                          networkConfig = {
-                            DHCPServer = true;
-                            IPv6SendRA = true;
-                          };
-                          addresses = [
-                            {
-                              addressConfig.Address = "10.0.0.1/24";
-                            }
-                            {
-                              addressConfig.Address = "fd12:3456:789a::1/64";
-                            }
-                          ];
-                          ipv6Prefixes = [
-                            {
-                              ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
-                            }
-                          ];
-                        };
-                        "11-microvm" = {
-                          matchConfig.Name = "vm-*";
-                          networkConfig.Bridge = "vbr0";
-                        };
-                      };
-                    };
-                    networking.firewall.allowedUDPPorts = [67];
-
-                    networking.firewall.trustedInterfaces = ["tailscale0" "vbr0"];
-                    programs.ssh.setXAuthLocation = lib.mkForce false;
+                  {
                     services = {
                       desktop.enable = true;
                       kernel.enable = true;
@@ -321,6 +266,7 @@
                         enable = true;
                         rootVolume = "disk/by-label/root";
                       };
+                      microvms.enable = true;
                       elegantBoot.enable = true;
                       vpn.enable = true;
                     };
@@ -328,7 +274,7 @@
                       graphical = "gnome";
                       apps = "personal";
                     };
-                  })
+                  }
                 ]);
             };
 
@@ -349,61 +295,8 @@
                   #srvos.nixosModules.server
                   microvm.nixosModules.host
                   ({config, ...}: {
-                    programs.nix-ld.enable = true;
-                    networking = {
-                      useDHCP = false;
-                      nat = {
-                        enable = true;
-                        enableIPv6 = true;
-                        internalInterfaces = ["vbr0"];
-                        externalInterface = "enp0s31f6";
-                      };
-                      useNetworkd = true;
-                    };
-                    systemd.network = {
-                      enable = true;
-                      wait-online.anyInterface = true;
-                      netdevs = {
-                        "10-microvm".netdevConfig = {
-                          Kind = "bridge";
-                          Name = "vbr0";
-                        };
-                      };
-                      networks = {
-                        "10-lan" = {
-                          matchConfig.Name = ["enp*" "wlp*"];
-                          networkConfig.DHCP = true;
-                        };
-                        "10-microvm" = {
-                          matchConfig.Name = "vbr0";
-                          networkConfig = {
-                            DHCPServer = true;
-                            IPv6SendRA = true;
-                          };
-                          addresses = [
-                            {
-                              addressConfig.Address = "10.0.0.1/24";
-                            }
-                            {
-                              addressConfig.Address = "fd12:3456:789a::1/64";
-                            }
-                          ];
-                          ipv6Prefixes = [
-                            {
-                              ipv6PrefixConfig.Prefix = "fd12:3456:789a::/64";
-                            }
-                          ];
-                        };
-                        "11-microvm" = {
-                          matchConfig.Name = "vm-*";
-                          networkConfig.Bridge = "vbr0";
-                        };
-                      };
-                    };
-                    networking.firewall.allowedUDPPorts = [67];
-
-                    networking.firewall.trustedInterfaces = ["tailscale0" "vbr0"];
                     services = {
+                      microvms.enable = true;
                       desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;

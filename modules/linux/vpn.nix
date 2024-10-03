@@ -24,10 +24,10 @@ in {
     # 1. create the TUN network device
     # 2. setup some IP routes to route through the TUN
     services.tailscale = {enable = true;};
-
     networking = {
       inherit (cfg) nameservers;
       firewall = {
+        trustedInterfaces = ["tailscale0"];
         checkReversePath = "loose";
         # Let's open the UDP port with which the network is tunneled through
         allowedUDPPorts = [41641];

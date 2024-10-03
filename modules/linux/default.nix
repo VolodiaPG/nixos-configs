@@ -63,7 +63,10 @@ in {
     ];
   };
 
-  programs.mosh.enable = true;
+  programs = {
+    mosh.enable = true;
+    nix-ld.enable = true;
+  };
 
   # Enable SSH with password authentication disabled.
   services = {
