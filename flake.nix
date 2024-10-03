@@ -347,7 +347,7 @@
                   nixos-hardware.nixosModules.common-pc-laptop
                   nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  srvos.nixosModules.server
+                  #srvos.nixosModules.server
                   microvm.nixosModules.host
                   ({config, ...}: {
                     programs.nix-ld.enable = true;
@@ -405,7 +405,7 @@
 
                     networking.firewall.trustedInterfaces = ["tailscale0" "vbr0"];
                     services = {
-                      desktop.enable = false;
+                      desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;
                       impermanence = {
@@ -422,8 +422,8 @@
                       };
                     };
                     home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
-                      apps = "no-apps";
+                      graphical = "gnome";
+                      apps = "personal";
                     };
                   })
                 ]);
