@@ -304,7 +304,7 @@
                         enable = true;
                         rootVolume = "nvme0n1p11";
                       };
-                      elegantBoot.enable = false;
+                      elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = true;
                       changeMAC = {
