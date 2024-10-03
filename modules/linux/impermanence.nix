@@ -43,10 +43,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    boot = {
-      supportedFilesystems = ["btrfs"];
-      initrd.enable = true;
-      initrd.postDeviceCommands = let
+    systemd.services.impermanence-setup = {
+      description = "Set up impermanent root";
+      wantedBy = ["initrd.target"];
+      after = ["systemd-udev-settle.service"];
+      before = ["sysroot.mount"];
+      unitConfig.DefaultDependencies = false;
+      serviceConfig.Type = "oneshot";
+      script = let
         directoriesList = config.environment.persistence."/persistent".directories;
         directories = builtins.map (set: "\"" + set.directory + "\"") directoriesList;
 
@@ -60,40 +64,40 @@ in {
         files = builtins.map dirname filesList;
 
         directoriesToBind = directories ++ files;
-      in
-        lib.mkAfter ''
-          mkdir /btrfs_tmp
-          mount /dev/${cfg.rootVolume} /btrfs_tmp
-          if [[ -e /btrfs_tmp/root ]]; then
-              mkdir -p /btrfs_tmp/old_roots
-              timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-              mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-          fi
+      in ''
+        mkdir /btrfs_tmp
+        mount /dev/${cfg.rootVolume} /btrfs_tmp
+        if [[ -e /btrfs_tmp/root ]]; then
+            mkdir -p /btrfs_tmp/old_roots
+            timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+            mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+        fi
 
-          delete_subvolume_recursively() {
-              IFS=$'\n'
-              for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-                  delete_subvolume_recursively "/btrfs_tmp/$i"
-              done
-              btrfs subvolume delete "$1"
-          }
+        delete_subvolume_recursively() {
+            IFS=$'\n'
+            for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+                delete_subvolume_recursively "/btrfs_tmp/$i"
+            done
+            btrfs subvolume delete "$1"
+        }
 
-          for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${cfg.deleteAfterDays}); do
-              delete_subvolume_recursively "$i"
-          done
+        for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${cfg.deleteAfterDays}); do
+            delete_subvolume_recursively "$i"
+        done
 
-          btrfs subvolume create /btrfs_tmp/root
+        btrfs subvolume create /btrfs_tmp/root
 
-          mkdir -p /btrfs_tmp/root/boot
-          mkdir -p /btrfs_tmp/root/nix
-          mkdir -p /btrfs_tmp/root/persistent
-          ${builtins.concatStringsSep "; " (builtins.map (dir: "mkdir -p /btrfs_tmp/root" + dir) directoriesToBind)}
-          ${builtins.concatStringsSep "; " (builtins.map (dir: "mkdir -p /btrfs_tmp/persistent" + dir) directoriesToBind)}
-          ${builtins.concatStringsSep "; " (builtins.map (dir: "touch /btrfs_tmp/persistent" + dir) filesList)}
+        mkdir -p /btrfs_tmp/root/boot
+        mkdir -p /btrfs_tmp/root/nix
+        mkdir -p /btrfs_tmp/root/persistent
+        ${builtins.concatStringsSep "\n" (builtins.map (dir: "mkdir -p /btrfs_tmp/root" + dir) directoriesToBind)}
+        ${builtins.concatStringsSep "\n" (builtins.map (dir: "mkdir -p /btrfs_tmp/persistent" + dir) directoriesToBind)}
+        ${builtins.concatStringsSep "\n" (builtins.map (dir: "touch /btrfs_tmp/persistent" + dir) filesList)}
 
-          umount /btrfs_tmp
-        '';
+        umount /btrfs_tmp
+      '';
     };
+    boot.supportedFilesystems = ["btrfs"];
 
     fileSystems = mkMerge [
       (
