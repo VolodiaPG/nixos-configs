@@ -28,6 +28,7 @@ in {
       "net.ipv4.tcp_ecn" = 1;
       "net.ipv4.tcp_sack" = 1;
       "net.ipv4.tcp_dsack" = 1;
+      "net.ipv4.tcp_congestion_control" = "bbr";
     };
   };
 
