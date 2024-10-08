@@ -44,6 +44,10 @@ in {
           extraGSettingsOverridePackages = [pkgs.gnome.gnome-settings-daemon];
         };
       };
+      system76-scheduler = {
+        enable = true;
+        useStockConfig = true;
+      };
 
       #system76Scheduler = {
       # enable = true;
