@@ -22,7 +22,7 @@ in {
           options i915 enable_guc=3 enable_fbc=1 fastboot=1
         '';
         kernelModules = ["kvm_intel"];
-        kernelParams = ["intel_iommu=on"];
+        kernelParams = ["intel_iommu=on" "intel_pstate=passive"];
       };
 
       environment.systemPackages = with pkgs; [intel-gpu-tools];

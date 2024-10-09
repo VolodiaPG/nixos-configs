@@ -25,7 +25,6 @@ in {
       boot.kernelModules = ["ecryptfs"];
       powerManagement = {
         enable = true;
-        cpuFreqGovernor = "performance";
         powertop.enable = true;
       };
       services = {

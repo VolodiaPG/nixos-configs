@@ -18,7 +18,7 @@ in {
   inherit imports;
 
   boot = {
-    loader.grub.configurationLimit = 5;
+    loader.grub.configurationLimit = 20;
     kernel.sysctl = {
       "kernel.threads-max" = 2000000;
       "kernel.pid-max" = 2000000;
