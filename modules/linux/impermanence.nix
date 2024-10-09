@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib; let
@@ -45,11 +46,39 @@ in {
   config = mkIf cfg.enable {
     systemd.services.impermanence-setup = {
       description = "Set up impermanent root";
-      wantedBy = ["initrd.target"];
-      after = ["systemd-udev-settle.service"];
-      before = ["sysroot.mount"];
-      unitConfig.DefaultDependencies = false;
-      serviceConfig.Type = "oneshot";
+      wantedBy = ["local-fs-pre.target"];
+      before = let
+        ensureValidServiceName = name:
+          if lib.hasSuffix ".service" name
+          then name
+          else name + ".service";
+        services = map ensureValidServiceName (
+          lib.attrNames (
+            lib.filterAttrs (
+              name: _:
+                lib.hasPrefix "persist-" name
+            )
+            config.systemd.services
+          )
+        );
+      in
+        ["local-fs-pre.target" "local-fs.target"]
+        ++ services;
+      after = ["systemd-fsck-root.service"];
+      path = with pkgs; [
+        btrfs-progs
+        coreutils
+        findutils
+        util-linux
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      unitConfig = {
+        DefaultDependencies = false;
+        Conflicts = "shutdown.target";
+      };
       script = let
         directoriesList = config.environment.persistence."/persistent".directories;
         directories = builtins.map (set: "\"" + set.directory + "\"") directoriesList;
@@ -65,7 +94,7 @@ in {
 
         directoriesToBind = directories ++ files;
       in ''
-        mkdir /btrfs_tmp
+        mkdir -p /btrfs_tmp
         mount /dev/${cfg.rootVolume} /btrfs_tmp
         if [[ -e /btrfs_tmp/root ]]; then
             mkdir -p /btrfs_tmp/old_roots
