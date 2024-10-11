@@ -18,6 +18,9 @@
     };
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
+    kernelParams = [
+      "usbcore.autosuspend=-1"
+    ];
     #loader.grub.device = "nodev";
   };
 
