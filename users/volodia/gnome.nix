@@ -185,9 +185,28 @@
   gtk = {
     enable = true;
 
+    # icontheme = {
+    #   name = "fluent";
+    #   package = pkgs.fluent-icon-theme;
+    # };
+
     iconTheme = {
-      name = "Fluent";
-      package = pkgs.fluent-icon-theme;
+      name = "WhiteSur";
+      package = pkgs.whitesur-icon-theme.override {
+        alternativeIcons = true;
+        boldPanelIcons = true;
+      };
+    };
+    cursorTheme = {
+      name = "macOS";
+      package = pkgs.apple-cursor;
+      size = 24;
+    };
+    theme = {
+      name = "WhiteSur-Light";
+      package = pkgs.whitesur-gtk-theme.override {
+        iconVariant = "simple";
+      };
     };
 
     #theme = {
