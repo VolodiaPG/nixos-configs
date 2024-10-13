@@ -19,6 +19,8 @@
     ];
   };
 
+  hardware.asahi.peripheralFirmwareDirectory = ./firmware;
+
   zramSwap.enable = true;
 
   services.logind.extraConfig = ''
