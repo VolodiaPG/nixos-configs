@@ -38,6 +38,9 @@
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
+    nixos-apple-silicon = {
+      url = "github:tpwrules/nixos-apple-silicon";
+    };
     vim.url = "github:volodiapg/vim";
     impermanence.url = "github:nix-community/impermanence";
     sops-nix = {
@@ -321,6 +324,42 @@
                       apps = "personal";
                     };
                   })
+                ]);
+            };
+
+            "m1" = nixpkgs.lib.nixosSystem {
+              inherit system;
+              specialArgs = specialArgsFor "${system}" "volodia";
+              modules =
+                outputs.nixosModules.${system}.default
+                ++ (with inputs; [
+                  ./machines/m1/configuration.nix
+                  ./machines/m1/hardware-configuration.nix
+                  nixos-apple-silicon.nixosModules.apple-silicon
+                  nixos-hardware.nixosModules.common-pc
+                  nixos-hardware.nixosModules.common-pc-laptop
+                  nixos-hardware.nixosModules.common-pc-laptop-ssd
+                  #srvos.nixosModules.server
+                  microvm.nixosModules.host
+                  {
+                    services = {
+                      microvms.enable = true;
+                      desktop.enable = true;
+                      kernel.enable = false;
+                      intel.enable = false;
+                      impermanence = {
+                        enable = true;
+                        rootVolume = "nvme0n1p5";
+                      };
+                      elegantBoot.enable = true;
+                      vpn.enable = true;
+                      laptopServer.enable = false;
+                    };
+                    home-manager.extraSpecialArgs = {
+                      graphical = "gnome";
+                      apps = "personal";
+                    };
+                  }
                 ]);
             };
           };
