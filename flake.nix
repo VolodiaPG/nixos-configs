@@ -220,7 +220,7 @@
                 ++ (with inputs; [
                   ./machines/m1/configuration.nix
                   ./machines/m1/hardware-configuration.nix
-                  nixos-apple-silicon.nixosModules.apple-silicon
+                  nixos-apple-silicon.nixosModules.apple-silicon-support
                   nixos-hardware.nixosModules.common-pc
                   nixos-hardware.nixosModules.common-pc-laptop
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
