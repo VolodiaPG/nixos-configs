@@ -242,7 +242,7 @@
                     };
                     home-manager.extraSpecialArgs = {
                       graphical = "gnome";
-                      apps = "personal";
+                      apps = "no-apps";
                     };
                   }
                 ]);

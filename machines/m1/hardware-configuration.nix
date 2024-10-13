@@ -2,7 +2,6 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  config,
   lib,
   modulesPath,
   ...
@@ -13,10 +12,9 @@
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "thunderbolt" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
+      availableKernelModules = ["nvme" "usb_storage" "sdhci_pci"];
       kernelModules = [];
     };
-    kernelModules = ["kvm-intel"];
     extraModulePackages = [];
     kernelParams = [
       "usbcore.autosuspend=-1"
@@ -26,17 +24,10 @@
 
   fileSystems = {
     "/boot" = {
-      device = "/dev/disk/by-uuid/D83C-1680";
+      device = "/dev/disk/by-uuid/616D-12F7";
       fsType = "vfat";
     };
   };
-
-  swapDevices = [
-    {
-      device = "/dev/disk/by-uuid/7309ec42-f066-404c-a948-d09765bf67a4";
-      options = ["noatime"];
-    }
-  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -47,5 +38,4 @@
   # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
