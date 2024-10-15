@@ -1,7 +1,13 @@
 {
   imports = [./common.nix];
-  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops = {
+    age.keyFile = "/var/lib/sops-nix/key.txt";
 
-  sops.secrets.dellmac = {
+    secrets = {
+      dellmac = {};
+      syncthing-password = {};
+      syncthing-cert = {};
+      syncthing-key = {};
+    };
   };
 }
