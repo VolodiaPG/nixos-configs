@@ -33,7 +33,7 @@ in {
   };
 
   nix = {
-    settings.experimental-features = "nix-command flakes";
+    settings.experimental-features = lib.mkForce "nix-command flakes";
     gc.dates = "weekly";
     optimise = {
       automatic = true;
