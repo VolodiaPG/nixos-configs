@@ -1,6 +1,13 @@
 {
-  networking.useNetworkd = true;
-  networking.useDHCP = false;
+  networking = {
+    stevenBlackHosts = {
+      enable = true;
+      blockFakenews = true;
+      blockGambling = true;
+    };
+    useNetworkd = true;
+    useDHCP = false;
+  };
   systemd.network = {
     enable = true;
     wait-online.anyInterface = true;

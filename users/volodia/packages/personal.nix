@@ -1,5 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   home.packages = with pkgs; [
+    inputs.zen-browser.packages.${pkgs.stdenv.system}.specific
     code-cursor
     freecad
     inkscape
@@ -44,6 +49,7 @@
     #      }
     #    ];
     #})
+
     zotero
 
     # Media

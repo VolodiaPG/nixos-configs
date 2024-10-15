@@ -56,6 +56,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     catppuccin.url = "github:catppuccin/nix";
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    hosts.url = "github:StevenBlack/hosts";
   };
 
   nixConfig = {
@@ -134,6 +136,7 @@
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
               }
               ./modules
+              hosts.nixosModule
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) sops-nix.nixosModules.sops)
