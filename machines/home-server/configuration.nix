@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{
   # Use the systemd-boot EFI boot loader.
 
   boot = {
@@ -29,13 +29,8 @@
 
   hardware.cpu.intel.updateMicrocode = true;
 
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      # vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      #libvdpau-va-gl
-    ];
+  hardware.graphics = {
+    enable = false;
   };
 
   # This value determines the NixOS release from which the default
