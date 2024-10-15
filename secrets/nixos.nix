@@ -6,8 +6,14 @@
     secrets = {
       dellmac = {};
       syncthing-password = {};
-      syncthing-cert = {};
-      syncthing-key = {};
+      syncthing-m1-cert = {};
+      syncthing-m1-key = {};
+      syncthing-dell-cert = {};
+      syncthing-dell-key = {};
+      syncthing-msi-cert = {};
+      syncthing-msi-key = {};
+      syncthing-home-server-cert = {};
+      syncthing-home-server-key = {};
     };
   };
 }
