@@ -79,7 +79,7 @@ in {
         DefaultDependencies = false;
         Conflicts = "shutdown.target";
       };
-      restartTriggers = [];
+      restartIfChanged = false;
       script = let
         directoriesList = config.environment.persistence."/persistent".directories;
         directories = builtins.map (set: "\"" + set.directory + "\"") directoriesList;
@@ -226,6 +226,7 @@ in {
               ".docker"
               ".tmux/resurrect"
               ".mozilla"
+              ".zen"
             ];
             files = [
               ".bash_history"
