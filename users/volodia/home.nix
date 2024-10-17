@@ -162,7 +162,7 @@ in {
       extraConfig = {
         rebase.autostash = true;
         init.defaultBranch = "main";
-        core.editor = "nano";
+        core.editor = "nvim";
       };
       aliases.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
     };
