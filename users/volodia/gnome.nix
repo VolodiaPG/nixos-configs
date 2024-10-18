@@ -101,6 +101,16 @@
         # move window one monitor to the right
         move-to-monitor-right = [];
         move-to-workspace-right = ["<primary><super><shift>right"];
+        switch-to-workspace-1 = ["<primary><super>&"];
+        switch-to-workspace-2 = ["<primary><super>2"];
+        switch-to-workspace-3 = ["<primary><super>3"];
+        switch-to-workspace-4 = ["<primary><super>4"];
+        switch-to-workspace-5 = ["<primary><super>5"];
+        switch-to-workspace-6 = ["<primary><super>6"];
+        switch-to-workspace-7 = ["<primary><super>7"];
+        switch-to-workspace-8 = ["<primary><super>8"];
+        switch-to-workspace-9 = ["<primary><super>9"];
+        switch-to-workspace-10 = ["<primary><super>10"];
         # super + ctrl + direction keys, change workspaces, move focus between monitors
         # move to workspace below
         switch-to-workspace-down = ["<primary><super>down" "<primary><super>j"];
@@ -117,6 +127,16 @@
         toggle-message-tray = ["<super>v"];
         # show the activities overview: disable <super>s
         toggle-overview = [];
+        open-new-application-1 = [];
+        open-new-application-2 = [];
+        open-new-application-3 = [];
+        open-new-application-4 = [];
+        open-new-application-5 = [];
+        open-new-application-6 = [];
+        open-new-application-7 = [];
+        open-new-application-8 = [];
+        open-new-application-9 = [];
+        open-new-application-10 = [];
       };
       "org/gnome/mutter/keybindings" = {
         # disable tiling to left / right of screen
