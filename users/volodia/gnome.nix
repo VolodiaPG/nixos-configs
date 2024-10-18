@@ -14,6 +14,7 @@
     gnomeExtensions.impatience
     gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
+    gnomeExtensions.stocks-extension
 
     gnome-obfuscate
   ];
@@ -54,6 +55,10 @@
           "x11gestures@joseexposito.github.io"
           "display-brightness-ddcutil@themightydeity.github.com"
         ];
+      };
+
+      "org/gnome/shell/extensions/net/gfxmonk/impatience" = {
+        speed-factor = 0.5;
       };
 
       "org/gnome/shell/extensions/vitals" = {
@@ -101,7 +106,7 @@
         # move window one monitor to the right
         move-to-monitor-right = [];
         move-to-workspace-right = ["<primary><super><shift>right"];
-        switch-to-workspace-1 = ["<primary><super>&"];
+        switch-to-workspace-1 = ["<primary><super>1"];
         switch-to-workspace-2 = ["<primary><super>2"];
         switch-to-workspace-3 = ["<primary><super>3"];
         switch-to-workspace-4 = ["<primary><super>4"];
@@ -127,16 +132,16 @@
         toggle-message-tray = ["<super>v"];
         # show the activities overview: disable <super>s
         toggle-overview = [];
-        open-new-application-1 = [];
-        open-new-application-2 = [];
-        open-new-application-3 = [];
-        open-new-application-4 = [];
-        open-new-application-5 = [];
-        open-new-application-6 = [];
-        open-new-application-7 = [];
-        open-new-application-8 = [];
-        open-new-application-9 = [];
-        open-new-application-10 = [];
+        open-new-window-application-1 = [];
+        open-new-window-application-2 = [];
+        open-new-window-application-3 = [];
+        open-new-window-application-4 = [];
+        open-new-window-application-5 = [];
+        open-new-window-application-6 = [];
+        open-new-window-application-7 = [];
+        open-new-window-application-8 = [];
+        open-new-window-application-9 = [];
+        open-new-window-application-10 = [];
       };
       "org/gnome/mutter/keybindings" = {
         # disable tiling to left / right of screen
