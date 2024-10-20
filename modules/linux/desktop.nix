@@ -40,8 +40,10 @@ in {
             [org.gnome.settings-daemon.plugins.power]
             sleep-inactive-ac-type='nothing'
             sleep-inactive-battery-type='nothing'
+            [org.gnome.mutter]
+            experimental-features=['scale-monitor-framebuffer']
           '';
-          extraGSettingsOverridePackages = [pkgs.gnome.gnome-settings-daemon];
+          extraGSettingsOverridePackages = [pkgs.gnome.mutter pkgs.gnome.gnome-settings-daemon];
         };
       };
       system76-scheduler = {
