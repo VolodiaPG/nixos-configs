@@ -61,6 +61,7 @@
     catppuccin.url = "github:catppuccin/nix";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     hosts.url = "github:StevenBlack/hosts";
+    codecursor.url = "github:coder/cursor-arm";
   };
 
   nixConfig = {
@@ -242,7 +243,7 @@
                     };
                     home-manager.extraSpecialArgs = {
                       graphical = "gnome";
-                      apps = "no-apps";
+                      apps = "personal";
                     };
                   }
                 ]);

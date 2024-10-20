@@ -197,6 +197,24 @@ in {
       Install.WantedBy = ["default.target"];
     };
 
+  systemd.user.services.sshIdRsa = let
+    script = pkgs.writeShellScript "symlinkrsa" ''
+      ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
+      ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
+    '';
+  in
+    lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      Unit = {
+        Description = "symlink rsa keys";
+      };
+      Service = {
+        ExecStart = script;
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      Install.WantedBy = ["default.target"];
+    };
+
   #   launchd.agents.sops-nix = {
   #     enable = true;
   #     config = {
