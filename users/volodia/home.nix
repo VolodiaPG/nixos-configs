@@ -198,9 +198,18 @@ in {
     };
 
   systemd.user.services.sshIdRsa = let
+    binPath = lib.strings.makeBinPath (
+      [pkgs.coreutils]
+      ++ pkgs.stdenv.initialPath
+    );
     script = pkgs.writeShellScript "symlinkrsa" ''
-      ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
-      ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
+      export PATH="${binPath}"
+      if [ ! -f ~/.ssh/id_rsa.pub ] || [ "$(realpath ~/.ssh/id_rsa.pub)" != "$(realpath ~/.ssh/id_ed25519.pub)" ]; then
+        ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
+      fi
+      if [ ! -f ~/.ssh/id_rsa ] || [ "$(realpath ~/.ssh/id_rsa)" != "$(realpath ~/.ssh/id_ed25519)" ]; then
+        ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
+      fi
     '';
   in
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
