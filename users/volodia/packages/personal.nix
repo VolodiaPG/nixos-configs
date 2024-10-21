@@ -16,6 +16,7 @@
       vlc
       signal-desktop
       qbittorrent
+      strawberry
     ]
     ++ (lib.optionals pkgs.stdenv.isx86_64 [
       code-cursor
