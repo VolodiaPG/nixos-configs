@@ -5,6 +5,8 @@
 
     secrets = {
       dellmac = {};
+      ssh-remote-builder = {};
+      ssh-remote-builder-pub = {};
       syncthing-password = {};
       syncthing-m1-cert = {};
       syncthing-m1-key = {};
