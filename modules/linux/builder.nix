@@ -5,7 +5,7 @@
     buildMachines = [
       {
         hostName = "dell-builder";
-        sshUser = "nix";
+        sshUser = "nix-remote-builder";
         protocol = "ssh-ng";
         sshKey = config.sops.secrets.ssh-remote-builder.path;
         systems = [
@@ -21,11 +21,25 @@
       }
       {
         hostName = "m1-builder";
-        sshUser = "nix";
+        sshUser = "nix-remote-builder";
         protocol = "ssh-ng";
         sshKey = config.sops.secrets.ssh-remote-builder.path;
         system = "aarch64-linux";
         maxJobs = 16;
+        supportedFeatures = [
+          "big-parallel"
+          "kvm"
+          "nixos-test"
+        ];
+      }
+      {
+        hostName = "msi-builder";
+        sshUser = "nix-remote-builder";
+        protocol = "ssh-ng";
+        sshKey = config.sops.secrets.ssh-remote-builder.path;
+        system = "x86_64-linux";
+        maxJobs = 16;
+        speedFactor = 1;
         supportedFeatures = [
           "big-parallel"
           "kvm"
@@ -55,5 +69,10 @@
       User nix-remote-builder
       HostName m1
       IdentityFile ${config.sops.secrets.ssh-remote-builder.path}
+    Host msi-builder
+      User nix-remote-builder
+      HostName msi
+      IdentityFile ${config.sops.secrets.ssh-remote-builder.path}
+
   '';
 }
