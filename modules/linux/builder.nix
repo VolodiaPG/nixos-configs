@@ -48,31 +48,33 @@
       }
     ];
   };
-
-  users.users.nix-remote-builder = {
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHIZaWKa2Y/gotOjZugykS0xFpoxwV/lWlshoEVRXJ04 volodia@msi"
-    ];
-    isNormalUser = true;
-    group = "nogroup";
+  users = {
+    groups.nix-builder = {};
+    users.nix-remote-builder = {
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHIZaWKa2Y/gotOjZugykS0xFpoxwV/lWlshoEVRXJ04 volodia@msi"
+      ];
+      isNormalUser = true;
+      group = "nix-builder";
+    };
   };
-
-  # Allow more nix-daemon sessions to connect at the same time.
-  services.openssh.settings.MaxStartups = 100;
 
   programs.ssh.extraConfig = ''
     Host dell-builder
       User nix-remote-builder
       HostName dell
       IdentityFile ${config.sops.secrets.ssh-remote-builder.path}
+      IdentitiesOnly yes
     Host m1-builder
       User nix-remote-builder
       HostName m1
       IdentityFile ${config.sops.secrets.ssh-remote-builder.path}
+      IdentitiesOnly yes
     Host msi-builder
       User nix-remote-builder
       HostName msi
       IdentityFile ${config.sops.secrets.ssh-remote-builder.path}
+      IdentitiesOnly yes
 
   '';
 }
