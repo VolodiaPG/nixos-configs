@@ -8,6 +8,7 @@
     [
       freecad
       inkscape
+      neovide
 
       # Media
       tidal-hifi
