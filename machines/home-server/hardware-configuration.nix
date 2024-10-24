@@ -18,6 +18,9 @@
     };
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
+    kernelParams = [
+      "mitigations=off"
+    ];
   };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

@@ -67,8 +67,8 @@
       };
 
       "org/gnome/shell/extensions/pop-shell" = {
-        "active-hint-border-radius" = 15;
-        "active-hint" = false;
+        "active-hint-border-radius" = "@u 15";
+        "active-hint" = true;
         "mouse-cursor-follows-active-window" = true;
       };
 
@@ -227,12 +227,12 @@
       package = pkgs.apple-cursor;
       size = 24;
     };
-    theme = {
-      name = "WhiteSur-Light";
-      package = pkgs.whitesur-gtk-theme.override {
-        iconVariant = "simple";
-      };
-    };
+    # theme = {
+    #   name = "WhiteSur-Light";
+    #   package = pkgs.whitesur-gtk-theme.override {
+    #     iconVariant = "simple";
+    #   };
+    # };
 
     #theme = {
     #  name = "Orchis";

@@ -6,6 +6,7 @@
 }: {
   home.packages = with pkgs;
     [
+      neovide
       freecad
       inkscape
       neovide

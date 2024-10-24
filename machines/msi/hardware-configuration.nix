@@ -25,6 +25,7 @@
     };
     kernelParams = [
       "usbcore.autosuspend=-1"
+      "mitigations=off"
     ];
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
