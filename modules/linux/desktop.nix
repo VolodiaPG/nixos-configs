@@ -30,6 +30,7 @@ in {
         displayManager.gdm = {
           enable = true;
           autoSuspend = false;
+          wayland = true;
         };
         desktopManager.gnome = {
           enable = true;
@@ -42,6 +43,10 @@ in {
             sleep-inactive-battery-type='nothing'
             [org.gnome.mutter]
             experimental-features=['scale-monitor-framebuffer']
+            [org.gnome.SessionManager]
+            auto-save-session=true
+            [org.gtk.Settings.FileChooser]
+            sort-directories-first=true
           '';
           extraGSettingsOverridePackages = [pkgs.gnome.mutter pkgs.gnome.gnome-settings-daemon];
         };
