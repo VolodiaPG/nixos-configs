@@ -5,7 +5,6 @@
     gnomeExtensions.vitals
     gnomeExtensions.pop-shell
     gnomeExtensions.hide-activities-button
-    gnomeExtensions.remove-app-menu
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
@@ -14,7 +13,6 @@
     gnomeExtensions.impatience
     gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
-    gnomeExtensions.stocks-extension
 
     gnome-obfuscate
   ];
@@ -38,7 +36,6 @@
           #"cosmic-workspaces@system76.com"
           # "pop-cosmic@system76.com"
           "Vitals@CoreCoding.com"
-          "remove-app-menu@stuarthayhurst.com"
           "hide-activities-button@zeten30.com"
           "gnomeExtensions.gnome-40-ui-improvements@AXP.com"
           "gnome-ui-tune@itstime.tech"
