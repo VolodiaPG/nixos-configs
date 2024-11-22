@@ -9,6 +9,10 @@ in {
   options = {
     services.microvms = with types; {
       enable = mkEnableOption "microvms";
+      interface = mkOption {
+        description = "host interface to connect the bridge to";
+        type = types.str;
+      };
     };
   };
 
@@ -21,7 +25,7 @@ in {
         enable = true;
         enableIPv6 = true;
         internalInterfaces = ["vbr0"];
-        externalInterface = "enp3s0";
+        externalInterface = cfg.interface;
       };
     };
     systemd.network = {

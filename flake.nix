@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs-unstable.follows = "srvos/nixpkgs";
     nixpkgs.follows = "srvos/nixpkgs";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-darwin.follows = "srvos/nixpkgs";
     srvos = {
       url = "github:nix-community/srvos";
@@ -313,7 +314,11 @@
                         enable = true;
                         rootVolume = "disk/by-label/root";
                       };
-                      microvms.enable = true;
+
+                      microvms = {
+                        enable = true;
+                        interface = "enp3s0";
+                      };
                       elegantBoot.enable = true;
                       vpn.enable = true;
                     };
@@ -343,7 +348,10 @@
                   microvm.nixosModules.host
                   ({config, ...}: {
                     services = {
-                      microvms.enable = true;
+                      microvms = {
+                        enable = true;
+                        interface = "enp0s31f6";
+                      };
                       desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;
@@ -355,7 +363,7 @@
                       vpn.enable = true;
                       laptopServer.enable = true;
                       changeMAC = {
-                        enable = true;
+                        enable = false;
                         mac = config.sops.secrets.dellmac.path;
                         interface = "enp0s31f6";
                       };

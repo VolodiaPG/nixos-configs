@@ -3,7 +3,21 @@
   lib,
   inputs,
   ...
-}: {
+}: let
+  stable-pkgs = import inputs.nixpkgs-stable {
+    config.allowUnfree = true;
+    inherit (pkgs.stdenv) system;
+  };
+in {
+  programs.obs-studio = {
+    enable = true;
+    plugins = with stable-pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+      obs-ndi
+    ];
+  };
   home.packages = with pkgs;
     [
       neovide
