@@ -63,6 +63,7 @@
     hosts.url = "github:StevenBlack/hosts";
     codecursor.url = "github:coder/cursor-arm";
     mac-app-util.url = "github:hraban/mac-app-util";
+    deploy-rs.url = "github:serokell/deploy-rs";
   };
 
   nixConfig = {
@@ -381,6 +382,15 @@
                   })
                 ]);
             };
+            deploy.nodes.dell = {
+              hostname = "dell";
+              profiles.system = {
+                user = "root";
+                path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
+              };
+            };
+
+            checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
           };
         }))
         (flake-utils.lib.eachSystem ["aarch64-darwin"] (
@@ -511,7 +521,7 @@
                 shellHook
                 ;
               packages =
-                (with pkgs; [just git git-crypt sops ssh-to-age home-manager])
+                (with pkgs; [just git git-crypt sops ssh-to-age home-manager deploy-rs])
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }
