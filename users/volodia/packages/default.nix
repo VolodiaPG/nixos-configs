@@ -10,7 +10,7 @@
     ++ lib.optional (apps == "personal") ./personal.nix;
 
   programs.firefox = {
-    enable = true;
+    enable = pkgs.stdenv.isLinux;
     #preferences = ''
     #/* hides the native tabs */
     ##TabsToolbar {

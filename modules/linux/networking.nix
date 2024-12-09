@@ -1,4 +1,7 @@
-{
+{inputs, ...}: {
+  imports = [
+    inputs.hosts.nixosModule
+  ];
   networking = {
     stevenBlackHosts = {
       enable = true;

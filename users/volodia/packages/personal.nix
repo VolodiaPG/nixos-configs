@@ -20,21 +20,20 @@ in {
   };
   home.packages = with pkgs;
     [
-      neovide
-      freecad
       inkscape
-      neovide
-
-      # Media
-      tidal-hifi
-      libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
-      # mpv
-      vlc
       signal-desktop
       qbittorrent
-      strawberry
     ]
-    ++ (lib.optionals pkgs.stdenv.isx86_64 [
+    ++ (lib.optionals pkgs.stdenv.isLinux [
+      neovide
+      vlc
+      freecad
+      strawberry
+      tidal-hifi
+      # Media
+      libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
+    ])
+    ++ (lib.optionals (pkgs.stdenv.isx86_64 && pkgs.stdenv.isLinux) [
       code-cursor
       discord
       insomnia
@@ -42,7 +41,7 @@ in {
       (steam.override {extraPkgs = _: [mono gtk3 gtk3-x11 libgdiplus zlib];}).run
       popcorntime
     ])
-    ++ (lib.optionals pkgs.stdenv.isAarch64 [
+    ++ (lib.optionals (pkgs.stdenv.isAarch64 && pkgs.stdenv.isLinux) [
       inputs.codecursor.packages.${pkgs.stdenv.system}.default
     ]);
 

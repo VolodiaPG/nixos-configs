@@ -241,11 +241,6 @@ in {
 
   home = {
     inherit homeDirectory username;
-    # activation = {
-    #   pythong5k = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    #     cat ${config.sops.secrets.pythong5k.path} > ${homeDirectory}/.python-grid5000.yaml
-    #   '';
-    # };
     packages = with pkgs; [
       fontconfig
       nvim

@@ -2,7 +2,7 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs-unstable.follows = "srvos/nixpkgs";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.follows = "srvos/nixpkgs";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-darwin.follows = "srvos/nixpkgs";
@@ -32,7 +32,6 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         nixpkgs-stable.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
     darwin = {
@@ -63,6 +62,7 @@
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     hosts.url = "github:StevenBlack/hosts";
     codecursor.url = "github:coder/cursor-arm";
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   nixConfig = {
@@ -134,41 +134,45 @@
                 nix = {
                   # Pin channels to flake inputs.
                   # registry.nixpkgs.flake = inputs.nixpkgs;
-                  registry.self.flake = inputs.self;
+                  registry.self.flake = inputs.nixpkgs;
                 };
                 nixpkgs.overlays = overlays;
 
                 system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+
+                home-manager = {
+                  users.volodia = import ./users/volodia/home.nix;
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  sharedModules = [
+                    sops-nix.homeManagerModules.sops
+                    ./secrets/home-manager.nix
+                    catppuccin.homeManagerModules.catppuccin
+                  ];
+                  extraSpecialArgs =
+                    specialArgsFor system "volodia";
+                };
               }
               ./modules
-              hosts.nixosModule
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) sops-nix.nixosModules.sops)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) home-manager.darwinModules.home-manager)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) catppuccin.nixosModules.catppuccin)
-            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) {
-              services.autoUpgrade = {
-                enable = true;
-                flakeURL = "github:volodiapg/nixos-configs";
-                inherit inputs;
-              };
-              home-manager = {
-                users.volodia = import ./users/volodia/home.nix;
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                sharedModules = [
-                  sops-nix.homeManagerModules.sops
-                  ./secrets/home-manager.nix
-                  catppuccin.homeManagerModules.catppuccin
-                ];
-                extraSpecialArgs =
-                  specialArgsFor system "volodia";
-              };
-            })
-            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin);
+            ++ (
+              nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) {
+                services.autoUpgrade = {
+                  enable = true;
+                  flakeURL = "github:volodiapg/nixos-configs";
+                  inherit inputs;
+                };
+              }
+            )
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) mac-app-util.darwinModules.default);
         in {
           nixosModules.default = defaultModules;
           # Configurations, option are obtained by .#volodia.<de>.<apps>
@@ -189,12 +193,14 @@
                       specialArgs = specialArgsFor system username; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
                     in {
                       inherit pkgs;
-                      modules = [
-                        catppuccin.homeManagerModules.catppuccin
-                        sops-nix.homeManagerModules.sops
-                        ./secrets/home-manager.nix
-                        ./users/volodia/home.nix
-                      ];
+                      modules =
+                        [
+                          catppuccin.homeManagerModules.catppuccin
+                          sops-nix.homeManagerModules.sops
+                          ./secrets/home-manager.nix
+                          ./users/volodia/home.nix
+                        ]
+                        ++ (nixpkgs.lib.optional pkgs.stdenv.isDarwin mac-app-util.homeManagerModules.default);
                       extraSpecialArgs = specialArgs // {inherit (settings) graphical apps;};
                     }
                   );
@@ -206,7 +212,7 @@
                   username = ["volodia" "volparolguarino"];
                   graphical = ["no-de" "gnome"];
                   apps = ["no-apps" "work" "personal"];
-                  machine = ["no-machine" "dell" "msi"];
+                  machine = ["no-machine" "dell" "msi" "Volodias-MacBook-Pro"];
                 }
               )
             );
@@ -377,7 +383,7 @@
             };
           };
         }))
-        (flake-utils.lib.eachSystem ["x86_64-darwin" "aarch64-darwin"] (
+        (flake-utils.lib.eachSystem ["aarch64-darwin"] (
           system: let
             inherit (darwin.lib) darwinSystem;
           in {
@@ -387,9 +393,27 @@
               modules =
                 outputs.nixosModules.${system}.default
                 ++ [
-                  {
+                  ({pkgs, ...}: {
                     system.stateVersion = 5;
                     nixpkgs.hostPlatform = system;
+
+                    home-manager.extraSpecialArgs = {
+                      graphical = "no-de";
+                      apps = "personal";
+                    };
+
+                    users.users.volodia = {
+                      name = "volodia";
+                      home = "/Users/volodia";
+                    };
+
+                    programs = {
+                      zsh.enable = true;
+                    };
+
+                    environment.systemPackages = with pkgs; [
+                      terminal-notifier
+                    ];
 
                     nix = {
                       settings = {
@@ -401,7 +425,7 @@
                         ];
                       };
                       extraOptions = ''
-                        extra-platforms = x86_64-darwin aarch64-darwin
+                        extra-platforms = x86_64-darwin
                       '';
 
                       configureBuildUsers = true;
@@ -426,7 +450,6 @@
                             trusted-public-keys = [
                               "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
                             ];
-                            extra-platforms = ["aarch64-linux" "x86_64-linux"];
                           };
                         };
                       };
@@ -445,7 +468,7 @@
                       nix-daemon.enable = true;
                       yabai = {
                         enable = true;
-                        package = outputs.packages.${system}.yabai;
+                        #package = outputs.packages.${system}.yabai;
                         extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                         enableScriptingAddition = true;
                       };
@@ -457,7 +480,7 @@
 
                     # Add ability to used TouchID for sudo authentication
                     security.pam.enableSudoTouchIdAuth = true;
-                  }
+                  })
                 ];
             };
           }
@@ -465,6 +488,7 @@
         (flake-utils.lib.eachDefaultSystem (
           system: let
             pkgs = pkgsFor nixpkgs system;
+            pkgs-unstable = pkgsFor nixpkgs-unstable system;
           in {
             formatter = pkgs.alejandra;
 
@@ -479,7 +503,7 @@
               };
             };
 
-            packages.mosh = pkgs.mosh;
+            packages.mosh = pkgs-unstable.mosh;
 
             devShells.default = pkgs.mkShell {
               inherit
