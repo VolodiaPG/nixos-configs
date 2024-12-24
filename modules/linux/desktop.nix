@@ -48,7 +48,7 @@ in {
             [org.gtk.Settings.FileChooser]
             sort-directories-first=true
           '';
-          extraGSettingsOverridePackages = [pkgs.gnome.mutter pkgs.gnome.gnome-settings-daemon];
+          extraGSettingsOverridePackages = [pkgs.mutter pkgs.gnome-settings-daemon];
         };
       };
       system76-scheduler = {
@@ -60,7 +60,7 @@ in {
       # enable = true;
       # assignments = builtins.readFile ./system76-assignments.ron;
       #};
-      udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+      udev.packages = with pkgs; [gnome-settings-daemon];
       pipewire = {
         enable = true;
         alsa.enable = true;
@@ -86,7 +86,7 @@ in {
         gnome-connections # Replaced by Remmina
         orca
       ])
-      ++ (with pkgs.gnome; [
+      ++ (with pkgs; [
         cheese # webcam tool
         gnome-music
         gnome-terminal

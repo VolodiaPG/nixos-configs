@@ -8,21 +8,24 @@
     allowUnfreePredicate = _pkg: true;
   };
 
-  programs.fish.interactiveShellInit = ''
-    function __fish_command_not_found_handler --on-event="fish_command_not_found"
-      ${
-      if config.programs.fish.useBabelfish
-      then ''
-        command_not_found_handle $argv
-      ''
-      else ''
-        ${pkgs.bashInteractive}/bin/bash -c \
-          "source ${config.programs.nix-index.package}/etc/profile.d/command-not-found.sh; command_not_found_handle $argv"
-      ''
-    }
-    end
-  '';
-  programs.nix-index.enable = true;
+  programs = {
+    fish.interactiveShellInit = ''
+      function __fish_command_not_found_handler --on-event="fish_command_not_found"
+        ${
+        if config.programs.fish.useBabelfish
+        then ''
+          command_not_found_handle $argv
+        ''
+        else ''
+          ${pkgs.bashInteractive}/bin/bash -c \
+            "source ${config.programs.nix-index.package}/etc/profile.d/command-not-found.sh; command_not_found_handle $argv"
+        ''
+      }
+      end
+    '';
+    nix-index.enable = true;
+    command-not-found.enable = false;
+  };
   nix = {
     package = pkgs.nixVersions.latest;
     #package = pkgs.nixVersions.unstable;

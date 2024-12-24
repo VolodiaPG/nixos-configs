@@ -246,7 +246,7 @@ in {
       nvim
       tmux
       mosh
-      (nerdfonts.override {fonts = ["FiraCode"];})
+      nerd-fonts.zed-mono
     ];
 
     file = {

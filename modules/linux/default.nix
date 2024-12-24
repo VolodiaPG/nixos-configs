@@ -114,6 +114,20 @@ in {
     pkgs.docker-compose
     pkgs.lm_sensors
   ];
+  security = {
+    sudo.extraRules = [
+      {
+        users = ["volodia"];
+        commands = [
+          {
+            command = "ALL";
+            options = ["NOPASSWD"];
+          }
+        ];
+      }
+    ];
+    sudo.execWheelOnly = lib.mkForce false;
+  };
 
   # security.polkit.extraConfig = ''
   #     polkit.addRule(function(action, subject) {

@@ -177,11 +177,8 @@
         in {
           nixosModules.default = defaultModules;
           # Configurations, option are obtained by .#volodia.<de>.<apps>
-          packages.yabai = let
-            pkgs = nixpkgs.legacyPackages.${system};
-          in
-            pkgs.callPackage ./yabai.nix {src = yabai;};
-          packages.homeConfigurations =
+
+          homeConfigurations =
             builtins.listToAttrs
             (
               builtins.map
@@ -220,6 +217,10 @@
         }))
         (flake-utils.lib.eachSystem ["aarch64-linux"] (system: {
           # Do not forget to also add to peerix to share the derivations
+          packages.yabai = let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in
+            pkgs.callPackage ./yabai.nix {src = yabai;};
           packages.nixosConfigurations = {
             "m1" = nixpkgs.lib.nixosSystem {
               inherit system;
@@ -258,9 +259,11 @@
             };
           };
         }))
-        (flake-utils.lib.eachSystem ["x86_64-linux"] (system: {
+        {
           # Do not forget to also add to peerix to share the derivations
-          packages.nixosConfigurations = {
+          nixosConfigurations = let
+            system = "x86_64-linux";
+          in {
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor system "volodia";
@@ -274,7 +277,6 @@
                   nixos-hardware.nixosModules.common-cpu-intel-cpu-only
                   nixos-hardware.nixosModules.common-pc
                   nixos-hardware.nixosModules.common-pc-ssd
-                  nixos-hardware.nixosModules.common-pc-hdd
                   srvos.nixosModules.server
                   disko.nixosModules.disko
                   {
@@ -349,7 +351,6 @@
                   nixos-hardware.nixosModules.common-gpu-intel
                   nixos-hardware.nixosModules.common-pc
                   nixos-hardware.nixosModules.common-pc-laptop
-                  nixos-hardware.nixosModules.common-pc-laptop-acpi_call
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   #srvos.nixosModules.server
                   microvm.nixosModules.host
@@ -382,17 +383,8 @@
                   })
                 ]);
             };
-            deploy.nodes.dell = {
-              hostname = "dell";
-              profiles.system = {
-                user = "root";
-                path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
-              };
-            };
-
-            checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
           };
-        }))
+        }
         (flake-utils.lib.eachSystem ["aarch64-darwin"] (
           system: let
             inherit (darwin.lib) darwinSystem;
@@ -526,5 +518,16 @@
             };
           }
         ))
+        {
+          deploy.nodes.dell = {
+            hostname = "dell";
+            profiles.system = {
+              user = "root";
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
+            };
+          };
+
+          checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+        }
       ];
 }
