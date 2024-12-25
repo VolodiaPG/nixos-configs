@@ -11,8 +11,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event.check_suite.conclusion == 'success'
-
     strategy:
       matrix:
         machine:
