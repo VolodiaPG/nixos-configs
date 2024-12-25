@@ -1,0 +1,16 @@
+name: "check"
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+  push:
+    branches: [main]
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v26
+    - run: nix flake check
