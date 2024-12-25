@@ -30,5 +30,7 @@ jobs:
 
     - uses: cachix/install-nix-action@v26
 
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+
     - run: nix flake check
 

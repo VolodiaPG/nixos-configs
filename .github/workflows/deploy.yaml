@@ -39,6 +39,8 @@ jobs:
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@main
 
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+
     - name: Add agamemnon to known hosts
       id: ssh-known-hosts
       run: |
