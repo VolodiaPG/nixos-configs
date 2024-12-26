@@ -46,10 +46,10 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan dell >> ~/.ssh/known_hosts
-        ssh-keyscan home-server >> ~/.ssh/known_hosts
+        # ssh-keyscan home-server >> ~/.ssh/known_hosts
 
     - name: Build and deploy
       run: |
         set -euxo pipefail
         nix flake check
-        nix run github:serokell/deploy-rs -- --targets .#dell .#home-server
+        nix run github:serokell/deploy-rs -- --targets .#dell
