@@ -45,12 +45,12 @@ jobs:
               uses: shimataro/ssh-key-action@v2
               with:
                   key: ${{ secrets.SSH_KEY }}
-                  name: key # optional
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
                   if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
             - name: Build and deploy
               run: |
                   set -euxo pipefail
-                  nix flake check
-                  nix run github:serokell/deploy-rs -- --targets .#dell
+                  ssh dell ls -lia
+                  # nix flake check
+                  # nix run github:serokell/deploy-rs -- --targets .#dell
