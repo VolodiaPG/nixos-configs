@@ -37,7 +37,7 @@ in {
       code-cursor
       discord
       insomnia
-      inputs.zen-browser.packages.${pkgs.stdenv.system}.specific
+      inputs.zen-browser.packages.${pkgs.stdenv.system}.default
       (steam.override {extraPkgs = _: [mono gtk3 gtk3-x11 libgdiplus zlib];}).run
       popcorntime
     ])
