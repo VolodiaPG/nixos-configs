@@ -13,33 +13,33 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            # - name: Free Disk Space (Ubuntu)
-            #   uses: jlumbroso/free-disk-space@main
-            #   with:
-            #       # this might remove tools that are actually needed,
-            #       # if set to "true" but frees about 6 GB
-            #       tool-cache: true
-            #       # all of these default to true, but feel free to set to
-            #       # "false" if necessary for your workflow
-            #       android: true
-            #       dotnet: true
-            #       haskell: true
-            #       large-packages: true
-            #       docker-images: true
-            #       swap-storage: true
+            - name: Free Disk Space (Ubuntu)
+              uses: jlumbroso/free-disk-space@main
+              with:
+                  # this might remove tools that are actually needed,
+                  # if set to "true" but frees about 6 GB
+                  tool-cache: true
+                  # all of these default to true, but feel free to set to
+                  # "false" if necessary for your workflow
+                  android: true
+                  dotnet: true
+                  haskell: true
+                  large-packages: true
+                  docker-images: true
+                  swap-storage: true
 
-            # - name: Checkout repository
-            #   uses: actions/checkout@v4
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
             - name: Tailscale
               uses: tailscale/github-action@v3
               with:
                   authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-            # - name: Install Nix
-            #   uses: DeterminateSystems/nix-installer-action@main
+            - name: Install Nix
+              uses: DeterminateSystems/nix-installer-action@main
 
-            # - uses: DeterminateSystems/magic-nix-cache-action@main
+            - uses: DeterminateSystems/magic-nix-cache-action@main
 
             - name: Install SSH key
               uses: shimataro/ssh-key-action@v2
@@ -51,6 +51,5 @@ jobs:
             - name: Build and deploy
               run: |
                   set -euxo pipefail
-                  ssh -vvv volodia@dell ls -lia
-                  # nix flake check
-                  # nix run github:serokell/deploy-rs -- --targets .#dell
+                  nix flake check
+                  nix run github:serokell/deploy-rs -- --targets .#dell
