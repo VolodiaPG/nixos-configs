@@ -1,55 +1,60 @@
 name: Deploy Config
 
 on:
-  push:
-    branches:
-      - "main"
-  check_suite:
-    types: [completed]
-  workflow_dispatch:
+    push:
+        branches:
+            - "main"
+    check_suite:
+        types: [completed]
+    workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-    - name: Free Disk Space (Ubuntu)
-      uses: jlumbroso/free-disk-space@main
-      with:
-        # this might remove tools that are actually needed,
-        # if set to "true" but frees about 6 GB
-        tool-cache: true
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
+        steps:
+            - name: Free Disk Space (Ubuntu)
+              uses: jlumbroso/free-disk-space@main
+              with:
+                  # this might remove tools that are actually needed,
+                  # if set to "true" but frees about 6 GB
+                  tool-cache: true
+                  # all of these default to true, but feel free to set to
+                  # "false" if necessary for your workflow
+                  android: true
+                  dotnet: true
+                  haskell: true
+                  large-packages: true
+                  docker-images: true
+                  swap-storage: true
 
-    - name: Checkout repository
-      uses: actions/checkout@v4
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-    - name: Tailscale
-      uses: tailscale/github-action@v3
-      with:
-        authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+            - name: Tailscale
+              uses: tailscale/github-action@v3
+              with:
+                  authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-    - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+            - name: Install Nix
+              uses: DeterminateSystems/nix-installer-action@main
 
-    - uses: DeterminateSystems/magic-nix-cache-action@main
+            - uses: DeterminateSystems/magic-nix-cache-action@main
 
-    - name: Add agamemnon to known hosts
-      id: ssh-known-hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan dell >> ~/.ssh/known_hosts
-        # ssh-keyscan home-server >> ~/.ssh/known_hosts
+            - name: Add SSH key
+              id: ssh
+              env:
+                  SSH_KEY: ${{ secrets.SSH_KEY }}
+              run: |
+                  mkdir -p ~/.ssh
+                  MACHINE_IP="$(tailscale ip -6 dell)"
+                  ssh-keyscan "$MACHINE_IP" >> ~/.ssh/known_hosts
+                  printf "%s" "$SSH_KEY" > ~/.ssh/key
+                  chmod 600 ~/.ssh/key
+                  ssh dell ls -lia
 
-    - name: Build and deploy
-      run: |
-        set -euxo pipefail
-        nix flake check
-        nix run github:serokell/deploy-rs -- --targets .#dell
+            - name: Build and deploy
+              run: |
+                  set -euxo pipefail
+                  nix flake check
+                  nix run github:serokell/deploy-rs -- --targets .#dell
