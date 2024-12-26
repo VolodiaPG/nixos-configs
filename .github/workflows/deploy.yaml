@@ -29,10 +29,10 @@ jobs:
                   swap-storage: true
 
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@main
 
             - name: Tailscale
-              uses: tailscale/github-action@v3
+              uses: tailscale/github-action@main
               with:
                   authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
@@ -42,7 +42,7 @@ jobs:
             - uses: DeterminateSystems/magic-nix-cache-action@main
 
             - name: Install SSH key
-              uses: shimataro/ssh-key-action@v2
+              uses: shimataro/ssh-key-action@main
               with:
                   key: ${{ secrets.SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
