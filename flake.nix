@@ -523,19 +523,19 @@
             dell = {
               hostname = "dell";
               profiles.system = {
-                user = "volodia";
+                user = "root";
                 sshUser = "volodia";
                 path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
               };
             };
-            home-server = {
-              hostname = "home-server";
-              profiles.system = {
-                user = "root";
-                sshUser = "volodia";
-                path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
-              };
-            };
+            # home-server = {
+            #   hostname = "home-server";
+            #   profiles.system = {
+            #     user = "root";
+            #     sshUser = "volodia";
+            #     path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
+            #   };
+            # };
           };
 
           checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
