@@ -42,7 +42,7 @@ jobs:
             - uses: DeterminateSystems/magic-nix-cache-action@main
 
             - name: Install SSH key
-              uses: shimataro/ssh-key-action@main
+              uses: shimataro/ssh-key-action@v2
               with:
                   key: ${{ secrets.SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
