@@ -23,7 +23,12 @@ in {
     # enable the tailscale daemon; this will do a variety of tasks:
     # 1. create the TUN network device
     # 2. setup some IP routes to route through the TUN
-    services.tailscale = {enable = true;};
+    services.tailscale = {
+      enable = true;
+      extraUpFlags = [
+        "--advertise-tags=tag:server"
+      ];
+    };
     networking = {
       inherit (cfg) nameservers;
       firewall = {
