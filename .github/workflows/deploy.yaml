@@ -51,6 +51,6 @@ jobs:
             - name: Build and deploy
               run: |
                   set -euxo pipefail
-                  ssh -vvv dell ls -lia
+                  ssh -vvv volodia@dell ls -lia
                   # nix flake check
                   # nix run github:serokell/deploy-rs -- --targets .#dell
