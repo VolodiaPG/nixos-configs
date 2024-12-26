@@ -4,8 +4,6 @@ on:
     push:
         branches:
             - "main"
-    check_suite:
-        types: [completed]
     workflow_dispatch:
 
 jobs:
