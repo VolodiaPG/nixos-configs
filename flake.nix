@@ -523,7 +523,7 @@
             dell = {
               hostname = "dell";
               profiles.system = {
-                user = "volodia";
+                user = "root";
                 sshUser = "volodia";
                 path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
               };
