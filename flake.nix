@@ -469,13 +469,13 @@
                     services = {
                       nix-daemon.enable = true;
                       yabai = {
-                        enable = true;
+                        enable = false;
                         #package = outputs.packages.${system}.yabai;
                         extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                         enableScriptingAddition = true;
                       };
                       skhd = {
-                        enable = true;
+                        enable = false;
                         skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
                       };
                     };

@@ -24,7 +24,6 @@
       end
     '';
     nix-index.enable = true;
-    command-not-found.enable = false;
   };
   nix = {
     package = pkgs.nixVersions.latest;
@@ -33,11 +32,11 @@
       automatic = true;
       options = "--delete-older-than 10d";
     };
+    optimise.automatic = true;
 
     # package = pkgs.nix;
     settings = {
       # experimental-features = "nix-command flakes";
-      auto-optimise-store = true;
       keep-outputs = true;
       keep-derivations = true;
       warn-dirty = false;
