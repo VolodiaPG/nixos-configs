@@ -23,7 +23,11 @@
       }
       end
     '';
-    nix-index.enable = true;
+    nix-index = {
+      enable = true;
+      nix-index.enableBashIntegration = false;
+      nix-index.enableZshIntegration = false;
+    };
   };
   nix = {
     package = pkgs.nixVersions.latest;
