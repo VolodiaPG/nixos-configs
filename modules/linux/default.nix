@@ -67,6 +67,7 @@ in {
   programs = {
     mosh.enable = true;
     nix-ld.enable = true;
+    command-not-found.enable = false;
   };
 
   # Enable SSH with password authentication disabled.

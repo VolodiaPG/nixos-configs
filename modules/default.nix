@@ -25,8 +25,6 @@
     '';
     nix-index = {
       enable = true;
-      nix-index.enableBashIntegration = false;
-      nix-index.enableZshIntegration = false;
     };
   };
   nix = {
