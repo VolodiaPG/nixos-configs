@@ -9,14 +9,14 @@
     srvos = {
       url = "github:nix-community/srvos";
     };
-    nur-xddxdd = {
-      url = "github:xddxdd/nur-packages";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nur-volodiapg = {
-      url = "github:volodiapg/nur-packages";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nur-xddxdd = {
+    #   url = "github:xddxdd/nur-packages";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # nur-volodiapg = {
+    #   url = "github:volodiapg/nur-packages";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -100,8 +100,8 @@
       };
 
       overlays = with inputs; [
-        nur-xddxdd.overlay
-        nur-volodiapg.overlay
+        # nur-xddxdd.overlay
+        # nur-volodiapg.overlay
         peerix.overlay
         mosh-overlay
         vim.overlay
