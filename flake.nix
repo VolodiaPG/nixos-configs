@@ -513,7 +513,7 @@
                 shellHook
                 ;
               packages =
-                (with pkgs; [just git git-crypt sops ssh-to-age home-manager deploy-rs])
+                (with pkgs; [just git git-crypt sops ssh-to-age home-manager deploy-rs nil])
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }
