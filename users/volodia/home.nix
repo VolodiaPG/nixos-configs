@@ -81,7 +81,6 @@ in {
     home-manager.enable = true;
     nix-index = {
       enable = true;
-      enableBashIntegration = true;
     };
     zoxide = {
       enable = true;
