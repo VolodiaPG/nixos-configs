@@ -69,6 +69,8 @@
   nixConfig = {
     extra-substituters = [
       "https://volodiapg.cachix.org"
+      "https://giraff.cachix.org"
+      "https://vim.cachix.org"
     ];
     extra-trusted-public-keys = [
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
