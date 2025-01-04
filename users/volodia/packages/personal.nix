@@ -25,6 +25,7 @@
       inkscape
       signal-desktop
       qbittorrent
+      lazygit
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
       neovide
