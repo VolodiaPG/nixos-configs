@@ -28,6 +28,7 @@ in {
       extraUpFlags = [
         "--advertise-tags=tag:server"
         "--advertise-exit-node"
+        "--accept-dns=false"
       ];
     };
     networking = {
