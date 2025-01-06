@@ -3,11 +3,13 @@
 
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable-small";
-    nixpkgs.follows = "srvos/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    # nixpkgs.follows = "srvos/nixpkgs";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgs-darwin.follows = "srvos/nixpkgs";
+    nixpkgs-darwin.follows = "nixpkgs";
     srvos = {
       url = "github:nix-community/srvos";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     # nur-xddxdd = {
     #   url = "github:xddxdd/nur-packages";
