@@ -1,62 +1,62 @@
 name: Deploy Config
 
 on:
-  push:
-    branches:
-      - "main"
-  check_suite:
-    types: [completed]
-  workflow_dispatch:
+    push:
+        branches:
+            - "main"
+    check_suite:
+        types: [completed]
+    workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: true
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+        steps:
+            - name: Free Disk Space (Ubuntu)
+              uses: jlumbroso/free-disk-space@main
+              with:
+                  # this might remove tools that are actually needed,
+                  # if set to "true" but frees about 6 GB
+                  tool-cache: true
+                  # all of these default to true, but feel free to set to
+                  # "false" if necessary for your workflow
+                  android: true
+                  dotnet: true
+                  haskell: true
+                  large-packages: true
+                  docker-images: true
+                  swap-storage: true
 
-      - name: Checkout repository
-        uses: actions/checkout@main
+            - name: Checkout repository
+              uses: actions/checkout@main
 
-      - name: Tailscale
-        uses: tailscale/github-action@main
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+            - name: Tailscale
+              uses: tailscale/github-action@main
+              with:
+                  authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+            - name: Install Nix
+              uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: cachix/cachix-action@v15
-        with:
-          name: volodiapg
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+            - uses: cachix/cachix-action@v15
+              with:
+                  name: volodiapg
+                  authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+            - name: Install SSH key
+              uses: shimataro/ssh-key-action@v2
+              with:
+                  key: ${{ secrets.SSH_KEY }}
+                  known_hosts: ${{ secrets.KNOWN_HOSTS }}
+                  if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
-      - name: Check
-        run: |
-          set -euxo pipefail
-          nix flake check
+            - name: Check
+              run: |
+                  set -euxo pipefail
+                  nix flake check
 
-      - name: Build and deploy
-        run: |
-          set -euxo pipefail
-          nix run github:serokell/deploy-rs -- --targets .#dell
+            - name: Build and deploy
+              run: |
+                  set -euxo pipefail
+                  nix run github:serokell/deploy-rs -- --targets .#dell .#home-server
