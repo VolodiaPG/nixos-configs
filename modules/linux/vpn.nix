@@ -27,6 +27,7 @@ in {
       enable = true;
       extraUpFlags = [
         "--advertise-tags=tag:server"
+        "--advertise-exit-node"
       ];
     };
     networking = {
