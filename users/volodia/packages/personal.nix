@@ -30,6 +30,8 @@
       nil
       alejandra
       elixir-ls
+      go
+      gopls
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
       neovide
