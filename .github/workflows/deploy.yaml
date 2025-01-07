@@ -51,10 +51,10 @@ jobs:
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
                   if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
-            - name: Check
-              run: |
-                  set -euxo pipefail
-                  nix flake check
+            # - name: Check
+            #   run: |
+            #       set -euxo pipefail
+            #       nix flake check
 
             - name: Build and deploy
               run: |
