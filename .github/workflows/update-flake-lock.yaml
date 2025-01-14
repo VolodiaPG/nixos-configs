@@ -2,7 +2,11 @@ name: update-flake-lock
 on:
     workflow_dispatch: # allows manual triggering
     schedule:
-        - cron: "0 10 * * 1-5" # runs weekly at 12 except on weekends
+      # Winter time (CEST, UTC+1)
+      - cron: '30 15 * 10-12 *'  # October to December
+      - cron: '30 15 * 1-3 *'  # January to March at
+      # Summer time (CEST, UTC+2)
+      - cron: '30 14 * 4-9 *'   # April to September
 
 jobs:
     lockfile:
