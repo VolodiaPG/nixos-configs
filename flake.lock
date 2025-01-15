@@ -11,11 +11,11 @@
         "nuscht-search": "nuscht-search"
       },
       "locked": {
-        "lastModified": 1736785029,
-        "narHash": "sha256-xHe4X4Je/4WjBL3BPlI1KGqA5N7VQpi4x57YYU9ZOlI=",
+        "lastModified": 1736957255,
+        "narHash": "sha256-qZZ/K5XheRMjCNYgle90QESuys0PIFJNPJJswMJ0GEA=",
         "owner": "catppuccin",
         "repo": "nix",
-        "rev": "4a5ac694d7f8a63dec75cbe0ac1c84c818b6b789",
+        "rev": "f06fcadf9a61b6581b392e72f230fa6783fe36e4",
         "type": "github"
       },
       "original": {
@@ -233,11 +233,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1736143030,
-        "narHash": "sha256-+hu54pAoLDEZT9pjHlqL9DNzWz0NbUn8NEAHP7PQPzU=",
+        "lastModified": 1730504689,
+        "narHash": "sha256-hgmguH29K2fvs9szpq2r3pz2/8cJd2LPS+b4tfNFCwE=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "b905f6fc23a9051a6e1b741e1438dbfc0634c6de",
+        "rev": "506278e768c2a08bec68eb62932193e341f55c90",
         "type": "github"
       },
       "original": {
@@ -772,12 +772,10 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1736848588,
-        "narHash": "sha256-9B6fQqphF3j9lpcxQnKyIUgp3NyGi7ikb9CjCYqixcY=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "357cd3dfdb8993af11268d755d53357720675e66",
-        "type": "github"
+        "lastModified": 0,
+        "narHash": "sha256-Xb8mke6UCYjge9kPR9o4P1nVrhk7QBbKv3xQ9cj7h2s=",
+        "path": "/nix/store/cginla74w7h4gln9b3mva6l4nmj6gj30-source",
+        "type": "path"
       },
       "original": {
         "id": "nixpkgs",
@@ -834,11 +832,11 @@
     },
     "nixpkgs_9": {
       "locked": {
-        "lastModified": 1736344531,
-        "narHash": "sha256-8YVQ9ZbSfuUk2bUf2KRj60NRraLPKPS0Q4QFTbc+c2c=",
+        "lastModified": 1732521221,
+        "narHash": "sha256-2ThgXBUXAE1oFsVATK1ZX9IjPcS4nKFOAjhPNKuiMn0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "bffc22eb12172e6db3c5dde9e3e5628f8e3e7912",
+        "rev": "4633a7c72337ea8fd23a4f2ba3972865e3ec685d",
         "type": "github"
       },
       "original": {
@@ -873,11 +871,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1736715511,
-        "narHash": "sha256-5YAiZ3wrEJ/fzFoCwNf14xqfRTvgdcnl/+y0vye3Y6A=",
+        "lastModified": 1732726573,
+        "narHash": "sha256-gvCPgtcXGf/GZaJBHYrXuM5r2pFRG3VDr7uOb7B1748=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "35d6c12626f9895cd5d8ccf5d19c3d00de394334",
+        "rev": "fc9178d124eba824f1862513314d351784e1a84c",
         "type": "github"
       },
       "original": {
@@ -920,11 +918,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1735854821,
-        "narHash": "sha256-Iv59gMDZajNfezTO0Fw6LHE7uKAShxbvMidmZREit7c=",
+        "lastModified": 1731936508,
+        "narHash": "sha256-z0BSSf78LkxIrrFXZYmCoRRAxAmxMUKpK7CyxQRvkZI=",
         "owner": "NuschtOS",
         "repo": "search",
-        "rev": "836908e3bddd837ae0f13e215dd48767aee355f0",
+        "rev": "fe07070f811b717a4626d01fab714a87d422a9e1",
         "type": "github"
       },
       "original": {
@@ -958,11 +956,11 @@
     "plugin-inlay-hints": {
       "flake": false,
       "locked": {
-        "lastModified": 1734768391,
-        "narHash": "sha256-99KCGoPowa4PA1jkCm4ZbbgrFl84NWnKQMgkfy8KS5E=",
+        "lastModified": 1724405543,
+        "narHash": "sha256-DZVtFAUK9c8GInp+JdCQ1BKe0dkAheHKI67oxdMmA24=",
         "owner": "MysticalDevil",
         "repo": "inlay-hints.nvim",
-        "rev": "3259b54f3b954b4d8260f3ee49ceabe978ea5636",
+        "rev": "af84dee42cd118af6d592b06c1c0e45d6432a6c0",
         "type": "github"
       },
       "original": {
@@ -1265,11 +1263,11 @@
         "plugin-staline": "plugin-staline"
       },
       "locked": {
-        "lastModified": 1736799398,
-        "narHash": "sha256-GJpQHWTRm1w2k+FrrMLe/PWxnc3DXPCh33OqMWPECAw=",
+        "lastModified": 1732792192,
+        "narHash": "sha256-vIvjhGwdD+pS1l+fPszGTsXREBsfcZas497XeKa/+ms=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "0c3144af0870c5fedeb6a196f933471404de141f",
+        "rev": "343b54ecca461f94a5cc3a157ffccd88e11e117b",
         "type": "github"
       },
       "original": {
