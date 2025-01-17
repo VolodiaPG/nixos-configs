@@ -450,7 +450,8 @@
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "pitkling",
+        "ref": "syncthing-declarative-macos",
         "repo": "home-manager",
         "type": "github"
       }

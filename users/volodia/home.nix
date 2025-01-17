@@ -70,7 +70,8 @@
 in {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
-    ++ lib.optional (apps != "no-apps") ./packages;
+    ++ lib.optional (apps != "no-apps") ./packages
+    ++ [./syncthing.nix];
 
   fonts.fontconfig.enable = true;
 
@@ -116,6 +117,21 @@ in {
 
         set --universal pure_enable_nixdevshell true
         set --universal pure_symbol_nixdevshell_prefix ❄
+
+        # Nix
+        if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
+            source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
+            # following is single user
+            # source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
+        end
+        # End Nix
+        if test (uname) = Darwin
+            fish_add_path --prepend --global \
+              "${config.xdg.stateHome}/nix/profile/bin" \
+              /etc/profiles/per-user/$USER/bin \
+              /run/current-system/sw/bin \
+              /nix/var/nix/profiles/default/bin
+        end
       '';
 
       interactiveShellInit = ''
@@ -138,11 +154,20 @@ in {
     zsh = {
       enable = true;
       initExtra = ''
-        # Make Nix and home-manager installed things available in PATH.
-        export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/usr/local/bin/:$PATH
-        exec ${pkgs.fish}/bin/fish
+        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
+        then
+            exec fish -l
+        fi
       '';
     };
+    # zsh = {
+    #   enable = true;
+    #   initExtra = ''
+    #     # Make Nix and home-manager installed things available in PATH.
+    #     export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/usr/local/bin/:$PATH
+    #     exec ${pkgs.fish}/bin/fish
+    #   '';
+    # };
     direnv = {
       enable = true;
       nix-direnv.enable = true;
