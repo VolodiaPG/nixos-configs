@@ -26,6 +26,9 @@
       signal-desktop
       qbittorrent
       lazygit
+      nixd
+      nil
+      elixir-ls
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
       neovide

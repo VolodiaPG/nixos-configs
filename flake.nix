@@ -18,7 +18,8 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      # url = "github:nix-community/home-manager/pull/6104";
+      url = "github:pitkling/home-manager/syncthing-declarative-macos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -112,8 +113,9 @@
           inherit overlays system;
           config.allowUnfree = true;
         };
-      specialArgsFor = system: username: {
+      specialArgsFor = system: username: hostName: {
         inherit overlays;
+        inherit hostName;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
         inherit inputs;
         homeDirectory =
@@ -128,7 +130,7 @@
         (flake-utils.lib.eachDefaultSystem (system: let
           defaultModules =
             [
-              {
+              ({hostName, ...}: {
                 # Inherit everything we can from the flake
                 environment.etc = {
                   "nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
@@ -153,9 +155,9 @@
                     catppuccin.homeManagerModules.catppuccin
                   ];
                   extraSpecialArgs =
-                    specialArgsFor system "volodia";
+                    specialArgsFor system "volodia" hostName;
                 };
-              }
+              })
               ./modules
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
@@ -226,7 +228,7 @@
           packages.nixosConfigurations = {
             "m1" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia";
+              specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -268,7 +270,7 @@
           in {
             "home-server" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor system "volodia";
+              specialArgs = specialArgsFor system "volodia" "home-server";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -305,7 +307,7 @@
             };
             "msi" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia";
+              specialArgs = specialArgsFor "${system}" "volodia" "msi";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -343,7 +345,7 @@
 
             "dell" = nixpkgs.lib.nixosSystem {
               inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia";
+              specialArgs = specialArgsFor "${system}" "volodia" "dell";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ (with inputs; [
@@ -356,7 +358,7 @@
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   #srvos.nixosModules.server
                   microvm.nixosModules.host
-                  ({config, ...}: {
+                  {
                     services = {
                       microvms = {
                         enable = true;
@@ -372,17 +374,17 @@
                       elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = true;
-                      changeMAC = {
-                        enable = false;
-                        mac = config.sops.secrets.dellmac.path;
-                        interface = "enp0s31f6";
-                      };
+                      # changeMAC = {
+                      #   enable = false;
+                      #   mac = config.sops.secrets.dellmac.path;
+                      #   interface = "enp0s31f6";
+                      # };
                     };
                     home-manager.extraSpecialArgs = {
                       graphical = "gnome";
                       apps = "personal";
                     };
-                  })
+                  }
                 ]);
             };
           };
@@ -393,7 +395,7 @@
           in {
             packages.darwinConfigurations."Volodias-MacBook-Pro" = darwinSystem {
               inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia";
+              specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
               modules =
                 outputs.nixosModules.${system}.default
                 ++ [
@@ -515,7 +517,7 @@
                 shellHook
                 ;
               packages =
-                (with pkgs; [just git git-crypt sops ssh-to-age home-manager deploy-rs nil])
+                (with pkgs; [just alejandra git git-crypt sops ssh-to-age home-manager deploy-rs])
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }

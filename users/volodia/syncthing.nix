@@ -1,11 +1,15 @@
-{config, ...}: let
-  inherit (config.sops) secrets;
-  inherit (config.networking) hostName;
+{
+  config,
+  lib,
+  pkgs,
+  hostName,
+  ...
+}: let
   msi = "msi";
   dell = "dell";
-  m1 = "m1";
+  volodias-macbook-pro = "Volodias-MacBook-Pro";
   home-server = "home-server";
-  allDevices = [m1 dell msi home-server];
+  allDevices = [volodias-macbook-pro dell msi home-server];
 
   genDevice = hostName: id: {
     inherit id;
@@ -14,24 +18,27 @@
 in {
   services.syncthing = {
     enable = true;
-    openDefaultPorts = true;
+    # openDefaultPorts = true;
     overrideDevices = true; # overrides any devices added or deleted through the WebUI
     overrideFolders = true; # overrides any folders added or deleted through the WebUI
-    user = "volodia";
-    dataDir = "/persistent/Sync";
-    cert = secrets."syncthing-${hostName}-cert".path;
-    key = secrets."syncthing-${hostName}-key".path;
+    # user = "volodia";
+    # dataDir = if lib.strings.hasSuffix "linux" pkgs.system then "/persistent/Sync" else "/Users/volodia/.syncthingdata";
+    cert = config.sops.secrets."syncthing-${hostName}-cert".path;
+    key = config.sops.secrets."syncthing-${hostName}-key".path;
 
     settings = {
       devices = {
-        ${m1} = genDevice m1 "MHXF54G-BZIEQMN-74IYJC6-HMJMCSW-MIBMEIJ-L3EGGXM-S5E74DQ-LXISYA6";
+        ${volodias-macbook-pro} = genDevice volodias-macbook-pro "WLVZHQK-QBOS6XW-5I6WIPH-VZTUSHQ-CA7QWCW-TQ5VT2G-7WD3MC7-ANZDEQQ";
         ${dell} = genDevice dell "UFAZWAJ-4BFYDEK-MEZ7VPS-AV3YVG2-HDHXKOJ-SZKIBGM-ORDZ77R-NWYFZQB";
         ${msi} = genDevice msi "OPL2OSX-P5EIM6J-OIIKMZI-QE7IEXU-2KURAEU-KBWNUI7-CBWQK4H-CJQK2AO";
         ${home-server} = genDevice home-server "S3JD5BW-PMNUD5Y-GGRJINH-FK7MS5B-KEKJJDT-AM6Y6SA-WFAK2M5-S2N65AL";
       };
       folders = {
         "Sync" = {
-          path = "/home/volodia/Documents/Sync";
+          path =
+            if lib.strings.hasSuffix "linux" pkgs.system
+            then "/home/volodia/Documents/Sync"
+            else "/Users/volodia/Documents/Sync";
           devices = allDevices;
           # By default, Syncthing doesn't sync file permissions. This line enables it for this folder.
           ignorePerms = false;

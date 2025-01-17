@@ -8,8 +8,8 @@
       ssh-remote-builder = {};
       ssh-remote-builder-pub = {};
       syncthing-password = {};
-      syncthing-m1-cert = {};
-      syncthing-m1-key = {};
+      syncthing-Volodias-MacBook-Pro-cert = {};
+      syncthing-Volodias-MacBook-Pro-key = {};
       syncthing-dell-cert = {};
       syncthing-dell-key = {};
       syncthing-msi-cert = {};

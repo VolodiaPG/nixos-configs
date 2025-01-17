@@ -442,15 +442,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1735898186,
-        "narHash": "sha256-1jP6P/tkr7unX3mS7+l1BBO4S+rdS53eoUTmQQ/C0kY=",
-        "owner": "nix-community",
+        "lastModified": 1733411267,
+        "narHash": "sha256-9mip6CIm+ZGrdtumI9d5swvTlG/a5JzXJscPtvBa6hI=",
+        "owner": "pitkling",
         "repo": "home-manager",
-        "rev": "f4f8d09f909b4ef34afd9bad2284042d307bc95f",
+        "rev": "eaee6ea13d91e840456f18bf295144112e87d458",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "pitkling",
+        "ref": "syncthing-declarative-macos",
         "repo": "home-manager",
         "type": "github"
       }
