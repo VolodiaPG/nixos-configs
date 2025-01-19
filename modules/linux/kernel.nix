@@ -66,7 +66,7 @@ in {
         #kernelPackages = pkgs.linuxPackages-rt_latest;
         # kernelPackages = pkgs.linuxPackages_zen;
         # kernelPackages = pkgs.linuxPackages_xanmod_latest;
-        kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
+        # kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
 
         # resumeDevice = "/dev/mapper/lvm-swap";
 
