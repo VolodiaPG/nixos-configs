@@ -205,6 +205,7 @@ in {
               ".cursor-tutor"
               ".config"
               ".local/share/fonts/ComicCode"
+              ".local/state/syncthing"
               {
                 directory = ".gnupg";
                 mode = "0700";
