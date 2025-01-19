@@ -20,12 +20,12 @@
   services.syncthing = {
     enable = true;
     # openDefaultPorts = true;
-    overrideDevices = true; # overrides any devices added or deleted through the WebUI
+    overrideDevices = false; # overrides any devices added or deleted through the WebUI
     overrideFolders = true; # overrides any folders added or deleted through the WebUI
     # user = "volodia";
     # dataDir = if lib.strings.hasSuffix "linux" pkgs.system then "/persistent/Sync" else "/Users/volodia/.syncthingdata";
-    cert = config.sops.secrets."syncthing-${hostName}-cert".path;
-    key = config.sops.secrets."syncthing-${hostName}-key".path;
+    # cert = config.sops.secrets."syncthing-${hostName}-cert".path;
+    # key = config.sops.secrets."syncthing-${hostName}-key".path;
 
     settings = {
       # devices = {
@@ -35,12 +35,11 @@
       #   ${home-server} = genDevice home-server "S3JD5BW-PMNUD5Y-GGRJINH-FK7MS5B-KEKJJDT-AM6Y6SA-WFAK2M5-S2N65AL";
       # };
 
-      overrideDevices = false;
       folders = {
         "Sync" = {
           path =
             if lib.strings.hasSuffix "linux" pkgs.system
-            then "/home/volodia/Documents/Sync"
+            then "~/Documents/Sync"
             else "/Users/volodia/Documents/Sync";
           # devices = allDevices;
           # By default, Syncthing doesn't sync file permissions. This line enables it for this folder.
