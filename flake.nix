@@ -437,7 +437,7 @@
                       configureBuildUsers = true;
 
                       linux-builder = {
-                        enable = true;
+                        enable = false;
                         ephemeral = true;
                         maxJobs = 8;
                         supportedFeatures = ["kvm" "benchmark" "big-parallel"];
@@ -473,7 +473,7 @@
                     services = {
                       nix-daemon.enable = true;
                       yabai = {
-                        enable = false;
+                        enable = true;
                         #package = outputs.packages.${system}.yabai;
                         extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                         enableScriptingAddition = true;
