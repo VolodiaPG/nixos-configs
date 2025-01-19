@@ -32,6 +32,7 @@ in {
       "net.ipv4.tcp_dsack" = 1;
       "net.ipv4.tcp_congestion_control" = lib.mkForce "bbr";
     };
+    initrd.systemd.network.wait-online.enable = false;
   };
 
   nix = {
