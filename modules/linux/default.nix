@@ -18,6 +18,7 @@ in {
   inherit imports;
 
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
+  systemd.network.wait-online.enable = false;
 
   boot = {
     loader.grub.configurationLimit = 20;
