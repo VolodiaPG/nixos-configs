@@ -6,7 +6,8 @@
   services.syncthing = {
     enable = true;
     overrideDevices = false;
-    overrideFolders = true;
+    overrideFolders = false;
+    guiAddress = "0.0.0.0:8384";
     settings = {
       folders = {
         "Sync" = {
