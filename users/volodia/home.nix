@@ -199,6 +199,9 @@ in {
     extraConfig = ''
       allow-loopback-pinentry
     '';
+    enableSshSupport = true;
+    enableExtraSocket = true;
+    enableScDaemon = false;
   };
 
   # Home Manager needs a bit of information about you and the

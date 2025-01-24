@@ -357,7 +357,7 @@
                         enable = true;
                         interface = "enp0s31f6";
                       };
-                      desktop.enable = true;
+                      desktop.enable = false;
                       kernel.enable = true;
                       intel.enable = true;
                       impermanence = {
@@ -372,9 +372,13 @@
                       #   mac = config.sops.secrets.dellmac.path;
                       #   interface = "enp0s31f6";
                       # };
+                      foldingathome = {
+                        enable = true;
+                        team = 1066076;
+                      };
                     };
                     home-manager.extraSpecialArgs = {
-                      graphical = "gnome";
+                      graphical = "no-de";
                       apps = "personal";
                     };
                   }
