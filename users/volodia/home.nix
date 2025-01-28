@@ -273,7 +273,7 @@ in {
       nvim
       tmux
       mosh
-      nerd-fonts.zed-mono
+      # nerd-fonts.zed-mono
     ];
 
     file = {
