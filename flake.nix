@@ -357,6 +357,7 @@
                         enable = true;
                         interface = "enp0s31f6";
                       };
+                      nvidia.enable = true;
                       desktop.enable = false;
                       kernel.enable = true;
                       intel.enable = true;
