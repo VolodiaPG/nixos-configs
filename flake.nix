@@ -20,8 +20,9 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     home-manager = {
+      url = "github:nix-community/home-manager";
       # url = "github:nix-community/home-manager/pull/6104";
-      url = "github:pitkling/home-manager/syncthing-declarative-macos";
+      # url = "github:pitkling/home-manager/syncthing-declarative-macos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -432,8 +433,6 @@
                         extra-platforms = x86_64-darwin
                       '';
 
-                      configureBuildUsers = true;
-
                       linux-builder = {
                         enable = false;
                         ephemeral = true;
@@ -469,7 +468,6 @@
                     '';
 
                     services = {
-                      nix-daemon.enable = true;
                       yabai = {
                         enable = true;
                         #package = outputs.packages.${system}.yabai;

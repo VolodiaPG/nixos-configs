@@ -4,7 +4,6 @@
   ids.gids.nixbld = 30000;
   nix = {
     settings.experimental-features = "nix-command flakes";
-    configureBuildUsers = true;
     gc.interval = {
       Weekday = 0;
       Hour = 0;

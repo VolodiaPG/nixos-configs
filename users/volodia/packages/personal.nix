@@ -32,6 +32,7 @@
       elixir-ls
       go
       gopls
+      devenv
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
       neovide
