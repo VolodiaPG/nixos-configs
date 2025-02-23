@@ -12,9 +12,12 @@ in {
 
   config = lib.mkIf cfg.enable {
     nixpkgs.config = {
+      # cudaSupport = true;
+      allowUnfree = true;
       nvidia.acceptLicense = true;
     };
     virtualisation.docker = {
+      enable = true;
       # https://docs.docker.com/reference/cli/dockerd/#enable-cdi-devices
       daemon.settings.features.cdi = true;
     };
@@ -28,22 +31,26 @@ in {
     # also an interesting resource https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/cdi.html
     hardware = {
       nvidia-container-toolkit.enable = true;
-
-      graphics.enable = true;
       graphics.enable32Bit = true;
+
       nvidia = {
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
         # https://docs.aws.amazon.com/dlami/latest/devguide/appendix-ami-release-notes.html
         # https://aws.amazon.com/releasenotes/aws-deep-learning-base-gpu-ami-ubuntu-22-04/
         # ^ Shows that AWS AMIs use 535 drivers. Unsure if these can be upgraded alghough I don't see why not
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-        package = config.boot.kernelPackages.nvidiaPackages.stable;
+        package = config.boot.kernelPackages.nvidiaPackages.dc_535;
         nvidiaPersistenced = true;
         modesetting.enable = true;
-        datacenter.enable = true;
+        powerManagement.enable = true;
+        datacenter = {
+          enable = true;
+        };
         open = false;
       };
     };
+    systemd.services.nvidia-fabricmanager.enable = lib.mkForce false;
+
     environment.systemPackages = with pkgs; [
       # ollama-cuda # wasn't cached and took forever to build
       nvtopPackages.nvidia
