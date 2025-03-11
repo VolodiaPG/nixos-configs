@@ -192,23 +192,6 @@ in {
     };
   };
 
-  home.file = {
-    "${lib.strings.optionalString pkgs.stdenv.isLinux ".config/jj/config.toml"
-      + lib.strings.optionalString pkgs.stdenv.isDarwin "Library/Application Support/jj/config.toml"}" = {
-      text = ''
-        [user]
-        name = "Volodia P.-G."
-        email = "volodia.parol-guarino@proton.me"
-
-        [signing]
-        sign-all = true
-        backend = "gpg"
-        backends.gpg.program = "${pkgs.gnupg}/bin/gpg"
-        key = "B566FD4E11A22B543B82520B72063CC9DB438B82"
-      '';
-    };
-  };
-
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
     grabKeyboardAndMouse = false;
