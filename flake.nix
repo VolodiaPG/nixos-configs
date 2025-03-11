@@ -475,7 +475,7 @@
                         enableScriptingAddition = true;
                       };
                       skhd = {
-                        enable = false;
+                        enable = true;
                         skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
                       };
                     };
