@@ -270,7 +270,6 @@ in {
     inherit homeDirectory username;
     packages = with pkgs; [
       fontconfig
-      nvim
       tmux
       mosh
       # nerd-fonts.zed-mono

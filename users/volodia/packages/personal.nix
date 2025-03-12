@@ -33,6 +33,11 @@
       go
       gopls
       devenv
+      ripgrep
+      neovim
+      tree-sitter
+      nodejs
+      zathura
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
       neovide
