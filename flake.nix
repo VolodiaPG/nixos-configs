@@ -45,7 +45,7 @@
     nixos-apple-silicon = {
       url = "github:tpwrules/nixos-apple-silicon";
     };
-    # vim.url = "github:volodiapg/vim";
+    vim.url = "github:volodiapg/vim/lazy";
     impermanence.url = "github:nix-community/impermanence";
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -108,7 +108,7 @@
         # nur-volodiapg.overlay
         peerix.overlay
         mosh-overlay
-        # vim.overlay
+        vim.overlay
       ];
 
       pkgsFor = nixpkgs_type: system:

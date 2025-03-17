@@ -396,6 +396,21 @@
         "type": "github"
       }
     },
+    "nixCats": {
+      "locked": {
+        "lastModified": 1741743332,
+        "narHash": "sha256-ilPZdemSQlhEexosIPEmccC+wESSVE20Daron6/MKd4=",
+        "owner": "BirdeeHub",
+        "repo": "nixCats-nvim",
+        "rev": "d2d35c0c392e3fb6032262c61083447ac368ddf3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "nixCats-nvim",
+        "type": "github"
+      }
+    },
     "nixos-apple-silicon": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -475,6 +490,22 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_10": {
+      "locked": {
+        "lastModified": 1735471104,
+        "narHash": "sha256-0q9NGQySwDQc7RhAV2ukfnu7Gxa5/ybJ2ANT8DQrQrs=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "88195a94f390381c6afcdaa933c2f6ff93959cb4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -589,16 +620,16 @@
     },
     "nixpkgs_9": {
       "locked": {
-        "lastModified": 1735471104,
-        "narHash": "sha256-0q9NGQySwDQc7RhAV2ukfnu7Gxa5/ybJ2ANT8DQrQrs=",
+        "lastModified": 1741708242,
+        "narHash": "sha256-cNRqdQD4sZpN7JLqxVOze4+WsWTmv2DGH0wNCOVwrWc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "88195a94f390381c6afcdaa933c2f6ff93959cb4",
+        "rev": "b62d2a95c72fb068aecd374a7262b37ed92df82b",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixos-unstable",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -673,6 +704,7 @@
         "pre-commit-hooks": "pre-commit-hooks",
         "sops-nix": "sops-nix",
         "srvos": "srvos",
+        "vim": "vim",
         "yabai": "yabai",
         "zen-browser": "zen-browser"
       }
@@ -827,6 +859,26 @@
         "type": "github"
       }
     },
+    "vim": {
+      "inputs": {
+        "nixCats": "nixCats",
+        "nixpkgs": "nixpkgs_9"
+      },
+      "locked": {
+        "lastModified": 1742217363,
+        "narHash": "sha256-guF5kwzgkv/HCZOkWxs48A6HdP2mVZvDCVrDwcpPW0I=",
+        "owner": "volodiapg",
+        "repo": "vim",
+        "rev": "2fa8200031e878b9e0df059087cec9b5bfaea549",
+        "type": "github"
+      },
+      "original": {
+        "owner": "volodiapg",
+        "ref": "lazy",
+        "repo": "vim",
+        "type": "github"
+      }
+    },
     "yabai": {
       "flake": false,
       "locked": {
@@ -845,7 +897,7 @@
     },
     "zen-browser": {
       "inputs": {
-        "nixpkgs": "nixpkgs_9"
+        "nixpkgs": "nixpkgs_10"
       },
       "locked": {
         "lastModified": 1741554872,
