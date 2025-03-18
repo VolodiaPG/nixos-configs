@@ -32,7 +32,7 @@
       elixir-ls
       go
       gopls
-      devenv
+      inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.system}.devenv
       ripgrep
       neovim
       tree-sitter
