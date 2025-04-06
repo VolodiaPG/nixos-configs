@@ -582,8 +582,8 @@
     "nixpkgs_5": {
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-DDe16FJk18sadknQKKG/9FbwEro7A57tg9vB5kxZ8kY=",
-        "path": "/nix/store/2d1ahim48jhzg4bbm97mvjlb4p7fpan3-source",
+        "narHash": "sha256-BgkBz4NpV6Kg8XF7cmHDHRVGZYnKbvG0Y4p+jElwxaM=",
+        "path": "/nix/store/v79jbgwmxgiy8m01rhmj4yzn5y507z2c-source",
         "type": "path"
       },
       "original": {
@@ -903,17 +903,14 @@
     "yabai": {
       "flake": false,
       "locked": {
-        "lastModified": 1743848338,
-        "narHash": "sha256-wcwqoBgW11ulF/G0rnp7MQJK72FCs44khGMUJxoQZXI=",
-        "owner": "koekeishiya",
-        "repo": "yabai",
-        "rev": "0a5cdddd46407386a235b67320da3a801c061212",
-        "type": "github"
+        "lastModified": 1743848208,
+        "narHash": "sha256-QgyThL6N4Vgj/em9Lxd2FvCUlzSfz7PV0avHLzY87YU=",
+        "type": "tarball",
+        "url": "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz"
       },
       "original": {
-        "owner": "koekeishiya",
-        "repo": "yabai",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz"
       }
     },
     "zen-browser": {

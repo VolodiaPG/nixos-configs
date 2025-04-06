@@ -56,7 +56,7 @@
     mosh.flake = false;
     yabai = {
       flake = false;
-      url = "github:koekeishiya/yabai";
+      url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz";
     };
     microvm = {
       url = "github:astro/microvm.nix";
@@ -470,7 +470,10 @@
                     services = {
                       yabai = {
                         enable = true;
-                        #package = outputs.packages.${system}.yabai;
+                        package = pkgs.yabai.overrideAttrs (_: {
+                          version = "7.1.14";
+                          src = inputs.yabai;
+                        });
                         extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                         enableScriptingAddition = true;
                       };

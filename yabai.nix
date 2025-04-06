@@ -14,7 +14,7 @@ in
   stdenv.mkDerivation (finalAttrs: {
     inherit src;
     pname = "yabai";
-    version = "7.1.1";
+    version = "7.1.14";
     env = {
       # silence service.h error
       NIX_CFLAGS_COMPILE = "-Wno-implicit-function-declaration";
