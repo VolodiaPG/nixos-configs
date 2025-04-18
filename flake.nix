@@ -11,7 +11,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      # url = "github:nix-community/home-manager";
+      url = "github:pasqui23/home-manager/nixos-late-start";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
@@ -41,7 +42,7 @@
       flake = false;
       url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz";
     };
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin.url = "github:catppuccin/nix/v1.2.0";
     hosts.url = "github:StevenBlack/hosts";
     mac-app-util.url = "github:hraban/mac-app-util";
     deploy-rs.url = "github:serokell/deploy-rs";
@@ -129,7 +130,7 @@
                   sharedModules = [
                     sops-nix.homeManagerModules.sops
                     ./secrets/home-manager.nix
-                    catppuccin.homeModules.catppuccin
+                    catppuccin.homeManagerModules.catppuccin
                   ];
                   extraSpecialArgs =
                     specialArgsFor system "volodia" hostName;
@@ -165,7 +166,7 @@
                       inherit pkgs;
                       modules =
                         [
-                          catppuccin.homeModules.catppuccin
+                          catppuccin.homeManagerModules.catppuccin
                           sops-nix.homeManagerModules.sops
                           ./secrets/home-manager.nix
                           ./users/volodia/home.nix
