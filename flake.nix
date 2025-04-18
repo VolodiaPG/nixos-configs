@@ -4,46 +4,27 @@
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    # nixpkgs.follows = "srvos/nixpkgs";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-darwin.follows = "nixpkgs";
     srvos = {
       url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nur-xddxdd = {
-    #   url = "github:xddxdd/nur-packages";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # nur-volodiapg = {
-    #   url = "github:volodiapg/nur-packages";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     home-manager = {
       url = "github:nix-community/home-manager";
-      # url = "github:nix-community/home-manager/pull/6104";
-      # url = "github:pitkling/home-manager/syncthing-declarative-macos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    peerix = {
-      url = "github:volodiapg/peerix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        nixpkgs-stable.follows = "nixpkgs";
       };
     };
     darwin = {
       url = "github:lnl7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
-    };
-    nixos-apple-silicon = {
-      url = "github:tpwrules/nixos-apple-silicon";
     };
     vim.url = "github:volodiapg/vim/lazy";
     impermanence.url = "github:nix-community/impermanence";
@@ -52,20 +33,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
-    mosh.url = "github:zhaofengli/mosh/fish-wcwidth";
-    mosh.flake = false;
+    mosh = {
+      url = "github:zhaofengli/mosh/fish-wcwidth";
+      flake = false;
+    };
     yabai = {
       flake = false;
       url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz";
     };
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     catppuccin.url = "github:catppuccin/nix";
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
     hosts.url = "github:StevenBlack/hosts";
-    codecursor.url = "github:coder/cursor-arm";
     mac-app-util.url = "github:hraban/mac-app-util";
     deploy-rs.url = "github:serokell/deploy-rs";
   };
@@ -104,9 +81,6 @@
       };
 
       overlays = with inputs; [
-        # nur-xddxdd.overlay
-        # nur-volodiapg.overlay
-        peerix.overlay
         mosh-overlay
         vim.overlay
       ];
@@ -213,50 +187,6 @@
               )
             );
         }))
-        (flake-utils.lib.eachSystem ["aarch64-linux"] (system: {
-          # Do not forget to also add to peerix to share the derivations
-          packages.yabai = let
-            pkgs = nixpkgs.legacyPackages.${system};
-          in
-            pkgs.callPackage ./yabai.nix {src = yabai;};
-          packages.nixosConfigurations = {
-            "m1" = nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/m1/configuration.nix
-                  ./machines/m1/hardware-configuration.nix
-                  nixos-apple-silicon.nixosModules.apple-silicon-support
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-laptop
-                  nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  #srvos.nixosModules.server
-                  microvm.nixosModules.host
-                  {
-                    services = {
-                      microvms.enable = true;
-                      desktop.enable = true;
-                      kernel.enable = false;
-                      intel.enable = false;
-                      impermanence = {
-                        enable = true;
-                        rootVolume = "nvme0n1p5";
-                      };
-                      elegantBoot.enable = true;
-                      vpn.enable = true;
-                      laptopServer.enable = false;
-                    };
-                    home-manager.extraSpecialArgs = {
-                      graphical = "gnome";
-                      apps = "personal";
-                    };
-                  }
-                ]);
-            };
-          };
-        }))
         {
           # Do not forget to also add to peerix to share the derivations
           nixosConfigurations = let
@@ -311,7 +241,6 @@
                   nixos-hardware.nixosModules.common-gpu-nvidia
                   nixos-hardware.nixosModules.common-pc
                   nixos-hardware.nixosModules.common-pc-ssd
-                  microvm.nixosModules.host
                   {
                     services = {
                       desktop.enable = true;
@@ -322,10 +251,6 @@
                         rootVolume = "disk/by-label/root";
                       };
 
-                      microvms = {
-                        enable = true;
-                        interface = "enp3s0";
-                      };
                       elegantBoot.enable = true;
                       vpn.enable = true;
                     };
@@ -351,13 +276,8 @@
                   nixos-hardware.nixosModules.common-pc-laptop
                   nixos-hardware.nixosModules.common-pc-laptop-ssd
                   #srvos.nixosModules.server
-                  microvm.nixosModules.host
                   {
                     services = {
-                      microvms = {
-                        enable = true;
-                        interface = "enp0s31f6";
-                      };
                       nvidia.enable = true;
                       desktop.enable = false;
                       kernel.enable = true;
@@ -369,15 +289,6 @@
                       elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = true;
-                      # changeMAC = {
-                      #   enable = false;
-                      #   mac = config.sops.secrets.dellmac.path;
-                      #   interface = "enp0s31f6";
-                      # };
-                      foldingathome = {
-                        enable = true;
-                        team = 1066076;
-                      };
                     };
                     home-manager.extraSpecialArgs = {
                       graphical = "no-de";
