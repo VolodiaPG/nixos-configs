@@ -129,7 +129,7 @@
                   sharedModules = [
                     sops-nix.homeManagerModules.sops
                     ./secrets/home-manager.nix
-                    catppuccin.homeManagerModules.catppuccin
+                    catppuccin.homeModules.catppuccin
                   ];
                   extraSpecialArgs =
                     specialArgsFor system "volodia" hostName;
@@ -165,7 +165,7 @@
                       inherit pkgs;
                       modules =
                         [
-                          catppuccin.homeManagerModules.catppuccin
+                          catppuccin.homeModules.catppuccin
                           sops-nix.homeManagerModules.sops
                           ./secrets/home-manager.nix
                           ./users/volodia/home.nix
@@ -251,7 +251,7 @@
                         rootVolume = "disk/by-label/root";
                       };
 
-                      elegantBoot.enable = true;
+                      elegantBoot.enable = false;
                       vpn.enable = true;
                     };
                     home-manager.extraSpecialArgs = {
@@ -286,7 +286,7 @@
                         enable = true;
                         rootVolume = "nvme0n1p11";
                       };
-                      elegantBoot.enable = true;
+                      elegantBoot.enable = false;
                       vpn.enable = true;
                       laptopServer.enable = true;
                     };

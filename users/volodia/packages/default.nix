@@ -32,17 +32,17 @@
     (with pkgs; [
       direnv # Load environment variables when cd'ing into a directory
       findutils # GNU find/xargs commands
-      man # Documentation for everything
-      p7zip # 7zip archive tools
-      lrzip # Advanced and storage efficient zip
+      # man # Documentation for everything
+      # p7zip # 7zip archive tools
+      # lrzip # Advanced and storage efficient zip
       parallel # Much smarter xargs
       # progress # View current progress of coreutils tools
       zip # ZIP file manipulation
       unzip
       gdu # Manager files and see sizes quickly
-      micro # text editor
+      # micro # text editor
       zoxide # smart CD that remembers
-      gh # Github PRs and stuff
+      # gh # Github PRs and stuff
       git-crypt
       cocogitto
       python3
@@ -54,7 +54,7 @@
       nmap # Network scanning and more
 
       # File transfer
-      sshfs-fuse # Mount remote filesystem over SSH with FUSE
+      # sshfs-fuse # Mount remote filesystem over SSH with FUSE
       wget # Retrieve files from the web
 
       # Fish deps
@@ -80,7 +80,7 @@
       # libreoffice
       # xournalpp
 
-      gitui
+      # gitui
 
       # Utils
       # boxes

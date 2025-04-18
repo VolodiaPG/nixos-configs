@@ -22,41 +22,41 @@
   # };
   home.packages = with pkgs;
     [
-      inkscape
-      signal-desktop
-      qbittorrent
+      # inkscape
+      # signal-desktop
+      # qbittorrent
       lazygit
       nixd
       nil
-      alejandra
-      elixir-ls
-      go
-      gopls
+      # alejandra
+      # elixir-ls
+      # go
+      # gopls
       inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.system}.devenv
       ripgrep
       neovim
-      tree-sitter
-      nodejs
-      zathura
+      # tree-sitter
+      # nodejs
+      # zathura
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
-      neovide
-      vlc
-      freecad
-      strawberry
-      tidal-hifi
-      # Media
-      libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
+      # neovide
+      # vlc
+      # freecad
+      # strawberry
+      # tidal-hifi
+      # # Media
+      # libsForQt5.qt5.qtwayland # Allow SVP to run on wayland
     ])
     ++ (lib.optionals (pkgs.stdenv.isx86_64 && pkgs.stdenv.isLinux) [
-      code-cursor
-      discord
-      insomnia
-      (steam.override {extraPkgs = _: [mono gtk3 gtk3-x11 libgdiplus zlib];}).run
-      popcorntime
+      # code-cursor
+      # discord
+      # insomnia
+      # (steam.override {extraPkgs = _: [mono gtk3 gtk3-x11 libgdiplus zlib];}).run
+      # popcorntime
     ])
     ++ (lib.optionals (pkgs.stdenv.isAarch64 && pkgs.stdenv.isLinux) [
-      inputs.codecursor.packages.${pkgs.stdenv.system}.default
+      # inputs.codecursor.packages.${pkgs.stdenv.system}.default
     ]);
 
   # programs.steam.enable = true;

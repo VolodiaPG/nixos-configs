@@ -115,7 +115,7 @@ in {
   };
 
   environment.systemPackages = [
-    pkgs.sshx
+    # pkgs.sshx
     pkgs.docker-compose
     pkgs.lm_sensors
   ];

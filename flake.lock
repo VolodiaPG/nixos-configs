@@ -637,7 +637,7 @@
       "flake": false,
       "locked": {
         "lastModified": 1743848208,
-        "narHash": "sha256-QgyThL6N4Vgj/em9Lxd2FvCUlzSfz7PV0avHLzY87YU=",
+        "narHash": "sha256-cDONHrNPBTzEkVqxN1cHDqVumfyfcHrTYGZxn4s/mEA=",
         "type": "tarball",
         "url": "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz"
       },
