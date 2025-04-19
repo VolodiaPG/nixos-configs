@@ -14,8 +14,10 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+
             - name: Install Nix
               uses: DeterminateSystems/nix-installer-action@main
+
             - name: Update flake.lock
               uses: DeterminateSystems/update-flake-lock@main
               with:
@@ -23,3 +25,13 @@ jobs:
                   pr-labels: | # Labels to be set on the PR
                       dependencies
                       automated
+
+            - uses: cachix/cachix-action@v15
+              with:
+                  name: volodiapg
+                  authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+            - name: Check
+              run: |
+                  set -euxo pipefail
+                  nix flake check

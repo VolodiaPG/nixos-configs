@@ -10,3 +10,5 @@ nohup.out
 /.pre-commit-config.yaml
 
 .DS_Store
+.aider*
+.env
