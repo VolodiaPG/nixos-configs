@@ -3,8 +3,8 @@
 
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    nixpkgs-stable.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-darwin.follows = "nixpkgs";
     srvos = {
       url = "github:nix-community/srvos";
@@ -20,11 +20,11 @@
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixpkgs-stable";
       };
     };
     darwin = {
-      url = "github:lnl7/nix-darwin/nix-darwin-24.11";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     vim.url = "github:volodiapg/vim/lazy";
@@ -396,7 +396,10 @@
                     };
 
                     # Add ability to used TouchID for sudo authentication
-                    security.pam.enableSudoTouchIdAuth = true;
+                    security.pam.services.sudo_local = {
+                      touchIdAuth = true;
+                      reattach = true;
+                    };
                   })
                 ];
             };
