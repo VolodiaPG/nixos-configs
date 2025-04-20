@@ -102,7 +102,7 @@
       "X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
     };
     systemPackages = with pkgs; [
-      nvtop
+      # nvtop
     ];
     sessionVariables = {
       LIBVA_DRIVER_NAME = "nvidia";
