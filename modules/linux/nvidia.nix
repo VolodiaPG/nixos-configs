@@ -16,6 +16,10 @@ in {
       allowUnfree = true;
       nvidia.acceptLicense = true;
     };
+
+    services.xserver.videoDrivers = ["nvidia"];
+    services.xserver.enable = false;
+
     virtualisation.docker = {
       enable = true;
       # https://docs.docker.com/reference/cli/dockerd/#enable-cdi-devices
@@ -39,13 +43,14 @@ in {
         # https://aws.amazon.com/releasenotes/aws-deep-learning-base-gpu-ami-ubuntu-22-04/
         # ^ Shows that AWS AMIs use 535 drivers. Unsure if these can be upgraded alghough I don't see why not
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-        package = config.boot.kernelPackages.nvidiaPackages.dc_535;
+        package = config.boot.kernelPackages.nvidiaPackages.beta;
         nvidiaPersistenced = true;
+        nvidiaSettings = true;
         modesetting.enable = true;
         powerManagement.enable = true;
-        datacenter = {
-          enable = true;
-        };
+        # datacenter = {
+        #   enable = true;
+        # };
         open = false;
       };
     };
@@ -55,6 +60,7 @@ in {
       # ollama-cuda # wasn't cached and took forever to build
       nvtopPackages.nvidia
       cudaPackages.cudatoolkit
+      nvidia-container-toolkit
     ];
   };
 }
