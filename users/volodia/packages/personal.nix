@@ -34,7 +34,7 @@
       # gopls
       inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.system}.devenv
       ripgrep
-      neovim
+      nvim
       # tree-sitter
       # nodejs
       # zathura
