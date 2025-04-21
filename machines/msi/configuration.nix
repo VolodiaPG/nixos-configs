@@ -11,7 +11,6 @@
       efi.canTouchEfiVariables = true;
       grub = {
         enable = true;
-        version = 2;
         device = "nodev";
         efiSupport = true;
         #enableCryptodisk = true;
@@ -32,9 +31,6 @@
   # programs.xwayland.enable = true;
   # services.xserver.displayManager.gdm.wayland = true;
 
-  virtualisation.docker.enableNvidia = true;
-
-  # Enable the OpenSSH daemon.
   services = {
     openssh.enable = true;
 
@@ -81,9 +77,8 @@
       nvidiaSettings = false;
     };
     cpu.intel.updateMicrocode = true;
-    opengl = {
+    graphics = {
       enable = true;
-      driSupport32Bit = true;
       extraPackages = with pkgs; [
         #intel-media-driver # LIBVA_DRIVER_NAME=iHD
         #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)

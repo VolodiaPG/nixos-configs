@@ -23,9 +23,11 @@ in {
     services = {
       xserver = {
         enable = true;
-        layout = "fr";
-        xkbVariant = "oss";
-        xkbOptions = "eurosign:e,ctrl:swapcaps";
+        xkb = {
+          variant = "oss";
+          options = "eurosign:e,ctrl:swapcaps";
+          layout = "fr";
+        };
 
         displayManager.gdm = {
           enable = true;
@@ -120,7 +122,7 @@ in {
     users.users.volodia.extraGroups = ["i2c"];
     # Enable sound.
 
-    hardware.pulseaudio.enable = false;
+    services.pulseaudio.enable = false;
     security.rtkit.enable = true;
 
     programs = {
@@ -133,7 +135,7 @@ in {
     };
 
     fonts = {
-      fonts = with pkgs; [
+      packages = with pkgs; [
         # powerline-fonts
         corefonts
         # noto-fonts

@@ -11,7 +11,6 @@
       efi.canTouchEfiVariables = true;
       grub = {
         enable = true;
-        #    version = 2;
         device = "nodev";
         efiSupport = true;
         #    enableCryptodisk = true;
@@ -34,7 +33,7 @@
   };
   hardware = {
     cpu.intel.updateMicrocode = true;
-    opengl = {
+    graphics = {
       enable = true;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
