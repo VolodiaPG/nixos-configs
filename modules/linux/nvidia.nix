@@ -44,7 +44,7 @@ in {
         # ^ Shows that AWS AMIs use 535 drivers. Unsure if these can be upgraded alghough I don't see why not
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
         package = config.boot.kernelPackages.nvidiaPackages.beta;
-        nvidiaPersistenced = false;
+        nvidiaPersistenced = true;
         nvidiaSettings = true;
         modesetting.enable = true;
         powerManagement.enable = true;
