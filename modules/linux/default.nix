@@ -103,6 +103,7 @@ in {
         dates = "weekly";
       };
     };
+    libvirtd.enable = true;
   };
 
   # GnuPG
