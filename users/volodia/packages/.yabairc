@@ -28,10 +28,10 @@ yabai -m config \
   split_ratio 0.50 \
   split_type auto \
   auto_balance off \
-  top_padding 10 \
-  bottom_padding 10 \
-  left_padding 10 \
-  right_padding 10 \
+  top_padding 0 \
+  bottom_padding 0 \
+  left_padding 0 \
+  right_padding 0 \
   window_gap 10 \
   layout bsp \
   mouse_modifier fn \
@@ -57,6 +57,7 @@ yabai -m rule --add app="^Orion$" space=web
 yabai -m rule --add app="^Obsidian$" space=notes
 yabai -m rule --add app="^Signal$" space=social
 yabai -m rule --add app="^kitty$" space=terminal
+yabai -m rule --add app="^ghostty$" space=terminal
 yabai -m rule --add app="^Cursor$" space=code
 yabai -m rule --add app="^TIDAL$" space=music
 yabai -m rule --add app="^Discord$" space=social
