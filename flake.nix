@@ -19,9 +19,9 @@
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-stable";
-      };
+      # inputs = {
+      #   nixpkgs.follows = "nixpkgs-stable";
+      # };
     };
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -304,105 +304,109 @@
           system: let
             inherit (darwin.lib) darwinSystem;
           in {
-            packages.darwinConfigurations."Volodias-MacBook-Pro" = darwinSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ [
-                  ({pkgs, ...}: {
-                    system.stateVersion = 5;
-                    nixpkgs.hostPlatform = system;
+            packages.darwinConfigurationsFunctions."Volodias-MacBook-Pro" = {symlinkPath ? null}:
+              darwinSystem {
+                inherit system;
+                specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
+                modules =
+                  outputs.nixosModules.${system}.default
+                  ++ [
+                    ({pkgs, ...}: {
+                      system.stateVersion = 5;
+                      nixpkgs.hostPlatform = system;
 
-                    home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
-                      apps = "personal";
-                    };
-
-                    users.users.volodia = {
-                      name = "volodia";
-                      home = "/Users/volodia";
-                    };
-
-                    programs = {
-                      zsh.enable = true;
-                    };
-
-                    environment.systemPackages = with pkgs; [
-                      terminal-notifier
-                    ];
-
-                    nix = {
-                      settings = {
-                        substituters = [
-                          "https://cache.nixos.org/"
-                        ];
-                        trusted-public-keys = [
-                          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-                        ];
+                      home-manager.extraSpecialArgs = {
+                        graphical = "no-de";
+                        apps = "personal";
+                        inherit symlinkPath;
                       };
-                      extraOptions = ''
-                        extra-platforms = x86_64-darwin
-                      '';
 
-                      linux-builder = {
-                        enable = false;
-                        ephemeral = true;
-                        maxJobs = 8;
-                        supportedFeatures = ["kvm" "benchmark" "big-parallel"];
-                        systems = ["aarch64-linux" "x86_64-linux"];
-                        config = {
-                          # This can't include aarch64-linux when building on aarch64,
-                          # for reasons I don't fully understand
-                          boot.binfmt.emulatedSystems = ["x86_64-linux"];
-                          virtualisation = {
-                            darwin-builder.diskSize = 60 * 1024;
-                          };
-                          nix.settings = {
-                            substituters = [
-                              "https://nix-community.cachix.org"
-                            ];
-                            trusted-public-keys = [
-                              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                            ];
+                      users.users.volodia = {
+                        name = "volodia";
+                        home = "/Users/volodia";
+                      };
+
+                      programs = {
+                        zsh.enable = true;
+                      };
+
+                      environment.systemPackages = with pkgs; [
+                        terminal-notifier
+                      ];
+
+                      nix = {
+                        settings = {
+                          substituters = [
+                            "https://cache.nixos.org/"
+                          ];
+                          trusted-public-keys = [
+                            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+                          ];
+                        };
+                        extraOptions = ''
+                          extra-platforms = x86_64-darwin
+                        '';
+
+                        linux-builder = {
+                          enable = false;
+                          ephemeral = true;
+                          maxJobs = 8;
+                          supportedFeatures = ["kvm" "benchmark" "big-parallel"];
+                          systems = ["aarch64-linux" "x86_64-linux"];
+                          config = {
+                            # This can't include aarch64-linux when building on aarch64,
+                            # for reasons I don't fully understand
+                            boot.binfmt.emulatedSystems = ["x86_64-linux"];
+                            virtualisation = {
+                              darwin-builder.diskSize = 60 * 1024;
+                            };
+                            nix.settings = {
+                              substituters = [
+                                "https://nix-community.cachix.org"
+                              ];
+                              trusted-public-keys = [
+                                "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+                              ];
+                            };
                           };
                         };
                       };
-                    };
 
-                    launchd.daemons.linux-builder.serviceConfig = {
-                      StandardOutPath = "/var/log/linux-builder.log";
-                      StandardErrorPath = "/var/log/linux-builder.log";
-                    };
-
-                    system.activationScripts.extraActivation.text = ''
-                      /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
-                    '';
-
-                    services = {
-                      yabai = {
-                        enable = true;
-                        package = pkgs.yabai.overrideAttrs (_: {
-                          version = "7.1.14";
-                          src = inputs.yabai;
-                        });
-                        extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
-                        enableScriptingAddition = true;
+                      launchd.daemons.linux-builder.serviceConfig = {
+                        StandardOutPath = "/var/log/linux-builder.log";
+                        StandardErrorPath = "/var/log/linux-builder.log";
                       };
-                      skhd = {
-                        enable = true;
-                        skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
-                      };
-                    };
 
-                    # Add ability to used TouchID for sudo authentication
-                    security.pam.services.sudo_local = {
-                      touchIdAuth = true;
-                      reattach = true;
-                    };
-                  })
-                ];
-            };
+                      system.activationScripts.extraActivation.text = ''
+                        /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
+                      '';
+
+                      services = {
+                        yabai = {
+                          enable = true;
+                          package = pkgs.yabai.overrideAttrs (_: {
+                            version = "7.1.14";
+                            src = inputs.yabai;
+                          });
+                          # symlinked out of tree
+                          # extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
+                          enableScriptingAddition = true;
+                        };
+                        skhd = {
+                          enable = true;
+                          # symlinked out of tree
+                          # skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
+                        };
+                      };
+
+                      # Add ability to used TouchID for sudo authentication
+                      security.pam.services.sudo_local = {
+                        touchIdAuth = true;
+                        reattach = true;
+                      };
+                    })
+                  ];
+              };
           }
         ))
         (flake-utils.lib.eachDefaultSystem (

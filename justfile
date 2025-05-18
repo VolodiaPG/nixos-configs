@@ -5,10 +5,11 @@ homemanager:
 
 homemanager-basic:
     nix develop .# -c home-manager switch --flake .#volodia.no-de.personal.no-machine
+
 updateindex:
     updateindex
 
-boot: 
+boot:
     sudo nixos-rebuild boot --flake .#$(hostname)
 
 _switch:
@@ -16,12 +17,12 @@ _switch:
 
 mount hostname:
     sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode mount {{justfile_directory()}}/machines/{{hostname}}/disk.nix
-    
+
 switch:
     #!/usr/bin/env bash
     (setsid nohup sudo bash -c "sleep 60 ; sudo nix-env --rollback --profile /nix/var/nix/profiles/system ; echo \"Rollbacked $(date)\"")& disown
     nohup_command_pid=$!
-    
+
     just _switch
 
     echo "--> 60 seconds before rollback..."
@@ -47,8 +48,23 @@ bump: update switch
     git add flake.lock
     cog commit chore "Update" lock
 
+toto:
+  echo {{ justfile_directory() }}
+
 darwin:
-    darwin-rebuild switch --flake .
+  #!/usr/bin/env bash
+  set -e
+  result=$(nix build --impure --print-out-paths --expr "
+    let
+    self = builtins.getFlake ''path://{{ justfile_directory() }}'';
+    configuration =
+  self.packages.aarch64-darwin.darwinConfigurationsFunctions.Volodias-MacBook-Pro
+  {symlinkPath = ''{{ justfile_directory() }}/users/volodia'';};
+    in
+    configuration")
+  echo $result
+  sudo $result/activate
+
 
 fmt:
     nix fmt .

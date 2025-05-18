@@ -3,12 +3,17 @@
   pkgs,
   graphical,
   apps,
+  symlinkPath,
   config,
   homeDirectory,
   inputs,
   username,
   ...
 }: let
+  mkOutOfStore = path:
+    if symlinkPath == null
+    then ./. + "/${path}"
+    else config.lib.file.mkOutOfStoreSymlink "${symlinkPath}/${path}";
   isClean = inputs.self ? rev;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
     # Function to print colored text
@@ -50,7 +55,7 @@
             echo "(yesterday's version)"
             ;;
         2)
-            print_colored $yellow_bold "(version last updated $diff_days days ago)"
+            print_colored $yellow "(version last updated $diff_days days ago)"
             ;;
         3)
             print_colored $orange "(version last updated $diff_days days ago)"
@@ -85,61 +90,50 @@ in {
     };
     zoxide = {
       enable = true;
-      enableFishIntegration = true;
+      enableNushellIntegration = true;
       options = [
         "--cmd cd"
       ];
-      #enableBashIntegration = true;
     };
-    fish = {
+    bash = {
       enable = true;
-      plugins = [
-        {
-          name = "fzf";
-          inherit (pkgs.fzf) src;
-        }
-        {
-          name = "grc";
-          inherit (pkgs.grc) src;
-        }
-        {
-          name = "done";
-          inherit (pkgs.fishPlugins.done) src;
-        }
-        {
-          name = "pure";
-          inherit (pkgs.fishPlugins.pure) src;
-        }
-      ];
-      shellInit = ''
-        set -g GPG_TTY (tty)
-        set -g EDITOR nvim
+      # plugins = [
+      #   {
+      #     name = "fzf";
+      #     inherit (pkgs.fzf) src;
+      #   }
+      #   {
+      #     name = "grc";
+      #     inherit (pkgs.grc) src;
+      #   }
+      #   {
+      #     name = "done";
+      #     inherit (pkgs.fishPlugins.done) src;
+      #   }
+      #   {
+      #     name = "pure";
+      #     inherit (pkgs.fishPlugins.pure) src;
+      #   }
+      # ];
+      bashrcExtra = ''
+        export GPG_TTY=$(tty)
+        export EDITOR=nvim
 
-        set --universal pure_enable_nixdevshell true
-        set --universal pure_symbol_nixdevshell_prefix ❄
-
-        # Nix
-        if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-            source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-            # following is single user
-            # source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
-        end
-        # End Nix
-        if test (uname) = Darwin
-            fish_add_path --prepend --global \
-              "${config.xdg.stateHome}/nix/profile/bin" \
-              /etc/profiles/per-user/$USER/bin \
-              /run/current-system/sw/bin \
-              /nix/var/nix/profiles/default/bin
-        end
+        # if test $(uname) = Darwin
+        #     export $PATH=\
+        #       "${config.xdg.stateHome}/nix/profile/bin" \
+        #       /etc/profiles/per-user/$USER/bin \
+        #       /run/current-system/sw/bin \
+        #       /nix/var/nix/profiles/default/bin
+        # end
       '';
 
-      interactiveShellInit = ''
-        if type -q nixos-version
-            echo Running ${status}Nixos (nixos-version) (${lib.getExe date_script})
+      initExtra = ''
+        if type -q nixos-version; then
+            echo Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})
         else
           echo Running ${status}Nix
-        end
+        fi
       '';
 
       shellAliases = {
@@ -154,12 +148,132 @@ in {
     zsh = {
       enable = true;
       initExtra = ''
-        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
+        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
         then
-            exec fish -l
+            exec nu -i
         fi
       '';
     };
+    nushell = {
+      enable = true;
+      # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
+      configFile.source =
+        mkOutOfStore "packages/config.nu";
+      # for editing directly to config.nu
+      extraConfig = ''
+        let carapace_completer = {|spans|
+        carapace $spans.0 nushell ...$spans | from json
+        }
+        $env.config = {
+         show_banner: false,
+         completions: {
+         case_sensitive: false # case-sensitive completions
+         quick: true    # set to false to prevent auto-selecting completions
+         partial: true    # set to false to prevent partial filling of the prompt
+         algorithm: "fuzzy"    # prefix or fuzzy
+         external: {
+         # set to false to prevent nushell looking into $env.PATH to find more suggestions
+             enable: true
+         # set to lower can improve completion performance at the cost of omitting some options
+             max_results: 100
+             completer: $carapace_completer # check 'carapace_completer'
+           }
+         }
+        }
+        $env.PATH = ($env.PATH |
+        split row (char esep) |
+        prepend /home/myuser/.apps |
+        append /usr/bin/env
+        )
+      '';
+      shellAliases = {
+        ll = "ls -l";
+        l = "ls";
+        j = "just";
+        jl = "just --list";
+        g = "git";
+        c = "clear";
+      };
+    };
+    carapace = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+    starship = {
+      enable = true;
+      enableNushellIntegration = true;
+
+      # settings = {
+      #   add_newline = false;
+      #   format = "$shlvl$shell$username$hostname$nix_shell$custom$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
+      #   shlvl = {
+      #     disabled = false;
+      #     symbol = "ﰬ";
+      #     style = "bright-red bold";
+      #   };
+      #   shellInit = ''
+      #     export GPG_TTY="$(tty)"
+      #   '';
+      #   shell = {
+      #     disabled = false;
+      #     format = "$indicator";
+      #     fish_indicator = "";
+      #     bash_indicator = "[BASH](bright-white) ";
+      #     zsh_indicator = "[ZSH](bright-white) ";
+      #   };
+      #   username = {
+      #     style_user = "bright-white bold";
+      #     style_root = "bright-red bold";
+      #   };
+      #   hostname = {
+      #     style = "bright-green bold";
+      #     ssh_only = true;
+      #   };
+      #   nix_shell = {
+      #     symbol = "";
+      #     format = "[$symbol]($style) ";
+      #     style = "bright-purple bold";
+      #   };
+      #   git_branch = {
+      #     only_attached = true;
+      #     format = "[$symbol$branch]($style) ";
+      #     symbol = "שׂ";
+      #     style = "bright-yellow bold";
+      #   };
+      #   git_commit = {
+      #     only_detached = true;
+      #     format = "[ﰖ$hash]($style) ";
+      #     style = "bright-yellow bold";
+      #   };
+      #   git_state = {
+      #     style = "bright-purple bold";
+      #   };
+      #   git_status = {
+      #     style = "bright-green bold";
+      #   };
+      #   directory = {
+      #     read_only = " ";
+      #     truncation_length = 0;
+      #   };
+      #   cmd_duration = {
+      #     format = "[$duration]($style) ";
+      #     style = "bright-blue";
+      #   };
+      #   jobs = {
+      #     style = "bright-green bold";
+      #   };
+      #   character = {
+      #     success_symbol = "[>](bright-green bold)";
+      #     error_symbol = "[!](bright-red bold)";
+      #   };
+      #   custom.direnv = {
+      #     format = "[\\[direnv\\]]($style) ";
+      #     style = "fg:yellow dimmed";
+      #     when = "env | grep -E '^DIRENV_FILE='";
+      #   };
+      # };
+    };
+
     # zsh = {
     #   enable = true;
     #   initExtra = ''
@@ -314,8 +428,10 @@ in {
         source = ./packages/scripts;
         recursive = true;
       };
-      #".yabairc".source = ./packages/.yabairc;
-      ".skhdrc".source = ./packages/.skhdrc;
+      ".yabairc".source =
+        mkOutOfStore "packages/yabairc";
+      ".skhdrc".source =
+        mkOutOfStore "packages/skhdrc";
     };
 
     # This value determines the Home Manager release that your
@@ -328,4 +444,8 @@ in {
     # changes in each release.
     stateVersion = "22.05";
   };
+
+  xdg.configFile."starship.toml".source = lib.mkForce (
+    mkOutOfStore "packages/starship.toml"
+  );
 }
