@@ -96,6 +96,7 @@
         inherit hostName;
         pkgs-unstable = pkgsFor nixpkgs-unstable system;
         inherit inputs;
+        symlinkPath = null;
         homeDirectory =
           if nixpkgs.lib.strings.hasSuffix "linux" system
           then "/home/${username}"

@@ -3,7 +3,7 @@
   pkgs,
   graphical,
   apps,
-  symlinkPath,
+  symlinkPath ? null,
   config,
   homeDirectory,
   inputs,

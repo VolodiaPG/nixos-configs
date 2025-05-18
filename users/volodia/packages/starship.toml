@@ -154,6 +154,9 @@ teal = "#94e2d5"
 text = "#cdd6f4"
 yellow = "#f9e2af"
 
+[hostname]
+ssh_symbol = ""
+
 [username]
 style_root = "bright-red bold"
 style_user = "bright-white bold"
