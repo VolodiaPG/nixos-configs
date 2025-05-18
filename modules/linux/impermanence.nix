@@ -224,6 +224,7 @@ in {
               }
               ".local/share/direnv"
               ".local/share/zoxide"
+              ".local/share/nvim/harpoon"
               ".docker"
               ".tmux/resurrect"
               ".mozilla"
