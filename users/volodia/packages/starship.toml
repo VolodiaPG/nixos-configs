@@ -114,17 +114,17 @@ allowed_msg = ""
 [git_branch]
 format = 'on [$symbol$branch]($style)'
 only_attached = true
-style = "bright-yellow bold"
+style = "bright-yellow"
 
 [git_commit]
 only_detached = true
 style = "bright-yellow bold"
 
 [git_state]
-style = "bright-yellow bold"
+style = "bright-yellow"
 
 [git_status]
-style = "bright-yellow bold"
+style = "bright-yellow"
 
 [palettes.catppuccin_mocha]
 base = "#1e1e2e"
