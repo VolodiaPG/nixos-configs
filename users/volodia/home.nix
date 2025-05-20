@@ -10,6 +10,7 @@
   username,
   ...
 }: let
+  isDarwin = builtins.currentSystem == "x86_64-darwin" || builtins.currentSystem == "aarch64-darwin";
   mkOutOfStore = path:
     if symlinkPath == null
     then ./. + "/${path}"
@@ -114,7 +115,7 @@ in {
       initExtra = ''
         source ${pkgs.blesh}/share/blesh/ble.sh
 
-        if type nixos-version 2>&1 >/dev/null; then
+        if command -v nixos-version 2>&1 >/dev/null; then
             echo Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})
         else
             echo Running ${status}Nix
@@ -134,15 +135,15 @@ in {
         c = "clear";
       };
     };
-    # zsh = {
-    #   enable = true;
-    #   initExtra = ''
-    #     if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
-    #     then
-    #         exec bash -i
-    #     fi
-    #   '';
-    # };
+    zsh = {
+      enable = isDarwin;
+      initExtra = ''
+        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'bash' ]]
+        then
+            exec bash
+        fi
+      '';
+    };
     carapace = {
       enable = true;
       enableBashIntegration = true;
@@ -316,5 +317,9 @@ in {
 
   xdg.configFile."starship.toml".source = lib.mkForce (
     mkOutOfStore "packages/starship.toml"
+  );
+
+  xdg.configFile.".blerc".source = lib.mkForce (
+    mkOutOfStore "packages/blerc.sh"
   );
 }

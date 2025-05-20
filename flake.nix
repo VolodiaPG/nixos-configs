@@ -79,6 +79,52 @@
             inherit patches;
             src = inputs.mosh;
           });
+
+        blesh = prev.blesh.overrideAttrs (old: {
+          src = prev.fetchFromGitHub {
+            owner = "akinomyoga";
+            repo = "ble.sh";
+            rev = "adf53ed";
+            fetchSubmodules = true;
+            hash = "sha256-7hX8UddV+MwqFceXK/lUDFpilIOqjOLxyBsbofZhFjI=";
+          };
+
+          dontBuild = false;
+
+          buildPhase = ''
+            sed -i '/git submodule update --init --recursive/d' GNUmakefile
+            sed -i 's/BLE_GIT_COMMIT_ID :=/BLE_GIT_COMMIT_ID := adf53ed/g' GNUmakefile
+            sed -i 's/BLE_GIT_BRANCH :=/BLE_GIT_BRANCH := master/g' GNUmakefile
+            make
+          '';
+
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p "$out/share/blesh"
+
+            # cat <<EOF >"$out/share/blesh/lib/_package.sh"
+            # _ble_base_package_type=nix
+            #
+            # function ble/base/package:nix/update {
+            #   echo "Ble.sh is installed by Nix. You can update it there." >&2
+            #   return 1
+            # }
+            # EOF
+
+            cp -rv out/* $out/share/blesh
+
+            echo "toto"
+
+            # runHook postInstall
+          '';
+
+          postInstall = "";
+
+          nativeBuildInputs = [
+            prev.git
+          ];
+        });
       };
 
       overlays = with inputs; [
@@ -321,6 +367,8 @@
                         apps = "personal";
                         inherit symlinkPath;
                       };
+
+                      system.primaryUser = "volodia";
 
                       users.users.volodia = {
                         name = "volodia";
