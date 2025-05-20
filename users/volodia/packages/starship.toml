@@ -100,7 +100,7 @@ success_symbol = "[>](bright-green bold)"
 [cmd_duration]
 # format = "[$duration]($style) "
 show_notifications = true
-style = "bright-green"
+# style = "bright-green"
 
 [direnv]
 format = 'via [$loaded](fg:bright-cyan)[$allowed](fg:bright-red)'
