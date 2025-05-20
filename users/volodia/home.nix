@@ -90,34 +90,17 @@ in {
     };
     zoxide = {
       enable = true;
-      enableNushellIntegration = true;
+      enableBashIntegration = true;
       options = [
         "--cmd cd"
       ];
     };
     bash = {
       enable = true;
-      # plugins = [
-      #   {
-      #     name = "fzf";
-      #     inherit (pkgs.fzf) src;
-      #   }
-      #   {
-      #     name = "grc";
-      #     inherit (pkgs.grc) src;
-      #   }
-      #   {
-      #     name = "done";
-      #     inherit (pkgs.fishPlugins.done) src;
-      #   }
-      #   {
-      #     name = "pure";
-      #     inherit (pkgs.fishPlugins.pure) src;
-      #   }
-      # ];
       bashrcExtra = ''
         export GPG_TTY=$(tty)
         export EDITOR=nvim
+        export _ZO_DOCTOR=0.
 
         # if test $(uname) = Darwin
         #     export $PATH=\
@@ -129,11 +112,17 @@ in {
       '';
 
       initExtra = ''
-        if type -q nixos-version; then
+        source ${pkgs.blesh}/share/blesh/ble.sh
+
+        if type nixos-version 2>&1 >/dev/null; then
             echo Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})
         else
-          echo Running ${status}Nix
+            echo Running ${status}Nix
         fi
+      '';
+
+      profileExtra = ''
+        source ~/.bashrc
       '';
 
       shellAliases = {
@@ -145,143 +134,23 @@ in {
         c = "clear";
       };
     };
-    zsh = {
-      enable = true;
-      initExtra = ''
-        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
-        then
-            exec nu -i
-        fi
-      '';
-    };
-    nushell = {
-      enable = true;
-      # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
-      configFile.source =
-        mkOutOfStore "packages/config.nu";
-      # for editing directly to config.nu
-      extraConfig = ''
-        let carapace_completer = {|spans|
-        carapace $spans.0 nushell ...$spans | from json
-        }
-        $env.config = {
-         show_banner: false,
-         completions: {
-         case_sensitive: false # case-sensitive completions
-         quick: true    # set to false to prevent auto-selecting completions
-         partial: true    # set to false to prevent partial filling of the prompt
-         algorithm: "fuzzy"    # prefix or fuzzy
-         external: {
-         # set to false to prevent nushell looking into $env.PATH to find more suggestions
-             enable: true
-         # set to lower can improve completion performance at the cost of omitting some options
-             max_results: 100
-             completer: $carapace_completer # check 'carapace_completer'
-           }
-         }
-        }
-        $env.PATH = ($env.PATH |
-        split row (char esep) |
-        prepend /home/myuser/.apps |
-        append /usr/bin/env
-        )
-      '';
-      shellAliases = {
-        ll = "ls -l";
-        l = "ls";
-        j = "just";
-        jl = "just --list";
-        g = "git";
-        c = "clear";
-      };
-    };
-    carapace = {
-      enable = true;
-      enableNushellIntegration = true;
-    };
-    starship = {
-      enable = true;
-      enableNushellIntegration = true;
-
-      # settings = {
-      #   add_newline = false;
-      #   format = "$shlvl$shell$username$hostname$nix_shell$custom$git_branch$git_commit$git_state$git_status$directory$jobs$cmd_duration\n$character";
-      #   shlvl = {
-      #     disabled = false;
-      #     symbol = "ﰬ";
-      #     style = "bright-red bold";
-      #   };
-      #   shellInit = ''
-      #     export GPG_TTY="$(tty)"
-      #   '';
-      #   shell = {
-      #     disabled = false;
-      #     format = "$indicator";
-      #     fish_indicator = "";
-      #     bash_indicator = "[BASH](bright-white) ";
-      #     zsh_indicator = "[ZSH](bright-white) ";
-      #   };
-      #   username = {
-      #     style_user = "bright-white bold";
-      #     style_root = "bright-red bold";
-      #   };
-      #   hostname = {
-      #     style = "bright-green bold";
-      #     ssh_only = true;
-      #   };
-      #   nix_shell = {
-      #     symbol = "";
-      #     format = "[$symbol]($style) ";
-      #     style = "bright-purple bold";
-      #   };
-      #   git_branch = {
-      #     only_attached = true;
-      #     format = "[$symbol$branch]($style) ";
-      #     symbol = "שׂ";
-      #     style = "bright-yellow bold";
-      #   };
-      #   git_commit = {
-      #     only_detached = true;
-      #     format = "[ﰖ$hash]($style) ";
-      #     style = "bright-yellow bold";
-      #   };
-      #   git_state = {
-      #     style = "bright-purple bold";
-      #   };
-      #   git_status = {
-      #     style = "bright-green bold";
-      #   };
-      #   directory = {
-      #     read_only = " ";
-      #     truncation_length = 0;
-      #   };
-      #   cmd_duration = {
-      #     format = "[$duration]($style) ";
-      #     style = "bright-blue";
-      #   };
-      #   jobs = {
-      #     style = "bright-green bold";
-      #   };
-      #   character = {
-      #     success_symbol = "[>](bright-green bold)";
-      #     error_symbol = "[!](bright-red bold)";
-      #   };
-      #   custom.direnv = {
-      #     format = "[\\[direnv\\]]($style) ";
-      #     style = "fg:yellow dimmed";
-      #     when = "env | grep -E '^DIRENV_FILE='";
-      #   };
-      # };
-    };
-
     # zsh = {
     #   enable = true;
     #   initExtra = ''
-    #     # Make Nix and home-manager installed things available in PATH.
-    #     export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/usr/local/bin/:$PATH
-    #     exec ${pkgs.fish}/bin/fish
+    #     if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
+    #     then
+    #         exec bash -i
+    #     fi
     #   '';
     # };
+    carapace = {
+      enable = true;
+      enableBashIntegration = true;
+    };
+    starship = {
+      enable = true;
+      enableBashIntegration = true;
+    };
     direnv = {
       enable = true;
       nix-direnv.enable = true;
