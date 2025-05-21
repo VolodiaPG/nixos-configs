@@ -323,7 +323,11 @@ in {
     stateVersion = "22.05";
   };
 
-  xdg.configFile."starship.toml".source = lib.mkForce (
-    mkOutOfStore "packages/starship.toml"
-  );
+  xdg.configFile = {
+    "starship.toml".source = lib.mkForce (
+      mkOutOfStore "packages/starship.toml"
+    );
+
+    "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
+  };
 }
