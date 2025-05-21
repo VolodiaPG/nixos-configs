@@ -100,7 +100,7 @@ in {
       initExtra = ''
         if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
         then
-            exec nu -i
+            exec nu
         fi
       '';
     };

@@ -313,7 +313,10 @@
                   outputs.nixosModules.${system}.default
                   ++ [
                     ({pkgs, ...}: {
-                      system.stateVersion = 5;
+                      system = {
+                        stateVersion = 5;
+                        primaryUser = "volodia";
+                      };
                       nixpkgs.hostPlatform = system;
 
                       home-manager.extraSpecialArgs = {
