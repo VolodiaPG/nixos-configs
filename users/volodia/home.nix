@@ -287,7 +287,7 @@ in {
       ".ssh/config" = {
         target = ".ssh/config_source";
         onChange = ''cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config'';
-        source = pkgs.substituteAll {
+        source = pkgs.replaceVars {
           src = ./config.ssh;
           # g5k_login = builtins.readFile ../../secrets/grid5000.user;
           g5k_login = "volparolguarino";
