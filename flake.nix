@@ -11,8 +11,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      # url = "github:nix-community/home-manager";
-      url = "github:pasqui23/home-manager/nixos-late-start";
+      url = "github:nix-community/home-manager/release-25.05";
+      # url = "github:pasqui23/home-manager/nixos-late-start";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
