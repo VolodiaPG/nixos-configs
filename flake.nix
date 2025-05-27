@@ -11,7 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager";
       # url = "github:pasqui23/home-manager/nixos-late-start";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -38,11 +38,11 @@
       url = "github:zhaofengli/mosh/fish-wcwidth";
       flake = false;
     };
-    yabai = {
-      flake = false;
-      url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.14/yabai-v7.1.14.tar.gz";
-    };
-    catppuccin.url = "github:catppuccin/nix/v1.2.0";
+    # yabai = {
+    #   flake = false;
+    #   url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.15/yabai-v7.1.15.tar.gz";
+    # };
+    catppuccin.url = "github:catppuccin/nix";
     hosts.url = "github:StevenBlack/hosts";
     mac-app-util.url = "github:hraban/mac-app-util";
     deploy-rs.url = "github:serokell/deploy-rs";
@@ -388,10 +388,10 @@
                       services = {
                         yabai = {
                           enable = true;
-                          package = pkgs.yabai.overrideAttrs (_: {
-                            version = "7.1.14";
-                            src = inputs.yabai;
-                          });
+                          # package = pkgs.yabai.overrideAttrs (_: {
+                          #   version = "7.1.14";
+                          #   src = inputs.yabai;
+                          # });
                           # symlinked out of tree
                           # extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
                           enableScriptingAddition = true;
