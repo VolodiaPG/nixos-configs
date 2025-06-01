@@ -33,8 +33,3 @@ jobs:
             dependencies
             automated
             auto-merge
-
-      - uses: cachix/cachix-action@v15
-        with:
-          name: volodiapg
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
