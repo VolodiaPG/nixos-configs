@@ -448,6 +448,7 @@
           }
         ))
         {
+          inherit (inputs.deploy-rs) apps;
           deploy.nodes = {
             dell = {
               hostname = "dell";
