@@ -43,9 +43,12 @@
     #   url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.15/yabai-v7.1.15.tar.gz";
     # };
     catppuccin.url = "github:catppuccin/nix";
-    hosts.url = "github:StevenBlack/hosts";
+    hosts = {
+      url = "github:StevenBlack/hosts";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     mac-app-util.url = "github:hraban/mac-app-util";
-    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs.url = "github:volodiapg/deploy-rs";
   };
 
   nixConfig = {
