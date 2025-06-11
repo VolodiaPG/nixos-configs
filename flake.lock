@@ -622,11 +622,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1749644527,
-        "narHash": "sha256-OoWjng44XLGXKRz3sTCpBbX8yi2qmHjkHHmidZE7QfY=",
+        "lastModified": 1749652564,
+        "narHash": "sha256-EpCcliRkUYjxuc5XNQLt8g128gMryAAzzs5+kIPSJMQ=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "618f464f8a3089dbe1392e196efc2748cb4be223",
+        "rev": "7e2d8ec051aff6bf482ce5d54045eb537f024aed",
         "type": "github"
       },
       "original": {
