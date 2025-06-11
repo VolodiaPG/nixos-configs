@@ -131,7 +131,7 @@
                   sharedModules = [
                     sops-nix.homeManagerModules.sops
                     ./secrets/home-manager.nix
-                    catppuccin.homeManagerModules.catppuccin
+                    catppuccin.homeModules.catppuccin
                   ];
                   extraSpecialArgs =
                     specialArgsFor system "volodia" hostName;
@@ -167,7 +167,7 @@
                       inherit pkgs;
                       modules =
                         [
-                          catppuccin.homeManagerModules.catppuccin
+                          catppuccin.homeModules.catppuccin
                           sops-nix.homeManagerModules.sops
                           ./secrets/home-manager.nix
                           ./users/volodia/home.nix

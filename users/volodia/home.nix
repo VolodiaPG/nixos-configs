@@ -187,7 +187,7 @@ in {
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
     grabKeyboardAndMouse = false;
-    pinentryPackage = pkgs.pinentry-tty;
+    pinentry.package = pkgs.pinentry-tty;
     extraConfig = ''
       allow-loopback-pinentry
     '';
