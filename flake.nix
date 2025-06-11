@@ -3,25 +3,22 @@
 
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-darwin.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     srvos = {
       url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      # url = "github:pasqui23/home-manager/nixos-late-start";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
     nixos-hardware.url = "github:nixos/nixos-hardware";
     flake-utils.url = "github:numtide/flake-utils";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
-      # inputs = {
-      #   nixpkgs.follows = "nixpkgs-stable";
-      # };
     };
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -419,7 +416,6 @@
         (flake-utils.lib.eachDefaultSystem (
           system: let
             pkgs = pkgsFor nixpkgs system;
-            pkgs-unstable = pkgsFor nixpkgs-unstable system;
           in {
             formatter = pkgs.alejandra;
 
@@ -434,7 +430,7 @@
               };
             };
 
-            packages.mosh = pkgs-unstable.mosh;
+            packages.mosh = pkgs.mosh;
 
             devShells.default = pkgs.mkShell {
               inherit
