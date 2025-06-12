@@ -612,7 +612,6 @@
       },
       "original": {
         "owner": "volodiapg",
-        "ref": "lazy",
         "repo": "vim",
         "type": "github"
       }
