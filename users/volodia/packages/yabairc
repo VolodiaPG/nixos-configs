@@ -68,7 +68,7 @@ yabai -m rule --add app="^Neovide$" space=code
 yabai -m rule --add app="^(Calculator|System Preferences|Archive Utility)$" manage=off
 
 # # specific space settings
-yabai -m config --space mail layout stack
+# yabai -m config --space mail layout stack
 yabai -m config --space social layout float
 
 yabai -m signal --add event=window_destroyed active=yes action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse &> /dev/null || yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id) &> /dev/null"
