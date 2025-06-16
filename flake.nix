@@ -126,8 +126,8 @@
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   sharedModules = [
-                    agenix.homeManagerModules.default
                     ./secrets/home-manager.nix
+                    agenix.homeManagerModules.default
                     catppuccin.homeModules.catppuccin
                   ];
                   extraSpecialArgs =
@@ -135,8 +135,8 @@
                 };
               })
               ./modules
+              ./secrets/nixos.nix
             ]
-            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
@@ -437,6 +437,7 @@
                 ;
               packages =
                 (with pkgs; [just alejandra git git-crypt age ssh-to-age home-manager deploy-rs])
+                ++ [inputs.agenix.packages.${system}.agenix]
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }

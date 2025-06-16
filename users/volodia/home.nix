@@ -97,7 +97,7 @@ in {
     };
     zsh = {
       enable = pkgs.stdenv.isDarwin;
-      initExtra = ''
+      initContent = ''
         if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
         then
             exec nu
@@ -114,7 +114,7 @@ in {
         let carapace_completer = {|spans|
         carapace $spans.0 nushell ...$spans | from json
         }
-        source ${config.age.secrets.envvars.path}
+        source /users/volodia/envvars.nu
         $env.config = {
          show_banner: false,
          completions: {
