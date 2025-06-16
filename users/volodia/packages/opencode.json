@@ -15,7 +15,7 @@
   },
   "agents": {
     "coder": {
-      "model": "openrouter.claude-3.7-sonnet",
+      "model": "openrouter.gemini-2.5",
       "maxTokens": 5000
     },
     "task": {
