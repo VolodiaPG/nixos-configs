@@ -144,6 +144,7 @@
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) catppuccin.nixosModules.catppuccin)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) agenix.darwinModules.default)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) mac-app-util.darwinModules.default);
         in {
           nixosModules.default = defaultModules;
