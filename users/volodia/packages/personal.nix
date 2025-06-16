@@ -35,6 +35,7 @@
       inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.system}.devenv
       ripgrep
       nvim
+      opencode
       # tree-sitter
       # nodejs
       # zathura

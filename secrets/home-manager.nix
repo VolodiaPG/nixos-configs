@@ -10,19 +10,12 @@
 
   sops = {
     age.keyFile = "${homeDirectory}/.config/.sops-nix-key.txt";
-    secrets.pythong5k = {
-      mode = "0600";
-      path = "${homeDirectory}/.python-grid5000.yaml";
-    };
     secrets = {
-      syncthing-Volodias-MacBook-Pro-cert = {};
-      syncthing-Volodias-MacBook-Pro-key = {};
-      syncthing-dell-cert = {};
-      syncthing-dell-key = {};
-      syncthing-msi-cert = {};
-      syncthing-msi-key = {};
-      syncthing-home-server-cert = {};
-      syncthing-home-server-key = {};
+      pythong5k = {
+        mode = "0600";
+        path = "${homeDirectory}/.python-grid5000.yaml";
+      };
+      envvars = {};
     };
   };
 

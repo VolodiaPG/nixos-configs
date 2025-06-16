@@ -114,6 +114,7 @@ in {
         let carapace_completer = {|spans|
         carapace $spans.0 nushell ...$spans | from json
         }
+        source ${config.sops.secrets.envvars.path}
         $env.config = {
          show_banner: false,
          completions: {
@@ -267,6 +268,10 @@ in {
       # nerd-fonts.zed-mono
     ];
 
+    sessionVariables = {
+      EDITOR = "nvim";
+    };
+
     file = {
       ".config/discord/settings.json".text = ''
         {
@@ -283,12 +288,10 @@ in {
         }
       '';
       ".config/kitty/kitty.conf".source = ./kitty.conf;
-      #".config/kitty/theme.conf".source = ./theme.conf;
       ".ssh/config" = {
         target = ".ssh/config_source";
         onChange = ''cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config'';
         source = pkgs.replaceVars ./config.ssh {
-          # g5k_login = builtins.readFile ../../secrets/grid5000.user;
           g5k_login = "volparolguarino";
           keychain =
             if pkgs.stdenv.isLinux
@@ -328,5 +331,6 @@ in {
     );
 
     "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
+    "opencode/.opencode.json".source = mkOutOfStore "packages/opencode.json";
   };
 }
