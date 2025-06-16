@@ -1,25 +1,11 @@
-{homeDirectory, ...}: {
-  # age.secrets = {
-  #   pythong5k.file = ./pythong5k.age;
-  #   ssh-remote-builder.file = ./ssh-remote-builder.private.age;
-  #   "ssh-remote-builder.pub".file = ./ssh-remote-builder.pub.age;
-  #   "syncthing.dell.cert".file = ./syncthing.dell.cert.age;
-  #   "syncthing.dell.key".file = ./syncthing.dell.key.age;
-  #   "syncthing.msi.cert".file = ./syncthing.msi.cert.age;
-  #   "syncthing.msi.key".file = ./syncthing.msi.key.age;
-  #   "syncthing.home-server.cert".file = ./syncthing.home-server.cert.age;
-  #   "syncthing.home-server.key".file = ./syncthing.home-server.key.age;
-  #   "syncthing.m1.cert".file = ./syncthing.m1.cert.age;
-  #   "syncthing.m1.key".file = ./syncthing.m1.key.age;
-  #   "syncthing.pass".file = ./syncthing.pass.age;
-  # };
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    defaultSopsFormat = "yaml";
+{ ... }: {
+  # This file is significantly simplified.
+  # agenix manages identities and secret files primarily through
+  # the age.identityPaths and age.secrets definitions,
+  # typically in a central agenix configuration file (e.g., secrets/agenix.nix)
+  # or directly within NixOS/Home Manager modules.
 
-    age = {
-      generateKey = true;
-      sshKeyPaths = ["/persistent${homeDirectory}/.ssh/id_ed25519" "${homeDirectory}/.ssh/id_ed25519"];
-    };
-  };
+  # The commented-out age.secrets block is an example of how sops-nix
+  # might have directly referenced .age files. Agenix uses a similar
+  # concept but structured differently within its own module system.
 }

@@ -23,8 +23,8 @@
     };
     vim.url = "github:volodiapg/vim";
     impermanence.url = "github:nix-community/impermanence";
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
+    agenix = {
+      url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko.url = "github:nix-community/disko";
@@ -126,7 +126,7 @@
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   sharedModules = [
-                    sops-nix.homeManagerModules.sops
+                    agenix.homeManagerModules.default
                     ./secrets/home-manager.nix
                     catppuccin.homeModules.catppuccin
                   ];
@@ -137,7 +137,7 @@
               ./modules
             ]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./secrets/nixos.nix)
-            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) sops-nix.nixosModules.sops)
+            ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) home-manager.darwinModules.home-manager)
@@ -165,7 +165,7 @@
                       modules =
                         [
                           catppuccin.homeModules.catppuccin
-                          sops-nix.homeManagerModules.sops
+                          agenix.homeManagerModules.default
                           ./secrets/home-manager.nix
                           ./users/volodia/home.nix
                         ]
@@ -435,7 +435,7 @@
                 shellHook
                 ;
               packages =
-                (with pkgs; [just alejandra git git-crypt sops ssh-to-age home-manager deploy-rs])
+                (with pkgs; [just alejandra git git-crypt age ssh-to-age home-manager deploy-rs])
                 ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [darwin.packages.${system}.darwin-rebuild]);
             };
           }

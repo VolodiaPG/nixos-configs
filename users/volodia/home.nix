@@ -114,7 +114,7 @@ in {
         let carapace_completer = {|spans|
         carapace $spans.0 nushell ...$spans | from json
         }
-        source ${config.sops.secrets.envvars.path}
+        source ${config.age.secrets.envvars.path}
         $env.config = {
          show_banner: false,
          completions: {
@@ -201,8 +201,10 @@ in {
   # paths it should manage.
 
   systemd.user.services.UseSecrets = let
-    script = pkgs.writeShellScript "sops-nix-user" ''
-      echo ${config.sops.secrets.pythong5k.path}
+    script = pkgs.writeShellScript "agenix-user-test" ''
+      echo "Accessing pythong5k secret path:"
+      echo ${config.age.secrets.pythong5k.path}
+      # Example: cat ${config.age.secrets.pythong5k.path}
     '';
   in
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {

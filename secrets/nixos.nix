@@ -1,12 +1,9 @@
-{
-  imports = [./common.nix];
-  sops = {
-    age.keyFile = "/var/lib/sops-nix/key.txt";
+{ ... }: {
+  imports = [
+    ./common.nix
+    ./agenix.nix # Import the agenix configuration for NixOS
+  ];
 
-    secrets = {
-      dellmac = {};
-      ssh-remote-builder = {};
-      ssh-remote-builder-pub = {};
-    };
-  };
+  # The sops block is removed. Secrets are defined in secrets/agenix.nix
+  # and accessed via config.age.secrets.<name>.path
 }
