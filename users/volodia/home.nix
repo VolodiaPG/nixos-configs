@@ -124,7 +124,7 @@ in {
         let carapace_completer = {|spans|
         carapace $spans.0 nushell ...$spans | from json
         }
-        source /users/volodia/envvars.nu
+        source ${homeDirectory}/envvars.nu
         $env.config = {
          show_banner: false,
          completions: {

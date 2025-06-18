@@ -1,4 +1,4 @@
-{
+{homeDirectory, ...}: {
   # Paths to public keys that can decrypt the secrets.
   age.identityPaths = [
     "/persistent/home/volodia/.ssh/id_ed25519"
@@ -12,7 +12,7 @@
     };
     envvars = {
       file = ./envvars.age;
-      path = "/users/volodia/envvars.nu";
+      path = "${homeDirectory}/envvars.nu";
     };
   };
 }
