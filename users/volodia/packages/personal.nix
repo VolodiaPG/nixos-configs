@@ -13,12 +13,12 @@
   #   ];
   # };
   home.packages = [
-    pkgs.lazygit
     pkgs.ripgrep
     pkgs.nvim
     pkgs.opencode
     pkgs-unstable.devenv
     pkgs-unstable.aider-chat
+    pkgs-unstable.difftastic
   ];
 
   # programs.steam.enable = true;

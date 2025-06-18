@@ -84,6 +84,16 @@ in {
 
   programs = {
     # Let Home Manager install and manage itself.
+    lazygit = {
+      enable = true;
+      settings = {
+        git = {
+          paging = {
+            externalDiffCommand = "${pkgs.difftastic}/bin/difft --color=always";
+          };
+        };
+      };
+    };
     home-manager.enable = true;
     nix-index = {
       enable = true;
