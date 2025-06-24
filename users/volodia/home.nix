@@ -110,6 +110,7 @@ in {
       initContent = ''
         if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
         then
+            export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/usr/local/bin/:$PATH
             exec nu
         fi
       '';
