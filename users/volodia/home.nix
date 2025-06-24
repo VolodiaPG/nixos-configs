@@ -142,6 +142,9 @@ in {
            }
          }
         }
+
+        def lsd [] { ls | where type == dir }
+
         $env.PATH = ($env.PATH |
         split row (char esep) |
         prepend /home/myuser/.apps |
@@ -157,7 +160,6 @@ in {
       '';
       shellAliases = {
         ll = "ls -l";
-        l = "ls";
         j = "just";
         jl = "just --list";
         g = "git";
