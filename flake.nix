@@ -310,7 +310,11 @@
                 modules =
                   outputs.nixosModules.${system}.default
                   ++ [
-                    ({pkgs, ...}: {
+                    ({
+                      pkgs,
+                      pkgs-unstable,
+                      ...
+                    }: {
                       system = {
                         stateVersion = 5;
                         primaryUser = "volodia";
@@ -386,6 +390,7 @@
                       services = {
                         yabai = {
                           enable = true;
+                          package = pkgs-unstable.yabai;
                           # package = pkgs.yabai.overrideAttrs (_: {
                           #   version = "7.1.14";
                           #   src = inputs.yabai;
