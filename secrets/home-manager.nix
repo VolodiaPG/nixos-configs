@@ -9,6 +9,7 @@
   age.secrets = {
     pythong5k = {
       file = ./pythong5k.age; # Relative to this file (secrets/pythong5k.age)
+      path = "${homeDirectory}/.python-grid5000.yaml";
     };
     envvars = {
       file = ./envvars.age;

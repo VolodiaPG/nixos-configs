@@ -9,23 +9,23 @@
     lib.optional (apps == "personal") ./mpv.nix
     ++ lib.optional (apps == "personal") ./personal.nix;
 
-  programs.firefox = {
-    enable = pkgs.stdenv.isLinux;
-    #preferences = ''
-    #/* hides the native tabs */
-    ##TabsToolbar {
-    #  visibility: collapse;
-    #}
-
-    ##titlebar {
-    #  visibility: collapse;
-    #}
-
-    ##sidebar-header {
-    #  visibility: collapse !important;
-    #}
-    #'';
-  };
+  # programs.firefox = {
+  #   enable = pkgs.stdenv.isLinux;
+  #   #preferences = ''
+  #   #/* hides the native tabs */
+  #   ##TabsToolbar {
+  #   #  visibility: collapse;
+  #   #}
+  #
+  #   ##titlebar {
+  #   #  visibility: collapse;
+  #   #}
+  #
+  #   ##sidebar-header {
+  #   #  visibility: collapse !important;
+  #   #}
+  #   #'';
+  # };
 
   # Common apps
   home.packages =
