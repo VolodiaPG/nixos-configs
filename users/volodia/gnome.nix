@@ -212,18 +212,18 @@
     #   package = pkgs.fluent-icon-theme;
     # };
 
-    iconTheme = {
-      name = "WhiteSur";
-      package = pkgs.whitesur-icon-theme.override {
-        alternativeIcons = true;
-        boldPanelIcons = true;
-      };
-    };
-    cursorTheme = {
-      name = "macOS";
-      package = pkgs.apple-cursor;
-      size = 24;
-    };
+    # iconTheme = {
+    #   name = "WhiteSur";
+    #   package = pkgs.whitesur-icon-theme.override {
+    #     alternativeIcons = true;
+    #     boldPanelIcons = true;
+    #   };
+    # };
+    # cursorTheme = {
+    #   name = "macOS";
+    #   package = pkgs.apple-cursor;
+    #   size = 24;
+    # };
     # theme = {
     #   name = "WhiteSur-Light";
     #   package = pkgs.whitesur-gtk-theme.override {
