@@ -125,7 +125,7 @@ in {
         let carapace_completer = {|spans|
         carapace $spans.0 nushell ...$spans | from json
         }
-        if (test -f ${homeDirectory}/envvars.nu) {
+        if ("${homeDirectory}/envvars.nu" | path exists) {
           source ${homeDirectory}/envvars.nu
         }
         $env.config = {
