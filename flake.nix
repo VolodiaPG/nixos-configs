@@ -298,7 +298,7 @@
                 ]);
             };
 
-            "aarch-vm" = nixpkgs.lib.nixosSystem {
+            "nixos" = nixpkgs.lib.nixosSystem {
               system = "aarch64-linux";
               specialArgs = specialArgsFor "aarch64-linux" "volodia" "aarch-vm";
               modules =
@@ -468,7 +468,6 @@
 
             packages = {
               inherit (pkgs) mosh;
-              inherit (outputs.nixosConfigurations.aarch-vm.config.system.build) vm;
             };
 
             devShells.default = pkgs.mkShell {
