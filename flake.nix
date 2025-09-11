@@ -311,13 +311,13 @@
                   ({lib, ...}: {
                     system.stateVersion = "25.05";
                     services = {
-                      desktop.enable = false;
+                      desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = false;
                       impermanence.enable = false;
                       elegantBoot.enable = false;
                       vpn.enable = true;
-                      laptopServer.enable = true;
+                      laptopServer.enable = false;
                       thermald.enable = lib.mkForce false;
                     };
                     home-manager = {
