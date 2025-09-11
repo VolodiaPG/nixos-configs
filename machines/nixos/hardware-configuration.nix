@@ -16,11 +16,7 @@
       availableKernelModules = ["xhci_pci" "thunderbolt" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
       kernelModules = [];
     };
-    kernelModules = ["kvm-intel"];
     extraModulePackages = [];
-    kernelParams = [
-      "usbcore.autosuspend=-1"
-    ];
     #loader.grub.device = "nodev";
   };
 
