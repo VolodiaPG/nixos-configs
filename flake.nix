@@ -300,7 +300,7 @@
 
             "nixos" = nixpkgs.lib.nixosSystem {
               system = "aarch64-linux";
-              specialArgs = specialArgsFor "aarch64-linux" "volodia" "aarch-vm";
+              specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
               modules =
                 outputs.nixosModules."aarch64-linux".default
                 ./machines/nixos/configuration.nix
