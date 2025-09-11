@@ -297,6 +297,39 @@
                   }
                 ]);
             };
+
+            "aarch-vm" = nixpkgs.lib.nixosSystem {
+              system = "aarch64-linux";
+              specialArgs = specialArgsFor "aarch64-linux" "volodia" "aarch-vm";
+              modules =
+                outputs.nixosModules."aarch64-linux".default
+                ++ [
+                  ({lib, ...}: {
+                    system.stateVersion = "25.05";
+                    services = {
+                      desktop.enable = false;
+                      kernel.enable = true;
+                      intel.enable = false;
+                      impermanence.enable = false;
+                      elegantBoot.enable = false;
+                      vpn.enable = true;
+                      laptopServer.enable = true;
+                      thermald.enable = lib.mkForce false;
+                    };
+                    home-manager = {
+                      sharedModules = [
+                        ./secrets/home-manager.nix
+                        agenix.homeManagerModules.default
+                      ];
+                      users.volodia.catppuccin.starship.enable = lib.mkForce false;
+                      extraSpecialArgs = {
+                        graphical = "no-de";
+                        apps = "personal";
+                      };
+                    };
+                  })
+                ];
+            };
           };
         }
         (flake-utils.lib.eachSystem ["aarch64-darwin"] (
@@ -354,7 +387,7 @@
                         '';
 
                         linux-builder = {
-                          enable = false;
+                          enable = true;
                           ephemeral = true;
                           maxJobs = 8;
                           supportedFeatures = ["kvm" "benchmark" "big-parallel"];
@@ -433,7 +466,10 @@
               };
             };
 
-            packages.mosh = pkgs.mosh;
+            packages = {
+              inherit (pkgs) mosh;
+              inherit (outputs.nixosConfigurations.aarch-vm.config.system.build) vm;
+            };
 
             devShells.default = pkgs.mkShell {
               inherit
