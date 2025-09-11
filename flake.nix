@@ -303,6 +303,8 @@
               specialArgs = specialArgsFor "aarch64-linux" "volodia" "aarch-vm";
               modules =
                 outputs.nixosModules."aarch64-linux".default
+                ./machines/nixos/configuration.nix
+                ./machines/nixos/hardware-configuration.nix
                 ++ [
                   ({lib, ...}: {
                     system.stateVersion = "25.05";
