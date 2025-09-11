@@ -2,7 +2,6 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  config,
   lib,
   modulesPath,
   ...
@@ -42,5 +41,4 @@
   # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
