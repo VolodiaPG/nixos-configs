@@ -181,7 +181,7 @@ in {
 
 
         if (which nixos-version); then
-          echo $"Running ${status}Nixos (nixos-version) (${lib.getExe date_script})"
+          echo $"Running ${status}Nixos $(nixos-version) ($(${lib.getExe date_script}))"
          else
            echo "Running ${status}Nix"
          fi
