@@ -14,6 +14,7 @@
     gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
     gnomeExtensions.paperwm
+    gnomeExtensions.tailscale-status
 
     gnome-obfuscate
   ];
