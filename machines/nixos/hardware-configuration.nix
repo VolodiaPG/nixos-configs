@@ -22,12 +22,12 @@
   fileSystems = {
     "/" = {
       device = "
-      /dev/disk/by-partlabel/root";
+      /dev/vda2";
       fsType = "ext4";
     };
 
     "/boot" = {
-      device = "/dev/disk/by-partlabel/EFI";
+      device = "/dev/vda1";
       fsType = "vfat";
     };
   };
