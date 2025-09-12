@@ -327,7 +327,7 @@
                       ];
                       users.volodia.catppuccin.starship.enable = lib.mkForce false;
                       extraSpecialArgs = {
-                        graphical = "no-de";
+                        graphical = "gnome";
                         apps = "personal";
                       };
                     };
