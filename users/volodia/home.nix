@@ -169,7 +169,7 @@ in {
             # Finally, set the PS1 variable using the conditional strings.
             # The \w part is the current working directory.
             # The final prompt will be on a new line and colored.
-            export PS1="\033[38;5;103m\w${PS1_GIT}\n${PS1_JOBS}\[\e[1;38;5;38m\]\$ \[\e[0m\]"
+            export PS1="\033[38;5;103m\w$PS1_GIT\n$PS1_JOBS\[\e[1;38;5;38m\]\$ \[\e[0m\]"
             # newline after command
             echo
             history -a
