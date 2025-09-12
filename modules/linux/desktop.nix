@@ -145,7 +145,7 @@ in {
         # ubuntu_font_family
         roboto
         joypixels
-        # nerdfonts
+        nerdfonts
         #(callPackage ../../pkgs/comic-code {})
       ];
       fontconfig.defaultFonts = {
