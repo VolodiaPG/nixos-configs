@@ -3,7 +3,7 @@
     # Gnome extensions
     gnomeExtensions.appindicator
     gnomeExtensions.vitals
-    gnomeExtensions.pop-shell
+    # gnomeExtensions.pop-shell
     gnomeExtensions.hide-activities-button
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
@@ -13,6 +13,7 @@
     gnomeExtensions.impatience
     gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
+    gnomeExtensions.paperwm
 
     gnome-obfuscate
   ];
