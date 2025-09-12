@@ -115,45 +115,71 @@ in {
         fi
       '';
     };
-    nushell = {
+    bash = {
       enable = true;
-      # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
-      configFile.source =
-        mkOutOfStore "packages/config.nu";
       # for editing directly to config.nu
-      extraConfig = ''
-        let carapace_completer = {|spans|
-        carapace $spans.0 nushell ...$spans | from json
-        }
-        if ("${homeDirectory}/envvars.nu" | path exists) {
-          source ${homeDirectory}/envvars.nu
-        }
-        $env.config = {
-         show_banner: false,
-         completions: {
-         case_sensitive: false # case-sensitive completions
-         quick: true    # set to false to prevent auto-selecting completions
-         partial: true    # set to false to prevent partial filling of the prompt
-         algorithm: "fuzzy"    # prefix or fuzzy
-         external: {
-         # set to false to prevent nushell looking into $env.PATH to find more suggestions
-             enable: true
-         # set to lower can improve completion performance at the cost of omitting some options
-             max_results: 100
-             completer: $carapace_completer # check 'carapace_completer'
-           }
-         }
+      initExtra = ''
+        source -- ${pkgs.blesh}/share/blesh/ble.sh
+
+        export SSH_AUTH_SOCK=/Users/volodia/.bitwarden-ssh-agent.sock
+        export LC_ALL="C.UTF-8"
+
+        # Save 5,000 lines of history in memory
+        HISTSIZE=10000
+        # Save 2,000,000 lines of history to disk (will have to grep ~/.bash_history for full listing)
+        HISTFILESIZE=2000000
+        # Append to history instead of overwrite
+        shopt -s histappend
+        # Ignore redundant or space commands
+        HISTCONTROL=ignoreboth
+        # Ignore more
+        HISTIGNORE='ls:ll:ls -alh:pwd:clear:c:history:htop'
+        # Set time format
+        HISTTIMEFORMAT='%F %T '
+        # Multiple commands on one line show up as a single line
+        shopt -s cmdhist
+
+        function __set_prompt() {
+            # Check for a Git repository.
+            # The 'git branch' command will be empty if not in a repo.
+            local git_info
+            git_info=$(git branch --show-current 2>/dev/null)
+            if [[ -n "$git_info" ]]; then
+                # If a branch is found, set the Git part of the prompt.
+                PS1_GIT="  \e[3m$git_info\e[0m"
+            else
+                # Otherwise, set it to an empty string.
+                PS1_GIT=""
+            fi
+
+            # Check for background jobs.
+            # The `\j` prompt escape sequence expands to the number of jobs.
+            # The `jobs` command returns a non-empty string if there are any jobs.
+            # The original prompt had a newline for jobs.
+            local jobs_count
+            jobs_count=$(jobs -p | wc -l)
+            if [[ "$jobs_count" -gt 0 ]]; then
+                # If there are jobs, set the jobs part of the prompt with a newline.
+                PS1_JOBS="(\j)"
+            else
+                # Otherwise, set it to an empty string.
+                PS1_JOBS=""
+            fi
+
+            # Finally, set the PS1 variable using the conditional strings.
+            # The \w part is the current working directory.
+            # The final prompt will be on a new line and colored.
+            export PS1="\033[38;5;103m\w${PS1_GIT}\n${PS1_JOBS}\[\e[1;38;5;38m\]\$ \[\e[0m\]"
+            # newline after command
+            echo
+            history -a
+            # history -c
+            # history -r
         }
 
-        def lsd [] { ls | where type == dir }
+        export PROMPT_COMMAND=__set_prompt
 
-        $env.PATH = ($env.PATH |
-        split row (char esep) |
-        prepend /home/myuser/.apps |
-        append /usr/bin/env
-        )
-      '';
-      extraLogin = ''
+
         if (which nixos-version | is-not-empty) {
           echo $"Running ${status}Nixos (nixos-version) (${lib.getExe date_script})"
         } else {
@@ -168,14 +194,6 @@ in {
         c = "clear";
       };
     };
-    carapace = {
-      enable = true;
-      enableNushellIntegration = true;
-    };
-    starship = {
-      enable = true;
-      enableNushellIntegration = true;
-    };
     direnv = {
       enable = true;
       nix-direnv.enable = true;
@@ -188,7 +206,7 @@ in {
       userName = "Volodia P.-G.";
       userEmail = "volodia.parol-guarino@proton.me";
       signing = {
-        key = "B566FD4E11A22B543B82520B72063CC9DB438B82";
+        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCpqTjWHv8bko3N+ypMJXcSBDPKtun7Ec7RHvtlC60V";
         signByDefault = true;
       };
       extraConfig = {
