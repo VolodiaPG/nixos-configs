@@ -119,72 +119,72 @@ in {
       enable = true;
       # for editing directly to config.nu
       initExtra = ''
-        source -- ${pkgs.blesh}/share/blesh/ble.sh
+         source -- ${pkgs.blesh}/share/blesh/ble.sh
 
-        export SSH_AUTH_SOCK=/Users/volodia/.bitwarden-ssh-agent.sock
-        export LC_ALL="C.UTF-8"
+         export SSH_AUTH_SOCK=/Users/volodia/.bitwarden-ssh-agent.sock
+         export LC_ALL="C.UTF-8"
 
-        # Save 5,000 lines of history in memory
-        HISTSIZE=10000
-        # Save 2,000,000 lines of history to disk (will have to grep ~/.bash_history for full listing)
-        HISTFILESIZE=2000000
-        # Append to history instead of overwrite
-        shopt -s histappend
-        # Ignore redundant or space commands
-        HISTCONTROL=ignoreboth
-        # Ignore more
-        HISTIGNORE='ls:ll:ls -alh:pwd:clear:c:history:htop'
-        # Set time format
-        HISTTIMEFORMAT='%F %T '
-        # Multiple commands on one line show up as a single line
-        shopt -s cmdhist
+         # Save 5,000 lines of history in memory
+         HISTSIZE=10000
+         # Save 2,000,000 lines of history to disk (will have to grep ~/.bash_history for full listing)
+         HISTFILESIZE=2000000
+         # Append to history instead of overwrite
+         shopt -s histappend
+         # Ignore redundant or space commands
+         HISTCONTROL=ignoreboth
+         # Ignore more
+         HISTIGNORE='ls:ll:ls -alh:pwd:clear:c:history:htop'
+         # Set time format
+         HISTTIMEFORMAT='%F %T '
+         # Multiple commands on one line show up as a single line
+         shopt -s cmdhist
 
-        function __set_prompt() {
-            # Check for a Git repository.
-            # The 'git branch' command will be empty if not in a repo.
-            local git_info
-            git_info=$(git branch --show-current 2>/dev/null)
-            if [[ -n "$git_info" ]]; then
-                # If a branch is found, set the Git part of the prompt.
-                PS1_GIT="  \e[3m$git_info\e[0m"
-            else
-                # Otherwise, set it to an empty string.
-                PS1_GIT=""
-            fi
+         function __set_prompt() {
+             # Check for a Git repository.
+             # The 'git branch' command will be empty if not in a repo.
+             local git_info
+             git_info=$(git branch --show-current 2>/dev/null)
+             if [[ -n "$git_info" ]]; then
+                 # If a branch is found, set the Git part of the prompt.
+                 PS1_GIT="  \e[3m$git_info\e[0m"
+             else
+                 # Otherwise, set it to an empty string.
+                 PS1_GIT=""
+             fi
 
-            # Check for background jobs.
-            # The `\j` prompt escape sequence expands to the number of jobs.
-            # The `jobs` command returns a non-empty string if there are any jobs.
-            # The original prompt had a newline for jobs.
-            local jobs_count
-            jobs_count=$(jobs -p | wc -l)
-            if [[ "$jobs_count" -gt 0 ]]; then
-                # If there are jobs, set the jobs part of the prompt with a newline.
-                PS1_JOBS="(\j)"
-            else
-                # Otherwise, set it to an empty string.
-                PS1_JOBS=""
-            fi
+             # Check for background jobs.
+             # The `\j` prompt escape sequence expands to the number of jobs.
+             # The `jobs` command returns a non-empty string if there are any jobs.
+             # The original prompt had a newline for jobs.
+             local jobs_count
+             jobs_count=$(jobs -p | wc -l)
+             if [[ "$jobs_count" -gt 0 ]]; then
+                 # If there are jobs, set the jobs part of the prompt with a newline.
+                 PS1_JOBS="(\j)"
+             else
+                 # Otherwise, set it to an empty string.
+                 PS1_JOBS=""
+             fi
 
-            # Finally, set the PS1 variable using the conditional strings.
-            # The \w part is the current working directory.
-            # The final prompt will be on a new line and colored.
-            export PS1="\033[38;5;103m\w$PS1_GIT\n$PS1_JOBS\[\e[1;38;5;38m\]\$ \[\e[0m\]"
-            # newline after command
-            echo
-            history -a
-            # history -c
-            # history -r
-        }
+             # Finally, set the PS1 variable using the conditional strings.
+             # The \w part is the current working directory.
+             # The final prompt will be on a new line and colored.
+             export PS1="\033[38;5;103m\w$PS1_GIT\n$PS1_JOBS\[\e[1;38;5;38m\]\$ \[\e[0m\]"
+             # newline after command
+             echo
+             history -a
+             # history -c
+             # history -r
+         }
 
-        export PROMPT_COMMAND=__set_prompt
+         export PROMPT_COMMAND=__set_prompt
 
 
-        if (which nixos-version | is-not-empty) {
+        if (which nixos-version); then
           echo $"Running ${status}Nixos (nixos-version) (${lib.getExe date_script})"
-        } else {
-          echo "Running ${status}Nix"
-        }
+         else
+           echo "Running ${status}Nix"
+         fi
       '';
       shellAliases = {
         ll = "ls -l";
