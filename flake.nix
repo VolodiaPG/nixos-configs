@@ -122,6 +122,8 @@
                   # Pin channels to flake inputs.
                   # registry.nixpkgs.flake = inputs.nixpkgs;
                   registry.self.flake = inputs.nixpkgs;
+
+                  inherit (self.nixConfig) trusted-public-keys trusted-substituters;
                 };
                 nixpkgs.overlays = overlays;
 
