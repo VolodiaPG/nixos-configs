@@ -2,8 +2,9 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    nixpkgs-unstable.follows = "nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,11 +51,13 @@
       "https://volodiapg.cachix.org"
       "https://giraff.cachix.org"
       "https://vim.cachix.org"
+      "https://install.determinate.systems"
     ];
     extra-trusted-public-keys = [
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "giraff.cachix.org-1:3sol29PSsWCh/7bAiRze+5Zq6OML02FDRH13K5i3qF4="
       "vim.cachix.org-1:csyY4pnUgltVSD3alxSV6zZG/lRD7FQBfl4K4RNBgXA="
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
     ];
   };
 
@@ -137,6 +140,7 @@
               ./modules
               ./secrets/nixos.nix
             ]
+            ++ [determinate.nixosModules.default]
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
             ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)

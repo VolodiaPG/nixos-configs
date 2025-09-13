@@ -37,7 +37,16 @@ in {
   };
 
   nix = {
-    settings.experimental-features = lib.mkForce "nix-command flakes";
+    settings = {
+      experimental-features = lib.mkForce [
+        "nix-command"
+        "flakes"
+        "caching-proxy"
+        "lazy-tree-sharding"
+        "multi-user"
+      ];
+      daemon = true;
+    };
     gc.dates = "weekly";
     optimise = {
       automatic = true;
