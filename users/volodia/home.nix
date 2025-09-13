@@ -9,11 +9,14 @@
   inputs,
   username,
   ...
-}: let
-  mkOutOfStore = path:
-    if symlinkPath == null
-    then ./. + "/${path}"
-    else config.lib.file.mkOutOfStoreSymlink "${symlinkPath}/${path}";
+}:
+let
+  mkOutOfStore =
+    path:
+    if symlinkPath == null then
+      ./. + "/${path}"
+    else
+      config.lib.file.mkOutOfStoreSymlink "${symlinkPath}/${path}";
   isClean = inputs.self ? rev;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
     # Function to print colored text
@@ -68,15 +71,13 @@
             ;;
     esac
   '';
-  status =
-    if isClean
-    then ''''
-    else ''"dirty" '';
-in {
+  status = if isClean then '''' else ''"dirty" '';
+in
+{
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
     ++ lib.optional (apps != "no-apps") ./packages
-    ++ [./syncthing.nix];
+    ++ [ ./syncthing.nix ];
 
   fonts.fontconfig.enable = true;
 
@@ -237,13 +238,14 @@ in {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
 
-  systemd.user.services.UseSecrets = let
-    script = pkgs.writeShellScript "agenix-user-test" ''
-      echo "Accessing pythong5k secret path:"
-      echo ${config.age.secrets.pythong5k.path}
-      # Example: cat ${config.age.secrets.pythong5k.path}
-    '';
-  in
+  systemd.user.services.UseSecrets =
+    let
+      script = pkgs.writeShellScript "agenix-user-test" ''
+        echo "Accessing pythong5k secret path:"
+        echo ${config.age.secrets.pythong5k.path}
+        # Example: cat ${config.age.secrets.pythong5k.path}
+      '';
+    in
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
         Description = "test";
@@ -253,24 +255,22 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      Install.WantedBy = ["default.target"];
+      Install.WantedBy = [ "default.target" ];
     };
 
-  systemd.user.services.sshIdRsa = let
-    binPath = lib.strings.makeBinPath (
-      [pkgs.coreutils]
-      ++ pkgs.stdenv.initialPath
-    );
-    script = pkgs.writeShellScript "symlinkrsa" ''
-      export PATH="${binPath}"
-      if [ ! -f ~/.ssh/id_rsa.pub ] || [ "$(realpath ~/.ssh/id_rsa.pub)" != "$(realpath ~/.ssh/id_ed25519.pub)" ]; then
-        ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
-      fi
-      if [ ! -f ~/.ssh/id_rsa ] || [ "$(realpath ~/.ssh/id_rsa)" != "$(realpath ~/.ssh/id_ed25519)" ]; then
-        ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
-      fi
-    '';
-  in
+  systemd.user.services.sshIdRsa =
+    let
+      binPath = lib.strings.makeBinPath ([ pkgs.coreutils ] ++ pkgs.stdenv.initialPath);
+      script = pkgs.writeShellScript "symlinkrsa" ''
+        export PATH="${binPath}"
+        if [ ! -f ~/.ssh/id_rsa.pub ] || [ "$(realpath ~/.ssh/id_rsa.pub)" != "$(realpath ~/.ssh/id_ed25519.pub)" ]; then
+          ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
+        fi
+        if [ ! -f ~/.ssh/id_rsa ] || [ "$(realpath ~/.ssh/id_rsa)" != "$(realpath ~/.ssh/id_ed25519)" ]; then
+          ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
+        fi
+      '';
+    in
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
         Description = "symlink rsa keys";
@@ -280,7 +280,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      Install.WantedBy = ["default.target"];
+      Install.WantedBy = [ "default.target" ];
     };
 
   #   launchd.agents.sops-nix = {
@@ -332,10 +332,7 @@ in {
         onChange = ''cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config'';
         source = pkgs.replaceVars ./config.ssh {
           g5k_login = "volparolguarino";
-          keychain =
-            if pkgs.stdenv.isLinux
-            then ""
-            else "UseKeychain yes";
+          keychain = if pkgs.stdenv.isLinux then "" else "UseKeychain yes";
         };
       };
       ".ssh/authorized_keys".text = ''
@@ -347,10 +344,8 @@ in {
         source = ./packages/scripts;
         recursive = true;
       };
-      ".yabairc".source =
-        mkOutOfStore "packages/yabairc";
-      ".skhdrc".source =
-        mkOutOfStore "packages/skhdrc";
+      ".yabairc".source = mkOutOfStore "packages/yabairc";
+      ".skhdrc".source = mkOutOfStore "packages/skhdrc";
     };
 
     # This value determines the Home Manager release that your
@@ -365,9 +360,7 @@ in {
   };
 
   xdg.configFile = {
-    "starship.toml".source = lib.mkForce (
-      mkOutOfStore "packages/starship.toml"
-    );
+    "starship.toml".source = lib.mkForce (mkOutOfStore "packages/starship.toml");
 
     "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
     "opencode/.opencode.json".source = mkOutOfStore "packages/opencode.json";

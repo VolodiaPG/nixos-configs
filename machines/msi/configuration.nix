@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ../../services/nvfancontrol/nvfancontrol.nix
   ];

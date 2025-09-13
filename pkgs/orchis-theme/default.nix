@@ -7,20 +7,49 @@
   gtk-engine-murrine,
   jdupes,
   sassc,
-  themeVariants ? [], # default: blue
-  colorVariants ? [], # default: all
-  sizeVariants ? [], # default: standard
+  themeVariants ? [ ], # default: blue
+  colorVariants ? [ ], # default: all
+  sizeVariants ? [ ], # default: standard
   border-radius ? null, # Suggested: 2 < value < 16
-  tweaks ? [],
-}: let
+  tweaks ? [ ],
+}:
+let
   pname = "orchis-theme";
 in
-  lib.checkListOfEnum "${pname}: theme variants" ["default" "purple" "pink" "red" "orange" "yellow" "green" "teal" "grey" "all"] themeVariants
-  lib.checkListOfEnum "${pname}: color variants" ["standard" "light" "dark"]
+lib.checkListOfEnum "${pname}: theme variants"
+  [
+    "default"
+    "purple"
+    "pink"
+    "red"
+    "orange"
+    "yellow"
+    "green"
+    "teal"
+    "grey"
+    "all"
+  ]
+  themeVariants
+  lib.checkListOfEnum
+  "${pname}: color variants"
+  [ "standard" "light" "dark" ]
   colorVariants
-  lib.checkListOfEnum "${pname}: size variants" ["standard" "compact"]
+  lib.checkListOfEnum
+  "${pname}: size variants"
+  [ "standard" "compact" ]
   sizeVariants
-  lib.checkListOfEnum "${pname}: tweaks" ["solid" "compact" "black" "primary" "macos" "submenu" "nord" "dracula"]
+  lib.checkListOfEnum
+  "${pname}: tweaks"
+  [
+    "solid"
+    "compact"
+    "black"
+    "primary"
+    "macos"
+    "submenu"
+    "nord"
+    "dracula"
+  ]
   tweaks
   stdenvNoCC.mkDerivation
   rec {
@@ -55,11 +84,13 @@ in
       runHook preInstall
 
       name= HOME="$TMPDIR" ./install.sh -l \
-        ${lib.optionalString (themeVariants != []) "--theme " + builtins.toString themeVariants} \
-        ${lib.optionalString (colorVariants != []) "--color " + builtins.toString colorVariants} \
-        ${lib.optionalString (sizeVariants != []) "--size " + builtins.toString sizeVariants} \
-        ${lib.optionalString (tweaks != []) "--tweaks " + builtins.toString tweaks} \
-        ${lib.optionalString (border-radius != null) ("--round " + builtins.toString border-radius + "px")} \
+        ${lib.optionalString (themeVariants != [ ]) "--theme " + builtins.toString themeVariants} \
+        ${lib.optionalString (colorVariants != [ ]) "--color " + builtins.toString colorVariants} \
+        ${lib.optionalString (sizeVariants != [ ]) "--size " + builtins.toString sizeVariants} \
+        ${lib.optionalString (tweaks != [ ]) "--tweaks " + builtins.toString tweaks} \
+        ${
+          lib.optionalString (border-radius != null) ("--round " + builtins.toString border-radius + "px")
+        } \
         --dest $out/share/themes
 
       jdupes --quiet --link-soft --recurse $out/share
@@ -67,7 +98,7 @@ in
       runHook postInstall
     '';
 
-    passthru.updateScript = gitUpdater {};
+    passthru.updateScript = gitUpdater { };
 
     meta = with lib; {
       description = "Orchis theme";

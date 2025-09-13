@@ -6,18 +6,27 @@
   lib,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "thunderbolt" "ahci" "nvme" "usb_storage" "sd_mod" "sdhci_pci"];
-      kernelModules = [];
+      availableKernelModules = [
+        "xhci_pci"
+        "thunderbolt"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "sdhci_pci"
+      ];
+      kernelModules = [ ];
     };
-    kernelModules = ["kvm-intel"];
-    extraModulePackages = [];
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
     kernelParams = [
       "usbcore.autosuspend=-1"
     ];
@@ -34,7 +43,7 @@
   swapDevices = [
     {
       device = "/dev/disk/by-uuid/7309ec42-f066-404c-a948-d09765bf67a4";
-      options = ["noatime"];
+      options = [ "noatime" ];
     }
   ];
 

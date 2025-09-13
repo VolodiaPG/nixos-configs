@@ -1,5 +1,6 @@
-{lib, ...}: {
-  imports = [];
+{ lib, ... }:
+{
+  imports = [ ];
   ids.uids.nixbld = lib.mkForce 350; # or some other uid
   ids.gids.nixbld = 30000;
   nix = {

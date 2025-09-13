@@ -4,10 +4,10 @@
   pkgs-unstable,
   apps,
   ...
-}: {
+}:
+{
   imports =
-    lib.optional (apps == "personal") ./mpv.nix
-    ++ lib.optional (apps == "personal") ./personal.nix;
+    lib.optional (apps == "personal") ./mpv.nix ++ lib.optional (apps == "personal") ./personal.nix;
 
   # programs.firefox = {
   #   enable = pkgs.stdenv.isLinux;

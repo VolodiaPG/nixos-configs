@@ -11,7 +11,8 @@ let
     owner = "root";
     mode = "0500";
   };
-in {
+in
+{
   # Paths to public keys that can decrypt the secrets.
   age.identityPaths = [
     "/persistent/home/volodia/.ssh/id_ed25519"
@@ -20,22 +21,19 @@ in {
   ];
 
   age.secrets = {
-    dellmac =
-      {
-        file = ./dellmac.age;
-      }
-      // rootReadable;
+    dellmac = {
+      file = ./dellmac.age;
+    }
+    // rootReadable;
 
-    "ssh-remote-builder" =
-      {
-        file = ./ssh-remote-builder.age;
-      }
-      // rootReadable;
+    "ssh-remote-builder" = {
+      file = ./ssh-remote-builder.age;
+    }
+    // rootReadable;
 
-    "ssh-remote-builder-pub" =
-      {
-        file = ./ssh-remote-builder-pub.age;
-      }
-      // rootReadable;
+    "ssh-remote-builder-pub" = {
+      file = ./ssh-remote-builder-pub.age;
+    }
+    // rootReadable;
   };
 }

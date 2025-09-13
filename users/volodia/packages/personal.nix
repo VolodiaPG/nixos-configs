@@ -2,7 +2,8 @@
   pkgs-unstable,
   pkgs,
   ...
-}: {
+}:
+{
   # programs.obs-studio = {
   #   enable = true;
   #   plugins = with stable-pkgs.obs-studio-plugins; [

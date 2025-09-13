@@ -4,9 +4,11 @@
   pkgs,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.foldingathome-scheduled;
-in {
+in
+{
   options.services.foldingathome-scheduled = {
     enable = mkEnableOption "Scheduled Folding@home client";
 
@@ -41,7 +43,7 @@ in {
       services = {
         foldingathome-scheduled = {
           description = "Folding@home distributed computing client";
-          after = ["network.target"];
+          after = [ "network.target" ];
 
           serviceConfig = {
             Type = "simple";
@@ -59,7 +61,7 @@ in {
 
         foldingathome-scheduled-start = {
           description = "Start Folding@home distributed computing client";
-          after = ["network.target"];
+          after = [ "network.target" ];
 
           serviceConfig = {
             Type = "oneshot";
@@ -80,7 +82,7 @@ in {
       timers = {
         foldingathome-scheduled-start = {
           description = "Timer for starting Folding@home client";
-          wantedBy = ["timers.target"];
+          wantedBy = [ "timers.target" ];
 
           timerConfig = {
             OnCalendar = [
@@ -93,7 +95,7 @@ in {
 
         foldingathome-scheduled-stop = {
           description = "Timer for stopping Folding@home client";
-          wantedBy = ["timers.target"];
+          wantedBy = [ "timers.target" ];
 
           timerConfig = {
             OnCalendar = [
@@ -112,6 +114,6 @@ in {
       description = "Folding@home client user";
     };
 
-    users.groups.${cfg.group} = {};
+    users.groups.${cfg.group} = { };
   };
 }

@@ -6,15 +6,23 @@
   lib,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
-      kernelModules = ["dm-snapshot"];
+      availableKernelModules = [
+        "xhci_pci"
+        "ehci_pci"
+        "ahci"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
+      kernelModules = [ "dm-snapshot" ];
 
       #luks.devices = {
       #  crypted = {
@@ -27,8 +35,8 @@
       "usbcore.autosuspend=-1"
       "mitigations=off"
     ];
-    kernelModules = ["kvm-intel"];
-    extraModulePackages = [];
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
   };
 
   fileSystems = {
@@ -41,7 +49,7 @@
   swapDevices = [
     {
       device = "/dev/disk/by-label/swap";
-      options = ["noatime"];
+      options = [ "noatime" ];
     }
   ];
 

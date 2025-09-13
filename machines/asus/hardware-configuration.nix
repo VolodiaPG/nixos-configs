@@ -6,15 +6,21 @@
   lib,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod"];
-      kernelModules = ["dm-snapshot"];
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "usb_storage"
+        "sd_mod"
+      ];
+      kernelModules = [ "dm-snapshot" ];
       luks.devices = {
         crypted = {
           device = "/dev/disk/by-uuid/3c7cadea-eece-4982-b52f-f17fc996204b";
@@ -23,27 +29,51 @@
       };
     };
 
-    kernelModules = ["kvm-intel"];
-    extraModulePackages = [];
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
   };
 
   fileSystems = {
     "/" = {
       device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
-      options = ["subvol=root" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+      options = [
+        "subvol=root"
+        "ssd"
+        "compress-force=zstd:2"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+        "autodefrag"
+      ]; # compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/home" = {
       device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
-      options = ["subvol=home" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+      options = [
+        "subvol=home"
+        "ssd"
+        "compress-force=zstd:2"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+        "autodefrag"
+      ]; # compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/nix" = {
       device = "/dev/disk/by-uuid/9a9bf750-2b10-474c-a9ae-d3e1b23ada2e";
       fsType = "btrfs";
-      options = ["subvol=nix" "ssd" "compress-force=zstd:2" "noatime" "discard=async" "space_cache=v2" "autodefrag"]; #compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
+      options = [
+        "subvol=nix"
+        "ssd"
+        "compress-force=zstd:2"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+        "autodefrag"
+      ]; # compress: 1 for nvme, 2 for sata ssd, "3/4 for hdd"
     };
 
     "/boot" = {
@@ -55,7 +85,7 @@
   swapDevices = [
     {
       device = "/dev/disk/by-uuid/78410e51-556c-451f-829e-eddf32c9b315";
-      options = ["noatime"];
+      options = [ "noatime" ];
     }
   ];
 

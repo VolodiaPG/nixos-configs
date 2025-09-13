@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _pkg: true;
@@ -49,8 +50,18 @@
       log-lines = 50;
       fallback = true;
 
-      allowed-users = ["root" "volodia" "@admin" "@wheel"];
-      trusted-users = ["root" "volodia" "@admin" "@wheel"];
+      allowed-users = [
+        "root"
+        "volodia"
+        "@admin"
+        "@wheel"
+      ];
+      trusted-users = [
+        "root"
+        "volodia"
+        "@admin"
+        "@wheel"
+      ];
 
       # Ignore global flake registry
       flake-registry = builtins.toFile "empty-registry.json" ''{"flakes": [], "version": 2}'';

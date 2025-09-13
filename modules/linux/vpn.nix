@@ -4,9 +4,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.vpn;
-in {
+in
+{
   options = {
     services.vpn = with types; {
       enable = mkEnableOption "vpn";
@@ -14,7 +16,10 @@ in {
       nameservers = mkOption {
         description = "dns nameservers";
         type = listOf types.str;
-        default = ["1.1.1.1" "1.0.0.1"];
+        default = [
+          "1.1.1.1"
+          "1.0.0.1"
+        ];
       };
     };
   };
@@ -34,11 +39,11 @@ in {
     networking = {
       inherit (cfg) nameservers;
       firewall = {
-        trustedInterfaces = ["tailscale0"];
+        trustedInterfaces = [ "tailscale0" ];
         checkReversePath = "loose";
         # Let's open the UDP port with which the network is tunneled through
-        allowedUDPPorts = [41641];
-        allowedTCPPorts = [22];
+        allowedUDPPorts = [ 41641 ];
+        allowedTCPPorts = [ 22 ];
       };
     };
 
@@ -52,6 +57,6 @@ in {
     # trace: warning: Strict reverse path filtering breaks Tailscale exit node use and some subnet routing setups. Consider setting `networking.firewall.checkReversePath` = 'loose'
 
     # Let's make the tailscale binary available to all users
-    environment.systemPackages = [pkgs.tailscale];
+    environment.systemPackages = [ pkgs.tailscale ];
   };
 }

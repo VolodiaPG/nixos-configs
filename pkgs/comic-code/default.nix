@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
       combinations.
     '';
     license = licenses.ofl;
-    maintainers = [maintainers.rycee];
+    maintainers = [ maintainers.rycee ];
     platforms = platforms.all;
   };
 }

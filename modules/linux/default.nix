@@ -2,7 +2,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   # Path to the current directory
   currentDir = ./.;
 
@@ -10,11 +11,13 @@
   readDir = builtins.readDir currentDir;
 
   # Filter out non-Nix files and default.nix, then import the rest
-  imports =
-    builtins.map (name: import (currentDir + "/${name}"))
-    (builtins.filter (name: name != "default.nix" && builtins.match ".*\\.nix$" name != null)
-      (builtins.attrNames readDir));
-in {
+  imports = builtins.map (name: import (currentDir + "/${name}")) (
+    builtins.filter (name: name != "default.nix" && builtins.match ".*\\.nix$" name != null) (
+      builtins.attrNames readDir
+    )
+  );
+in
+{
   inherit imports;
 
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
@@ -27,7 +30,7 @@ in {
       "kernel.pid-max" = 2000000;
       "fs.file-max" = 204708;
       "vm.max_map_count" = 6000000;
-      "net.core.default_qdisc" = lib.mkForce "cake"; #fq_codel also works but is older
+      "net.core.default_qdisc" = lib.mkForce "cake"; # fq_codel also works but is older
       "net.ipv4.tcp_ecn" = 1;
       "net.ipv4.tcp_sack" = 1;
       "net.ipv4.tcp_dsack" = 1;
@@ -50,7 +53,7 @@ in {
     gc.dates = "weekly";
     optimise = {
       automatic = true;
-      dates = ["weekly"];
+      dates = [ "weekly" ];
     };
   };
   i18n = {
@@ -132,11 +135,11 @@ in {
   security = {
     sudo.extraRules = [
       {
-        users = ["volodia"];
+        users = [ "volodia" ];
         commands = [
           {
             command = "ALL";
-            options = ["NOPASSWD"];
+            options = [ "NOPASSWD" ];
           }
         ];
       }
@@ -163,7 +166,16 @@ in {
       volodia = {
         isNormalUser = true;
         description = "Volodia P.G.";
-        extraGroups = ["wheel" "video" "audio" "disk" "libvirtd" "usb" "networkmanager" "docker"]; # Enable ‘sudo’ for the user.
+        extraGroups = [
+          "wheel"
+          "video"
+          "audio"
+          "disk"
+          "libvirtd"
+          "usb"
+          "networkmanager"
+          "docker"
+        ]; # Enable ‘sudo’ for the user.
         openssh.authorizedKeys.keys = [
           "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi"
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"

@@ -4,9 +4,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.desktop;
-in {
+in
+{
   options = {
     services.desktop = with types; {
       enable = mkEnableOption "desktop";
@@ -50,7 +52,10 @@ in {
             [org.gtk.Settings.FileChooser]
             sort-directories-first=true
           '';
-          extraGSettingsOverridePackages = [pkgs.mutter pkgs.gnome-settings-daemon];
+          extraGSettingsOverridePackages = [
+            pkgs.mutter
+            pkgs.gnome-settings-daemon
+          ];
         };
       };
       system76-scheduler = {
@@ -62,7 +67,7 @@ in {
       # enable = true;
       # assignments = builtins.readFile ./system76-assignments.ron;
       #};
-      udev.packages = with pkgs; [gnome-settings-daemon];
+      udev.packages = with pkgs; [ gnome-settings-daemon ];
       pipewire = {
         enable = true;
         alsa.enable = true;
@@ -115,11 +120,11 @@ in {
       KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
     '';
     # Load i2c kernel module
-    boot.kernelModules = ["i2c-dev"];
+    boot.kernelModules = [ "i2c-dev" ];
 
-    users.groups.i2c = {};
+    users.groups.i2c = { };
 
-    users.users.volodia.extraGroups = ["i2c"];
+    users.users.volodia.extraGroups = [ "i2c" ];
     # Enable sound.
 
     services.pulseaudio.enable = false;

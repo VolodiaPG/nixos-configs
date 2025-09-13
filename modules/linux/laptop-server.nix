@@ -3,9 +3,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.laptopServer;
-in {
+in
+{
   options = {
     services.laptopServer = with types; {
       enable = mkEnableOption "laptopServer";

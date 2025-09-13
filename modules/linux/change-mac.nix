@@ -4,9 +4,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.changeMAC;
-in {
+in
+{
   options = {
     services.changeMAC = with types; {
       enable = mkEnableOption "changeMAC";
@@ -25,8 +27,8 @@ in {
     systemd = {
       services.change-mac = {
         description = "Change MAC Address";
-        wantedBy = ["multi-user.target"];
-        path = [pkgs.busybox];
+        wantedBy = [ "multi-user.target" ];
+        path = [ pkgs.busybox ];
         script = ''
           while ! [ -f "${cfg.mac}" ] ; do
             sleep 1
@@ -47,13 +49,13 @@ in {
           RestartSec = "5s";
         };
       };
-      timers .autoChangeMac = {
+      timers.autoChangeMac = {
         description = "Timer for changing mac automatically";
 
-        wantedBy = ["timers.target"];
+        wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = "*-*-* 12:00:00";
-          Unit = ["change-mac.service"];
+          Unit = [ "change-mac.service" ];
         };
       };
     };

@@ -3,9 +3,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.mypeerix;
-in {
+in
+{
   options = {
     services.mypeerix = with types; {
       enable = mkEnableOption "mypeerix";
@@ -13,7 +15,11 @@ in {
       extraHosts = mkOption {
         description = "Hosts to consider";
         type = listOf types.str;
-        default = ["asus" "msi" "dell"];
+        default = [
+          "asus"
+          "msi"
+          "dell"
+        ];
       };
     };
   };
@@ -34,7 +40,7 @@ in {
         isSystemUser = true;
         group = "peerix";
       };
-      groups.peerix = {};
+      groups.peerix = { };
     };
   };
 }

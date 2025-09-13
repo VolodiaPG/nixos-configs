@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.services.nvidia;
-in {
+in
+{
   options.services.nvidia = {
     enable = lib.mkEnableOption "NVIDIA drivers and container support";
   };
@@ -17,7 +19,7 @@ in {
       nvidia.acceptLicense = true;
     };
 
-    services.xserver.videoDrivers = ["nvidia"];
+    services.xserver.videoDrivers = [ "nvidia" ];
     services.xserver.enable = false;
 
     virtualisation.docker = {

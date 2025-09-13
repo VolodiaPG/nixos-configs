@@ -1,4 +1,5 @@
-{inputs, ...}: {
+{ inputs, ... }:
+{
   imports = [
     inputs.hosts.nixosModule
   ];
@@ -15,7 +16,10 @@
     enable = true;
     networks = {
       "10-lan" = {
-        matchConfig.Name = ["enp*" "wlp*"];
+        matchConfig.Name = [
+          "enp*"
+          "wlp*"
+        ];
         networkConfig.DHCP = true;
       };
     };

@@ -5,17 +5,22 @@
   lib,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   boot = {
     initrd = {
-      availableKernelModules = ["nvme" "usb_storage" "sdhci_pci"];
-      kernelModules = [];
+      availableKernelModules = [
+        "nvme"
+        "usb_storage"
+        "sdhci_pci"
+      ];
+      kernelModules = [ ];
     };
-    extraModulePackages = [];
+    extraModulePackages = [ ];
     kernelParams = [
       "usbcore.autosuspend=-1"
     ];

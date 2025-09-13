@@ -3,9 +3,11 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.microvms;
-in {
+in
+{
   options = {
     services.microvms = with types; {
       enable = mkEnableOption "microvms";
@@ -17,14 +19,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    networking.firewall.trustedInterfaces = ["vbr0"];
+    networking.firewall.trustedInterfaces = [ "vbr0" ];
 
     #networking.firewall.allowedUDPPorts = [67];
     networking = {
       nat = {
         enable = true;
         enableIPv6 = true;
-        internalInterfaces = ["vbr0"];
+        internalInterfaces = [ "vbr0" ];
         externalInterface = cfg.interface;
       };
     };

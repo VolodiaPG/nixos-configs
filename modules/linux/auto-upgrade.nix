@@ -4,12 +4,14 @@
   lib,
   ...
 }:
-with lib; let
+with lib;
+let
   # inherit (config.networking) hostName;
   # Only enable auto upgrade if current config came from a clean tree
   # This avoids accidental auto-upgrades when working locally.
   cfg = config.services.autoUpgrade;
-in {
+in
+{
   options = {
     services.autoUpgrade = {
       enable = mkEnableOption "autoUpgrade";
@@ -24,9 +26,10 @@ in {
     };
   };
 
-  config = let
-    isClean = cfg.inputs.self ? rev;
-  in
+  config =
+    let
+      isClean = cfg.inputs.self ? rev;
+    in
     mkIf cfg.enable {
       system.autoUpgrade = {
         allowReboot = true;
