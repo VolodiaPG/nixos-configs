@@ -122,7 +122,6 @@ in
       initExtra = ''
         source -- ${pkgs.blesh}/share/blesh/ble.sh
 
-        export SSH_AUTH_SOCK=/Users/volodia/.bitwarden-ssh-agent.sock
         export LC_ALL="C.UTF-8"
 
         # Save 5,000 lines of history in memory
