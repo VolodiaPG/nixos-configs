@@ -54,6 +54,8 @@
           "hibernate-status@dromi"
           "x11gestures@joseexposito.github.io"
           "display-brightness-ddcutil@themightydeity.github.com"
+          "paperwm@paperwm.github.org"
+          "tailscale-status@max-gallup.github.io"
         ];
       };
 
