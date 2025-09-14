@@ -269,7 +269,7 @@
                     services = {
                       desktop.enable = true;
                       kernel.enable = true;
-                      intel.enable = false;
+                      intel.enable = true;
                       impermanence = {
                         enable = true;
                         rootVolume = "disk/by-label/root";
