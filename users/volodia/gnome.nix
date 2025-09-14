@@ -18,6 +18,8 @@
     gnomeExtensions.tailscale-status
 
     gnome-obfuscate
+
+    brave
   ];
   dconf = {
     enable = true;
