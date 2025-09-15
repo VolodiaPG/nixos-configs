@@ -73,7 +73,7 @@ in
         alsa.enable = true;
         # alsa.support32Bit = true;
         pulse.enable = true;
-        config.pipewire = {
+        extraConfig.pipewire = {
           "context.properties" = {
             "resample.quality" = 15;
             "link.max-buffers" = 16;
