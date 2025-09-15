@@ -18,7 +18,7 @@
     pkgs.opencode
     pkgs-unstable.devenv
     pkgs-unstable.aider-chat
-    pkgs-unstable.difftastic
+    pkgs.difftastic
   ];
 
   # programs.steam.enable = true;

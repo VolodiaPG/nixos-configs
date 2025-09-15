@@ -204,8 +204,13 @@ in {
       enable = true;
       userName = "Volodia P.-G.";
       userEmail = "volodia.parol-guarino@proton.me";
+      difftastic = {
+        enable = true;
+        package = pkgs.difftastic;
+      };
       signing = {
-        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCpqTjWHv8bko3N+ypMJXcSBDPKtun7Ec7RHvtlC60V";
+        format = "ssh";
+        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
         signByDefault = true;
       };
       extraConfig = {
