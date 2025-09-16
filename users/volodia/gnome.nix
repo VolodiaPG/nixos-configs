@@ -258,7 +258,7 @@
         "use-default-background" = true;
         "window-switcher-preview-scale" = 0.05;
       };
-      "org/gnome/shell/extensions/just-perfection/" = {
+      "org/gnome/shell/extensions/just-perfection" = {
         "top-panel-position" = 1;
       };
     };
