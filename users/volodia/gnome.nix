@@ -230,7 +230,7 @@
         settings-version = 5;
       };
       "org/gnome/desktop/interface" = {
-        # monospace-font-name = "Comic Code Ligatures";
+        monospace-font-name = "Comic Code Ligatures";
       };
       "org/gnome/shell/extensions/mediacontrols" = {
         extension-position = "right";
