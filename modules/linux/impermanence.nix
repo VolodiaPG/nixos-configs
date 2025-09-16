@@ -211,8 +211,7 @@ in
             ".cursor"
             ".cursor-tutor"
             ".config"
-            ".local/share/fonts/ComicCode"
-            ".local/state/syncthing"
+            ".local"
             {
               directory = ".gnupg";
               mode = "0700";
@@ -229,9 +228,9 @@ in
               directory = ".local/share/keyrings";
               mode = "0700";
             }
-            ".local/share/direnv"
-            ".local/share/zoxide"
-            ".local/share/nvim/harpoon"
+            # ".local/share/direnv"
+            # ".local/share/zoxide"
+            # ".local/share/nvim/harpoon"
             ".docker"
             ".tmux/resurrect"
             ".mozilla"
