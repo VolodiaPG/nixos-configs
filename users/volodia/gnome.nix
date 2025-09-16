@@ -16,11 +16,13 @@
     gnomeExtensions.brightness-control-using-ddcutil
     gnomeExtensions.paperwm
     gnomeExtensions.tailscale-status
+    gnomeExtensions.just-perfection
 
     gnome-obfuscate
 
     brave
   ];
+  # can use the gnome dump command
   dconf = {
     enable = true;
     settings = {
@@ -58,6 +60,7 @@
           "display-brightness-ddcutil@themightydeity.github.com"
           "paperwm@paperwm.github.com"
           "tailscale-status@maxgallup.github.com"
+          "just-perfection-desktop@just-perfection"
         ];
       };
 
@@ -250,10 +253,13 @@
         "restore-workspaces-only-on-primary" = "false";
         "show-focus-mode-icon" = false;
         "show-open-position-icon" = false;
-        "show-window-position-bar" = true;
-        "show-workspace-indicator" = true;
+        "show-window-position-bar" = false;
+        "show-workspace-indicator" = false;
         "use-default-background" = true;
         "window-switcher-preview-scale" = 0.05;
+      };
+      "org/gnome/shell/extensions/just-perfection/" = {
+        "top-panel-position" = 1;
       };
     };
   };
