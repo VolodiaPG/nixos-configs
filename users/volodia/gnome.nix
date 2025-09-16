@@ -237,6 +237,24 @@
         show-player-icon = false;
         show-separators = false;
       };
+      "org/gnome/shell/extensions/paperwm" = {
+        "animation-time" = 0.12;
+        "disable-scratch-in-overview" = false;
+        "disable-topbar-styling" = false;
+        "edge-preview-enable" = true;
+        "minimap-scale" = 0.0;
+        "minimap-shade-opacity" = 0;
+        "only-scratch-in-overview" = false;
+        "restore-attach-modal-dialogs" = "true";
+        "restore-edge-tiling" = "true";
+        "restore-workspaces-only-on-primary" = "false";
+        "show-focus-mode-icon" = false;
+        "show-open-position-icon" = false;
+        "show-window-position-bar" = true;
+        "show-workspace-indicator" = true;
+        "use-default-background" = true;
+        "window-switcher-preview-scale" = 0.05;
+      };
     };
   };
   gtk = {
