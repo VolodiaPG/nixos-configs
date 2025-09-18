@@ -1,0 +1,40 @@
+;; define keys that will be modified (all keys still processed)
+(defsrc
+      esc
+      grv
+      caps
+      q s d f g h j k l m
+      lctl spc ralt
+)
+
+;; default/base layer modifications always active
+(deflayer default
+      _
+      _
+      lctl
+      _ _ _ _ _ _ j k _ _
+      caps _ _
+)
+
+(deflayer programming
+      _
+      _
+      lctl
+      _ _ _ _ _ _ j k _ _
+      caps _ _
+)
+
+(defvar
+  streak-count 3
+  streak-time 325
+  tap-timeout 200
+  hold-timeout 500
+  chord-timeout 50
+)
+
+(defchordsv2
+  (j k) bspc $chord-timeout all-released ()
+  (k l) ret $chord-timeout all-released ()
+  (d f) esc $chord-timeout all-released ()
+  (s d) Delete $chord-timeout all-released ()
+)

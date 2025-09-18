@@ -173,6 +173,13 @@ in
 
     nixpkgs.config.joypixels.acceptLicense = true; # Personal use only
 
+    services.kanata = {
+      enable = true;
+      keyboards.all.config = readFile ./kanata.kbd;
+      keyboards.all.extraDefCfg = ''
+        concurrent-tap-hold yes
+      '';
+    };
     # virtualisation.libvirtd.enable = true;
     # virtualisation = {
     #   waydroid.enable = true;
