@@ -238,8 +238,8 @@ in
           ];
           files = [
             ".bash_history"
-            ".local/share/fish/fish_history"
-            ".local/share/nvim/harpoon.json"
+            # ".local/share/fish/fish_history"
+            # ".local/share/nvim/harpoon.json"
           ];
         };
       }

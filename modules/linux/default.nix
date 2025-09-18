@@ -24,7 +24,11 @@ in
   systemd.network.wait-online.enable = false;
 
   boot = {
-    loader.grub.configurationLimit = 20;
+    loader.grub = {
+      configurationLimit = 20;
+      useOSProber = true;
+      copyKernels = true;
+    };
     kernel.sysctl = {
       "kernel.threads-max" = 2000000;
       "kernel.pid-max" = 2000000;
