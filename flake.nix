@@ -4,10 +4,10 @@
   inputs = {
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    nixpkgs-unstable.follows = "nixpkgs";
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     darwin = {
       url = "github:lnl7/nix-darwin/nix-darwin-25.05";

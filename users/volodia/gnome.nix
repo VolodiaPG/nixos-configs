@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  pkgs-unstable,
+  ...
+}:
 {
   home.packages = with pkgs; [
     # Gnome extensions
@@ -21,6 +25,7 @@
     gnome-obfuscate
 
     brave
+    pkgs-unstable.tidal-hifi
   ];
   # can use the gnome dump command
   dconf = {
