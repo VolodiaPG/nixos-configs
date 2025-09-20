@@ -2,7 +2,7 @@
 ;; https://github.com/jtroo/kanata/blob/main/docs/locales.adoc
 
 
-;;(defcfg concurrent-tap-hold yes)
+(defcfg concurrent-tap-hold yes)
 
 
 (deflocalkeys-linux
@@ -33,9 +33,27 @@ lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
       lctl _ _ _ _ _ _ _ _ _ _ _ _
-      _ _ _ _ _ _ _ _ _ _ _ _ _
-      @capsp _ _ _ _ _
+      @lsd _ _ _ _ _ _ _ _ _ _ _ _
+      @capsp _ @laltd _ _ _
 )
+
+(deflayer alt-layer
+      _ A-1 A-2 A-3 A-4 A-5 A-6 A-7 A-8 A-9 A-0 _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _
+)
+
+
+(deflayer s-layer
+      _ S-1 S-2 S-3 S-4 S-5 S-6 S-7 S-8 S-9 S-0 _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _
+)
+
 
 (defvar
   streak-count 3
@@ -56,6 +74,9 @@ lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
 (defalias
   capsd (layer-switch programming)
   capsp (layer-switch default)
+  laltd (tap-hold 100 100 lalt (layer-while-held alt-layer))
+  lsd (tap-hold 100 100 lsft (layer-while-held s-layer))
+
   two RA-5
   three RA-4
   four 5
