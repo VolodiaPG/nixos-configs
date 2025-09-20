@@ -9,18 +9,19 @@
     gnomeExtensions.appindicator
     gnomeExtensions.vitals
     # gnomeExtensions.pop-shell
-    gnomeExtensions.hide-activities-button
+    # gnomeExtensions.hide-activities-button
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
     gnomeExtensions.blur-my-shell
     gnomeExtensions.media-controls
-    gnomeExtensions.impatience
-    gnomeExtensions.hibernate-status-button
+    # gnomeExtensions.impatience
+    # gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
     gnomeExtensions.paperwm
     gnomeExtensions.tailscale-status
     gnomeExtensions.just-perfection
+    gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
 
     gnome-obfuscate
 
@@ -69,6 +70,7 @@
           "paperwm@paperwm.github.com"
           "tailscale-status@maxgallup.github.com"
           "just-perfection-desktop@just-perfection"
+          "instantworkspaceswitcher@amalantony.net"
         ];
       };
 
@@ -107,9 +109,9 @@
         # hide window: disable <super>h
         minimize = [ ];
         # switch to workspace left: disable <super>left
-        switch-to-workspace-left = [ "<primary><super>left" ];
+        switch-to-workspace-left = [ ];
         # switch to workspace right: disable <super>right
-        switch-to-workspace-right = [ "<primary><super>right" ];
+        switch-to-workspace-right = [ ];
         # maximize window: disable <super>up
         maximize = [ ];
         # restore window: disable <super>down
@@ -121,41 +123,68 @@
         # super + direction keys, move window left and right monitors, or up and down workspaces
         # move window one monitor to the left
         move-to-monitor-left = [ ];
-        move-to-workspace-left = [ "<primary><super><shift>left" ];
+        move-to-workspace-left = [ ];
         # move window one workspace down
         move-to-workspace-down = [ ];
         # move window one workspace up
         move-to-workspace-up = [ ];
         # move window one monitor to the right
         move-to-monitor-right = [ ];
-        move-to-workspace-right = [ "<primary><super><shift>right" ];
-        switch-to-workspace-1 = [ "<primary><super>1" ];
-        switch-to-workspace-2 = [ "<primary><super>2" ];
-        switch-to-workspace-3 = [ "<primary><super>3" ];
-        switch-to-workspace-4 = [ "<primary><super>4" ];
-        switch-to-workspace-5 = [ "<primary><super>5" ];
-        switch-to-workspace-6 = [ "<primary><super>6" ];
-        switch-to-workspace-7 = [ "<primary><super>7" ];
-        switch-to-workspace-8 = [ "<primary><super>8" ];
-        switch-to-workspace-9 = [ "<primary><super>9" ];
-        switch-to-workspace-10 = [ "<primary><super>10" ];
+        move-to-workspace-right = [ ];
+        switch-to-workspace-1 = [
+          "<Alt>1"
+          "<Alt>&"
+        ];
+        switch-to-workspace-2 = [
+          "<Alt>2"
+          "<Alt>["
+        ];
+        switch-to-workspace-3 = [
+          "<Alt>3"
+          "<Alt>{"
+        ];
+        switch-to-workspace-4 = [
+          "<Alt>4"
+          "<Alt>("
+        ];
+        switch-to-workspace-5 = [
+          "<Alt>5"
+          "<Alt>'"
+        ];
+        switch-to-workspace-6 = [
+          "<Alt>6"
+          "<Alt>\""
+        ];
+        switch-to-workspace-7 = [
+          "<Alt>7"
+          "<Alt>)"
+        ];
+        switch-to-workspace-8 = [
+          "<Alt>8"
+          "<Alt>}"
+        ];
+        switch-to-workspace-9 = [
+          "<Alt>9"
+          "<Alt>]"
+        ];
+        switch-to-workspace-10 = [
+          "<Alt>10"
+          "<Alt>-"
+        ];
+
         # super + ctrl + direction keys, change workspaces, move focus between monitors
         # move to workspace below
         switch-to-workspace-down = [
-          "<primary><super>down"
-          "<primary><super>j"
         ];
         # move to workspace above
         switch-to-workspace-up = [
-          "<primary><super>up"
-          "<primary><super>k"
         ];
         # toggle maximization state
         toggle-maximized = [ ];
         # close window
         close = [
-          "<super>q"
-          "<alt>f4"
+          # "<super>q"
+          "<Alt>f4"
         ];
       };
       "org/gnome/shell/keybindings" = {
@@ -278,6 +307,7 @@
       };
       "org/gnome/shell/extensions/just-perfection" = {
         "top-panel-position" = 1;
+        "animation" = 3;
       };
     };
   };

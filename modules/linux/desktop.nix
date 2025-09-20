@@ -146,11 +146,11 @@ in
                 quality = 15;
                 disable = true;
               };
-              channelmix = {
-                disable = false;
-                min-volume = 0.0;
-                max-volume = 10.0;
-              };
+              # channelmix = {
+              #   disable = false;
+              #   min-volume = 0.0;
+              #   max-volume = 10.0;
+              # };
             };
           };
         };
