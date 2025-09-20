@@ -32,8 +32,8 @@ lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
 (deflayer programming
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ _
-      @lsd _ _ _ _ _ _ _ _ _ _ _ _
+      lctl _ _ _ _ _ _ _ _ _ _ _ _ _
+      @lsd _ _ _ _ _ _ _ _ _ _ _
       @capsp _ @laltd _ _ _
 )
 
