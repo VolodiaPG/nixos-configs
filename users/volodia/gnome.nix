@@ -26,6 +26,9 @@
 
     brave
     pkgs-unstable.tidal-hifi
+    hyperhdr
+    distrobox
+    distrobox-tui
   ];
   # can use the gnome dump command
   dconf = {
@@ -246,7 +249,7 @@
         show-separators = false;
       };
       "org/gnome/shell/extensions/paperwm" = {
-        "animation-time" = 0.12;
+        "animation-time" = 0.025;
         "disable-scratch-in-overview" = false;
         "disable-topbar-styling" = false;
         "edge-preview-enable" = true;
@@ -262,6 +265,16 @@
         "show-workspace-indicator" = false;
         "use-default-background" = true;
         "window-switcher-preview-scale" = 0.05;
+        "restore-keybinds" = ''
+          {"cancel-input-capture":{"bind":"[\\"<Super><Shift>Escape\\"]","schema_id":"org.gnome.mutter.keybindings"},"switch-to-workspace-last":{"bind":"[\\"<Super>End\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-panels":{"bind":"[\\"<Control><Alt>Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-group-backward":{"bind":"[\\"<Shift><Super>Above_Tab\\",\\"<Shift><Alt>Above_Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-group":{"bind":"[\\"<Super>Above_Tab\\",\\"<Alt>Above_Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-panels-backward":{"bind":"[\\"<Shift><Control><Alt>Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-applications":{"bind":"[\\"<Super>Tab\\",\\"<Alt>Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"switch-applications-backward":{"bind":"[\\"<Shift><Super>Tab\\",\\"<Shift><Alt>Tab\\"]","schema_id":"org.gnome.desktop.wm.keybindings"},"shift-overview-up":{"bind":"[\\"<Super><Alt>Up\\"]","schema_id":"org.gnome.shell.keybindings"},"shift-overview-down":{"bind":"[\\"<Super><Alt>Down\\"]","schema_id":"org.gnome.shell.keybindings"},"focus-active-notification":{"bind":"[\\"<Super>n\\"]","schema_id":"org.gnome.shell.keybindings"},"toggle-message-tray":{"bind":"[\\"<super>v\\"]","schema_id":"org.gnome.shell.keybindings"},"home":{"bind":"[\\"<super>f\\"]","schema_id":"org.gnome.settings-daemon.plugins.media-keys"}}
+        '';
+        "cycle-width-steps" = [
+          0.25
+          0.33
+          0.5
+          0.66
+          0.75
+        ];
       };
       "org/gnome/shell/extensions/just-perfection" = {
         "top-panel-position" = 1;

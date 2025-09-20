@@ -22,7 +22,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    boot.kernelModules = [ "ecryptfs" ];
+    # boot.kernelModules = ["ecryptfs"];
     powerManagement = {
       enable = true;
       powertop.enable = true;
@@ -76,28 +76,36 @@ in
 
       # resumeDevice = "/dev/mapper/lvm-swap";
 
-      #kernelParams = [
-      #noibrs"
-      #  "noibpb"
-      #  "nopti"
-      #  "nospectre_v2"
-      #  "nospectre_v1"
-      #  "l1tf=off"
-      #  "nospec_store_bypass_disable"
-      #  "no_stf_barrier"
-      #  "mds=off"
-      #  "tsx=on"
-      #   "tsx_async_abort=off"
-      #   "mitigations=off"
-      #];
-
       kernelParams = [
-        # "ahci.mobile_lpm_policy=3"
-        # "intel_pstate=disable" # switch to acpi-cpufreq instead
-        # "enable_guc=3"
+        "ecryptfs"
+        "noibrs"
+        "noibpb"
+        "nopti"
+        "nospectre_v2"
+        "nospectre_v1"
+        "l1tf=off"
+        "nospec_store_bypass_disable"
+        "no_stf_barrier"
+        "mds=off"
+        "tsx=on"
+        "tsx_async_abort=off"
+        "mitigations=off"
+        "preempt=full"
+        "threadirqs"
+        "hrtimer"
       ];
 
+      # kernelParams = [
+      #   # "ahci.mobile_lpm_policy=3"
+      #   # "intel_pstate=disable" # switch to acpi-cpufreq instead
+      #   # "enable_guc=3"
+      # ];
+
       kernel.sysctl = {
+        # Increase VM dirty ratios for audio workloads
+        "vm.dirty_background_ratio" = 1;
+        "vm.dirty_ratio" = 3;
+        "kernel.sched_rt_runtime_us" = -1;
         # # "kernel.sched_migration_cost_ns" = 5000000;
         # # "kernel.sched_nr_fork_threshold" = 3;
         # "kernel.sched_fake_interactive_win_time_ms" = 1000;

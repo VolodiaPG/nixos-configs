@@ -14,6 +14,7 @@
         enable = true;
         device = "nodev";
         efiSupport = true;
+        gfxmodeEfi = "3440x1440";
         #enableCryptodisk = true;
       };
     };
@@ -70,13 +71,6 @@
   };
 
   hardware = {
-    nvidia = {
-      open = true;
-      powerManagement.enable = true;
-      modesetting.enable = true;
-      nvidiaPersistenced = true;
-      nvidiaSettings = false;
-    };
     cpu.intel.updateMicrocode = true;
     graphics = {
       enable = true;

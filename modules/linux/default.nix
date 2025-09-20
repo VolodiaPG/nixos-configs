@@ -169,6 +169,7 @@ in
           "wheel"
           "video"
           "audio"
+          "realtime"
           "disk"
           "libvirtd"
           "usb"

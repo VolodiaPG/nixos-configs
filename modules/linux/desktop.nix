@@ -22,9 +22,15 @@ in
 
     # Services
     # Enable the X11 windowing system.
+
+    programs.cfs-zen-tweaks.enable = true;
+
+    security.rtkit.enable = true;
+
     services = {
+      pulseaudio.enable = false;
       xserver = {
-        enable = true;
+        enable = lib.mkForce true;
         xkb = {
           variant = "oss";
           options = "eurosign:e,ctrl:swapcaps";
@@ -59,7 +65,7 @@ in
         };
       };
       system76-scheduler = {
-        enable = true;
+        enable = false;
         useStockConfig = true;
       };
 
@@ -68,23 +74,123 @@ in
       # assignments = builtins.readFile ./system76-assignments.ron;
       #};
       udev.packages = with pkgs; [ gnome-settings-daemon ];
+
       pipewire = {
         enable = true;
+
         alsa.enable = true;
-        # alsa.support32Bit = true;
+        alsa.support32Bit = true;
         pulse.enable = true;
-        extraConfig.pipewire = {
-          "context.properties" = {
-            "resample.quality" = 15;
-            "link.max-buffers" = 16;
-            "default.clock.rate" = 196000;
-            "default.clock.quantum" = 1024;
-            "default.clock.min-quantum" = 32;
-            "default.clock.max-quantum" = 8192;
+        jack.enable = true;
+
+        extraConfig = {
+          pipewire = {
+            "92-low-latency" = {
+              context.properties.default.clock = {
+                # resample.quality = 15;
+                # link.max-buffers = 16;
+                rate = 192000;
+                quantum = 32;
+                min-quantum = 32;
+                max-quantum = 8192;
+              };
+            };
+            "93-alsa-config" = {
+              context.objects = [
+                {
+                  factory = "adapter";
+                  args = {
+                    factory.name = "api.alsa.pcm.sink";
+                    node = {
+                      name = "alsa-sink";
+                      description = "High-Quality ALSA Sink";
+                    };
+                    media.class = "Audio/Sink";
+                    # api.alsa.path = "hw:0,0"; # Adjust for your DAC
+                    api.alsa = {
+                      period-size = 32;
+                      headroom = 0;
+                      channels = 2;
+                    };
+                    audio = {
+                      format = "S24_3LE"; # 24-bit
+                      rate = 192000;
+                      channels = 2;
+                      position = [
+                        "FL"
+                        "FR"
+                      ];
+                    };
+                  };
+                }
+              ];
+            };
+          };
+
+          pipewire-pulse."92-low-latency" = {
+            context.modules = [
+              {
+                name = "libpipewire-module-protocol-pulse";
+                args.pulse = {
+                  min.req = "32/192000";
+                  default.req = "32/192000";
+                  max.req = "32/192000";
+                  min.quantum = "32/192000";
+                  max.quantum = "8192/192000";
+                };
+              }
+            ];
+            stream.properties = {
+              node.latency = "32/192000";
+              resample = {
+                quality = 15;
+                disable = true;
+              };
+              channelmix = {
+                disable = false;
+                min-volume = 0.0;
+                max-volume = 10.0;
+              };
+            };
           };
         };
       };
     };
+
+    boot.kernelParams = [
+      "snd-hda-intel.power_save=0" # Disable power saving
+      "snd-ac97-codec.power_save=0"
+    ];
+
+    # Real-time scheduling for audio
+    security.pam.loginLimits = [
+      {
+        domain = "@audio";
+        item = "memlock";
+        type = "-";
+        value = "unlimited";
+      }
+      {
+        domain = "@audio";
+        item = "rtprio";
+        type = "-";
+        value = "99";
+      }
+      {
+        domain = "@audio";
+        item = "nofile";
+        type = "soft";
+        value = "99999";
+      }
+      {
+        domain = "@audio";
+        item = "nofile";
+        type = "hard";
+        value = "99999";
+      }
+    ];
+
+    # Add user to audio group
 
     environment.gnome.excludePackages =
       (with pkgs; [
@@ -126,10 +232,6 @@ in
 
     users.users.volodia.extraGroups = [ "i2c" ];
     # Enable sound.
-
-    services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-
     programs = {
       dconf.enable = true;
       gnupg.agent = {
@@ -175,7 +277,7 @@ in
 
     services.kanata = {
       enable = true;
-      keyboards.all.config = readFile ./kanata.kbd;
+      keyboards.all.config = readFile ./kanata.lisp;
       keyboards.all.extraDefCfg = ''
         concurrent-tap-hold yes
       '';

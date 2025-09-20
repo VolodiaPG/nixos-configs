@@ -270,12 +270,13 @@
                       desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;
+                      nvidia.enable = true;
                       impermanence = {
                         enable = true;
                         rootVolume = "disk/by-label/root";
                       };
 
-                      elegantBoot.enable = false;
+                      elegantBoot.enable = true;
                       vpn.enable = true;
                     };
                     home-manager.extraSpecialArgs = {
