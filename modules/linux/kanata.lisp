@@ -16,7 +16,7 @@
   '        1     2     3     4     5     6     7     8     9     0      par    eql        bspc
   tab       a     z     e     r     t     y     u     i     o     p      ^     ;
   caps       q     s     d     f     g     h     j     k     l     m      `     bksl     ret
-lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
+  lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
   lctl    lmet   lalt           spc                             ralt                    rctl
 )
 
@@ -33,7 +33,7 @@ lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
       lctl _ _ _ _ _ _ _ _ _ _ _ _ _
-      @lsd _ _ _ _ _ _ _ _ _ _ _
+      @lsd _ _ _ _ _ _ _ _ _ _ @lsd
       @capsp _ @laltd _ _ _
 )
 
