@@ -1,5 +1,4 @@
 {
-  pkgs,
   config,
   lib,
   ...
@@ -43,22 +42,22 @@ in
     #   RUNTIME_PM_ON_BAT = "auto";
     # };
 
-    systemd.services.cfs-zen-tweaks = mkIf cfg.zfsTweaks {
-      description = "Zen CFS tweaks";
-
-      wantedBy = [
-        "multi-user.target"
-        "suspend.target"
-        "hibernate.target"
-        "hybrid-sleep.target"
-        "suspend-then-hibernate.target"
-      ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash ${pkgs.cfs-zen-tweaks}/lib/cfs-zen-tweaks/set-cfs-zen-tweaks.bash";
-      };
-    };
+    # systemd.services.cfs-zen-tweaks = mkIf cfg.zfsTweaks {
+    #   description = "Zen CFS tweaks";
+    #
+    #   wantedBy = [
+    #     "multi-user.target"
+    #     "suspend.target"
+    #     "hibernate.target"
+    #     "hybrid-sleep.target"
+    #     "suspend-then-hibernate.target"
+    #   ];
+    #
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     ExecStart = "${pkgs.bash}/bin/bash ${pkgs.cfs-zen-tweaks}/lib/cfs-zen-tweaks/set-cfs-zen-tweaks.bash";
+    #   };
+    # };
 
     boot = {
       #tmp.cleanOnBoot = true;

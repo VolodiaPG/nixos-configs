@@ -23,7 +23,7 @@ in
     # Services
     # Enable the X11 windowing system.
 
-    programs.cfs-zen-tweaks.enable = true;
+    # programs.cfs-zen-tweaks.enable = true;
 
     security.rtkit.enable = true;
 
