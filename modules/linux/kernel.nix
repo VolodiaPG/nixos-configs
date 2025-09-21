@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   lib,
   ...
@@ -27,20 +28,19 @@ in
       powertop.enable = true;
     };
     services = {
-      power-profiles-daemon.enable = true;
+      power-profiles-daemon.enable = false;
       thermald.enable = true;
       acpid.enable = true;
+      tlp = {
+        enable = true;
+        settings = {
+          CPU_BOOST_ON_BAT = 0;
+          CPU_BOOST_ON_AC = 1;
+          CPU_SCALING_GOVERNOR_ON_BATTERY = "powersave";
+          CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        };
+      };
     };
-    # services.tlp.enable = true;
-    # services.tlp.settings = {
-    #   CPU_BOOST_ON_BAT = 1;
-    #   CPU_BOOST_ON_AC = 1;
-    #   CPU_SCALING_GOVERNOR_ON_BATTERY = "powersave";
-    #   CPU_SCALING_GOVERNOR_ON_AC = "powersave";
-    #   START_CHARGE_THRESH_BAT0 = 90;
-    #   STOP_CHARGE_THRESH_BAT0 = 97;
-    #   RUNTIME_PM_ON_BAT = "auto";
-    # };
 
     # systemd.services.cfs-zen-tweaks = mkIf cfg.zfsTweaks {
     #   description = "Zen CFS tweaks";
@@ -59,6 +59,11 @@ in
     #   };
     # };
 
+    zramSwap = {
+      enable = true;
+      algorithm = "zstd";
+    };
+
     boot = {
       #tmp.cleanOnBoot = true;
 
@@ -70,7 +75,7 @@ in
       #kernelPackages = pkgs-unstable.recurseIntoAttrs (pkgs-unstable.linuxPackagesFor pkgs-unstable.linux-xanmod-volodiapg);
       #kernelPackages = pkgs.linuxPackages-rt_latest;
       # kernelPackages = pkgs.linuxPackages_zen;
-      # kernelPackages = pkgs.linuxPackages_xanmod_latest;
+      kernelPackages = pkgs.linuxPackages_xanmod;
       # kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
 
       # resumeDevice = "/dev/mapper/lvm-swap";
@@ -105,6 +110,23 @@ in
         "vm.dirty_background_ratio" = 1;
         "vm.dirty_ratio" = 3;
         "kernel.sched_rt_runtime_us" = -1;
+
+        # TCP Buffer Optimization
+        "net.core.rmem_max" = 134217728;
+        "net.core.wmem_max" = 134217728;
+        "net.ipv4.tcp_wmem" = "4096 65536 134217728";
+        "net.ipv4.tcp_rmem" = "4096 65536 134217728";
+
+        # TCP Performance Tuning
+        "net.ipv4.tcp_window_scaling" = 1;
+        "net.ipv4.tcp_timestamps" = 1;
+        "net.ipv4.tcp_no_metrics_save" = 1;
+        "net.ipv4.tcp_moderate_rcvbuf" = 1;
+
+        # Network Stack Optimization
+        "net.core.netdev_max_backlog" = 5000;
+        "net.ipv4.tcp_slow_start_after_idle" = 0;
+
         # # "kernel.sched_migration_cost_ns" = 5000000;
         # # "kernel.sched_nr_fork_threshold" = 3;
         # "kernel.sched_fake_interactive_win_time_ms" = 1000;
@@ -117,8 +139,12 @@ in
 
         # # The swappiness sysctl parameter represents the kernel's preference (or avoidance) of swap space. Swappiness can have a value between 0 and 100, the default value is 60.
         # # A low value causes the kernel to avoid swapping, a higher value causes the kernel to try to use swap space. Using a low value on sufficient memory is known to improve responsiveness on many systems.
-        # "vm.swappiness" = 1;
+        "vm.swappiness" = 60;
 
+        # https://github.com/NixOS/nixpkgs/pull/268121/files
+        "vm.watermark_boost_factor" = 0;
+        "vm.watermark_scale_factor" = 125;
+        "vm.page-cluster" = 0;
         # # The value controls the tendency of the kernel to reclaim the memory which is used for caching of directory and inode objects (VFS cache).
         # # Lowering it from the default value of 100 makes the kernel less inclined to reclaim VFS cache (do not set it to 0, this may produce out-of-memory conditions)
         # #vm.vfs_cache_pressure=50
@@ -156,7 +182,9 @@ in
 
         # # This action will speed up your boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
         # # Disable NMI watchdog
-        # "kernel.nmi_watchdog" = 0;
+        "kernel.nmi_watchdog" = 0;
+
+        "vm.oom_kill_allocating_task" = 1;
 
         # # Enable the sysctl setting kernel.unprivileged_userns_clone to allow normal users to run unprivileged containers.
         # "kernel.unprivileged_userns_clone" = 1;
@@ -171,7 +199,7 @@ in
         # "kernel.kptr_restrict" = 2;
 
         # # Disable Kexec, which allows replacing the current running kernel.
-        # "kernel.kexec_load_disabled" = 1;
+        "kernel.kexec_load_disabled" = 1;
 
         # # Increasing the size of the receive queue.
         # # The received frames will be stored in this queue after taking them from the ring buffer on the network card.
@@ -269,6 +297,54 @@ in
         # # "kernel.sched_prio_load_balance_enabled" = 1;
 
         # # "kernel.sched_tt_balancer_opt" = "1";
+
+        "net.core.default_qdisc" = "fq";
+        "net.ipv4.tcp_congestion_control" = "bbr";
+
+        # https://wiki.archlinux.org/title/sysctl
+        "net.ipv4.tcp_fastopen" = 3;
+        "net.ipv4.tcp_max_tw_buckets" = 2000000;
+        "net.ipv4.tcp_max_syn_backlog" = 8192;
+        "net.ipv4.tcp_tw_reuse" = 1;
+        # Set by nix-gaming module
+        # "net.ipv4.tcp_fin_timeout" = 10;
+        "net.ipv4.tcp_keepalive_time" = 60;
+        "net.ipv4.tcp_keepalive_intvl" = 10;
+        "net.ipv4.tcp_keepalive_probes" = 6;
+        "net.ipv4.tcp_mtu_probing" = 1;
+        "net.ipv4.tcp_syncookies" = 1;
+
+        "net.ipv4.conf.all.forwarding" = lib.mkForce 1;
+        "net.ipv4.conf.default.forwarding" = lib.mkForce 1;
+        "net.ipv4.conf.*.forwarding" = lib.mkForce 1;
+        "net.ipv6.conf.all.forwarding" = lib.mkForce 1;
+        "net.ipv6.conf.default.forwarding" = lib.mkForce 1;
+        "net.ipv6.conf.*.forwarding" = lib.mkForce 1;
+
+        "net.ipv4.conf.all.rp_filter" = lib.mkForce 0;
+        "net.ipv4.conf.default.rp_filter" = lib.mkForce 0;
+        "net.ipv4.conf.*.rp_filter" = lib.mkForce 0;
+        "net.ipv4.conf.all.accept_redirects" = lib.mkForce 0;
+        "net.ipv4.conf.default.accept_redirects" = lib.mkForce 0;
+        "net.ipv4.conf.*.accept_redirects" = lib.mkForce 0;
+        "net.ipv4.conf.all.secure_redirects" = 0;
+        "net.ipv4.conf.default.secure_redirects" = 0;
+        "net.ipv4.conf.*.secure_redirects" = 0;
+        "net.ipv4.conf.all.send_redirects" = 0;
+        "net.ipv4.conf.default.send_redirects" = 0;
+        "net.ipv4.conf.*.send_redirects" = 0;
+        "net.ipv6.conf.all.accept_redirects" = lib.mkForce 0;
+        "net.ipv6.conf.default.accept_redirects" = lib.mkForce 0;
+        "net.ipv6.conf.*.accept_redirects" = lib.mkForce 0;
+
+        # Force ARP respond on same interface
+        # https://serverfault.com/questions/834512/why-does-linux-answer-to-arp-on-incorrect-interfaces
+        # But do not set all or *
+        # https://serverfault.com/questions/935366/why-does-arp-ignore-1-break-arp-on-pointopoint-interfaces-kvm-guest
+        "net.ipv4.conf.all.arp_ignore" = 0;
+        "net.ipv4.conf.default.arp_ignore" = 1;
+        "net.ipv4.conf.all.arp_announce" = 0;
+        "net.ipv4.conf.default.arp_announce" = 2;
       };
     };
   };
