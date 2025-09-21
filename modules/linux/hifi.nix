@@ -163,7 +163,7 @@ in
                     };
                     api.alsa = {
                       period-size = selectedProfile.bufferSize;
-                      period-num = 3;
+                      period-num = 6;
                       headroom = 1024;
                       start-delay = 0;
                       disable-mmap = false;
