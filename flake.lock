@@ -898,11 +898,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1758474841,
-        "narHash": "sha256-KkqJaTR575pOM7ByNb5P0bUkmjIO3XV3Xl2lZE+zLLY=",
+        "lastModified": 1758485278,
+        "narHash": "sha256-QKocvzULReSDdYsnQdhDcGozM/pDovH5tAXqXjdUIv0=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "92b16881634e0648b57d3931cabf4cc7146f7c79",
+        "rev": "14c779b6a8eaa2624493cf618d4841f373505870",
         "type": "github"
       },
       "original": {
