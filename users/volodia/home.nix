@@ -184,6 +184,10 @@ in
         else
           echo "Running ${status}Nix"
         fi
+
+        if [ -f ${config.age.secrets.envvars.path} ]; then
+          source ${config.age.secrets.envvars.path}
+        fi
       '';
       shellAliases = {
         ll = "ls -l";
