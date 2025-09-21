@@ -235,6 +235,7 @@ in
             ".tmux/resurrect"
             ".mozilla"
             ".zen"
+            ".supermaven"
           ];
           files = [
             ".bash_history"
