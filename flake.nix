@@ -303,20 +303,25 @@
                   #srvos.nixosModules.server
                   {
                     services = {
-                      nvidia.enable = true;
-                      desktop.enable = false;
+                      desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;
+                      nvidia.enable = true;
+                      hifi = {
+                        enable = true;
+                        profile = "audiophile";
+                      };
                       impermanence = {
                         enable = true;
                         rootVolume = "nvme0n1p11";
                       };
-                      elegantBoot.enable = false;
+
+                      elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = true;
                     };
                     home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
+                      graphical = "gnome";
                       apps = "personal";
                     };
                   }
