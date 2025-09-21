@@ -25,8 +25,6 @@ in
 
     # programs.cfs-zen-tweaks.enable = true;
 
-    security.rtkit.enable = true;
-
     services = {
       pulseaudio.enable = false;
       xserver = {

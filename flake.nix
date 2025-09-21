@@ -265,6 +265,10 @@
                     services = {
                       desktop.enable = true;
                       kernel.enable = true;
+                      hifi = {
+                        enable = true;
+                        profile = "audiophile";
+                      };
                       intel.enable = true;
                       nvidia.enable = true;
                       impermanence = {
