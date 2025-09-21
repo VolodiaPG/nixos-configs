@@ -33,10 +33,6 @@
       url = "github:zhaofengli/mosh/fish-wcwidth";
       flake = false;
     };
-    # yabai = {
-    #   flake = false;
-    #   url = "https://github.com/koekeishiya/yabai/releases/download/v7.1.15/yabai-v7.1.15.tar.gz";
-    # };
     catppuccin.url = "github:catppuccin/nix";
     hosts = {
       url = "github:StevenBlack/hosts";

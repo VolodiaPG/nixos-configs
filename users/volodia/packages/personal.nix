@@ -16,9 +16,8 @@
   home.packages = [
     pkgs.ripgrep
     pkgs.nvim
-    pkgs.opencode
+    pkgs-unstable.opencode
     pkgs-unstable.devenv
-    pkgs-unstable.aider-chat
     pkgs.difftastic
   ];
 
