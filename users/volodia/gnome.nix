@@ -30,6 +30,7 @@
     hyperhdr
     distrobox
     distrobox-tui
+    kitty
   ];
   # can use the gnome dump command
   dconf = {
