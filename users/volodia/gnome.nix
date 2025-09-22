@@ -302,9 +302,7 @@
         "window-switcher-preview-scale" = 0.05;
         "cycle-width-steps" = [
           0.25
-          0.33
           0.5
-          0.66
           0.75
         ];
       };
