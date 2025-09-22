@@ -34,6 +34,7 @@
     discord
     zathura
     signal-desktop
+    gnome-tweaks
   ];
   # can use the gnome dump command
   dconf = {
@@ -91,6 +92,7 @@
           "_processor_frequency_"
           "_system_load_1m_"
           "__temperature_avg__"
+          "_storage_free_"
         ];
         position-in-panel = 3;
       };
