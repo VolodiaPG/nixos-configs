@@ -82,7 +82,7 @@
         speed-factor = 0.5;
       };
 
-      "org/gnome/shell/extensions/vitals" = {
+      "org/gnomere/shell/extensions/vitals" = {
         hot-sensors = [
           "_memory_usage_"
           "__network-tx_max__"
@@ -111,7 +111,7 @@
       };
       "org/gnome/desktop/wm/keybindings" = {
         # hide window: disable <super>h
-        minimize = [ ];
+        minimizere = [ ];
         # switch to workspace left: disable <super>left
         switch-to-workspace-left = [ ];
         # switch to workspace right: disable <super>right
@@ -307,22 +307,38 @@
         ];
       };
       "org/gnome/shell/extensions/paperwm/keybindings" = {
-        "resize-w-dec" = [ "<Super>minus" ];
+        "resize-w-dec" = [
+          "<Super>minus"
+        ];
+        "resize-w-inc" = [
+          "<Super>plus"
+        ];
+        "cyle-width" = [
+          "<Alt>r"
+        ];
         "switch-down" = [
           "<Super>Down"
           "<Super>j"
+          "<Alt>Down"
+          "<Alt>j"
         ];
         "switch-left" = [
           "<Super>Left"
           "<Super>h"
+          "<Alt>Left"
+          "<Alt>h"
         ];
         "switch-right" = [
           "<Super>Right"
           "<Super>l"
+          "<Alt>Right"
+          "<Alt>l"
         ];
         "switch-up" = [
           "<Super>Up"
           "<Super>k"
+          "<Alt>Up"
+          "<Alt>k"
         ];
       };
       "org/gnome/shell/extensions/just-perfection" = {
