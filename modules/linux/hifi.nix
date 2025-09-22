@@ -11,7 +11,7 @@ let
     audiophile = {
       sampleRate = 96000;
       bitDepth = "S24_3LE";
-      bufferSize = 1024;
+      bufferSize = 4096;
       resampleQuality = 15;
       description = "Maximum quality for critical listening";
     };
@@ -35,7 +35,7 @@ let
     studio = {
       sampleRate = 192000;
       bitDepth = "S32_LE";
-      bufferSize = 2048;
+      bufferSize = 8192;
       resampleQuality = 15;
       description = "Studio-grade quality for professional audio work";
     };
@@ -125,7 +125,7 @@ in
                   rate = selectedProfile.sampleRate;
                   quantum = selectedProfile.bufferSize;
                   min-quantum = selectedProfile.bufferSize;
-                  max-quantum = selectedProfile.bufferSize * 4;
+                  max-quantum = selectedProfile.bufferSize * 16;
                 };
                 core = {
                   daemon = true;
@@ -163,8 +163,8 @@ in
                     };
                     api.alsa = {
                       period-size = selectedProfile.bufferSize;
-                      period-num = 6;
-                      headroom = 1024;
+                      period-num = 3;
+                      headroom = 0;
                       start-delay = 0;
                       disable-mmap = false;
                       disable-batch = false;
@@ -193,11 +193,13 @@ in
                     pulse = {
                       min.req = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
                       default.req = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
-                      max.req = "${toString (selectedProfile.bufferSize * 4)}/${toString selectedProfile.sampleRate}";
+                      max.req = "${toString (selectedProfile.bufferSize * 16)}/${toString selectedProfile.sampleRate}";
                     };
                     pulse = {
                       min.quantum = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
-                      max.quantum = "${toString (selectedProfile.bufferSize * 4)}/${toString selectedProfile.sampleRate}";
+                      max.quantum = "${
+                        toString (selectedProfile.bufferSize * 16)
+                      }/${toString selectedProfile.sampleRate}";
                     };
                     server.address = [ "unix:native" ];
                   };
@@ -259,6 +261,10 @@ in
       "snd-ac97-codec.power_save=0"
       "snd-hda-intel.model=auto"
       "snd-hda-intel.probe_mask=1"
+      "threadirqs"
+      "irqaffinity=0"
+      # "intel_idle.max_cstate=1"
+      # "processor.max_cstate=1"
     ];
 
     security.pam.loginLimits = [
@@ -296,11 +302,19 @@ in
 
     users.users.volodia.extraGroups = [ "audio" ];
 
-    systemd.user.services.pipewire.environment = {
-      PIPEWIRE_LATENCY = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
-      PIPEWIRE_RATE = toString selectedProfile.sampleRate;
-      PIPEWIRE_QUANTUM = toString selectedProfile.bufferSize;
-    };
+    # systemd.user.services.pipewire = {
+    #   environment = {
+    #     PIPEWIRE_LATENCY = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
+    #     PIPEWIRE_RATE = toString selectedProfile.sampleRate;
+    #     PIPEWIRE_QUANTUM = toString selectedProfile.bufferSize;
+    #   };
+    #   serviceConfig = {
+    #     CPUSchedulingPolicy = "rr";
+    #     CPUSchedulingPriority = 88;
+    #     IOSchedulingClass = 1;
+    #     IOSchedulingPriority = 4;
+    #   };
+    # };
 
     environment.variables = {
       PIPEWIRE_LATENCY = "${toString selectedProfile.bufferSize}/${toString selectedProfile.sampleRate}";
