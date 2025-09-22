@@ -32,6 +32,7 @@
     distrobox-tui
     kitty
     discord
+    zathura
   ];
   # can use the gnome dump command
   dconf = {
