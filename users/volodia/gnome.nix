@@ -33,6 +33,7 @@
     kitty
     discord
     zathura
+    signal-desktop
   ];
   # can use the gnome dump command
   dconf = {
