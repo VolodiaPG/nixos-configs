@@ -31,6 +31,7 @@
     distrobox
     distrobox-tui
     kitty
+    discord
   ];
   # can use the gnome dump command
   dconf = {
