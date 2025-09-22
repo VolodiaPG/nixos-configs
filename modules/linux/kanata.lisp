@@ -24,15 +24,15 @@
 (deflayer default
       _ _ _ _ _ _ _ _ _ _ _ eql par _
       _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ _
-      _ _ _ _ _ _ _ _ _ _ _ _ _
+      lctl _ _ _ _ _ _ _ _ _ _ _ @stard
+      _ _ _ _ _ _ _ _ _ _ _ _ @lsd
       @capsd _ _ _ _ _
 )
 
 (deflayer programming
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ _ _
+      lctl _ _ _ _ _ _ _ _ _ _ _ _ @stard
       @lsd _ _ _ _ _ _ _ _ _ eql @lsd
       @capsp _ @laltd _ @raltd _
 )
@@ -63,10 +63,8 @@
 )
 
 (defvar
-  streak-count 3
-  streak-time 325
-  tap-timeout 20
-  hold-timeout 500
+  tap-timeout 100
+  hold-timeout 100
   chord-timeout 50
 )
 
@@ -81,9 +79,10 @@
 (defalias
   capsd (layer-switch programming)
   capsp (layer-switch default)
-  laltd (tap-hold 100 100 lalt (layer-while-held alt-layer))
-  lsd (tap-hold 100 100 lsft (layer-while-held s-layer))
-  raltd (tap-hold 100 100 ralt (layer-while-held agr-layer))
+  laltd (tap-hold $tap-timeout $hold-timeout lalt (layer-while-held alt-layer))
+  lsd (tap-hold $tap-timeout $hold-timeout lsft (layer-while-held s-layer))
+  raltd (tap-hold $tap-timeout $hold-timeout ralt (layer-while-held agr-layer))
+  stard (tap-hold $tap-timeout $hold-timeout ^ (layer-while-held agr-layer))
 
   two RA-5
   three RA-4
