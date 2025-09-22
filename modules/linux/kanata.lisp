@@ -32,8 +32,8 @@
 (deflayer programming
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ _ @stard
-      @lsd _ _ _ _ _ _ _ _ _ eql @lsd
+      lctl _ _ _ _ _ _ _ _ _ _ _ @stard
+      @lsd _ _ _ _ _ _ _ _ _ _ eql @lsd
       @capsp _ @laltd _ @raltd _
 )
 
