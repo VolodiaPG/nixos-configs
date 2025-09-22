@@ -22,7 +22,7 @@
 
 ;; default/base layer modifications always active
 (deflayer default
-      _ _ _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _ _ eql par _
       _ _ _ _ _ _ _ _ _ _ _ _ _
       lctl _ _ _ _ _ _ _ _ _ _ _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -33,7 +33,7 @@
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _
       lctl _ _ _ _ _ _ _ _ _ _ _ _ _
-      @lsd _ _ _ _ _ _ _ _ _ _ @lsd
+      @lsd _ _ _ _ _ _ _ _ _ eql @lsd
       @capsp _ @laltd _ @raltd _
 )
 
@@ -41,7 +41,7 @@
       A-' A-1 A-2 A-3 A-4 A-5 A-6 A-7 A-8 A-9 A-0 A-par A-eql A-bspc
       A-tab A-a A-z A-e A-r A-t A-y A-u A-i A-o A-p A-^ A-;
       lctl A-q A-s A-d A-f A-g A-h A-j A-k A-l A-m A-` A-bksl A-ret
-      lsft A-nubs A-w A-x A-c A-v A-b A-n A-comm A-. A-EXCL A-rsft
+      lsft A-nubs A-w A-x A-c A-v A-b A-n A-comm A-. EXCL A-rsft
       lctl lmet lalt spc ralt rctl
 )
 
@@ -50,7 +50,7 @@
       S-' S-1 S-2 S-3 S-4 S-5 S-6 S-7 S-8 S-9 S-0 S-par S-eql S-bspc
       S-tab S-a S-z S-e S-r S-t S-y S-u S-i S-o S-p S-^ S-;
       lctl S-q S-s S-d S-f S-g S-h S-j S-k S-l S-m S-` S-bksl S-ret
-      lsft S-nubs S-w S-x S-c S-v S-b S-n S-comm S-. S-EXCL rsft
+      lsft S-nubs S-w S-x S-c S-v S-b S-n S-comm S-. EXCL rsft
       lctl lmet lalt spc ralt rctl
 )
 
@@ -58,7 +58,7 @@
       RA-' RA-1 RA-2 RA-3 RA-4 RA-5 RA-6 RA-7 RA-8 RA-9 RA-0 RA-par RA-eql RA-bspc
       RA-tab RA-a RA-z RA-e RA-r RA-t RA-y RA-u RA-i RA-o RA-p RA-^ RA-;
       lctl RA-q RA-s RA-d RA-f RA-g RA-h RA-j RA-k RA-l RA-m RA-` RA-bksl RA-ret
-      sft RA-nubs RA-w RA-x RA-c RA-v RA-b RA-n RA-comm RA-. RA-EXCL rsft
+      sft RA-nubs RA-w RA-x RA-c RA-v RA-b RA-n RA-comm RA-. EXCL rsft
       lctl lmet lalt spc ralt rctl
 )
 
