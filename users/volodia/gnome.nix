@@ -86,6 +86,7 @@
       "org/gnomere/shell/extensions/vitals" = {
         hot-sensors = [
           "_memory_usage_"
+          "_memory_swap_usage_"
           "__network-tx_max__"
           "__network-rx_max__"
           "_processor_usage_"
