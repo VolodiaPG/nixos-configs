@@ -269,6 +269,7 @@
                         enable = true;
                         profile = "audiophile";
                       };
+                      hyperhdr.enable = true;
                       intel.enable = true;
                       nvidia.enable = true;
                       impermanence = {

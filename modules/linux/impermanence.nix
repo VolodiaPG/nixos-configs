@@ -236,6 +236,7 @@ in
             ".mozilla"
             ".zen"
             ".supermaven"
+            ".hyperhdr"
           ];
           files = [
             ".bash_history"
