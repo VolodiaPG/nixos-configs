@@ -13,27 +13,27 @@
 
 ;; define keys that will be modified (all keys still processed)
 (defsrc
-  '        1     2     3     4     5     6     7     8     9     0      par    eql        bspc
-  tab       a     z     e     r     t     y     u     i     o     p      ^     ;
-  caps       q     s     d     f     g     h     j     k     l     m      `     bksl     ret
-  lsft nubs   w     x     c     v     b     n     comm  .     EXCL         rsft
-  lctl    lmet   lalt           spc                             ralt                    rctl
+  '        1     2     3     4     5     6     7     8     9     0      par   eql      bspc
+  tab      a     z     e     r     t     y     u     i     o     p      ^     ;
+  caps     q     s     d     f     g     h     j     k     l     m      `     bksl     ret
+  lsft     nubs  w     x     c     v     b     n     comm  .     EXCL   rsft
+  lctl     lmet  lalt  spc   ralt  rctl
 )
 
 ;; default/base layer modifications always active
 (deflayer default
-      _ _ _ _ _ _ _ _ _ _ _ eql par _
-      _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ @stard
-      _ _ _ _ _ _ _ _ _ _ _ _ @lsd
+      _    _ _ _ _ _ _ _ _ _ _    eql  par    _
+      _    _ _ _ _ _ _ _ _ _ _    _    _
+      lctl _ _ _ _ _ _ _ _ _ _    _   @stard  _
+      _    _ _ _ _ _ _ _ _ _ _    @lsd
       @capsd _ _ _ _ _
 )
 
 (deflayer programming
       _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
-      _ _ _ _ _ _ _ _ _ _ _ _ _
-      lctl _ _ _ _ _ _ _ _ _ _ _ @stard
-      @lsd _ _ _ _ _ _ _ _ _ _ eql @lsd
+      _    _ _ _ _ _ _ _ _ _ _    _    _
+      lctl _ _ _ _ _ _ _ _ _ _    _    @stard _
+      @lsd _ _ _ _ _ _ _ _ _ eql  @lsd
       @capsp _ @laltd _ @raltd _
 )
 
@@ -63,8 +63,8 @@
 )
 
 (defvar
-  tap-timeout 100
-  hold-timeout 100
+  tap-timeout 250
+  hold-timeout 300
   chord-timeout 50
 )
 
@@ -82,7 +82,7 @@
   laltd (tap-hold $tap-timeout $hold-timeout lalt (layer-while-held alt-layer))
   lsd (tap-hold $tap-timeout $hold-timeout lsft (layer-while-held s-layer))
   raltd (tap-hold $tap-timeout $hold-timeout ralt (layer-while-held agr-layer))
-  stard (tap-hold $tap-timeout $hold-timeout ^ (layer-while-held agr-layer))
+  stard (tap-hold $tap-timeout $hold-timeout bksl (layer-while-held agr-layer))
 
   two RA-5
   three RA-4
