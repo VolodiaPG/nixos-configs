@@ -280,8 +280,10 @@
       };
       "org/gnome/shell/extensions/mediacontrols" = {
         extension-position = "right";
-        show-player-icon = false;
+        show-player-icon = true;
         show-separators = false;
+        show-label = false;
+        label-width = 0;
       };
       "org/gnome/shell/extensions/paperwm" = {
         "animation-time" = 0.025;
@@ -301,9 +303,9 @@
         "use-default-background" = true;
         "window-switcher-preview-scale" = 0.05;
         "cycle-width-steps" = [
-          0.25
-          0.5
-          0.75
+          0.24
+          0.49
+          0.74
         ];
       };
       "org/gnome/shell/extensions/paperwm/keybindings" = {
