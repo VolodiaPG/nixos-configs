@@ -32,9 +32,9 @@
     distrobox-tui
     kitty
     discord
-    zathura
     signal-desktop
     gnome-tweaks
+    qpdfview
   ];
   # can use the gnome dump command
   dconf = {
@@ -319,25 +319,25 @@
         "switch-down" = [
           "<Super>Down"
           "<Super>j"
-          "<Alt>Down"
+          # "<Alt>Down"
           "<Alt>j"
         ];
         "switch-left" = [
           "<Super>Left"
           "<Super>h"
-          "<Alt>Left"
+          # "<Alt>Left"
           "<Alt>h"
         ];
         "switch-right" = [
           "<Super>Right"
           "<Super>l"
-          "<Alt>Right"
+          # "<Alt>Right"
           "<Alt>l"
         ];
         "switch-up" = [
           "<Super>Up"
           "<Super>k"
-          "<Alt>Up"
+          # "<Alt>Up"
           "<Alt>k"
         ];
       };
