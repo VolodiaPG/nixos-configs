@@ -83,7 +83,7 @@
         speed-factor = 0.5;
       };
 
-      "org/gnomere/shell/extensions/vitals" = {
+      "org/gnome/shell/extensions/vitals" = {
         hot-sensors = [
           "_memory_usage_"
           "_memory_swap_usage_"
