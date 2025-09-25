@@ -11,7 +11,7 @@ let
     audiophile = {
       sampleRate = 96000;
       bitDepth = "S24_3LE";
-      bufferSize = 16384;
+      bufferSize = 16384 * 4;
       resampleQuality = 15;
       description = "Maximum quality for critical listening";
     };
