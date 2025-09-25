@@ -1,9 +1,4 @@
 {
-  config,
-  # pkgs,
-  ...
-}:
-{
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _pkg: true;

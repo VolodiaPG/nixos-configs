@@ -1,6 +1,5 @@
 {
   stdenv,
-  fetchFromGitHub,
   pkgs,
   lib,
   ...
