@@ -45,6 +45,7 @@ in
 
   nix = {
     settings = {
+      extra-experimental-features = "parallel-eval";
       eval-cores = 0;
       max-jobs = "auto";
       lazy-trees = true;
