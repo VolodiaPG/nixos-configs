@@ -121,7 +121,7 @@
                 nix = {
                   # Pin channels to flake inputs.
                   # registry.nixpkgs.flake = inputs.nixpkgs;
-                  registry.self.flake = inputs.nixpkgs;
+                  registry.nixpkgs.flake = inputs.nixpkgs;
                 };
                 nixpkgs.overlays = overlays;
 
@@ -136,6 +136,7 @@
                     agenix.homeManagerModules.default
                     catppuccin.homeModules.catppuccin
                     nix-index-database.homeModules.nix-index
+                    { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
                   ];
                   extraSpecialArgs = specialArgsFor system "volodia" hostName;
                 };
@@ -177,6 +178,7 @@
                       nix-index-database.homeModules.nix-index
                       ./secrets/home-manager.nix
                       ./users/volodia/home.nix
+                      { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
                     ]
                     ++ (nixpkgs.lib.optional pkgs.stdenv.isDarwin mac-app-util.homeManagerModules.default);
                     extraSpecialArgs = specialArgs // {
