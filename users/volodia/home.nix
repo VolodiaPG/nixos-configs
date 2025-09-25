@@ -96,9 +96,6 @@ in
       };
     };
     home-manager.enable = true;
-    nix-index = {
-      enable = true;
-    };
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -116,6 +113,8 @@ in
         fi
       '';
     };
+    nix-index.enable = true;
+    nix-index-database.comma.enable = true;
     bash = {
       enable = true;
       # for editing directly to config.nu

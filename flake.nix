@@ -40,6 +40,10 @@
     };
     mac-app-util.url = "github:hraban/mac-app-util";
     deploy-rs.url = "github:volodiapg/deploy-rs";
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -131,6 +135,7 @@
                     ./secrets/home-manager.nix
                     agenix.homeManagerModules.default
                     catppuccin.homeModules.catppuccin
+                    nix-index-database.homeModules.nix-index
                   ];
                   extraSpecialArgs = specialArgsFor system "volodia" hostName;
                 };
@@ -169,6 +174,7 @@
                     modules = [
                       catppuccin.homeModules.catppuccin
                       agenix.homeManagerModules.default
+                      nix-index-database.homeModules.nix-index
                       ./secrets/home-manager.nix
                       ./users/volodia/home.nix
                     ]
