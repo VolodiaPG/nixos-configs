@@ -337,45 +337,45 @@
                 ]);
             };
 
-            "nixos" = nixpkgs.lib.nixosSystem {
-              system = "aarch64-linux";
-              specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
-              modules =
-                outputs.nixosModules."aarch64-linux".default
-                ++ [
-                  ./machines/nixos/configuration.nix
-                  ./machines/nixos/hardware-configuration.nix
-                ]
-                ++ [
-                  (
-                    { lib, ... }:
-                    {
-                      system.stateVersion = "25.05";
-                      services = {
-                        desktop.enable = true;
-                        kernel.enable = true;
-                        intel.enable = false;
-                        impermanence.enable = false;
-                        elegantBoot.enable = false;
-                        vpn.enable = true;
-                        laptopServer.enable = false;
-                        thermald.enable = lib.mkForce false;
-                      };
-                      home-manager = {
-                        sharedModules = [
-                          ./secrets/home-manager.nix
-                          agenix.homeManagerModules.default
-                        ];
-                        users.volodia.catppuccin.starship.enable = lib.mkForce false;
-                        extraSpecialArgs = {
-                          graphical = "gnome";
-                          apps = "personal";
-                        };
-                      };
-                    }
-                  )
-                ];
-            };
+            # "nixos" = nixpkgs.lib.nixosSystem {
+            #   system = "aarch64-linux";
+            #   specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
+            #   modules =
+            #     outputs.nixosModules."aarch64-linux".default
+            #     ++ [
+            #       ./machines/nixos/configuration.nix
+            #       ./machines/nixos/hardware-configuration.nix
+            #     ]
+            #     ++ [
+            #       (
+            #         { lib, ... }:
+            #         {
+            #           system.stateVersion = "25.05";
+            #           services = {
+            #             desktop.enable = true;
+            #             kernel.enable = true;
+            #             intel.enable = false;
+            #             impermanence.enable = false;
+            #             elegantBoot.enable = false;
+            #             vpn.enable = true;
+            #             laptopServer.enable = false;
+            #             thermald.enable = lib.mkForce false;
+            #           };
+            #           home-manager = {
+            #             sharedModules = [
+            #               ./secrets/home-manager.nix
+            #               agenix.homeManagerModules.default
+            #             ];
+            #             users.volodia.catppuccin.starship.enable = lib.mkForce false;
+            #             extraSpecialArgs = {
+            #               graphical = "gnome";
+            #               apps = "personal";
+            #             };
+            #           };
+            #         }
+            #       )
+            #     ];
+            # };
           };
       }
       (flake-utils.lib.eachSystem [ "aarch64-darwin" ] (
