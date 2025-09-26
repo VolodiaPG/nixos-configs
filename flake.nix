@@ -22,7 +22,10 @@
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
     };
-    vim.url = "github:volodiapg/vim";
+    vim = {
+      url = "github:volodiapg/vim";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     impermanence.url = "github:nix-community/impermanence";
     agenix = {
       url = "github:ryantm/agenix";
