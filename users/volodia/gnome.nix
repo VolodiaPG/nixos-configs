@@ -35,6 +35,9 @@
     signal-desktop
     gnome-tweaks
     qpdfview
+    strawberry
+    qbittorrent
+    distrobox
   ];
   # can use the gnome dump command
   dconf = {

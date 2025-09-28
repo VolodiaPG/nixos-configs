@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   lib,
   ...
@@ -105,23 +106,16 @@ in
 
     # From https://github.com/Gurjaka/Dotfiles/blob/f49e7adfc815d3b2adfd2406133d53cb642ec04e/nixos/modules/sound.nix#L57
     # Look at https://github.com/bilalmirza74/Dotfiles/blob/9a6389f0b2c47baf9dc17404bbeffcfc979bda91/nixos/modules/sound.nix#L42
-
     services.pipewire = {
-      enable = true;
-
       # Pulse configuration optimized for low-impedance IEMs
       extraConfig.pipewire-pulse = {
         "99-pulse-custom" = {
           pulse.properties = {
-            # Smaller buffer sizes for lower latency with sensitive IEMs
-            "pulse.min.req" = "512/48000";
-            "pulse.default.req" = "512/48000";
-            "pulse.min.frag" = "512/48000";
-            "pulse.default.frag" = "512/48000";
+            "pulse.min.req" = "1024/48000";
+            "pulse.default.req" = "1024/48000";
+            "pulse.min.frag" = "1024/48000";
+            "pulse.default.frag" = "1024/48000";
             "pulse.default.tlength" = "1024/48000";
-            # Better volume handling for sensitive drivers
-            "pulse.default.volume" = 0.5;
-            "pulse.volume.limit" = 0.8;
           };
         };
       };
@@ -130,14 +124,11 @@ in
         "10-clock-rate" = {
           context.properties = {
             "default.clock.rate" = 48000;
-            # Add hi-res rates that complement the Aria 2's capabilities
             "default.clock.allowed-rates" = [
               44100
               48000
               88200
               96000
-              176400
-              192000
             ];
             "default.clock.force-rate" = 0;
           };
@@ -148,9 +139,6 @@ in
             "channelmix.upmix" = false;
             "channelmix.downmix" = false;
             "channelmix.normalize" = false;
-            # Preserve dynamic range for detailed IEMs
-            "stream.audio.rate" = 1.0;
-            "stream.audio.volume" = 0.7; # Conservative volume for sensitive IEMs
             "channelmix.mix-lfe" = false;
           };
         };
@@ -158,29 +146,23 @@ in
         "12-buffer-quality" = {
           context.properties = {
             "default.clock.power-of-zero" = false;
-            # Smaller quantum for responsive audio with IEMs
-            "default.clock.quantum" = 512;
-            "default.clock.min-quantum" = 512;
+            "default.clock.quantum" = 1024;
+            "default.clock.min-quantum" = 1024;
             "default.clock.max-quantum" = 1024;
             "default.clock.monotonic" = true;
-            # Better timing precision
             "clock.power-of-two-quantum" = true;
           };
         };
 
         "13-audiophile-quality" = {
           stream.properties = {
-            # Maximum resampling quality for detail retrieval
-            "resample.quality" = 15;
+            "resample.quality" = 10;
             "resample.disable" = false;
-            # 32-bit float processing for headroom
-            "convert.mix.bitdepth" = 32;
             "convert.dither.method" = "triangular-hf"; # Better for sensitive transducers
             "node.pause-on-idle" = false;
-            "node.latency" = "512/48000";
-            "audio.format" = "F32LE";
+            "node.latency" = "1024/48000";
+            "audio.format" = "F24LE";
             "audio.position" = "FL,FR";
-            # Preserve audio fidelity
             "audio.convert" = "none";
             "resample.peaks" = false;
           };
@@ -203,41 +185,6 @@ in
             }
           ];
         };
-
-        # Additional config for IEM-specific optimizations
-        "15-iem-optimizations" = {
-          stream.properties = {
-            # Disable unnecessary processing that can add noise
-            "filter.graph" = "";
-            "audio.adapt.follower" = "";
-            # Ensure bit-perfect output when possible
-            "audio.rate" = 48000;
-            "audio.channels" = 2;
-            # Optimize for stereo imaging of IEMs
-            "channelmix.disable" = true;
-          };
-          context.properties = {
-            # Reduce system audio interference
-            "support.dbus" = false;
-            # Optimize scheduling for audio priority
-            "default.clock.force-quantum" = 512;
-          };
-        };
-
-        # Low-latency profile for gaming/monitoring
-        "16-low-latency-profile" = {
-          context.properties = {
-            "default.clock.quantum" = 256;
-            "default.clock.min-quantum" = 256;
-            "default.clock.max-quantum" = 512;
-          };
-          stream.properties = {
-            "node.latency" = "256/48000";
-            "resample.quality" = 4; # Lower quality but faster processing
-          };
-          # Uncomment the flag below to enable low-latency mode
-          # flags = ["default"];
-        };
       };
 
       alsa.enable = true;
@@ -251,11 +198,9 @@ in
           properties = {
             "alsa.use-acp" = false;
             "alsa.midi" = false; # Disable if not needed
-            # Better hardware parameter handling
-            "api.alsa.period-size" = 512;
+            "api.alsa.period-size" = 1024;
             "api.alsa.period-num" = 2;
             "api.alsa.headroom" = 1024;
-            # Disable hardware mixing for pure output
             "api.alsa.disable-mmap" = false;
             "api.alsa.use-chmap" = false;
           };
@@ -273,6 +218,8 @@ in
         };
       };
     };
+
+    # other config
 
     # System-level audio optimizations
     # boot.kernel.sysctl = {
@@ -429,13 +376,13 @@ in
     #   };
     # };
     #
-    # environment.systemPackages = with pkgs; [
-    #   pavucontrol
-    #   helvum
-    #   qpwgraph
-    #   alsa-utils
-    #   pulseaudio
-    # ];
+    environment.systemPackages = with pkgs; [
+      pavucontrol
+      helvum
+      qpwgraph
+      alsa-utils
+      pulseaudio
+    ];
     #
     # boot.kernelParams = [
     #   "snd-hda-intel.power_save=0"
