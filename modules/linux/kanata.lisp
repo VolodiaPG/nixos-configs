@@ -72,7 +72,7 @@
 
 (defvar
   tap-timeout 500
-  hold-timeout 200
+  hold-timeout 100
   chord-timeout 50
 )
 
