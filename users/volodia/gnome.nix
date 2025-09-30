@@ -142,46 +142,35 @@
         move-to-monitor-right = [ ];
         move-to-workspace-right = [ ];
         switch-to-workspace-1 = [
-          "<Alt>1"
-          "<Alt>&"
+          "<Super>1"
         ];
         switch-to-workspace-2 = [
-          "<Alt>2"
-          "<Alt>["
+          "<Super>2"
         ];
         switch-to-workspace-3 = [
-          "<Alt>3"
-          "<Alt>{"
+          "<Super>3"
         ];
         switch-to-workspace-4 = [
-          "<Alt>4"
-          "<Alt>("
+          "<Super>4"
         ];
         switch-to-workspace-5 = [
-          "<Alt>5"
-          "<Alt>'"
+          "<Super>5"
         ];
         switch-to-workspace-6 = [
-          "<Alt>6"
-          "<Alt>\""
+          "<Super>6"
         ];
         switch-to-workspace-7 = [
-          "<Alt>7"
-          "<Alt>)"
+          "<Super>7"
         ];
         switch-to-workspace-8 = [
-          "<Alt>8"
-          "<Alt>}"
+          "<Super>8"
         ];
         switch-to-workspace-9 = [
-          "<Alt>9"
-          "<Alt>]"
+          "<Super>9"
         ];
         switch-to-workspace-10 = [
-          "<Alt>10"
-          "<Alt>-"
+          "<Super>0"
         ];
-
         # super + ctrl + direction keys, change workspaces, move focus between monitors
         # move to workspace below
         switch-to-workspace-down = [
@@ -203,6 +192,17 @@
         toggle-message-tray = [ "<super>v" ];
         # show the activities overview: disable <super>s
         toggle-overview = [ ];
+
+        switch-to-application-1 = [ ];
+        switch-to-application-2 = [ ];
+        switch-to-application-3 = [ ];
+        switch-to-application-4 = [ ];
+        switch-to-application-5 = [ ];
+        switch-to-application-6 = [ ];
+        switch-to-application-7 = [ ];
+        switch-to-application-9 = [ ];
+        switch-to-application-10 = [ ];
+
         open-new-window-application-1 = [ ];
         open-new-window-application-2 = [ ];
         open-new-window-application-3 = [ ];
@@ -314,37 +314,39 @@
       };
       "org/gnome/shell/extensions/paperwm/keybindings" = {
         "resize-w-dec" = [
-          "<Super>minus"
+          "<Super><Shift>minus"
         ];
         "resize-w-inc" = [
-          "<Super>plus"
+          "<Super><Shift>plus"
         ];
+        "resize-h-dec" = [ ];
+        "resize-h-inc" = [ ];
         "cyle-width" = [
-          "<Alt>r"
+          "<Super>r"
         ];
         "switch-down" = [
           "<Super>Down"
           "<Super>j"
           # "<Alt>Down"
-          "<Alt>j"
+          # "<Alt>j"
         ];
         "switch-left" = [
           "<Super>Left"
           "<Super>h"
           # "<Alt>Left"
-          "<Alt>h"
+          # "<Alt>h"
         ];
         "switch-right" = [
           "<Super>Right"
           "<Super>l"
           # "<Alt>Right"
-          "<Alt>l"
+          # "<Alt>l"
         ];
         "switch-up" = [
           "<Super>Up"
           "<Super>k"
           # "<Alt>Up"
-          "<Alt>k"
+          # "<Alt>k"
         ];
       };
       "org/gnome/shell/extensions/just-perfection" = {

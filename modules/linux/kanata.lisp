@@ -34,7 +34,15 @@
       _    _ _ _ _ _ _ _ _ _ _    _    _
       lctl _ _ _ _ _ _ _ _ _ _    _    @stard _
       @lsd _ _ _ _ _ _ _ _ _ eql  @lsd
-      @capsp _ @laltd _ @raltd _
+      @capsp @superd @laltd _ @raltd _
+)
+
+(deflayer super-layer
+      M-' M-1 M-2 M-3 M-4 M-5 M-6 M-7 M-8 M-9 M-0 M-par M-eql M-bspc
+      M-tab M-a M-z M-e M-r M-t M-y M-u M-i M-o M-p M-^ M-;
+      lctl M-q M-s M-d M-f M-g M-h M-j M-k M-l M-m M-` M-bksl M-ret
+      lsft M-nubs M-w M-x M-c M-v M-b M-n M-comm M-. EXCL M-rsft
+      lctl lmet lalt spc ralt rctl
 )
 
 (deflayer alt-layer
@@ -63,8 +71,8 @@
 )
 
 (defvar
-  tap-timeout 250
-  hold-timeout 100
+  tap-timeout 500
+  hold-timeout 200
   chord-timeout 50
 )
 
@@ -82,6 +90,7 @@
   laltd (tap-hold $tap-timeout $hold-timeout lalt (layer-while-held alt-layer))
   lsd (tap-hold $tap-timeout $hold-timeout lsft (layer-while-held s-layer))
   raltd (tap-hold $tap-timeout $hold-timeout ralt (layer-while-held agr-layer))
+  superd (tap-hold $tap-timeout $hold-timeout lmet (layer-while-held super-layer))
   stard (tap-hold $tap-timeout $hold-timeout bksl (layer-while-held agr-layer))
 
   two RA-5
