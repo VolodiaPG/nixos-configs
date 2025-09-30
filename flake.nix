@@ -557,6 +557,14 @@
       {
         inherit (inputs.deploy-rs) apps;
         deploy.nodes = {
+          msi = {
+            hostname = "msi";
+            profiles.system = {
+              user = "root";
+              sshUser = "volodia";
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
+            };
+          };
           dell = {
             hostname = "dell";
             profiles.system = {
