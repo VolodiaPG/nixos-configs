@@ -63,7 +63,7 @@ in
         };
       };
       system76-scheduler = {
-        enable = true;
+        enable = false;
         useStockConfig = true;
       };
 
