@@ -311,6 +311,9 @@
           0.49
           0.74
         ];
+        "winprops" = [
+          ''{"wm_class":"","title":"Picture in picture","scratch_layer":true,"focus":true}''
+        ];
       };
       "org/gnome/shell/extensions/paperwm/keybindings" = {
         "resize-w-dec" = [
