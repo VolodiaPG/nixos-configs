@@ -32,7 +32,7 @@ in
     kernel.sysctl = {
       "kernel.threads-max" = 2000000;
       "kernel.pid-max" = 2000000;
-      "fs.file-max" = 204708;
+      "fs.file-max" = 999999;
       "vm.max_map_count" = 6000000;
       "net.core.default_qdisc" = lib.mkForce "cake"; # cake fq_codel also works but is older
       "net.ipv4.tcp_ecn" = 1;

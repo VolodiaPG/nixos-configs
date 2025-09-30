@@ -194,17 +194,17 @@ in
 
       # ALSA optimizations for direct hardware access
       wireplumber.extraConfig = {
-        alsa-monitor = {
-          properties = {
-            "alsa.use-acp" = false;
-            "alsa.midi" = false; # Disable if not needed
-            "api.alsa.period-size" = 1024;
-            "api.alsa.period-num" = 2;
-            "api.alsa.headroom" = 1024;
-            "api.alsa.disable-mmap" = false;
-            "api.alsa.use-chmap" = false;
-          };
-        };
+        # alsa-monitor = {
+        #   properties = {
+        #     "alsa.use-acp" = false;
+        #     "alsa.midi" = false; # Disable if not needed
+        #     "api.alsa.period-size" = 1024;
+        #     "api.alsa.period-num" = 2;
+        #     "api.alsa.headroom" = 1024;
+        #     "api.alsa.disable-mmap" = false;
+        #     "api.alsa.use-chmap" = false;
+        #   };
+        # };
 
         # Bluetooth codec preferences (if using wireless)
         bluetooth-monitor = {
