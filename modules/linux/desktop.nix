@@ -16,17 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    #imports = [
-    #  ../services/system76-scheduler/system76-scheduler.nix
-    #];
-
-    # Services
-    # Enable the X11 windowing system.
-
-    # programs.cfs-zen-tweaks.enable = true;
-
     services = {
-      pulseaudio.enable = false;
       xserver = {
         enable = lib.mkForce true;
         xkb = {
@@ -62,162 +52,33 @@ in
           ];
         };
       };
-      system76-scheduler = {
-        enable = false;
-        useStockConfig = true;
-      };
 
-      #system76Scheduler = {
-      # enable = true;
-      # assignments = builtins.readFile ./system76-assignments.ron;
-      #};
-      udev.packages = with pkgs; [ gnome-settings-daemon ];
+      udev.packages = [ pkgs.gnome-settings-daemon ];
 
-      pipewire = {
+      gnome.core-apps.enable = false;
+
+      kanata = {
         enable = true;
-
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-        jack.enable = true;
-
-        extraConfig = {
-          pipewire = {
-            "92-low-latency" = {
-              context.properties.default.clock = {
-                # resample.quality = 15;
-                # link.max-buffers = 16;
-                rate = 192000;
-                quantum = 32;
-                min-quantum = 32;
-                max-quantum = 8192;
-              };
-            };
-            "93-alsa-config" = {
-              context.objects = [
-                {
-                  factory = "adapter";
-                  args = {
-                    factory.name = "api.alsa.pcm.sink";
-                    node = {
-                      name = "alsa-sink";
-                      description = "High-Quality ALSA Sink";
-                    };
-                    media.class = "Audio/Sink";
-                    # api.alsa.path = "hw:0,0"; # Adjust for your DAC
-                    api.alsa = {
-                      period-size = 32;
-                      headroom = 0;
-                      channels = 2;
-                    };
-                    audio = {
-                      format = "S24_3LE"; # 24-bit
-                      rate = 192000;
-                      channels = 2;
-                      position = [
-                        "FL"
-                        "FR"
-                      ];
-                    };
-                  };
-                }
-              ];
-            };
-          };
-
-          pipewire-pulse."92-low-latency" = {
-            context.modules = [
-              {
-                name = "libpipewire-module-protocol-pulse";
-                args.pulse = {
-                  min.req = "32/192000";
-                  default.req = "32/192000";
-                  max.req = "32/192000";
-                  min.quantum = "32/192000";
-                  max.quantum = "8192/192000";
-                };
-              }
-            ];
-            stream.properties = {
-              node.latency = "32/192000";
-              resample = {
-                quality = 15;
-                disable = true;
-              };
-              # channelmix = {
-              #   disable = false;
-              #   min-volume = 0.0;
-              #   max-volume = 10.0;
-              # };
-            };
-          };
-        };
+        keyboards.all.config = readFile ./kanata.lisp;
+        keyboards.all.extraDefCfg = ''
+          concurrent-tap-hold yes
+        '';
       };
     };
 
-    boot.kernelParams = [
-      "snd-hda-intel.power_save=0" # Disable power saving
-      "snd-ac97-codec.power_save=0"
-    ];
+    environment.systemPackages = [
+      pkgs.gnome-calculator
+      pkgs.gnome-characters
+      pkgs.gnome-clocks
+      pkgs.gnome-font-viewer
+      pkgs.gnome-system-monitor
+      pkgs.gnome-weather
+      pkgs.loupe
+      pkgs.nautilus
+      pkgs.snapshot
 
-    # Real-time scheduling for audio
-    security.pam.loginLimits = [
-      {
-        domain = "@audio";
-        item = "memlock";
-        type = "-";
-        value = "unlimited";
-      }
-      {
-        domain = "@audio";
-        item = "rtprio";
-        type = "-";
-        value = "99";
-      }
-      {
-        domain = "@audio";
-        item = "nofile";
-        type = "soft";
-        value = "99999";
-      }
-      {
-        domain = "@audio";
-        item = "nofile";
-        type = "hard";
-        value = "99999";
-      }
-    ];
-
-    # Add user to audio group
-
-    environment.gnome.excludePackages =
-      (with pkgs; [
-        gnome-photos
-        gnome-tour
-        gnome-connections # Replaced by Remmina
-        orca
-      ])
-      ++ (with pkgs; [
-        cheese # webcam tool
-        gnome-music
-        gnome-terminal
-        epiphany # web browser
-        geary # email reader
-        gnome-characters
-        totem # video player
-        tali # poker game
-        iagno # go game
-        hitori # sudoku game
-        atomix # puzzle game
-        yelp
-        gnome-logs
-        gnome-maps
-        gnome-contacts
-      ]);
-
-    #Enable ddc
-    environment.systemPackages = with pkgs; [
-      ddcutil
+      #Enable ddc
+      pkgs.ddcutil
     ];
 
     services.udev.extraRules = ''
@@ -241,17 +102,10 @@ in
 
     fonts = {
       packages = with pkgs; [
-        # powerline-fonts
         corefonts
-        # noto-fonts
-        # noto-fonts-cjk
-        # noto-fonts-emoji
-        # noto-fonts-extra
-        # ubuntu_font_family
         roboto
         joypixels
         nerd-fonts.iosevka-term
-        #(callPackage ../../pkgs/comic-code {})
       ];
       fontconfig.defaultFonts = {
         monospace = [
@@ -260,33 +114,11 @@ in
 
         sansSerif = [
           "Roboto"
-          # "Noto Sans"
-          # "Noto Sans CJK JP"
         ];
-
-        # serif = [
-        #   "Noto Serif"
-        #   "Noto Serif CJK JP"
-        # ];
       };
     };
 
     nixpkgs.config.joypixels.acceptLicense = true; # Personal use only
-
-    services.kanata = {
-      enable = true;
-      keyboards.all.config = readFile ./kanata.lisp;
-      keyboards.all.extraDefCfg = ''
-        concurrent-tap-hold yes
-      '';
-    };
-    # virtualisation.libvirtd.enable = true;
-    # virtualisation = {
-    #   waydroid.enable = true;
-    #   # lxd.enable = true;
-    # };
-
-    # services.gnome.gnome-remote-desktop.enable = true;
 
     # Open up ports
     networking.firewall = {

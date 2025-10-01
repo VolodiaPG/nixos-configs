@@ -276,11 +276,8 @@
                     services = {
                       desktop.enable = true;
                       kernel.enable = true;
-                      hifi = {
-                        enable = true;
-                        profile = "audiophile";
-                      };
-                      hyperhdr.enable = true;
+                      hifi.enable = true;
+                      hyperhdr.enable = false;
                       intel.enable = true;
                       nvidia.enable = true;
                       impermanence = {
@@ -319,10 +316,7 @@
                       kernel.enable = true;
                       intel.enable = true;
                       nvidia.enable = true;
-                      hifi = {
-                        enable = true;
-                        profile = "audiophile";
-                      };
+                      hifi.enable = true;
                       impermanence = {
                         enable = true;
                         rootVolume = "nvme0n1p11";
