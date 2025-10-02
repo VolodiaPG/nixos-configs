@@ -38,6 +38,7 @@
     strawberry
     qbittorrent
     distrobox
+    vlc
   ];
   # can use the gnome dump command
   dconf = {
@@ -361,11 +362,6 @@
   gtk = {
     enable = true;
 
-    # icontheme = {
-    #   name = "fluent";
-    #   package = pkgs.fluent-icon-theme;
-    # };
-
     # iconTheme = {
     #   name = "WhiteSur";
     #   package = pkgs.whitesur-icon-theme.override {
@@ -373,37 +369,20 @@
     #     boldPanelIcons = true;
     #   };
     # };
-    # cursorTheme = {
-    #   name = "macOS";
-    #   package = pkgs.apple-cursor;
-    #   size = 24;
-    # };
+    cursorTheme = {
+      name = "Phinger";
+      package = pkgs.phinger-cursors;
+      size = 24;
+    };
     # theme = {
-    #   name = "WhiteSur-Light";
-    #   package = pkgs.whitesur-gtk-theme.override {
-    #     iconVariant = "simple";
-    #   };
-    # };
-
-    #theme = {
-    #  name = "Orchis";
-
-    #package = (pkgs.callPackage ../../pkgs/orchis-theme { }).override {
-    #  border-radius = 2;
-    #  sizeVariants = [ "compact" ];
-    #  tweaks = [ "macos" ];
-    #};
-    #};
-
-    # cursorTheme = {
-    #   name = "Yaru";
-    #   # package = pkgs.numix-cursor-theme;
+    #   name = "Jasper";
+    #   package = pkgs.jasper-gtk-theme;
     # };
   };
 
-  qt = {
-    #enable = true;
-    platformTheme = "kvantum";
-    style.name = "kvantum";
-  };
+  # qt = {
+  #   #enable = true;
+  #   platformTheme = "kvantum";
+  #   style.name = "kvantum";
+  # };
 }
