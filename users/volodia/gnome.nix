@@ -39,6 +39,7 @@
     qbittorrent
     distrobox
     vlc
+    nur.repos.Ev357.helium
   ];
   # can use the gnome dump command
   dconf = {

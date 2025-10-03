@@ -47,6 +47,10 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -89,6 +93,7 @@
       overlays = with inputs; [
         mosh-overlay
         vim.overlay
+        nur.overlays.default
       ];
 
       pkgsFor =
