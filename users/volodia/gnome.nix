@@ -370,7 +370,7 @@
     #   };
     # };
     cursorTheme = {
-      name = "Phinger";
+      name = "phinger-cursors-light";
       package = pkgs.phinger-cursors;
       size = 24;
     };
