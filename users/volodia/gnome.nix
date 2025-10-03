@@ -40,6 +40,7 @@
     distrobox
     vlc
     nur.repos.Ev357.helium
+    orca-slicer
   ];
   # can use the gnome dump command
   dconf = {
