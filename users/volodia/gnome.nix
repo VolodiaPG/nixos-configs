@@ -16,7 +16,7 @@
     gnomeExtensions.blur-my-shell
     gnomeExtensions.media-controls
     # gnomeExtensions.impatience
-    # gnomeExtensions.hibernate-status-button
+    gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
     gnomeExtensions.paperwm
     gnomeExtensions.tailscale-status

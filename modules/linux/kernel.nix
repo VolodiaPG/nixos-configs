@@ -80,8 +80,6 @@ in
       kernelPackages = pkgs.linuxPackages_xanmod_latest;
       # kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
 
-      # resumeDevice = "/dev/mapper/lvm-swap";
-
       kernelParams = [
         "ecryptfs"
         "noibrs"
