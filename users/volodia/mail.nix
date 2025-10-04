@@ -56,6 +56,7 @@
     mbsync.enable = true;
     msmtp.enable = true;
     notmuch.enable = true;
+    abook.enable = true;
 
     neomutt = {
       enable = true;
