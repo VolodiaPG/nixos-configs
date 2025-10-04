@@ -77,7 +77,10 @@ in
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
     ++ lib.optional (apps != "no-apps") ./packages
-    ++ [ ./syncthing.nix ];
+    ++ [
+      ./syncthing.nix
+      ./mail.nix
+    ];
 
   fonts.fontconfig.enable = true;
 

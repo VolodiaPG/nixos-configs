@@ -9,14 +9,19 @@
 
   age.secrets = {
     pythong5k = {
-      file = ./pythong5k.age; # Relative to this file (secrets/pythong5k.age)
-      mode = "0400";
+      file = ./pythong5k.age;
+      mode = "400";
       path = "${homeDirectory}/.python-grid5000.yaml";
     };
     envvars = {
       file = ./envvars.age;
-      mode = "0400";
+      mode = "400";
       path = "${homeDirectory}/.envvars.sh";
+    };
+    mail_inria_password = {
+      file = ./mail.inria.password.age;
+      mode = "0400";
+      path = "${homeDirectory}/.mail.inria.password.txt";
     };
   };
 }
