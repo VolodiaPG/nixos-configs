@@ -23,6 +23,7 @@
     gnomeExtensions.tailscale-status
     gnomeExtensions.just-perfection
     gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
+    gnomeExtensions.transparent-top-bar-adjustable-transparency
 
     gnome-obfuscate
 
@@ -114,6 +115,7 @@
           "tailscale-status@maxgallup.github.com"
           "just-perfection-desktop@just-perfection"
           "instantworkspaceswitcher@amalantony.net"
+          "transparent-top-bar@ftpix.com"
         ];
       };
 
@@ -296,19 +298,11 @@
         hide = true;
         selected-image = "current";
       };
+      "org/gnome/shell/extensions/blur-my-shell/panel" = {
+        blur = false;
+      };
       "org/gnome/shell/extensions/blur-my-shell/applications" = {
         blur = false;
-        opacity = 230;
-        whitelist = [
-          "Kgx"
-          "org.gnome.Console"
-          "Org.gnome.Nautilus"
-          "Code"
-          "gnome-control-center"
-          "tidal-hifi"
-          "discord"
-          "lapce"
-        ];
       };
       "org/gnome/shell/extensions/rounded-window-corners" = {
         global-rounded-corner-settings = "{'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 20>, 'smoothing': <0.10000000000000001>, 'enabled': <true>}";
@@ -349,6 +343,8 @@
         "winprops" = [
           ''{"wm_class":"","title":"Picture in picture","scratch_layer":true,"focus":true}''
         ];
+        "vertical-margin-bottom" = 0;
+        "selection-border-size" = 0;
       };
       "org/gnome/shell/extensions/paperwm/keybindings" = {
         "resize-w-dec" = [
@@ -390,6 +386,11 @@
       "org/gnome/shell/extensions/just-perfection" = {
         "top-panel-position" = 1;
         "animation" = 3;
+      };
+      "com/ftpix/transparentbar" = {
+        "dark-full-screen" = false;
+        "disable-text-shadow" = true;
+        "transparency" = 0;
       };
     };
   };
