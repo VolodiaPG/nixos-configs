@@ -237,6 +237,7 @@ in
             ".zen"
             ".supermaven"
             ".hyperhdr"
+            ".tmux"
           ];
           files = [
             ".bash_history"
