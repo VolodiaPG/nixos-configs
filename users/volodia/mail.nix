@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   ...
 }:
@@ -52,6 +53,22 @@
       };
   };
 
+  xdg.configFile = {
+    "neomutt/mailcap" = {
+      enable = true;
+      text = ''
+        text/html; ${pkgs.lynx}/bin/lynx -display_charset=utf-8 -dump %s; nametemplate=%s.html; copiousoutput
+        text/*; more
+      '';
+    };
+  };
+
+  # Include lynx in our packages
+  home.packages = with pkgs; [
+    lynx
+    # urlscan
+  ];
+
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
@@ -67,6 +84,8 @@
         shortPath = true;
         width = 25;
       };
+
+      settings.mailcap_path = "${config.xdg.configHome}/neomutt/mailcap";
 
       # from https://github.com/LukeSmithxyz/mutt-wizard
 
