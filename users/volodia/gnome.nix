@@ -150,7 +150,10 @@
         restore-shortcuts = [ ];
       };
       "org/gnome/desktop/wm/preferences" = {
-        focus-mode = "mouse";
+        focus-mode = "click"; # mouse
+      };
+      "org/gnome/desktop/sound" = {
+        event-sounds = false;
       };
       "org/gnome/desktop/wm/keybindings" = {
         # hide window: disable <super>h
