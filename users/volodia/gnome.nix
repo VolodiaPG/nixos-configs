@@ -42,7 +42,7 @@
     distrobox
     vlc
     nur.repos.Ev357.helium
-    # orca-slicer
+    drawio
   ];
   xdg.desktopEntries = {
     OrcaSlicer = {
