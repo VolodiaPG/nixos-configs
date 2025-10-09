@@ -27,7 +27,6 @@
 
     gnome-obfuscate
 
-    brave
     pkgs-unstable.tidal-hifi
     hyperhdr
     distrobox
