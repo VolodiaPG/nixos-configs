@@ -29,7 +29,7 @@
 
   fileSystems = {
     "/boot" = {
-      device = "/dev/disk/by-uuid/616D-12F7";
+      device = "/dev/disk/by-label/BOOT";
       fsType = "vfat";
     };
   };
