@@ -339,6 +339,38 @@
                 ]);
             };
 
+            "m1" = nixpkgs.lib.nixosSystem {
+              inherit system;
+              specialArgs = specialArgsFor "${system}" "volodia";
+              modules =
+                outputs.nixosModules.${system}.default
+                ++ (with inputs; [
+                  ./machines/m1/configuration.nix
+                  ./machines/m1/hardware-configuration.nix
+                  nixos-apple-silicon.nixosModules.apple-silicon
+                  nixos-hardware.nixosModules.common-pc
+                  nixos-hardware.nixosModules.common-pc-laptop
+                  nixos-hardware.nixosModules.common-pc-laptop-ssd
+                  #srvos.nixosModules.server
+                  microvm.nixosModules.host
+                  {
+                    services = {
+                      desktop.enable = true;
+                      impermanence = {
+                        enable = true;
+                        rootVolume = "/dev/disk/by-label/root";
+                      };
+                      # elegantBoot.enable = true;
+                      vpn.enable = true;
+                    };
+                    home-manager.extraSpecialArgs = {
+                      graphical = "gnome";
+                      apps = "personal";
+                    };
+                  }
+                ]);
+            };
+
             # "nixos" = nixpkgs.lib.nixosSystem {
             #   system = "aarch64-linux";
             #   specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
