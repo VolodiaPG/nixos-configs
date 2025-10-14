@@ -1,23 +1,22 @@
 {
   pkgs,
   lib,
-  pkgs-unstable,
   ...
 }:
 {
   home.packages = with pkgs; [
     # Gnome extensions
-    gnomeExtensions.appindicator
+    # gnomeExtensions.appindicator
     gnomeExtensions.vitals
     # gnomeExtensions.pop-shell
     # gnomeExtensions.hide-activities-button
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.gsconnect
     gnomeExtensions.bing-wallpaper-changer
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.media-controls
+    # gnomeExtensions.blur-my-shell
+    # gnomeExtensions.media-controls
     # gnomeExtensions.impatience
-    gnomeExtensions.hibernate-status-button
+    # gnomeExtensions.hibernate-status-button
     gnomeExtensions.brightness-control-using-ddcutil
     gnomeExtensions.paperwm
     gnomeExtensions.tailscale-status
@@ -27,7 +26,7 @@
 
     gnome-obfuscate
 
-    pkgs-unstable.tidal-hifi
+    # pkgs-unstable.tidal-hifi
     hyperhdr
     distrobox
     distrobox-tui
@@ -338,7 +337,6 @@
         "use-default-background" = true;
         "window-switcher-preview-scale" = 0.05;
         "cycle-width-steps" = [
-          0.24
           0.49
           0.74
         ];
