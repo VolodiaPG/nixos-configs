@@ -12,7 +12,7 @@
         realName = "Volodia P.-G.";
 
         mbsync.enable = true;
-        msmtp.enable = true;
+        # msmtp.enable = true;
         notmuch = {
           enable = true;
           neomutt.enable = true;
@@ -36,18 +36,21 @@
           inherit
             realName
             mbsync
-            msmtp
+            # msmtp
             notmuch
             neomutt
             ;
-          address = "vparolgu@inria.fr";
+          address = "volodia.parol-guarino@inria.fr";
           userName = "vparolgu";
           passwordCommand = "cat ${config.age.secrets.mail_inria_password.path}";
           imap = {
             host = "imap.inria.fr";
+            port = 993;
           };
           smtp = {
             host = "smtp.inria.fr";
+            tls.useStartTls = true;
+            port = 587;
           };
         };
       };
