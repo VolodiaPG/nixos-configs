@@ -18,7 +18,6 @@
     ];
   };
 
-  hardware.asahi.peripheralFirmwareDirectory = ./firmware;
   zramSwap.enable = true;
 
   networking = {
@@ -27,9 +26,21 @@
     networkmanager.enable = true; # Easiest to use and most distros use this by default.
   };
 
-  hardware.asahi = {
-    enable = true;
-    setupAsahiSound = true;
+  hardware = {
+    asahi = {
+      enable = true;
+      setupAsahiSound = true;
+      peripheralFirmwareDirectory = ./firmware;
+    };
+    apple.touchBar = {
+      enable = true;
+      settings = {
+        MediaLayerDefault = true;
+        ShowButtonOutlines = false;
+        AdaptiveBrightness = true;
+        ActiveBrightness = 128;
+      };
+    };
   };
 
   services = {
