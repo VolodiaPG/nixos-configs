@@ -210,10 +210,6 @@ in
       enable = true;
       userName = "Volodia P.-G.";
       userEmail = "volodia.parol-guarino@proton.me";
-      difftastic = {
-        enable = true;
-        package = pkgs.difftastic;
-      };
       signing = {
         format = "ssh";
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
