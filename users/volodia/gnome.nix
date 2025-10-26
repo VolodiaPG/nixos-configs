@@ -4,44 +4,49 @@
   ...
 }:
 {
-  home.packages = with pkgs; [
-    # Gnome extensions
-    # gnomeExtensions.appindicator
-    gnomeExtensions.vitals
-    # gnomeExtensions.pop-shell
-    # gnomeExtensions.hide-activities-button
-    gnomeExtensions.gnome-40-ui-improvements
-    gnomeExtensions.gsconnect
-    gnomeExtensions.bing-wallpaper-changer
-    # gnomeExtensions.blur-my-shell
-    # gnomeExtensions.media-controls
-    # gnomeExtensions.impatience
-    # gnomeExtensions.hibernate-status-button
-    gnomeExtensions.brightness-control-using-ddcutil
-    gnomeExtensions.paperwm
-    gnomeExtensions.tailscale-status
-    gnomeExtensions.just-perfection
-    gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
-    gnomeExtensions.transparent-top-bar-adjustable-transparency
+  home.packages =
+    with pkgs;
+    [
+      # Gnome extensions
+      # gnomeExtensions.appindicator
+      gnomeExtensions.vitals
+      # gnomeExtensions.pop-shell
+      # gnomeExtensions.hide-activities-button
+      gnomeExtensions.gnome-40-ui-improvements
+      gnomeExtensions.gsconnect
+      gnomeExtensions.bing-wallpaper-changer
+      # gnomeExtensions.blur-my-shell
+      # gnomeExtensions.media-controls
+      # gnomeExtensions.impatience
+      # gnomeExtensions.hibernate-status-button
+      gnomeExtensions.brightness-control-using-ddcutil
+      gnomeExtensions.paperwm
+      gnomeExtensions.tailscale-status
+      gnomeExtensions.just-perfection
+      gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
+      gnomeExtensions.transparent-top-bar-adjustable-transparency
 
-    gnome-obfuscate
+      gnome-obfuscate
 
-    # pkgs-unstable.tidal-hifi
-    hyperhdr
-    distrobox
-    distrobox-tui
-    kitty
-    discord
-    signal-desktop
-    gnome-tweaks
-    qpdfview
-    strawberry
-    qbittorrent
-    distrobox
-    vlc
-    nur.repos.Ev357.helium
-    drawio
-  ];
+      # pkgs-unstable.tidal-hifi
+      hyperhdr
+      distrobox
+      distrobox-tui
+      kitty
+
+      signal-desktop
+      gnome-tweaks
+      qpdfview
+      strawberry
+      qbittorrent
+      distrobox
+      vlc
+      nur.repos.Ev357.helium
+      drawio
+    ]
+    ++ lib.optionals pkgs.stdenv.isx86_64 [
+      discord
+    ];
   xdg.desktopEntries = {
     OrcaSlicer = {
       name = "OrcaSlicer";

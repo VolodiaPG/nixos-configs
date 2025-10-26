@@ -19,13 +19,7 @@
   };
 
   hardware.asahi.peripheralFirmwareDirectory = ./firmware;
-
   zramSwap.enable = true;
-
-  services.logind.extraConfig = ''
-    # don't shutdown when power button is short-pressed
-    HandlePowerKey=ignore
-  '';
 
   networking = {
     hostId = "30249679";
@@ -34,19 +28,36 @@
   };
 
   hardware.asahi = {
-    useExperimentalGPUDriver = true;
-    experimentalGPUInstallMode = "replace";
+    enable = true;
     setupAsahiSound = true;
   };
 
   services = {
     openssh.enable = true;
-
-    # Enable the X11 windowing system.
-    # xserver = {
+    # libinput = {
     #   enable = true;
-    #   #  videoDrivers = ["nvidia"];
-    #   #  exportConfiguration = true;
+    #   touchpad = {
+    #     accelStepScroll = 0.00001;
+    #     accelStepMotion = 0.00001;
+    #     accelPointsScroll = [
+    #       0
+    #       0.0001
+    #       0.00024
+    #       0.00025
+    #     ];
+    #     accelPointsMotion = [
+    #       0
+    #       0.0001
+    #       0.00024
+    #       0.00025
+    #     ];
+    #     # accelStepMotion = 0.001;
+    #     tapping = true;
+    #     scrollMethod = "twofinger";
+    #     naturalScrolling = true;
+    #     accelProfile = "flat";
+    #     disableWhileTyping = true;
+    #   };
     # };
   };
 

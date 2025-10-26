@@ -3,7 +3,7 @@
 
   inputs = {
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -51,6 +51,9 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-apple-silicon = {
+      url = "github:nix-community/nixos-apple-silicon";
+    };
   };
 
   nixConfig = {
@@ -59,12 +62,14 @@
       "https://giraff.cachix.org"
       "https://vim.cachix.org"
       "https://install.determinate.systems"
+      "https://nixos-apple-silicon.cachix.org"
     ];
     extra-trusted-public-keys = [
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "giraff.cachix.org-1:3sol29PSsWCh/7bAiRze+5Zq6OML02FDRH13K5i3qF4="
       "vim.cachix.org-1:csyY4pnUgltVSD3alxSV6zZG/lRD7FQBfl4K4RNBgXA="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+      "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
     ];
   };
 
@@ -94,6 +99,7 @@
         mosh-overlay
         vim.overlay
         nur.overlays.default
+        nixos-apple-silicon.overlays.default
       ];
 
       pkgsFor =
@@ -214,6 +220,7 @@
                     "no-machine"
                     "dell"
                     "msi"
+                    "m1"
                     "Volodias-MacBook-Pro"
                   ];
                 }
@@ -223,12 +230,12 @@
       ))
       {
         # Do not forget to also add to peerix to share the derivations
-        nixosConfigurations =
-          let
-            system = "x86_64-linux";
-          in
-          {
-            "home-server" = nixpkgs.lib.nixosSystem {
+        nixosConfigurations = {
+          "home-server" =
+            let
+              system = "x86_64-linux";
+            in
+            nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor system "volodia" "home-server";
               modules =
@@ -265,7 +272,11 @@
                   }
                 ]);
             };
-            "msi" = nixpkgs.lib.nixosSystem {
+          "msi" =
+            let
+              system = "x86_64-linux";
+            in
+            nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor "${system}" "volodia" "msi";
               modules =
@@ -301,7 +312,11 @@
                 ]);
             };
 
-            "dell" = nixpkgs.lib.nixosSystem {
+          "dell" =
+            let
+              system = "x86_64-linux";
+            in
+            nixpkgs.lib.nixosSystem {
               inherit system;
               specialArgs = specialArgsFor "${system}" "volodia" "dell";
               modules =
@@ -339,78 +354,84 @@
                 ]);
             };
 
-            # "m1" = nixpkgs.lib.nixosSystem {
-            #   inherit system;
-            #   specialArgs = specialArgsFor "${system}" "volodia";
-            #   modules =
-            #     outputs.nixosModules.${system}.default
-            #     ++ (with inputs; [
-            #       ./machines/m1/configuration.nix
-            #       ./machines/m1/hardware-configuration.nix
-            #       nixos-apple-silicon.nixosModules.apple-silicon
-            #       nixos-hardware.nixosModules.common-pc
-            #       nixos-hardware.nixosModules.common-pc-laptop
-            #       nixos-hardware.nixosModules.common-pc-laptop-ssd
-            #       #srvos.nixosModules.server
-            #       microvm.nixosModules.host
-            #       {
-            #         services = {
-            #           desktop.enable = true;
-            #           impermanence = {
-            #             enable = true;
-            #             rootVolume = "/dev/disk/by-label/root";
-            #           };
-            #           # elegantBoot.enable = true;
-            #           vpn.enable = true;
-            #         };
-            #         home-manager.extraSpecialArgs = {
-            #           graphical = "gnome";
-            #           apps = "personal";
-            #         };
-            #       }
-            #     ]);
-            # };
-            #
-            # "nixos" = nixpkgs.lib.nixosSystem {
-            #   system = "aarch64-linux";
-            #   specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
-            #   modules =
-            #     outputs.nixosModules."aarch64-linux".default
-            #     ++ [
-            #       ./machines/nixos/configuration.nix
-            #       ./machines/nixos/hardware-configuration.nix
-            #     ]
-            #     ++ [
-            #       (
-            #         { lib, ... }:
-            #         {
-            #           system.stateVersion = "25.05";
-            #           services = {
-            #             desktop.enable = true;
-            #             kernel.enable = true;
-            #             intel.enable = false;
-            #             impermanence.enable = false;
-            #             elegantBoot.enable = false;
-            #             vpn.enable = true;
-            #             laptopServer.enable = false;
-            #             thermald.enable = lib.mkForce false;
-            #           };
-            #           home-manager = {
-            #             sharedModules = [
-            #               ./secrets/home-manager.nix
-            #               agenix.homeManagerModules.default
-            #             ];
-            #             users.volodia.catppuccin.starship.enable = lib.mkForce false;
-            #             extraSpecialArgs = {
-            #               graphical = "gnome";
-            #               apps = "personal";
-            #             };
-            #           };
-            #         }
-            #       )
-            #     ];
-            # };
-          };
+          "m1" =
+            let
+              system = "aarch64-linux";
+            in
+            nixpkgs.lib.nixosSystem {
+              inherit system;
+              specialArgs = specialArgsFor "${system}" "volodia" "m1";
+              modules =
+                outputs.nixosModules.${system}.default
+                ++ (with inputs; [
+                  ./machines/m1/configuration.nix
+                  ./machines/m1/hardware-configuration.nix
+                  nixos-apple-silicon.nixosModules.default
+                  nixos-hardware.nixosModules.common-pc
+                  nixos-hardware.nixosModules.common-pc-laptop
+                  nixos-hardware.nixosModules.common-pc-laptop-ssd
+                  #srvos.nixosModules.server
+                  #microvm.nixosModules.host
+                  {
+                    services = {
+                      desktop.enable = true;
+                      impermanence = {
+                        enable = true;
+                        rootVolume = "disk/by-label/root";
+                      };
+                      kernel.enable = true;
+                      elegantBoot.enable = true;
+                      vpn.enable = true;
+                      hifi.enable = true;
+                    };
+                    home-manager.extraSpecialArgs = {
+                      graphical = "gnome";
+                      apps = "personal";
+                    };
+                  }
+                ]);
+            };
+
+          # "nixos" = nixpkgs.lib.nixosSystem {
+          #   system = "aarch64-linux";
+          #   specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
+          #   modules =
+          #     outputs.nixosModules."aarch64-linux".default
+          #     ++ [
+          #       ./machines/nixos/configuration.nix
+          #       ./machines/nixos/hardware-configuration.nix
+          #     ]
+          #     ++ [
+          #       (
+          #         { lib, ... }:
+          #         {
+          #           system.stateVersion = "25.05";
+          #           services = {
+          #             desktop.enable = true;
+          #             kernel.enable = true;
+          #             intel.enable = false;
+          #             impermanence.enable = false;
+          #             elegantBoot.enable = false;
+          #             vpn.enable = true;
+          #             laptopServer.enable = false;
+          #             thermald.enable = lib.mkForce false;
+          #           };
+          #           home-manager = {
+          #             sharedModules = [
+          #               ./secrets/home-manager.nix
+          #               agenix.homeManagerModules.default
+          #             ];
+          #             users.volodia.catppuccin.starship.enable = lib.mkForce false;
+          #             extraSpecialArgs = {
+          #               graphical = "gnome";
+          #               apps = "personal";
+          #             };
+          #           };
+          #         }
+          #       )
+          #     ];
+          # };
+        };
       }
       (flake-utils.lib.eachSystem [ "aarch64-darwin" ] (
         system:

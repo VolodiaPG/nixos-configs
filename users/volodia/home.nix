@@ -93,7 +93,7 @@ in
       settings = {
         git = {
           paging = {
-            externalDiffCommand = "${pkgs.difftastic}/bin/difft --color=always";
+            pager = "diff-so-fancy";
           };
         };
       };
@@ -309,6 +309,7 @@ in
       fontconfig
       tmux
       mosh
+      diff-so-fancy
       # nerd-fonts.zed-mono
     ];
 
