@@ -34,24 +34,35 @@ in
       };
     })
     // (mkIf cfg.enable {
-      # boot.kernelModules = ["ecryptfs"];
       powerManagement = {
         enable = true;
         powertop.enable = true;
       };
+
+      boot = {
+        extraModulePackages = [
+          pkgs.cpufreq-laputil
+        ];
+
+        kernelModules = [
+          "ecryptfs"
+          "cpufreq-laputil"
+        ];
+      };
+
       services = {
         power-profiles-daemon.enable = false;
         thermald.enable = pkgs.stdenv.isx86_64;
         acpid.enable = true;
         tlp = {
-          enable = true;
+          enable = false;
           settings = {
             CPU_BOOST_ON_BAT = 0;
             CPU_BOOST_ON_AC = 1;
             CPU_HWP_DYN_BOOST_ON_AC = 1;
             CPU_HWP_DYN_BOOST_ON_BAT = 0;
-            CPU_SCALING_GOVERNOR_ON_BATTERY = "powersave";
-            CPU_SCALING_GOVERNOR_ON_AC = "performance";
+            CPU_SCALING_GOVERNOR_ON_BATTERY = "laputil";
+            CPU_SCALING_GOVERNOR_ON_AC = "laputil";
             CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
             CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
             PLATFORM_PROFILE_ON_AC = "performance";

@@ -54,6 +54,10 @@
     nixos-apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon";
     };
+    laputil = {
+      url = "github:volodiapg/laputil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -161,6 +165,7 @@
           ]
           ++ [ determinate.nixosModules.default ]
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
+          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) laputil.nixosModules.default)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) home-manager.darwinModules.home-manager)

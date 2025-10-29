@@ -43,6 +43,7 @@
       vlc
       nur.repos.Ev357.helium
       drawio
+      easyeffects
     ]
     ++ lib.optionals pkgs.stdenv.isx86_64 [
       discord
