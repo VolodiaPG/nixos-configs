@@ -5,36 +5,12 @@
   };
 
   programs = {
-    # fish.interactiveShellInit = ''
-    #   function __fish_command_not_found_handler --on-event="fish_command_not_found"
-    #     ${
-    #     if config.programs.fish.useBabelfish
-    #     then ''
-    #       command_not_found_handle $argv
-    #     ''
-    #     else ''
-    #       ${pkgs.bashInteractive}/bin/bash -c \
-    #         "source ${config.programs.nix-index.package}/etc/profile.d/command-not-found.sh; command_not_found_handle $argv"
-    #     ''
-    #   }
-    #   end
-    # '';
     nix-index = {
       enable = true;
     };
   };
   nix = {
-    # package = pkgs.nixVersions.latest;
-    #package = pkgs.nixVersions.unstable;
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 10d";
-    };
-    optimise.automatic = true;
-
-    # package = pkgs.nix;
     settings = {
-      # experimental-features = "nix-command flakes";
       keep-outputs = true;
       keep-derivations = true;
       warn-dirty = false;

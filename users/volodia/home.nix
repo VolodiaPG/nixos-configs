@@ -76,7 +76,10 @@ in
 {
   imports =
     lib.optional (graphical == "gnome") ./gnome.nix
-    ++ lib.optional (graphical == "gnome") ./mail.nix
+    ++ lib.optional (builtins.elem graphical [
+      "gnome"
+      "macos"
+    ]) ./mail.nix
     ++ lib.optional (apps != "no-apps") ./packages
     ++ [
       ./syncthing.nix
@@ -101,85 +104,33 @@ in
     home-manager.enable = true;
     zoxide = {
       enable = true;
-      enableBashIntegration = true;
+      enableZshIntegration = true;
       options = [
         "--cmd cd"
       ];
     };
     zsh = {
-      enable = pkgs.stdenv.isDarwin;
-      initContent = ''
-        if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'nu' ]]
-        then
-            export PATH=/run/current-system/sw/bin/:/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/usr/local/bin/:$PATH
-            exec nu
-        fi
-      '';
-    };
-    nix-index.enable = true;
-    nix-index-database.comma.enable = true;
-    bash = {
       enable = true;
-      # for editing directly to config.nu
-      initExtra = ''
-        source -- ${pkgs.blesh}/share/blesh/ble.sh
-
+      enableCompletion = true;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      initContent = ''
         export LC_ALL="C.UTF-8"
 
-        # Save 5,000 lines of history in memory
+        # History settings
         HISTSIZE=10000
-        # Save 2,000,000 lines of history to disk (will have to grep ~/.bash_history for full listing)
-        HISTFILESIZE=2000000
-        # Append to history instead of overwrite
-        shopt -s histappend
-        # Ignore redundant or space commands
-        HISTCONTROL=ignoreboth
-        # Ignore more
-        HISTIGNORE='ls:ll:ls -alh:pwd:clear:c:history:htop'
-        # Set time format
-        HISTTIMEFORMAT='%F %T '
-        # Multiple commands on one line show up as a single line
-        shopt -s cmdhist
+        SAVEHIST=2000000
+        HISTFILE=~/.zsh_history
+        setopt appendhistory
+        setopt hist_ignore_all_dups
+        setopt hist_ignore_space
+        setopt hist_reduce_blanks
+        setopt share_history
 
-        function __set_prompt() {
-            # Check for a Git repository.
-            # The 'git branch' command will be empty if not in a repo.
-            local git_info
-            git_info=$(git branch --show-current 2>/dev/null)
-            if [[ -n "$git_info" ]]; then
-                # If a branch is found, set the Git part of the prompt.
-                PS1_GIT="  \e[3m$git_info\e[0m"
-            else
-                # Otherwise, set it to an empty string.
-                PS1_GIT=""
-            fi
+        # Ignore commands
+        HISTORY_IGNORE="(ls|ll|ls -alh|pwd|clear|c|history|htop)"
 
-            # Check for background jobs.
-            # The `\j` prompt escape sequence expands to the number of jobs.
-            # The `jobs` command returns a non-empty string if there are any jobs.
-            # The original prompt had a newline for jobs.
-            local jobs_count
-            jobs_count=$(jobs -p | wc -l)
-            if [[ "$jobs_count" -gt 0 ]]; then
-                # If there are jobs, set the jobs part of the prompt with a newline.
-                PS1_JOBS="(\j)"
-            else
-                # Otherwise, set it to an empty string.
-                PS1_JOBS=""
-            fi
-
-            # Finally, set the PS1 variable using the conditional strings.
-            # The \w part is the current working directory.
-            # The final prompt will be on a new line and colored.
-            export PS1="\033[38;5;103m\w$PS1_GIT\n$PS1_JOBS\[\e[1;38;5;38m\]\$ \[\e[0m\]"
-            # newline after command
-            echo
-            history -a
-            # history -c
-            # history -r
-        }
-
-        export PROMPT_COMMAND=__set_prompt
+        SHELL=${lib.getExe pkgs.zsh}
 
         if (which nixos-version > /dev/null); then
          echo $"Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})"
@@ -198,6 +149,12 @@ in
         g = "git";
         c = "clear";
       };
+    };
+    nix-index.enable = true;
+    nix-index-database.comma.enable = true;
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
     };
     direnv = {
       enable = true;
@@ -239,50 +196,50 @@ in
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
 
-  systemd.user.services.UseSecrets =
-    let
-      script = pkgs.writeShellScript "agenix-user-test" ''
-        echo "Accessing pythong5k secret path:"
-        echo ${config.age.secrets.pythong5k.path}
-        # Example: cat ${config.age.secrets.pythong5k.path}
-      '';
-    in
-    lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      Unit = {
-        Description = "test";
-      };
-      Service = {
-        ExecStart = script;
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      Install.WantedBy = [ "default.target" ];
-    };
+  # systemd.user.services.UseSecrets =
+  #   let
+  #     script = pkgs.writeShellScript "agenix-user-test" ''
+  #       echo "Accessing pythong5k secret path:"
+  #       echo ${config.age.secrets.pythong5k.path}
+  #       # Example: cat ${config.age.secrets.pythong5k.path}
+  #     '';
+  #   in
+  #   lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+  #     Unit = {
+  #       Description = "test";
+  #     };
+  #     Service = {
+  #       ExecStart = script;
+  #       Type = "oneshot";
+  #       RemainAfterExit = true;
+  #     };
+  #     Install.WantedBy = [ "default.target" ];
+  #   };
 
-  systemd.user.services.sshIdRsa =
-    let
-      binPath = lib.strings.makeBinPath ([ pkgs.coreutils ] ++ pkgs.stdenv.initialPath);
-      script = pkgs.writeShellScript "symlinkrsa" ''
-        export PATH="${binPath}"
-        if [ ! -f ~/.ssh/id_rsa.pub ] || [ "$(realpath ~/.ssh/id_rsa.pub)" != "$(realpath ~/.ssh/id_ed25519.pub)" ]; then
-          ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
-        fi
-        if [ ! -f ~/.ssh/id_rsa ] || [ "$(realpath ~/.ssh/id_rsa)" != "$(realpath ~/.ssh/id_ed25519)" ]; then
-          ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
-        fi
-      '';
-    in
-    lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      Unit = {
-        Description = "symlink rsa keys";
-      };
-      Service = {
-        ExecStart = script;
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      Install.WantedBy = [ "default.target" ];
-    };
+  # systemd.user.services.sshIdRsa =
+  #   let
+  #     binPath = lib.strings.makeBinPath ([ pkgs.coreutils ] ++ pkgs.stdenv.initialPath);
+  #     script = pkgs.writeShellScript "symlinkrsa" ''
+  #       export PATH="${binPath}"
+  #       if [ ! -f ~/.ssh/id_rsa.pub ] || [ "$(realpath ~/.ssh/id_rsa.pub)" != "$(realpath ~/.ssh/id_ed25519.pub)" ]; then
+  #         ln -s ~/.ssh/id_ed25519.pub ~/.ssh/id_rsa.pub
+  #       fi
+  #       if [ ! -f ~/.ssh/id_rsa ] || [ "$(realpath ~/.ssh/id_rsa)" != "$(realpath ~/.ssh/id_ed25519)" ]; then
+  #         ln -s ~/.ssh/id_ed25519 ~/.ssh/id_rsa
+  #       fi
+  #     '';
+  #   in
+  #   lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+  #     Unit = {
+  #       Description = "symlink rsa keys";
+  #     };
+  #     Service = {
+  #       ExecStart = script;
+  #       Type = "oneshot";
+  #       RemainAfterExit = true;
+  #     };
+  #     Install.WantedBy = [ "default.target" ];
+  #   };
 
   #   launchd.agents.sops-nix = {
   #     enable = true;
@@ -298,6 +255,53 @@ in
   #     };
   #   };
   # };
+
+  home.activation = {
+    copyNixApps = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      # Create directory for the applications
+      mkdir -p "$HOME/Applications/Nix-Apps"
+      # Remove old entries
+      rm -rf "$HOME/Applications/Nix-Apps"/*
+      # Get the target of the symlink
+      NIXAPPS=$(readlink -f "$HOME/.nix-profile/Applications")
+      # For each application
+      for app_source in "$NIXAPPS"/*; do
+        if [ -d "$app_source" ] || [ -L "$app_source" ]; then
+            appname=$(basename "$app_source")
+            target="$HOME/Applications/Nix-Apps/$appname"
+
+            # Create the basic structure
+            mkdir -p "$target"
+            mkdir -p "$target/Contents"
+
+            # Copy the Info.plist file
+            if [ -f "$app_source/Contents/Info.plist" ]; then
+              mkdir -p "$target/Contents"
+              cp -f "$app_source/Contents/Info.plist" "$target/Contents/"
+            fi
+
+            # Copy icon files
+            if [ -d "$app_source/Contents/Resources" ]; then
+              mkdir -p "$target/Contents/Resources"
+              find "$app_source/Contents/Resources" -name "*.icns" -exec cp -f {} "$target/Contents/Resources/" \;
+            fi
+
+            # Symlink the MacOS directory (contains the actual binary)
+            if [ -d "$app_source/Contents/MacOS" ]; then
+              ln -sfn "$app_source/Contents/MacOS" "$target/Contents/MacOS"
+            fi
+
+            # Symlink other directories
+            for dir in "$app_source/Contents"/*; do
+              dirname=$(basename "$dir")
+              if [ "$dirname" != "Info.plist" ] && [ "$dirname" != "Resources" ] && [ "$dirname" != "MacOS" ]; then
+                ln -sfn "$dir" "$target/Contents/$dirname"
+              fi
+            done
+          fi
+          done
+    '';
+  };
 
   home = {
     inherit homeDirectory username;
@@ -362,7 +366,7 @@ in
   };
 
   xdg.configFile = {
-    "starship.toml".source = lib.mkForce (mkOutOfStore "packages/starship.toml");
+    # "starship.toml".source = lib.mkForce (mkOutOfStore "packages/starship.toml");
 
     "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
     "opencode/.opencode.json".source = mkOutOfStore "packages/opencode.json";

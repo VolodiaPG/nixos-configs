@@ -10,7 +10,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin/nix-darwin-25.05";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     srvos = {
@@ -163,7 +163,8 @@
             ./modules
             ./secrets/nixos.nix
           ]
-          ++ [ determinate.nixosModules.default ]
+          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) determinate.darwinModules.default)
+          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) determinate.nixosModules.default)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) laputil.nixosModules.default)
           ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
@@ -215,6 +216,7 @@
                   graphical = [
                     "no-de"
                     "gnome"
+                    "macos"
                   ];
                   apps = [
                     "no-apps"
@@ -452,118 +454,19 @@
               inherit system;
               specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
               modules = outputs.nixosModules.${system}.default ++ [
-                (
-                  {
-                    pkgs,
-                    pkgs-unstable,
-                    ...
-                  }:
-                  {
-                    system = {
-                      stateVersion = 5;
-                      primaryUser = "volodia";
-                    };
-                    nixpkgs.hostPlatform = system;
+                {
+                  system = {
+                    stateVersion = 5;
+                    primaryUser = "volodia";
+                  };
+                  nixpkgs.hostPlatform = system;
 
-                    home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
-                      apps = "personal";
-                      inherit symlinkPath;
-                    };
-
-                    users.users.volodia = {
-                      name = "volodia";
-                      home = "/Users/volodia";
-                    };
-
-                    programs = {
-                      zsh.enable = true;
-                    };
-
-                    environment.systemPackages = with pkgs; [
-                      terminal-notifier
-                    ];
-
-                    nix = {
-                      settings = {
-                        substituters = [
-                          "https://cache.nixos.org/"
-                        ];
-                        trusted-public-keys = [
-                          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-                        ];
-                      };
-                      extraOptions = ''
-                        extra-platforms = x86_64-darwin
-                      '';
-
-                      linux-builder = {
-                        enable = true;
-                        ephemeral = true;
-                        maxJobs = 8;
-                        supportedFeatures = [
-                          "kvm"
-                          "benchmark"
-                          "big-parallel"
-                        ];
-                        systems = [
-                          "aarch64-linux"
-                          "x86_64-linux"
-                        ];
-                        config = {
-                          # This can't include aarch64-linux when building on aarch64,
-                          # for reasons I don't fully understand
-                          boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
-                          virtualisation = {
-                            darwin-builder.diskSize = 60 * 1024;
-                          };
-                          nix.settings = {
-                            substituters = [
-                              "https://nix-community.cachix.org"
-                            ];
-                            trusted-public-keys = [
-                              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                            ];
-                          };
-                        };
-                      };
-                    };
-
-                    launchd.daemons.linux-builder.serviceConfig = {
-                      StandardOutPath = "/var/log/linux-builder.log";
-                      StandardErrorPath = "/var/log/linux-builder.log";
-                    };
-
-                    system.activationScripts.extraActivation.text = ''
-                      /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
-                    '';
-
-                    services = {
-                      yabai = {
-                        enable = true;
-                        package = pkgs-unstable.yabai;
-                        # package = pkgs.yabai.overrideAttrs (_: {
-                        #   version = "7.1.14";
-                        #   src = inputs.yabai;
-                        # });
-                        # symlinked out of tree
-                        # extraConfig = builtins.readFile ./users/volodia/packages/.yabairc;
-                        enableScriptingAddition = true;
-                      };
-                      skhd = {
-                        enable = true;
-                        # symlinked out of tree
-                        # skhdConfig = builtins.readFile ./users/volodia/packages/.skhdrc;
-                      };
-                    };
-
-                    # Add ability to used TouchID for sudo authentication
-                    security.pam.services.sudo_local = {
-                      touchIdAuth = true;
-                      reattach = true;
-                    };
-                  }
-                )
+                  home-manager.extraSpecialArgs = {
+                    graphical = "macos";
+                    apps = "personal";
+                    inherit symlinkPath;
+                  };
+                }
               ];
             };
         }
@@ -598,7 +501,6 @@
             packages =
               (with pkgs; [
                 just
-                alejandra
                 git
                 git-crypt
                 age
