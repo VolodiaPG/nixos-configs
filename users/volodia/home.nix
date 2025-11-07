@@ -165,19 +165,21 @@ in
     };
     git = {
       enable = true;
-      userName = "Volodia P.-G.";
-      userEmail = "volodia.parol-guarino@proton.me";
+      settings = {
+        user = {
+          name = "Volodia P.-G.";
+          email = "volodia.parol-guarino@proton.me";
+        };
+        rebase.autostash = true;
+        init.defaultBranch = "main";
+        core.editor = "nvim";
+        alias.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+      };
       signing = {
         format = "ssh";
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
         signByDefault = true;
       };
-      extraConfig = {
-        rebase.autostash = true;
-        init.defaultBranch = "main";
-        core.editor = "nvim";
-      };
-      aliases.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
     };
   };
 
