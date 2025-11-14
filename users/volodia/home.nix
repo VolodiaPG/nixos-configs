@@ -93,11 +93,12 @@ in
     # Let Home Manager install and manage itself.
     lazygit = {
       enable = true;
+      enableZshIntegration = true;
       settings = {
         git = {
-          paging = {
-            pager = "diff-so-fancy";
-          };
+          pagers = [
+            { pager = "diff-so-fancy"; }
+          ];
         };
       };
     };
@@ -336,6 +337,7 @@ in
       tmux
       mosh
       diff-so-fancy
+      ripgrep
       # nerd-fonts.zed-mono
     ];
 

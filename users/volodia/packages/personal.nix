@@ -14,12 +14,9 @@
   #   ];
   # };
   home.packages = [
-    pkgs.ripgrep
     pkgs.nvim
     pkgs-unstable.opencode
     pkgs-unstable.devenv
-    pkgs.difftastic
-    pkgs.discordo
   ];
 
   # programs.steam.enable = true;
