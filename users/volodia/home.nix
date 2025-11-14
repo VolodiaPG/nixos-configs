@@ -156,6 +156,7 @@ in
         jl = "just --list";
         g = "git";
         c = "clear";
+        n = "nvim";
       };
       plugins = [
         {
