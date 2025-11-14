@@ -140,6 +140,8 @@ in
 
         SHELL=${lib.getExe pkgs.zsh}
 
+        source ${pkgs.just}/share/zsh/site-functions/_just
+
         if (which nixos-version > /dev/null); then
          echo $"Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})"
         else
