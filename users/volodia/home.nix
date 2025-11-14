@@ -112,7 +112,14 @@ in
     zsh = {
       enable = true;
       enableCompletion = true;
-      autosuggestion.enable = true;
+      autosuggestion = {
+        enable = true;
+        strategy = [
+          "history"
+          "completion"
+          "match_prev_cmd"
+        ];
+      };
       syntaxHighlighting.enable = true;
       initContent = ''
         export LC_ALL="C.UTF-8"
@@ -149,6 +156,13 @@ in
         g = "git";
         c = "clear";
       };
+      plugins = [
+        {
+          name = "auto-suggestions";
+          src = pkgs.zsh-autosuggestions;
+          file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+        }
+      ];
     };
     nix-index.enable = true;
     nix-index-database.comma.enable = true;
