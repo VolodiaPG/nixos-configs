@@ -162,6 +162,16 @@ in
           src = pkgs.zsh-autosuggestions;
           file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
         }
+        {
+          name = "zsh-completions";
+          src = pkgs.zsh-completions;
+          file = "share/zsh-completions/zsh-completions.zsh";
+        }
+        {
+          name = "nix-zsh-completions";
+          src = pkgs.nix-zsh-completions;
+          file = "share/nix-zsh-completions/nix-zsh-completions.zsh";
+        }
       ];
     };
     nix-index.enable = true;
