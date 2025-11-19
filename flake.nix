@@ -3,8 +3,8 @@
 
   inputs = {
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs-unstable.follows = "nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -42,7 +42,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mac-app-util.url = "github:hraban/mac-app-util";
-    deploy-rs.url = "github:volodiapg/deploy-rs";
+    deploy-rs.url = "github:serokell/deploy-rs";
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -262,7 +262,7 @@
                     services = {
                       desktop.enable = false;
                       kernel.enable = true;
-                      intel.enable = true;
+                      intel.enable = false;
                       impermanence = {
                         enable = true;
                         rootVolume = "sda";
@@ -339,65 +339,67 @@
                   #srvos.nixosModules.server
                   {
                     services = {
-                      desktop.enable = true;
                       kernel.enable = true;
                       intel.enable = true;
                       nvidia.enable = true;
-                      hifi.enable = true;
+                      virt.enable = true;
+
+                      hifi.enable = false;
+                      desktop.enable = false;
+                      elegantBoot.enable = false;
+
                       impermanence = {
                         enable = true;
                         rootVolume = "nvme0n1p11";
                       };
-
-                      elegantBoot.enable = true;
                       vpn.enable = true;
                       laptopServer.enable = true;
                     };
                     home-manager.extraSpecialArgs = {
-                      graphical = "gnome";
+                      graphical = "no-de";
                       apps = "personal";
                     };
                   }
                 ]);
             };
 
-          "m1" =
-            let
-              system = "aarch64-linux";
-            in
-            nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "m1";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/m1/configuration.nix
-                  ./machines/m1/hardware-configuration.nix
-                  nixos-apple-silicon.nixosModules.default
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-laptop
-                  nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  #srvos.nixosModules.server
-                  #microvm.nixosModules.host
-                  {
-                    services = {
-                      desktop.enable = true;
-                      impermanence = {
-                        enable = true;
-                        rootVolume = "disk/by-label/root";
-                      };
-                      kernel.enable = true;
-                      elegantBoot.enable = true;
-                      vpn.enable = true;
-                      hifi.enable = true;
-                    };
-                    home-manager.extraSpecialArgs = {
-                      graphical = "gnome";
-                      apps = "personal";
-                    };
-                  }
-                ]);
-            };
+          # "m1" =
+          #   let
+          #     system = "aarch64-linux";
+          #   in
+          #   nixpkgs.lib.nixosSystem {
+          #     inherit system;
+          #     specialArgs = specialArgsFor "${system}" "volodia" "m1";
+          #     modules =
+          #       outputs.nixosModules.${system}.default
+          #       ++ (with inputs; [
+          #         ./machines/m1/configuration.nix
+          #         ./machines/m1/hardware-configuration.nix
+          #         nixos-apple-silicon.nixosModules.default
+          #         nixos-hardware.nixosModules.common-pc
+          #         nixos-hardware.nixosModules.common-pc-laptop
+          #         nixos-hardware.nixosModules.common-pc-laptop-ssd
+          #         #srvos.nixosModules.server
+          #         #microvm.nixosModules.host
+          #         {
+          #           services = {
+          #             desktop.enable = true;
+          #             impermanence = {
+          #               enable = true;
+          #               rootVolume = "disk/by-label/root";
+          #             };
+          #             kernel.enable = true;
+          #             elegantBoot.enable = true;
+          #             vpn.enable = true;
+          #             hifi.enable = true;
+          #           };
+          #           home-manager.extraSpecialArgs = {
+          #             graphical = "gnome";
+          #             apps = "personal";
+          #           };
+          #         }
+          #       ]);
+          #   };
 
           # "nixos" = nixpkgs.lib.nixosSystem {
           #   system = "aarch64-linux";
@@ -506,8 +508,8 @@
                 age
                 ssh-to-age
                 home-manager
-                deploy-rs
               ])
+              ++ [ inputs.deploy-rs.packages.${system}.default ]
               ++ [ inputs.agenix.packages.${system}.agenix ]
               ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [ darwin.packages.${system}.darwin-rebuild ]);
           };

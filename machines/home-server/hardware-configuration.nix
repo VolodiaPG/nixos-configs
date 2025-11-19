@@ -27,6 +27,7 @@
     extraModulePackages = [ ];
     kernelParams = [
       "mitigations=off"
+      "intel_pstate=disable"
     ];
   };
 
@@ -37,6 +38,6 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "conservative";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

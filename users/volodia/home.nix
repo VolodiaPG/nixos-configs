@@ -139,6 +139,7 @@ in
         HISTORY_IGNORE="(ls|ll|ls -alh|pwd|clear|c|history|htop)"
 
         SHELL=${lib.getExe pkgs.zsh}
+        TERM=xterm-256color
 
         source ${pkgs.just}/share/zsh/site-functions/_just
 
@@ -151,6 +152,58 @@ in
         if [ -f ${config.age.secrets.envvars.path} ]; then
           source ${config.age.secrets.envvars.path}
         fi
+
+        # create a zkbd compatible hash;
+        # to add other keys to this hash, see: man 5 terminfo
+        typeset -g -A key
+
+        key[Home]=''${terminfo[khome]}
+        key[End]=''${terminfo[kend]}
+        key[Insert]=''${terminfo[kich1]}
+        key[Backspace]=''${terminfo[kbs]}
+        key[Delete]=''${terminfo[kdch1]}
+        key[Up]=''${terminfo[kcuu1]}
+        key[Down]=''${terminfo[kcud1]}
+        key[Left]=''${terminfo[kcub1]}
+        key[Right]=''${terminfo[kcuf1]}
+        key[PageUp]=''${terminfo[kpp]}
+        key[PageDown]=''${terminfo[knp]}
+        key[Shift-Tab]=''${terminfo[kcbt]}
+
+        # setup key accordingly
+        [[ -n "''${key[Home]}"      ]] && bindkey -- "''${key[Home]}"       beginning-of-line
+        [[ -n "''${key[End]}"       ]] && bindkey -- "''${key[End]}"        end-of-line
+        [[ -n "''${key[Insert]}"    ]] && bindkey -- "''${key[Insert]}"     overwrite-mode
+        [[ -n "''${key[Backspace]}" ]] && bindkey -- "''${key[Backspace]}"  backward-delete-char
+        [[ -n "''${key[Delete]}"    ]] && bindkey -- "''${key[Delete]}"     delete-char
+        [[ -n "''${key[Up]}"        ]] && bindkey -- "''${key[Up]}"         up-line-or-history
+        [[ -n "''${key[Down]}"      ]] && bindkey -- "''${key[Down]}"       down-line-or-history
+        [[ -n "''${key[Left]}"      ]] && bindkey -- "''${key[Left]}"       backward-char
+        [[ -n "''${key[Right]}"     ]] && bindkey -- "''${key[Right]}"      forward-char
+        [[ -n "''${key[PageUp]}"    ]] && bindkey -- "''${key[PageUp]}"     beginning-of-buffer-or-history
+        [[ -n "''${key[PageDown]}"  ]] && bindkey -- "''${key[PageDown]}"   end-of-buffer-or-history
+        [[ -n "''${key[Shift-Tab]}" ]] && bindkey -- "''${key[Shift-Tab]}"  reverse-menu-complete
+
+        # Finally, make sure the terminal is in application mode, when zle is
+        # active. Only then are the values from $terminfo valid.
+        if (( ''${+terminfo[smkx]} && ''${+terminfo[rmkx]} )); then
+        	autoload -Uz add-zle-hook-widget
+        	function zle_application_mode_start { echoti smkx }
+        	function zle_application_mode_stop { echoti rmkx }
+        	add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+        	add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+        fi
+
+        # ZLE search
+        autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+        zle -N up-line-or-beginning-search
+        zle -N down-line-or-beginning-search
+
+        [[ -n "''${key[Up]}"   ]] && bindkey -- "''${key[Up]}"   up-line-or-beginning-search
+        [[ -n "''${key[Down]}" ]] && bindkey -- "''${key[Down]}" down-line-or-beginning-search
+
+        bindkey "^[[1;3C" forward-word
+        bindkey "^[[1;3D" backward-word
       '';
       shellAliases = {
         ll = "ls -l";
@@ -208,6 +261,13 @@ in
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
         signByDefault = true;
       };
+    };
+    keychain = {
+      enable = true;
+      enableZshIntegration = true;
+      keys = [
+        "id_ed25519"
+      ];
     };
   };
 
@@ -286,52 +346,52 @@ in
   #   };
   # };
 
-  home.activation = {
-    copyNixApps = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      # Create directory for the applications
-      mkdir -p "$HOME/Applications/Nix-Apps"
-      # Remove old entries
-      rm -rf "$HOME/Applications/Nix-Apps"/*
-      # Get the target of the symlink
-      NIXAPPS=$(readlink -f "$HOME/.nix-profile/Applications")
-      # For each application
-      for app_source in "$NIXAPPS"/*; do
-        if [ -d "$app_source" ] || [ -L "$app_source" ]; then
-            appname=$(basename "$app_source")
-            target="$HOME/Applications/Nix-Apps/$appname"
-
-            # Create the basic structure
-            mkdir -p "$target"
-            mkdir -p "$target/Contents"
-
-            # Copy the Info.plist file
-            if [ -f "$app_source/Contents/Info.plist" ]; then
-              mkdir -p "$target/Contents"
-              cp -f "$app_source/Contents/Info.plist" "$target/Contents/"
-            fi
-
-            # Copy icon files
-            if [ -d "$app_source/Contents/Resources" ]; then
-              mkdir -p "$target/Contents/Resources"
-              find "$app_source/Contents/Resources" -name "*.icns" -exec cp -f {} "$target/Contents/Resources/" \;
-            fi
-
-            # Symlink the MacOS directory (contains the actual binary)
-            if [ -d "$app_source/Contents/MacOS" ]; then
-              ln -sfn "$app_source/Contents/MacOS" "$target/Contents/MacOS"
-            fi
-
-            # Symlink other directories
-            for dir in "$app_source/Contents"/*; do
-              dirname=$(basename "$dir")
-              if [ "$dirname" != "Info.plist" ] && [ "$dirname" != "Resources" ] && [ "$dirname" != "MacOS" ]; then
-                ln -sfn "$dir" "$target/Contents/$dirname"
-              fi
-            done
-          fi
-          done
-    '';
-  };
+  # home.activation = {
+  #   copyNixApps = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+  #     # Create directory for the applications
+  #     mkdir -p "$HOME/Applications/Nix-Apps"
+  #     # Remove old entries
+  #     rm -rf "$HOME/Applications/Nix-Apps"/*
+  #     # Get the target of the symlink
+  #     NIXAPPS=$(readlink -f "$HOME/.nix-profile/Applications")
+  #     # For each application
+  #     for app_source in "$NIXAPPS"/*; do
+  #       if [ -d "$app_source" ] || [ -L "$app_source" ]; then
+  #           appname=$(basename "$app_source")
+  #           target="$HOME/Applications/Nix-Apps/$appname"
+  #
+  #           # Create the basic structure
+  #           mkdir -p "$target"
+  #           mkdir -p "$target/Contents"
+  #
+  #           # Copy the Info.plist file
+  #           if [ -f "$app_source/Contents/Info.plist" ]; then
+  #             mkdir -p "$target/Contents"
+  #             cp -f "$app_source/Contents/Info.plist" "$target/Contents/"
+  #           fi
+  #
+  #           # Copy icon files
+  #           if [ -d "$app_source/Contents/Resources" ]; then
+  #             mkdir -p "$target/Contents/Resources"
+  #             find "$app_source/Contents/Resources" -name "*.icns" -exec cp -f {} "$target/Contents/Resources/" \;
+  #           fi
+  #
+  #           # Symlink the MacOS directory (contains the actual binary)
+  #           if [ -d "$app_source/Contents/MacOS" ]; then
+  #             ln -sfn "$app_source/Contents/MacOS" "$target/Contents/MacOS"
+  #           fi
+  #
+  #           # Symlink other directories
+  #           for dir in "$app_source/Contents"/*; do
+  #             dirname=$(basename "$dir")
+  #             if [ "$dirname" != "Info.plist" ] && [ "$dirname" != "Resources" ] && [ "$dirname" != "MacOS" ]; then
+  #               ln -sfn "$dir" "$target/Contents/$dirname"
+  #             fi
+  #           done
+  #         fi
+  #         done
+  #   '';
+  # };
 
   home = {
     inherit homeDirectory username;
@@ -397,9 +457,9 @@ in
   };
 
   xdg.configFile = {
-    # "starship.toml".source = lib.mkForce (mkOutOfStore "packages/starship.toml");
+    # "starship.toml".source = lib.mkForce (mkOutOfStore "packages/starship.toml");homenixbas
 
-    "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
+    # "ghostty/config".source = mkOutOfStore "packages/ghostty.conf";
     "opencode/.opencode.json".source = mkOutOfStore "packages/opencode.json";
   };
 }

@@ -4,6 +4,9 @@
     allowUnfreePredicate = _pkg: true;
   };
 
+  # Make sure all user services do actually start
+  users.users.volodia.linger = true;
+
   programs = {
     nix-index = {
       enable = true;

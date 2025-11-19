@@ -29,6 +29,7 @@
     extraModulePackages = [ ];
     kernelParams = [
       "usbcore.autosuspend=-1"
+      "intel_pstate=disable"
     ];
     #loader.grub.device = "nodev";
   };
@@ -55,6 +56,6 @@
   # networking.interfaces.enp0s31f6.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "conservative";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
