@@ -10,7 +10,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin?ref=pull/1636/head";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     srvos = {
