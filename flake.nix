@@ -323,31 +323,31 @@
           ./secrets/nixos.nix
         ];
       };
+    }
+    // (inputs.flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = pkgsFor system;
+      in
+      {
 
-      # Development tools
-      # formatter = inputs.flake-utils.lib.eachDefaultSystem (system:
-      #   (pkgsFor system).nixfmt-tree
-      # );
+        # Development tools
+        formatter = pkgs.nixfmt-tree;
 
-      checks = inputs.flake-utils.lib.eachDefaultSystem (system: {
-        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            nixfmt-rfc-style.enable = true;
-            statix.enable = true;
-            deadnix.enable = true;
-            commitizen.enable = true;
-            actionlint.enable = true;
+        checks = {
+          pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              nixfmt-rfc-style.enable = true;
+              statix.enable = true;
+              deadnix.enable = true;
+              commitizen.enable = true;
+              actionlint.enable = true;
+            };
           };
         };
-      });
 
-      devShells = inputs.flake-utils.lib.eachDefaultSystem (
-        system:
-        let
-          pkgs = pkgsFor system;
-        in
-        {
+        devShells = {
           default = pkgs.mkShell {
             inherit (outputs.checks.${system}.pre-commit-check) shellHook;
             packages =
@@ -365,9 +365,10 @@
                 inputs.darwin.packages.${system}.darwin-rebuild
               );
           };
-        }
-      );
-
+        };
+      }
+    ))
+    // {
       # Deploy-rs configuration
       deploy.nodes = {
         msi = {

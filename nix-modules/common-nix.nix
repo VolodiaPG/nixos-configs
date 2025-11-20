@@ -181,7 +181,7 @@
           "docker"
         ];
         openssh.authorizedKeys.keys = user.keys;
-        inherit hashedPassword;
+        inherit (user) hashedPassword;
         shell = pkgs.zsh;
       };
       root = {
