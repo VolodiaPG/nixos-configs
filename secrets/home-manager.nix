@@ -1,4 +1,4 @@
-{ homeDirectory, ... }:
+{ config, ... }:
 {
   # Paths to public keys that can decrypt the secrets.
   age.identityPaths = [
@@ -11,17 +11,17 @@
     pythong5k = {
       file = ./pythong5k.age;
       mode = "400";
-      path = "${homeDirectory}/.python-grid5000.yaml";
+      path = "${config.home.homeDirectory}/.python-grid5000.yaml";
     };
     envvars = {
       file = ./envvars.age;
       mode = "400";
-      path = "${homeDirectory}/.envvars.sh";
+      path = "${config.home.homeDirectory}/.envvars.sh";
     };
     mail_inria_password = {
       file = ./mail.inria.password.age;
       mode = "0400";
-      path = "${homeDirectory}/.mail.inria.password.txt";
+      path = "${config.home.homeDirectory}/.mail.inria.password.txt";
     };
   };
 }

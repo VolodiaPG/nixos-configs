@@ -2,62 +2,105 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs-unstable.follows = "nixpkgs";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
     darwin = {
       url = "github:lnl7/nix-darwin?ref=pull/1636/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     srvos = {
       url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-hardware.url = "github:nixos/nixos-hardware";
-    flake-utils.url = "github:numtide/flake-utils";
+
+    determinate = {
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
     vim = {
       url = "github:volodiapg/vim";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    impermanence.url = "github:nix-community/impermanence";
+
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    disko.url = "github:nix-community/disko";
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mosh = {
       url = "github:zhaofengli/mosh/fish-wcwidth";
       flake = false;
     };
-    catppuccin.url = "github:catppuccin/nix";
+
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hosts = {
       url = "github:StevenBlack/hosts";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    mac-app-util.url = "github:hraban/mac-app-util";
-    deploy-rs.url = "github:serokell/deploy-rs";
+
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nixos-apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
     laputil = {
       url = "github:volodiapg/laputil";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   nixConfig = {
@@ -78,16 +121,16 @@
   };
 
   outputs =
-    inputs:
-    with inputs;
+    inputs@{ self, ... }:
     let
       inherit (self) outputs;
+
+      # Overlays
       mosh-overlay = _final: prev: {
         mosh = prev.mosh.overrideAttrs (
           old:
           let
-            # Remove a patch already merged in master
-            patches = nixpkgs.lib.lists.remove (prev.fetchpatch {
+            patches = inputs.nixpkgs.lib.lists.remove (prev.fetchpatch {
               url = "https://github.com/mobile-shell/mosh/commit/eee1a8cf413051c2a9104e8158e699028ff56b26.patch";
               hash = "sha256-CouLHWSsyfcgK3k7CvTK3FP/xjdb1pfsSXYYQj3NmCQ=";
             }) old.patches;
@@ -99,407 +142,214 @@
         );
       };
 
-      overlays = with inputs; [
+      overlays = [
         mosh-overlay
-        vim.overlay
-        nur.overlays.default
-        nixos-apple-silicon.overlays.default
+        inputs.vim.overlay
+        inputs.nur.overlays.default
+        inputs.nixos-apple-silicon.overlays.default
       ];
 
+      # User data
+      specialArgs = {
+        inherit inputs outputs;
+        user = {
+          name = "Volodia P.G.";
+          username = "volodia";
+          homeDirectory = "/home/volodia";
+          email = "volodia.parol-guarino@proton.me";
+          signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
+          keys = [
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi"
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"
+          ];
+          hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
+        };
+      };
+
+      # Helper function to create pkgs with overlays
       pkgsFor =
-        nixpkgs_type: system:
-        import nixpkgs_type {
-          inherit overlays system;
+        system:
+        import inputs.nixpkgs {
+          inherit system overlays;
           config.allowUnfree = true;
         };
-      specialArgsFor = system: username: hostName: {
-        inherit overlays;
-        inherit hostName;
-        pkgs-unstable = pkgsFor nixpkgs-unstable system;
-        inherit inputs;
-        symlinkPath = null;
-        homeDirectory =
-          if nixpkgs.lib.strings.hasSuffix "linux" system then "/home/${username}" else "/Users/${username}";
-        inherit username;
+
+      flakeModule = {
+        nixpkgs = {
+          inherit overlays;
+          config.allowUnfree = true;
+        };
+        environment.etc."nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
+        environment.etc."nix/inputs/self".source = "${self}";
+        nix.registry.nixpkgs.flake = inputs.nixpkgs;
+        system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
       };
     in
-    nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate { } [
-      (flake-utils.lib.eachDefaultSystem (
-        system:
-        let
-          defaultModules = [
-            (
-              { hostName, ... }:
-              {
-                # Inherit everything we can from the flake
-                environment.etc = {
-                  "nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
-                  "nix/inputs/self".source = "${inputs.self}";
-                };
-                nix = {
-                  # Pin channels to flake inputs.
-                  # registry.nixpkgs.flake = inputs.nixpkgs;
-                  registry.nixpkgs.flake = inputs.nixpkgs;
-                };
-                nixpkgs.overlays = overlays;
+    {
+      # Module registries
+      nixosModules = import ./nix-modules;
+      darwinModules = import ./darwin-modules;
+      homeManagerModules = import ./home-modules;
 
-                system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-
-                home-manager = {
-                  users.volodia = import ./users/volodia/home.nix;
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  sharedModules = [
-                    ./secrets/home-manager.nix
-                    agenix.homeManagerModules.default
-                    catppuccin.homeModules.catppuccin
-                    nix-index-database.homeModules.nix-index
-                    { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
-                  ];
-                  extraSpecialArgs = specialArgsFor system "volodia" hostName;
-                };
-              }
-            )
+      # NixOS configurations
+      nixosConfigurations = {
+        msi = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          inherit specialArgs;
+          modules = [
+            ./hosts/msi/configuration.nix
+            flakeModule
+            inputs.determinate.nixosModules.default
+            inputs.agenix.nixosModules.default
+            inputs.laputil.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
+            inputs.catppuccin.nixosModules.catppuccin
             ./modules
             ./secrets/nixos.nix
-          ]
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) determinate.darwinModules.default)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) determinate.nixosModules.default)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) agenix.nixosModules.default)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) laputil.nixosModules.default)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) ./modules/linux)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) home-manager.nixosModules.home-manager)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) home-manager.darwinModules.home-manager)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) impermanence.nixosModules.impermanence)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "linux" system) catppuccin.nixosModules.catppuccin)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) ./modules/darwin)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) agenix.darwinModules.default)
-          ++ (nixpkgs.lib.optional (nixpkgs.lib.strings.hasSuffix "darwin" system) mac-app-util.darwinModules.default);
-        in
-        {
-          nixosModules.default = defaultModules;
-          # Configurations, option are obtained by .#volodia.<de>.<apps>
-
-          homeConfigurations = builtins.listToAttrs (
-            builtins.map
-              (settings: {
-                name = with settings; "${username}.${graphical}.${apps}.${machine}";
-                value = home-manager.lib.homeManagerConfiguration (
-                  with settings;
-                  let
-                    pkgs = pkgsFor nixpkgs system;
-                    specialArgs = specialArgsFor system username; # // (nixpkgs.lib.mkIf (machine != "no-machine") {nixosConfig = nixosConfigurations."${machine}".config;});
-                  in
-                  {
-                    inherit pkgs;
-                    modules = [
-                      catppuccin.homeModules.catppuccin
-                      agenix.homeManagerModules.default
-                      nix-index-database.homeModules.nix-index
-                      ./secrets/home-manager.nix
-                      ./users/volodia/home.nix
-                      { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
-                    ]
-                    ++ (nixpkgs.lib.optional pkgs.stdenv.isDarwin mac-app-util.homeManagerModules.default);
-                    extraSpecialArgs = specialArgs // {
-                      inherit (settings) graphical apps;
-                    };
-                  }
-                );
-              })
-              (
-                nixpkgs.lib.attrsets.cartesianProductOfSets {
-                  username = [
-                    "volodia"
-                    "volparolguarino"
-                  ];
-                  graphical = [
-                    "no-de"
-                    "gnome"
-                    "macos"
-                  ];
-                  apps = [
-                    "no-apps"
-                    "work"
-                    "personal"
-                  ];
-                  machine = [
-                    "no-machine"
-                    "dell"
-                    "msi"
-                    "m1"
-                    "Volodias-MacBook-Pro"
-                  ];
-                }
-              )
-          );
-        }
-      ))
-      {
-        # Do not forget to also add to peerix to share the derivations
-        nixosConfigurations = {
-          "home-server" =
-            let
-              system = "x86_64-linux";
-            in
-            nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor system "volodia" "home-server";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/home-server/hardware-configuration.nix
-                  ./machines/home-server/configuration.nix
-                  ./machines/home-server/disk.nix
-                  nixos-hardware.nixosModules.common-cpu-intel
-                  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-ssd
-                  srvos.nixosModules.server
-                  disko.nixosModules.disko
-                  {
-                    _module.args.disks = [ "/dev/sda" ];
-                    services = {
-                      desktop.enable = false;
-                      kernel.enable = true;
-                      intel.enable = false;
-                      impermanence = {
-                        enable = true;
-                        rootVolume = "sda";
-                        disko = true;
-                      };
-                      elegantBoot.enable = false;
-                      vpn.enable = true;
-                      laptopServer.enable = true;
-                    };
-                    home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
-                      apps = "no-apps";
-                    };
-                  }
-                ]);
-            };
-          "msi" =
-            let
-              system = "x86_64-linux";
-            in
-            nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "msi";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/msi/configuration.nix
-                  ./machines/msi/hardware-configuration.nix
-                  nixos-hardware.nixosModules.common-cpu-intel
-                  nixos-hardware.nixosModules.common-gpu-nvidia
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-ssd
-                  {
-                    services = {
-                      desktop.enable = true;
-                      kernel.enable = true;
-                      hifi.enable = true;
-                      hyperhdr.enable = false;
-                      intel.enable = true;
-                      nvidia.enable = true;
-                      impermanence = {
-                        enable = true;
-                        rootVolume = "disk/by-label/root";
-                      };
-
-                      elegantBoot.enable = true;
-                      vpn.enable = true;
-                    };
-                    home-manager.extraSpecialArgs = {
-                      graphical = "gnome";
-                      apps = "personal";
-                    };
-                  }
-                ]);
-            };
-
-          "dell" =
-            let
-              system = "x86_64-linux";
-            in
-            nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "dell";
-              modules =
-                outputs.nixosModules.${system}.default
-                ++ (with inputs; [
-                  ./machines/dell/configuration.nix
-                  ./machines/dell/hardware-configuration.nix
-                  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
-                  nixos-hardware.nixosModules.common-gpu-intel
-                  nixos-hardware.nixosModules.common-pc
-                  nixos-hardware.nixosModules.common-pc-laptop
-                  nixos-hardware.nixosModules.common-pc-laptop-ssd
-                  #srvos.nixosModules.server
-                  {
-                    services = {
-                      kernel.enable = true;
-                      intel.enable = true;
-                      nvidia.enable = true;
-                      virt.enable = true;
-
-                      hifi.enable = false;
-                      desktop.enable = false;
-                      elegantBoot.enable = false;
-
-                      impermanence = {
-                        enable = true;
-                        rootVolume = "nvme0n1p11";
-                      };
-                      vpn.enable = true;
-                      laptopServer.enable = true;
-                    };
-                    home-manager.extraSpecialArgs = {
-                      graphical = "no-de";
-                      apps = "personal";
-                    };
-                  }
-                ]);
-            };
-
-          # "m1" =
-          #   let
-          #     system = "aarch64-linux";
-          #   in
-          #   nixpkgs.lib.nixosSystem {
-          #     inherit system;
-          #     specialArgs = specialArgsFor "${system}" "volodia" "m1";
-          #     modules =
-          #       outputs.nixosModules.${system}.default
-          #       ++ (with inputs; [
-          #         ./machines/m1/configuration.nix
-          #         ./machines/m1/hardware-configuration.nix
-          #         nixos-apple-silicon.nixosModules.default
-          #         nixos-hardware.nixosModules.common-pc
-          #         nixos-hardware.nixosModules.common-pc-laptop
-          #         nixos-hardware.nixosModules.common-pc-laptop-ssd
-          #         #srvos.nixosModules.server
-          #         #microvm.nixosModules.host
-          #         {
-          #           services = {
-          #             desktop.enable = true;
-          #             impermanence = {
-          #               enable = true;
-          #               rootVolume = "disk/by-label/root";
-          #             };
-          #             kernel.enable = true;
-          #             elegantBoot.enable = true;
-          #             vpn.enable = true;
-          #             hifi.enable = true;
-          #           };
-          #           home-manager.extraSpecialArgs = {
-          #             graphical = "gnome";
-          #             apps = "personal";
-          #           };
-          #         }
-          #       ]);
-          #   };
-
-          # "nixos" = nixpkgs.lib.nixosSystem {
-          #   system = "aarch64-linux";
-          #   specialArgs = specialArgsFor "aarch64-linux" "volodia" "nixos";
-          #   modules =
-          #     outputs.nixosModules."aarch64-linux".default
-          #     ++ [
-          #       ./machines/nixos/configuration.nix
-          #       ./machines/nixos/hardware-configuration.nix
-          #     ]
-          #     ++ [
-          #       (
-          #         { lib, ... }:
-          #         {
-          #           system.stateVersion = "25.05";
-          #           services = {
-          #             desktop.enable = true;
-          #             kernel.enable = true;
-          #             intel.enable = false;
-          #             impermanence.enable = false;
-          #             elegantBoot.enable = false;
-          #             vpn.enable = true;
-          #             laptopServer.enable = false;
-          #             thermald.enable = lib.mkForce false;
-          #           };
-          #           home-manager = {
-          #             sharedModules = [
-          #               ./secrets/home-manager.nix
-          #               agenix.homeManagerModules.default
-          #             ];
-          #             users.volodia.catppuccin.starship.enable = lib.mkForce false;
-          #             extraSpecialArgs = {
-          #               graphical = "gnome";
-          #               apps = "personal";
-          #             };
-          #           };
-          #         }
-          #       )
-          #     ];
-          # };
+          ];
         };
-      }
-      (flake-utils.lib.eachSystem [ "aarch64-darwin" ] (
-        system:
-        let
-          inherit (darwin.lib) darwinSystem;
-        in
-        {
-          packages.darwinConfigurationsFunctions."Volodias-MacBook-Pro" =
-            {
-              symlinkPath ? null,
-            }:
-            darwinSystem {
-              inherit system;
-              specialArgs = specialArgsFor "${system}" "volodia" "Volodias-MacBook-Pro";
-              modules = outputs.nixosModules.${system}.default ++ [
-                {
-                  system = {
-                    stateVersion = 5;
-                    primaryUser = "volodia";
-                  };
-                  nixpkgs.hostPlatform = system;
 
-                  home-manager.extraSpecialArgs = {
-                    graphical = "macos";
-                    apps = "personal";
-                    inherit symlinkPath;
-                  };
-                }
+        dell = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          inherit specialArgs;
+          modules = [
+            ./hosts/dell/configuration.nix
+            flakeModule
+            inputs.determinate.nixosModules.default
+            inputs.agenix.nixosModules.default
+            inputs.laputil.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
+            inputs.catppuccin.nixosModules.catppuccin
+            ./modules
+            ./secrets/nixos.nix
+          ];
+        };
+
+        home-server = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          inherit specialArgs;
+          modules = [
+            ./hosts/home-server/configuration.nix
+            flakeModule
+            inputs.determinate.nixosModules.default
+            inputs.agenix.nixosModules.default
+            inputs.laputil.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
+            inputs.catppuccin.nixosModules.catppuccin
+            ./modules
+            ./secrets/nixos.nix
+          ];
+        };
+      };
+
+      # Darwin configurations
+      darwinConfigurations."Volodias-MacBook-Pro" = inputs.darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        specialArgs = specialArgs // {
+          user = specialArgs.user // {
+            homeDirectory = "/Users/volodia";
+          };
+        };
+        modules = [
+          {
+            system = {
+              stateVersion = 5;
+              primaryUser = "volodia";
+            };
+            nixpkgs = {
+              hostPlatform = "aarch64-darwin";
+              inherit overlays;
+              config.allowUnfree = true;
+            };
+          }
+          outputs.darwinModules.common-darwin
+          inputs.determinate.darwinModules.default
+          inputs.home-manager.darwinModules.home-manager
+          inputs.agenix.darwinModules.default
+          inputs.mac-app-util.darwinModules.default
+          {
+            home-manager = {
+              users."${specialArgs.user.username}" =
+                {
+                  lib,
+                  config,
+                  pkgs,
+                  ...
+                }:
+                {
+                  imports = lib.flatten [
+                    (with outputs.homeManagerModules; [
+                      (common-home {
+                        inherit pkgs lib;
+                        user = specialArgs.user // {
+                          homeDirectory = "/Users/volodia";
+                        };
+                      })
+                      (git {
+                        inherit pkgs;
+                        inherit (specialArgs) user;
+                      })
+                      (zsh {
+                        inherit
+                          pkgs
+                          lib
+                          config
+                          inputs
+                          ;
+                      })
+                      (ssh {
+                        inherit pkgs;
+                        inherit (specialArgs) user;
+                      })
+                      syncthing
+                      mail
+                      packages-personal
+                    ])
+                  ];
+                };
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              sharedModules = [
+                ./secrets/home-manager.nix
+                inputs.agenix.homeManagerModules.default
+                inputs.catppuccin.homeModules.catppuccin
+                inputs.nix-index-database.homeModules.nix-index
+                inputs.mac-app-util.homeManagerModules.default
+                { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
               ];
             };
-        }
-      ))
-      (flake-utils.lib.eachDefaultSystem (
+          }
+          ./modules
+          ./secrets/nixos.nix
+        ];
+      };
+
+      # Development tools
+      # formatter = inputs.flake-utils.lib.eachDefaultSystem (system:
+      #   (pkgsFor system).nixfmt-tree
+      # );
+
+      checks = inputs.flake-utils.lib.eachDefaultSystem (system: {
+        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nixfmt-rfc-style.enable = true;
+            statix.enable = true;
+            deadnix.enable = true;
+            commitizen.enable = true;
+            actionlint.enable = true;
+          };
+        };
+      });
+
+      devShells = inputs.flake-utils.lib.eachDefaultSystem (
         system:
         let
-          pkgs = pkgsFor nixpkgs system;
+          pkgs = pkgsFor system;
         in
         {
-          formatter = pkgs.nixfmt-tree;
-
-          checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              nixfmt-rfc-style.enable = true;
-              statix.enable = true;
-              deadnix.enable = true;
-              commitizen.enable = true;
-              actionlint.enable = true;
-            };
-          };
-
-          packages = {
-            inherit (pkgs) mosh;
-          };
-
-          devShells.default = pkgs.mkShell {
-            inherit (outputs.checks.${system}.pre-commit-check)
-              shellHook
-              ;
+          default = pkgs.mkShell {
+            inherit (outputs.checks.${system}.pre-commit-check) shellHook;
             packages =
               (with pkgs; [
                 just
@@ -511,40 +361,41 @@
               ])
               ++ [ inputs.deploy-rs.packages.${system}.default ]
               ++ [ inputs.agenix.packages.${system}.agenix ]
-              ++ (nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin [ darwin.packages.${system}.darwin-rebuild ]);
+              ++ (inputs.nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin
+                inputs.darwin.packages.${system}.darwin-rebuild
+              );
           };
         }
-      ))
-      {
-        inherit (inputs.deploy-rs) apps;
-        deploy.nodes = {
-          msi = {
-            hostname = "msi";
-            profiles.system = {
-              user = "root";
-              sshUser = "volodia";
-              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
-            };
-          };
-          dell = {
-            hostname = "dell";
-            profiles.system = {
-              user = "root";
-              sshUser = "volodia";
-              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
-            };
-          };
-          home-server = {
-            hostname = "home-server";
-            profiles.system = {
-              user = "root";
-              sshUser = "volodia";
-              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
-            };
+      );
+
+      # Deploy-rs configuration
+      deploy.nodes = {
+        msi = {
+          hostname = "msi";
+          profiles.system = {
+            user = "root";
+            sshUser = "volodia";
+            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
           };
         };
+        dell = {
+          hostname = "dell";
+          profiles.system = {
+            user = "root";
+            sshUser = "volodia";
+            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
+          };
+        };
+        home-server = {
+          hostname = "home-server";
+          profiles.system = {
+            user = "root";
+            sshUser = "volodia";
+            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
+          };
+        };
+      };
 
-        checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
-      }
-    ];
+      inherit (inputs.deploy-rs) apps;
+    };
 }

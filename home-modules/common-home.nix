@@ -1,0 +1,120 @@
+{
+  pkgs,
+  user,
+  lib,
+  ...
+}:
+{
+  fonts.fontconfig.enable = true;
+
+  catppuccin.enable = true;
+
+  programs = {
+    home-manager.enable = true;
+    lazygit = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        git = {
+          pagers = [
+            { pager = "diff-so-fancy"; }
+          ];
+        };
+      };
+    };
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+      options = [
+        "--cmd cd"
+      ];
+    };
+    nix-index.enable = true;
+    nix-index-database.comma.enable = true;
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+      stdlib = ''
+        export DIRENV_LOG_FORMAT=""
+      '';
+    };
+    keychain = {
+      enable = true;
+      enableZshIntegration = true;
+      keys = [
+        "id_ed25519"
+      ];
+    };
+  };
+
+  services.gpg-agent = {
+    enable = pkgs.stdenv.isLinux;
+    grabKeyboardAndMouse = false;
+    pinentry.package = pkgs.pinentry-tty;
+    extraConfig = ''
+      allow-loopback-pinentry
+    '';
+    enableSshSupport = true;
+    enableExtraSocket = true;
+    enableScDaemon = false;
+  };
+
+  home = {
+    inherit (user) username homeDirectory;
+    packages = with pkgs; [
+      fontconfig
+      tmux
+      mosh
+      diff-so-fancy
+      ripgrep
+      direnv
+      findutils
+      parallel
+      zip
+      unzip
+      gdu
+      zoxide
+      git-crypt
+      cocogitto
+      python3
+      htop
+      nmap
+      wget
+      fzf
+      grc
+      libnotify
+      notify-desktop
+      tmux
+      bottom
+      libgtop
+    ];
+
+    sessionVariables = {
+      EDITOR = "nvim";
+    };
+
+    file = {
+      ".config/discord/settings.json".text = ''
+        {
+          "BACKGROUND_COLOR": "#202225",
+          "IS_MAXIMIZED": false,
+          "IS_MINIMIZED": true,
+          "SKIP_HOST_UPDATE": true,
+          "WINDOW_BOUNDS": {
+            "x": 307,
+            "y": 127,
+            "width": 1280,
+            "height": 725
+          }
+        }
+      '';
+      ".ssh/authorized_keys".text = lib.concatStringsSep "\n" user.keys;
+    };
+
+    stateVersion = "22.05";
+  };
+}
