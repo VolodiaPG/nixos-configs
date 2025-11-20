@@ -17,7 +17,6 @@
 
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     srvos = {
@@ -42,7 +41,6 @@
 
     impermanence = {
       url = "github:nix-community/impermanence";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     agenix = {
@@ -189,7 +187,7 @@
       # Module registries
       nixosModules = import ./nix-modules;
       darwinModules = import ./darwin-modules;
-      homeManagerModules = import ./home-modules;
+      homeModules = import ./home-modules;
 
       # NixOS configurations
       nixosConfigurations = {
@@ -204,7 +202,6 @@
             inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
             inputs.catppuccin.nixosModules.catppuccin
-            ./modules
             ./secrets/nixos.nix
           ];
         };
@@ -220,7 +217,6 @@
             inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
             inputs.catppuccin.nixosModules.catppuccin
-            ./modules
             ./secrets/nixos.nix
           ];
         };
@@ -236,7 +232,6 @@
             inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
             inputs.catppuccin.nixosModules.catppuccin
-            ./modules
             ./secrets/nixos.nix
           ];
         };
@@ -278,7 +273,7 @@
                 }:
                 {
                   imports = lib.flatten [
-                    (with outputs.homeManagerModules; [
+                    (with outputs.homeModules; [
                       (common-home {
                         inherit pkgs lib;
                         user = specialArgs.user // {
@@ -366,6 +361,25 @@
               );
           };
         };
+
+        apps = {
+          deploy-rs = {
+            type = "app";
+            program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
+            meta = {
+              description = "Deploy NixOS configurations using deploy-rs";
+              mainProgram = "deploy";
+            };
+          };
+          default = {
+            type = "app";
+            program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
+            meta = {
+              description = "Deploy NixOS configurations using deploy-rs";
+              mainProgram = "deploy";
+            };
+          };
+        };
       }
     ))
     // {
@@ -396,7 +410,5 @@
           };
         };
       };
-
-      inherit (inputs.deploy-rs) apps;
     };
 }
