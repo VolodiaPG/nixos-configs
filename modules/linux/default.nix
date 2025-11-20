@@ -20,6 +20,9 @@ in
 {
   inherit imports;
 
+  # Make sure all user services do actually start
+  users.users.volodia.linger = true;
+
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
   systemd.network.wait-online.enable = false;
 
