@@ -113,6 +113,7 @@
         }
       '';
       ".ssh/authorized_keys".text = lib.concatStringsSep "\n" user.keys;
+      ".config/kitty/kitty.conf".source = ./kitty.conf;
     };
 
     stateVersion = "22.05";

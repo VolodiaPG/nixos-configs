@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.follows = "nixpkgs";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -11,7 +11,7 @@
     };
 
     darwin = {
-      url = "github:lnl7/nix-darwin?ref=pull/1636/head";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
