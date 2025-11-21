@@ -19,4 +19,5 @@
   peerix = import ./peerix.nix;
   virt = import ./virt.nix;
   vpn = import ./vpn.nix;
+  linux = import ./linux.nix;
 }

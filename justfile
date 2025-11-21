@@ -54,16 +54,20 @@ toto:
 darwin:
   #!/usr/bin/env bash
   set -e
-  result=$(nix build --impure --print-out-paths --expr "
-    let
-    self = builtins.getFlake ''path://{{ justfile_directory() }}'';
-    configuration =
-  self.packages.aarch64-darwin.darwinConfigurationsFunctions.Volodias-MacBook-Pro
-  {symlinkPath = ''{{ justfile_directory() }}/users/volodia'';};
-    in
-    configuration")
+  # result=$(nix build --impure --print-out-paths --expr "
+  #   let
+  #   self = builtins.getFlake ''path://{{ justfile_directory() }}'';
+  #   configuration =
+  # self.darwinConfigurationsFunctions.aarch64-darwin.Volodias-MacBook-Pro
+  # {symlinkPath = ''{{ justfile_directory() }}/users/volodia'';};
+  #   in
+  #   configuration")
+  # echo $result
+  # sudo $result/activate
+  result=$(nix build .#darwinConfigurations.Volodias-MacBook-Pro.system --print-out-paths)
   echo $result
   sudo $result/activate
+
 
 
 fmt:

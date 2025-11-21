@@ -88,15 +88,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-apple-silicon = {
-      url = "github:nix-community/nixos-apple-silicon";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nixos-apple-silicon = {
+    #   url = "github:nix-community/nixos-apple-silicon";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
-    laputil = {
-      url = "github:volodiapg/laputil";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # laputil = {
+    #   url = "github:volodiapg/laputil";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     flake-utils.url = "github:numtide/flake-utils";
   };
@@ -144,7 +144,7 @@
         mosh-overlay
         inputs.vim.overlay
         inputs.nur.overlays.default
-        inputs.nixos-apple-silicon.overlays.default
+        # inputs.nixos-apple-silicon.overlays.default
       ];
 
       # User data
@@ -154,6 +154,7 @@
           name = "Volodia P.G.";
           username = "volodia";
           homeDirectory = "/home/volodia";
+          macosHomeDirectory = "/Users/volodia";
           email = "volodia.parol-guarino@proton.me";
           signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
           keys = [
@@ -238,86 +239,88 @@
       };
 
       # Darwin configurations
-      darwinConfigurations."Volodias-MacBook-Pro" = inputs.darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = specialArgs // {
-          user = specialArgs.user // {
-            homeDirectory = "/Users/volodia";
+      darwinConfigurations."Volodias-MacBook-Pro" =
+        let
+          specialArgs' = specialArgs // {
+            user = specialArgs.user // {
+              homeDirectory = specialArgs.user.macosHomeDirectory;
+            };
           };
+        in
+        inputs.darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          specialArgs = specialArgs';
+          modules = [
+            {
+              system = {
+                stateVersion = 5;
+                primaryUser = specialArgs'.user.username;
+              };
+              nixpkgs = {
+                hostPlatform = "aarch64-darwin";
+                inherit overlays;
+                config.allowUnfree = true;
+              };
+            }
+            outputs.darwinModules.common-darwin
+            inputs.determinate.darwinModules.default
+            inputs.home-manager.darwinModules.home-manager
+            inputs.agenix.darwinModules.default
+            inputs.mac-app-util.darwinModules.default
+            {
+              home-manager = {
+                users."${specialArgs'.user.username}" =
+                  {
+                    lib,
+                    config,
+                    pkgs,
+                    ...
+                  }:
+                  {
+                    imports = lib.flatten [
+                      (with outputs.homeModules; [
+                        (common-home {
+                          inherit pkgs lib;
+                          inherit (specialArgs') user;
+                        })
+                        (git {
+                          inherit pkgs;
+                          inherit (specialArgs') user;
+                        })
+                        (zsh {
+                          inherit
+                            pkgs
+                            lib
+                            config
+                            inputs
+                            ;
+                        })
+                        (ssh {
+                          inherit pkgs;
+                          inherit (specialArgs') user;
+                        })
+                        syncthing
+                        mail
+                        packages-personal
+                      ])
+                    ];
+                  };
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = specialArgs';
+                sharedModules = [
+                  ./secrets/home-manager.nix
+                  inputs.agenix.homeManagerModules.default
+                  inputs.catppuccin.homeModules.catppuccin
+                  inputs.nix-index-database.homeModules.nix-index
+                  inputs.mac-app-util.homeManagerModules.default
+                  { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
+                ];
+              };
+            }
+            ./secrets/nixos.nix
+          ];
         };
-        modules = [
-          {
-            system = {
-              stateVersion = 5;
-              primaryUser = "volodia";
-            };
-            nixpkgs = {
-              hostPlatform = "aarch64-darwin";
-              inherit overlays;
-              config.allowUnfree = true;
-            };
-          }
-          outputs.darwinModules.common-darwin
-          inputs.determinate.darwinModules.default
-          inputs.home-manager.darwinModules.home-manager
-          inputs.agenix.darwinModules.default
-          inputs.mac-app-util.darwinModules.default
-          {
-            home-manager = {
-              users."${specialArgs.user.username}" =
-                {
-                  lib,
-                  config,
-                  pkgs,
-                  ...
-                }:
-                {
-                  imports = lib.flatten [
-                    (with outputs.homeModules; [
-                      (common-home {
-                        inherit pkgs lib;
-                        user = specialArgs.user // {
-                          homeDirectory = "/Users/volodia";
-                        };
-                      })
-                      (git {
-                        inherit pkgs;
-                        inherit (specialArgs) user;
-                      })
-                      (zsh {
-                        inherit
-                          pkgs
-                          lib
-                          config
-                          inputs
-                          ;
-                      })
-                      (ssh {
-                        inherit pkgs;
-                        inherit (specialArgs) user;
-                      })
-                      syncthing
-                      mail
-                      packages-personal
-                    ])
-                  ];
-                };
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              sharedModules = [
-                ./secrets/home-manager.nix
-                inputs.agenix.homeManagerModules.default
-                inputs.catppuccin.homeModules.catppuccin
-                inputs.nix-index-database.homeModules.nix-index
-                inputs.mac-app-util.homeManagerModules.default
-                { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
-              ];
-            };
-          }
-          ./modules
-          ./secrets/nixos.nix
-        ];
-      };
     }
     // (inputs.flake-utils.lib.eachDefaultSystem (
       system:

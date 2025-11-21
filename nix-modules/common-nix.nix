@@ -168,7 +168,7 @@
       "${user.username}" = {
         isNormalUser = true;
         description = user.name;
-        linger = pkgs.stdenv.isLinux;
+        linger = true;
         extraGroups = [
           "wheel"
           "video"
