@@ -93,10 +93,10 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
 
-    # laputil = {
-    #   url = "github:volodiapg/laputil";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    laputil = {
+      url = "github:volodiapg/laputil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     flake-utils.url = "github:numtide/flake-utils";
   };

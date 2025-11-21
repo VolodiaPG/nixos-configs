@@ -470,6 +470,26 @@
         "type": "github"
       }
     },
+    "laputil": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1761652999,
+        "narHash": "sha256-Kkti4pHRUcF3TXCRXL3puR302/SqVsfnOcs+WDx2Q3A=",
+        "owner": "volodiapg",
+        "repo": "laputil",
+        "rev": "e09d6326dea1a51f9c54ab13b9c09e64f9c3e139",
+        "type": "github"
+      },
+      "original": {
+        "owner": "volodiapg",
+        "repo": "laputil",
+        "type": "github"
+      }
+    },
     "mac-app-util": {
       "inputs": {
         "cl-nix-lite": "cl-nix-lite",
@@ -730,6 +750,7 @@
         "home-manager": "home-manager_2",
         "hosts": "hosts",
         "impermanence": "impermanence",
+        "laputil": "laputil",
         "mac-app-util": "mac-app-util",
         "mosh": "mosh",
         "nix-index-database": "nix-index-database",
