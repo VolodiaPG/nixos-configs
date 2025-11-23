@@ -29,7 +29,7 @@
     extraModulePackages = [ ];
     kernelParams = [
       "usbcore.autosuspend=-1"
-      "intel_pstate=disable"
+      # "intel_pstate=disable"
     ];
     #loader.grub.device = "nodev";
   };

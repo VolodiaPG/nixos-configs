@@ -24,7 +24,7 @@ in
       kernelModules = [ "kvm_intel" ];
       kernelParams = [
         "intel_iommu=on"
-        "intel_pstate=passive"
+        "intel_pstate=active"
       ];
     };
 

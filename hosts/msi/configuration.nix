@@ -36,7 +36,6 @@
         ;
     })
     ./hardware-configuration.nix
-    ../../services/nvfancontrol/nvfancontrol.nix
   ];
 
   # Host-specific configuration
@@ -84,24 +83,24 @@
       analogioOffset = -95;
     };
 
-    nvfancontrol = {
-      enable = true;
-      configuration = ''
-        [[gpu]]
-        id = 0
-
-        points = [
-            [50,0],
-            [54,0],
-            [57,46],
-            [62,62],
-            [66,75],
-            [75,85],
-            [80,100],
-        ]
-      '';
-      cliArgs = "-d -f -l 0";
-    };
+    # nvfancontrol = {
+    #   enable = true;
+    #   configuration = ''
+    #     [[gpu]]
+    #     id = 0
+    #
+    #     points = [
+    #         [50,0],
+    #         [54,0],
+    #         [57,46],
+    #         [62,62],
+    #         [66,75],
+    #         [75,85],
+    #         [80,100],
+    #     ]
+    #   '';
+    #   cliArgs = "-d -f -l 0";
+    # };
   };
 
   hardware = {
