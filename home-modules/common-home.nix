@@ -34,6 +34,29 @@
     starship = {
       enable = true;
       enableZshIntegration = true;
+      settings = {
+        add_newline = false;
+        format = lib.concatStrings [
+          "$directory"
+          "$git_status"
+          "$cmd_duration"
+          "$character"
+        ];
+        directory = {
+          format = "[$path]($style) ";
+        };
+
+        git_branch = {
+          format = "[$symbol$branch]($style)";
+        };
+
+        character = {
+          success_symbol = "[➜](green)";
+          error_symbol = "[➜](red)";
+        };
+
+        scan_timeout = 10;
+      };
     };
     direnv = {
       enable = true;
