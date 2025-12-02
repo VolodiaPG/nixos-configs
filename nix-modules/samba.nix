@@ -12,7 +12,7 @@ let
       comment = "Share for ${path}.";
       "guest ok" = "no";
       inherit path;
-      "read only" = "no";
+      "read only" = "yes";
     };
 in
 {
