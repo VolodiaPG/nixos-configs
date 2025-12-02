@@ -15,6 +15,7 @@
       vpn
       laptop-server
       arr
+      samba
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel

@@ -40,5 +40,10 @@ in
       file = ./ssh-remote-builder-pub.age;
     }
     // rootReadable;
+
+    samba-user-password = {
+      file = ./samba-user-password.age;
+    }
+    // rootReadable;
   };
 }
