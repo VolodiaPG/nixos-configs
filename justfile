@@ -12,31 +12,11 @@ updateindex:
 boot:
     sudo nixos-rebuild boot --flake .#$(hostname)
 
-_switch:
+switch:
     sudo nixos-rebuild switch --flake .#$(hostname)
 
 mount hostname:
     sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode mount {{justfile_directory()}}/machines/{{hostname}}/disk.nix
-
-switch:
-    #!/usr/bin/env bash
-    (setsid nohup sudo bash -c "sleep 60 ; sudo nix-env --rollback --profile /nix/var/nix/profiles/system ; echo \"Rollbacked $(date)\"")& disown
-    nohup_command_pid=$!
-
-    just _switch
-
-    echo "--> 60 seconds before rollback..."
-
-    select result in Keep Rollback
-    do
-        if [ $result == "Keep" ]; then
-            kill $nohup_command_pid
-            break
-        elif [ $result == "Rollback" ]; then
-            wait
-            break
-        fi
-    done
 
 test:
     sudo nixos-rebuild test --flake .#$(hostname)

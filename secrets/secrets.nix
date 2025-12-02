@@ -4,8 +4,9 @@ in
 {
   "pythong5k.age".publicKeys = [ publicKey ];
   "envvars.age".publicKeys = [ publicKey ];
-  "dellmac.age".publicKeys = [ publicKey ];
+  "tailscale-authkey.age".publicKeys = [ publicKey ];
   "mail.inria.password.age".publicKeys = [ publicKey ];
   "ssh-remote-builder.age".publicKeys = [ publicKey ];
   "ssh-remote-builder-pub.age".publicKeys = [ publicKey ];
+  "rss-password.age".publicKeys = [ publicKey ];
 }

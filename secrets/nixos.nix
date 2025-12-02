@@ -21,8 +21,13 @@ in
   ];
 
   age.secrets = {
-    dellmac = {
-      file = ./dellmac.age;
+    tailscale-authkey = {
+      file = ./tailscale-authkey.age;
+    }
+    // rootReadable;
+
+    rss-password = {
+      file = ./rss-password.age;
     }
     // rootReadable;
 

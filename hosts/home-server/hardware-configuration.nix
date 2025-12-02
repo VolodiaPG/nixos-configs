@@ -27,8 +27,15 @@
     extraModulePackages = [ ];
     kernelParams = [
       "mitigations=off"
-      "intel_pstate=disable"
+      # "intel_pstate=disable"
     ];
+  };
+
+  fileSystems = {
+    "/data" = {
+      device = "/dev/disk/by-uuid/9e5f9d10-25ce-85f8-cbfe-d5aefabdef97";
+      fsType = "ext4";
+    };
   };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

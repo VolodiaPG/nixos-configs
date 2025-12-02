@@ -14,6 +14,7 @@
       impermanence
       vpn
       laptop-server
+      arr
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel
@@ -24,6 +25,7 @@
     (with inputs; [
       srvos.nixosModules.server
       disko.nixosModules.disko
+      nixarr.nixosModules.default
     ])
     (import ./home.nix {
       inherit

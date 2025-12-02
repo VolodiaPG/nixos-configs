@@ -98,6 +98,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixarr = {
+      url = "github:rasmus-kirk/nixarr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -155,6 +160,7 @@
           username = "volodia";
           homeDirectory = "/home/volodia";
           macosHomeDirectory = "/Users/volodia";
+          tailname = "goblin-alewife.ts.net";
           email = "volodia.parol-guarino@proton.me";
           signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
           keys = [
@@ -213,11 +219,6 @@
           modules = [
             ./hosts/dell/configuration.nix
             flakeModule
-            inputs.determinate.nixosModules.default
-            inputs.agenix.nixosModules.default
-            inputs.laputil.nixosModules.default
-            inputs.impermanence.nixosModules.impermanence
-            inputs.catppuccin.nixosModules.catppuccin
             ./secrets/nixos.nix
           ];
         };
