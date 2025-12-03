@@ -4,10 +4,19 @@
   user,
   lib,
   pkgs,
+  config,
   ...
 }:
 {
   imports = lib.flatten [
+    (with inputs; [
+      determinate.nixosModules.default
+      agenix.nixosModules.default
+      laputil.nixosModules.default
+      impermanence.nixosModules.impermanence
+      catppuccin.nixosModules.catppuccin
+      nixarr.nixosModules.default
+    ])
     (with outputs.nixosModules; [
       (common-nix { inherit pkgs user lib; })
       kernel
@@ -17,6 +26,8 @@
       impermanence
       vpn
       laptop-server
+      arr
+      (home-lab { inherit pkgs user config; })
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel-cpu-only

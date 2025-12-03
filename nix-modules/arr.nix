@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  user,
   ...
 }:
 let
@@ -66,7 +67,9 @@ in
     transmission = {
       enable = true; # Enable Transmission for torrents
       peerPort = 50000; # Set peer port
-      extraAllowedIps = [ "100.*.*.*" ]; # Allow access from Tailscale
+      extraAllowedIps = [
+        "100.*"
+      ]; # Allow access from Tailscale
       flood.enable = true;
     };
     bazarr.enable = false; # Enable Bazarr for subtitles
@@ -76,11 +79,17 @@ in
     readarr.enable = false; # Enable Readarr for books
   };
 
-  services.flaresolverr = {
-    enable = false;
-    port = 8191;
-    package = pkgs.flaresolverr;
+  services.transmission.settings = {
+    rpc-host-whitelist-enabled = false;
+    rpc-whitelist-enabled = lib.mkForce false;
+    rpc-bind-address = lib.mkForce "127.0.0.1";
   };
+
+  # services.flaresolverr = {
+  #   enable = false;
+  #   port = 8191;
+  #   package = pkgs.flaresolverr;
+  # };
 
   # Block transmission user from using non-tailscale interfaces (backup kill switch)
   networking.firewall.extraCommands = ''
@@ -104,42 +113,120 @@ in
     fi
   '';
 
-  systemd.services = {
-    transmission = {
-      # Ensure transmission starts after tailscale is up
-      after = [
-        "tailscaled.service"
-      ];
-      wants = [ "tailscaled.service" ];
-      bindsTo = [ "tailscaled.service" ]; # Stop transmission if tailscale dies (kill switch)
-      serviceConfig = {
-        Restart = "always";
-        RestartSec = 3;
-        # Bind to Tailscale interface only - prevents any traffic on other interfaces
-        BindToDevice = "tailscale0";
-        # Restrict network access
-        RestrictAddressFamilies = [
-          "AF_INET"
-          "AF_INET6"
-          "AF_UNIX"
+  systemd = {
+    services = {
+      transmission = {
+        # Ensure transmission starts after tailscale is up
+        after = [
+          "tailscaled.service"
         ];
+        wants = [ "tailscaled.service" ];
+        bindsTo = [ "tailscaled.service" ]; # Stop transmission if tailscale dies (kill switch)
+        serviceConfig = {
+          Restart = "always";
+          RestartSec = 3;
+          # Bind to Tailscale interface only - prevents any traffic on other interfaces
+          BindToDevice = "tailscale0";
+          # Restrict network access
+          RestrictAddressFamilies = [
+            "AF_INET"
+            "AF_INET6"
+            "AF_UNIX"
+          ];
+        };
+      };
+      sonarr.serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = lib.mkForce 3;
+      };
+      radarr.serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = lib.mkForce 3;
+      };
+      prowlarr.serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = lib.mkForce 3;
+      };
+    }
+    // scheduledServices.services;
+
+    inherit (scheduledServices) timers;
+
+    tmpfiles.rules = [
+      "d /data/media/.state/organizr 0755 - - - -"
+    ];
+  };
+
+  users.users.organizr = {
+    isSystemUser = true;
+    uid = 7070;
+    group = "media";
+  };
+  virtualisation.oci-containers.containers.organizr = {
+    image = "ghcr.io/organizr/organizr";
+    ports = [ "7070:80" ];
+    volumes = [
+      "/data/media/.state/organizr:/config"
+    ];
+    environment = {
+      PUID = toString config.users.users.organizr.uid;
+      PGID = toString config.users.groups.media.gid;
+    };
+  };
+
+  services.caddy = {
+    virtualHosts = {
+      "https://hass.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/hass
+
+          reverse_proxy http://127.0.0.1:8123 {
+              header_up Host {host}
+          }
+        '';
+      };
+
+      "https://organizr.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/organizr
+
+          reverse_proxy http://127.0.0.1:7070 {
+              header_up Host {host}
+          }
+        '';
+      };
+      "https://transmission.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/transmission
+          reverse_proxy http://127.0.0.1:9091 {
+              header_up Host {host}
+          }
+        '';
+      };
+      "https://sonarr.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/sonarr
+          reverse_proxy http://127.0.0.1:8989 {
+              header_up Host {host}
+          }
+        '';
+      };
+      "https://radarr.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/radarr
+          reverse_proxy http://127.0.0.1:7878 {
+              header_up Host {host}
+          }
+        '';
+      };
+      "https://prowlarr.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/prowlarr
+          reverse_proxy http://127.0.0.1:9696 {
+              header_up Host {host}
+          }
+        '';
       };
     };
-    sonarr.serviceConfig = {
-      Restart = lib.mkForce "always";
-      RestartSec = lib.mkForce 3;
-    };
-    radarr.serviceConfig = {
-      Restart = lib.mkForce "always";
-      RestartSec = lib.mkForce 3;
-    };
-    prowlarr.serviceConfig = {
-      Restart = lib.mkForce "always";
-      RestartSec = lib.mkForce 3;
-    };
-  }
-  // scheduledServices.services;
-
-  systemd.timers = scheduledServices.timers;
-
+  };
 }
