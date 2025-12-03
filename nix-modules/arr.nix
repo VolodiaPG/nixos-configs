@@ -4,6 +4,59 @@
   config,
   ...
 }:
+let
+  # Helper function to create scheduled stop/start service pairs
+  mkScheduledService = serviceName: {
+    services = {
+      "${serviceName}-stop" = {
+        description = "Stop ${serviceName} service";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.systemd}/bin/systemctl stop ${serviceName}.service";
+        };
+      };
+      "${serviceName}-start" = {
+        description = "Start ${serviceName} service";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.systemd}/bin/systemctl start ${serviceName}.service";
+        };
+      };
+    };
+    timers = {
+      "${serviceName}-stop" = {
+        description = "Stop ${serviceName} at 22:30";
+        timerConfig = {
+          OnCalendar = "*-*-* 22:30:00";
+          Persistent = true;
+        };
+        wantedBy = [ "timers.target" ];
+      };
+      "${serviceName}-start" = {
+        description = "Start ${serviceName} at 07:30";
+        timerConfig = {
+          OnCalendar = "*-*-* 07:30:00";
+          Persistent = true;
+        };
+        wantedBy = [ "timers.target" ];
+      };
+    };
+  };
+
+  # Generate scheduled services for each service
+  scheduledServices =
+    lib.foldr (serviceName: acc: lib.recursiveUpdate acc (mkScheduledService serviceName))
+      {
+        services = { };
+        timers = { };
+      }
+      [
+        "transmission"
+        "sonarr"
+        "radarr"
+        "prowlarr"
+      ];
+in
 {
   nixarr = {
     enable = true;
@@ -56,7 +109,6 @@
       # Ensure transmission starts after tailscale is up
       after = [
         "tailscaled.service"
-        "network-online.target"
       ];
       wants = [ "tailscaled.service" ];
       bindsTo = [ "tailscaled.service" ]; # Stop transmission if tailscale dies (kill switch)
@@ -85,6 +137,9 @@
       Restart = lib.mkForce "always";
       RestartSec = lib.mkForce 3;
     };
-  };
+  }
+  // scheduledServices.services;
+
+  systemd.timers = scheduledServices.timers;
 
 }
