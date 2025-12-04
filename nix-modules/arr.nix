@@ -151,33 +151,7 @@ in
     // scheduledServices.services;
 
     inherit (scheduledServices) timers;
-
-    # # Generate services page on boot
-    # systemd-tmpfiles.rules = [
-    #   "d /data/media/.state/services-page 0755 root root - -"
-    # ];
-
-    # tmpfiles.rules = [
-    #   "d /data/media/.state/organizr 0755 - - - -"
-    # ];
   };
-
-  # users.users.organizr = {
-  #   isSystemUser = true;
-  #   uid = 7070;
-  #   group = "media";
-  # };
-  # virtualisation.oci-containers.containers.organizr = {
-  #   image = "ghcr.io/organizr/organizr";
-  #   ports = [ "7070:80" ];
-  #   volumes = [
-  #     "/data/media/.state/organizr:/config"
-  #   ];
-  #   environment = {
-  #     PUID = toString config.users.users.organizr.uid;
-  #     PGID = toString config.users.groups.media.gid;
-  #   };
-  # };
 
   services.caddy = {
     virtualHosts = {
@@ -212,15 +186,6 @@ in
         '';
       };
 
-      "https://organizr.${user.tailname}" = {
-        extraConfig = ''
-          bind tailscale/organizr
-
-          reverse_proxy http://127.0.0.1:7070 {
-              header_up Host {host}
-          }
-        '';
-      };
       "https://transmission.${user.tailname}" = {
         extraConfig = ''
           bind tailscale/transmission
