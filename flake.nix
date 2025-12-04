@@ -68,11 +68,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mac-app-util = {
-      url = "github:hraban/mac-app-util";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -267,7 +262,6 @@
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
-            inputs.mac-app-util.darwinModules.default
             {
               home-manager = {
                 users."${specialArgs'.user.username}" =
@@ -314,7 +308,6 @@
                   inputs.agenix.homeManagerModules.default
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.nix-index-database.homeModules.nix-index
-                  inputs.mac-app-util.homeManagerModules.default
                   { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
                 ];
               };
