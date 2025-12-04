@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+        }
+
+        .service-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .service-desc {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .service-port {
+            font-size: 0.85em;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Media Services</h1>
+        <div class="services-grid">
+            <a href="https://transmission.@TAILNAME@" class="service-card">
+                <div class="service-icon">📥</div>
+                <div class="service-name">Transmission</div>
+                <div class="service-desc">Torrent Client</div>
+                <div class="service-port">Port 9091</div>
+            </a>
+
+            <a href="https://sonarr.@TAILNAME@" class="service-card">
+                <div class="service-icon">📺</div>
+                <div class="service-name">Sonarr</div>
+                <div class="service-desc">TV Shows Manager</div>
+                <div class="service-port">Port 8989</div>
+            </a>
+
+            <a href="https://radarr.@TAILNAME@" class="service-card">
+                <div class="service-icon">🎥</div>
+                <div class="service-name">Radarr</div>
+                <div class="service-desc">Movies Manager</div>
+                <div class="service-port">Port 7878</div>
+            </a>
+
+            <a href="https://prowlarr.@TAILNAME@" class="service-card">
+                <div class="service-icon">🔍</div>
+                <div class="service-name">Prowlarr</div>
+                <div class="service-desc">Indexer Manager</div>
+                <div class="service-port">Port 9696</div>
+            </a>
+
+            <a href="https://hass.@TAILNAME@" class="service-card">
+                <div class="service-icon">🏠</div>
+                <div class="service-name">Home Assistant</div>
+                <div class="service-desc">Home Automation</div>
+                <div class="service-port">Port 8123</div>
+            </a>
+
+            <a href="https://organizr.@TAILNAME@" class="service-card">
+                <div class="service-icon">📋</div>
+                <div class="service-name">Organizr</div>
+                <div class="service-desc">Service Dashboard</div>
+                <div class="service-port">Port 7070</div>
+            </a>
+        </div>
+        <div class="footer">
+            <p>All services require Tailscale connection</p>
+        </div>
+    </div>
+</body>
+</html>

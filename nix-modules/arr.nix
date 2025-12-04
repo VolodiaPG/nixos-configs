@@ -152,30 +152,56 @@ in
 
     inherit (scheduledServices) timers;
 
-    tmpfiles.rules = [
-      "d /data/media/.state/organizr 0755 - - - -"
-    ];
+    # # Generate services page on boot
+    # systemd-tmpfiles.rules = [
+    #   "d /data/media/.state/services-page 0755 root root - -"
+    # ];
+
+    # tmpfiles.rules = [
+    #   "d /data/media/.state/organizr 0755 - - - -"
+    # ];
   };
 
-  users.users.organizr = {
-    isSystemUser = true;
-    uid = 7070;
-    group = "media";
-  };
-  virtualisation.oci-containers.containers.organizr = {
-    image = "ghcr.io/organizr/organizr";
-    ports = [ "7070:80" ];
-    volumes = [
-      "/data/media/.state/organizr:/config"
-    ];
-    environment = {
-      PUID = toString config.users.users.organizr.uid;
-      PGID = toString config.users.groups.media.gid;
-    };
-  };
+  # users.users.organizr = {
+  #   isSystemUser = true;
+  #   uid = 7070;
+  #   group = "media";
+  # };
+  # virtualisation.oci-containers.containers.organizr = {
+  #   image = "ghcr.io/organizr/organizr";
+  #   ports = [ "7070:80" ];
+  #   volumes = [
+  #     "/data/media/.state/organizr:/config"
+  #   ];
+  #   environment = {
+  #     PUID = toString config.users.users.organizr.uid;
+  #     PGID = toString config.users.groups.media.gid;
+  #   };
+  # };
 
   services.caddy = {
     virtualHosts = {
+      "http://:80" = {
+        extraConfig = ''
+          # Route for the root request (and redirect if needed, like /index.htm -> /)
+          route / {
+              rewrite /index.htm /
+
+              file_server {
+                  index ${
+                    pkgs.replaceVars ./services-page/index.html {
+                      TAILNAME = user.tailname;
+                    }
+                  }
+              }
+          }
+
+          route * {
+              respond "Not Found" 404
+          }
+        '';
+      };
+
       "https://hass.${user.tailname}" = {
         extraConfig = ''
           bind tailscale/hass
