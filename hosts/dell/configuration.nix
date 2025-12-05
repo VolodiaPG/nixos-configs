@@ -4,7 +4,6 @@
   user,
   lib,
   pkgs,
-  config,
   ...
 }:
 {
@@ -27,7 +26,7 @@
       vpn
       laptop-server
       arr
-      (home-lab { inherit pkgs user config; })
+      # (home-lab { inherit pkgs user config; })
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel-cpu-only

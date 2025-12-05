@@ -185,7 +185,15 @@ in
           }
         '';
       };
+      "https://rss.${user.tailname}" = {
+        extraConfig = ''
+          bind tailscale/rss
 
+          reverse_proxy http://127.0.0.1:8082 {
+              header_up Host {host}
+          }
+        '';
+      };
       "https://transmission.${user.tailname}" = {
         extraConfig = ''
           bind tailscale/transmission
