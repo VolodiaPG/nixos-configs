@@ -38,16 +38,14 @@
         add_newline = false;
         format = lib.concatStrings [
           "$directory"
+          "$git_branch"
           "$git_status"
           "$cmd_duration"
           "$character"
         ];
+
         directory = {
           format = "[$path]($style) ";
-        };
-
-        git_branch = {
-          format = "[$symbol$branch]($style)";
         };
 
         character = {
