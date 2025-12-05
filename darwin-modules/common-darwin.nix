@@ -1,7 +1,6 @@
 {
   pkgs,
   user,
-  inputs,
   ...
 }:
 {
@@ -35,6 +34,9 @@
   environment.systemPackages = with pkgs; [
     kitty
     terminal-notifier
+
+    yabai
+    skhd
   ];
 
   # launchd.daemons.linux-builder.serviceConfig = {
@@ -49,7 +51,7 @@
   services = {
     yabai = {
       enable = true;
-      package = inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.yabai;
+      package = pkgs.yabai;
       enableScriptingAddition = true;
     };
     skhd = {
