@@ -56,4 +56,4 @@ jobs:
       - name: Build and deploy
         run: |
           set -euxo pipefail
-          nix run .#deploy-rs -- --targets .#dell .#home-server
+          nix run .#deploy-rs -- --targets .#dell,.#home-server
