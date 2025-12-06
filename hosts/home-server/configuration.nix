@@ -14,6 +14,7 @@
       impermanence
       vpn
       laptop-server
+      recyclarr
       arr
       samba
       caddy

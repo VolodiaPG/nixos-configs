@@ -76,7 +76,6 @@ in
     sonarr.enable = true; # Enable Sonarr for TV shows
     radarr.enable = true; # Enable Radarr for movies
     prowlarr.enable = true; # Enable Prowlarr for indexers
-    readarr.enable = false; # Enable Readarr for books
   };
 
   services.transmission.settings = {
