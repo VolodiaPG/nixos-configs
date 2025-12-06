@@ -6,7 +6,7 @@
 {
   home.packages = [
     pkgs.nvim
-    inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.opencode
-    inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.devenv
+    inputs.llm-agents.packages.${pkgs.system}.opencode
+    pkgs.devenv
   ];
 }

@@ -88,6 +88,8 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
 
+    llm-agents.url = "github:numtide/llm-agents.nix";
+
     laputil = {
       url = "github:volodiapg/laputil";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -108,6 +110,7 @@
       "https://vim.cachix.org"
       "https://install.determinate.systems"
       "https://nixos-apple-silicon.cachix.org"
+      "https://numtide.cachix.org"
     ];
     extra-trusted-public-keys = [
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
@@ -115,6 +118,7 @@
       "vim.cachix.org-1:csyY4pnUgltVSD3alxSV6zZG/lRD7FQBfl4K4RNBgXA="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
+      "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
     ];
   };
 
