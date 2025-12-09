@@ -2,18 +2,16 @@
   pkgs,
   user,
   lib,
+  inputs,
   ...
 }:
+let
+  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+in
 {
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _pkg: true;
-  };
-
-  programs = {
-    nix-index = {
-      enable = true;
-    };
   };
 
   nix = {
@@ -27,10 +25,11 @@
       cores = 0;
       log-lines = 50;
       fallback = true;
-
+      experimental-features = "nix-command flakes";
       extra-experimental-features = "parallel-eval";
       eval-cores = 0;
       lazy-trees = true;
+      flake-registry = "";
 
       allowed-users = [
         "root"
@@ -44,10 +43,11 @@
         "@admin"
         "@wheel"
       ];
-
-      # Ignore global flake registry
-      flake-registry = builtins.toFile "empty-registry.json" ''{"flakes": [], "version": 2}'';
     };
+
+    channel.enable = false;
+    registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
+    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
 
     gc.dates = "weekly";
     optimise = {

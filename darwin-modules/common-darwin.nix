@@ -1,24 +1,40 @@
 {
   pkgs,
   user,
+  lib,
+  inputs,
   ...
 }:
+let
+  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+in
+
 {
   imports = [ ];
 
   nix = {
     enable = false; # Use determinate system
     settings = {
-      substituters = [
-        "https://cache.nixos.org/"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      ];
+      sandbox = "relaxed";
+      extra-platforms = "x86_64-darwin";
+      keep-outputs = true;
+      keep-derivations = true;
+      warn-dirty = false;
+      build-users-group = "nixbld";
+      builders-use-substitutes = true;
+      max-jobs = "auto";
+      cores = 0;
+      log-lines = 50;
+      fallback = true;
+      experimental-features = "nix-command flakes";
+      extra-experimental-features = "parallel-eval";
+      eval-cores = 0;
+      lazy-trees = true;
+      flake-registry = "";
     };
-    extraOptions = ''
-      extra-platforms = x86_64-darwin
-    '';
+    channel.enable = false;
+    registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
+    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
 
   users.users."${user.username}" = {
