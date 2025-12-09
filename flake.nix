@@ -263,10 +263,16 @@
               };
             }
             outputs.darwinModules.common-darwin
+            outputs.darwinModules.autoupdate
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
             {
+              services.darwinAutoUpdate = {
+                enable = true;
+                flake = "github:volodiapg/nixos-configs";
+                hostName = "Volodias-MacBook-Pro";
+              };
               home-manager = {
                 users."${specialArgs'.user.username}" =
                   {
