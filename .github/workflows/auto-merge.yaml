@@ -2,7 +2,31 @@ name: Auto Merge Dependency Updates
 on:
   - pull_request_target
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: "holster"
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            lazy-trees = true
+
+      - name: Set up FlakeHub Cache and local cache
+        uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Run nix flake check
+        run: nix flake check
+
   auto-merge-dependency-updates:
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       contents: write

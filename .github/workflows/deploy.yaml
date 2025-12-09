@@ -32,10 +32,13 @@ jobs:
         with:
           hatchet-protocol: "holster"
 
-      - uses: DeterminateSystems/determinate-nix-action@main
+      - uses: DeterminateSystems/determinate-nix-action@v3
         with:
           extra-conf: |
             lazy-trees = true
+
+      - name: Set up FlakeHub Cache and local cache
+        uses: DeterminateSystems/flakehub-cache-action@main
 
       - name: Checkout repository
         uses: actions/checkout@main
