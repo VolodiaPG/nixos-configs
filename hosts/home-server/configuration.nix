@@ -9,7 +9,7 @@
 {
   imports = lib.flatten [
     (with outputs.nixosModules; [
-      (common-nix { inherit pkgs user lib; })
+      common-nix
       kernel
       impermanence
       vpn

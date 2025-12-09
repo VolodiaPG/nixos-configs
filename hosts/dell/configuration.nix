@@ -17,7 +17,7 @@
       nixarr.nixosModules.default
     ])
     (with outputs.nixosModules; [
-      (common-nix { inherit pkgs user lib; })
+      common-nix
       kernel
       intel
       nvidia

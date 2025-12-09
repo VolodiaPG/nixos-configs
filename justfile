@@ -13,7 +13,7 @@ boot:
     sudo nixos-rebuild boot --flake .#$(hostname)
 
 switch:
-    sudo nixos-rebuild switch --flake .#$(hostname)
+    sudo nixos-rebuild switch --flake .#$(hostname) --accept-flake-config
 
 mount hostname:
     sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode mount {{justfile_directory()}}/machines/{{hostname}}/disk.nix
@@ -44,7 +44,7 @@ darwin:
   #   configuration")
   # echo $result
   # sudo $result/activate
-  result=$(nix build .#darwinConfigurations.Volodias-MacBook-Pro.system --print-out-paths)
+  result=$(nix build .#darwinConfigurations.Volodias-MacBook-Pro.system --print-out-paths --accept-flake-config)
   echo $result
   sudo $result/activate
 

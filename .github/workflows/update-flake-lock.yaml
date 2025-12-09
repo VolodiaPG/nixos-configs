@@ -17,6 +17,9 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            lazy-trees = true
 
       - uses: actions/create-github-app-token@v2
         id: app-token
