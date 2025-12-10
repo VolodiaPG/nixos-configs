@@ -42,6 +42,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@main
+        with:
+          fetch-depth: 0
 
       - name: Tailscale
         uses: tailscale/github-action@main

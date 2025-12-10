@@ -18,8 +18,9 @@ jobs:
         uses: DeterminateSystems/flakehub-cache-action@main
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
+          fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Run nix flake check
