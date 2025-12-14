@@ -76,6 +76,7 @@
     sonarr.enable = true; # Enable Sonarr for TV shows
     radarr.enable = true; # Enable Radarr for movies
     prowlarr.enable = true; # Enable Prowlarr for indexers
+    jellyfin.enable = true; # Enable Jellyfin for media
   };
 
   services.transmission.settings = {
