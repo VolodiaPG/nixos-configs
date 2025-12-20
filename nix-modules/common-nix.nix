@@ -146,6 +146,7 @@ in
     pkgs.docker-compose
     pkgs.lm_sensors
     pkgs.ecryptfs
+    pkgs.fscrypt-experimental
   ];
 
   security = {
