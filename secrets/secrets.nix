@@ -10,4 +10,5 @@ in
   "ssh-remote-builder-pub.age".publicKeys = [ publicKey ];
   "rss-password.age".publicKeys = [ publicKey ];
   "samba-user-password.age".publicKeys = [ publicKey ];
+  "cachix-token.age".publicKeys = [ publicKey ];
 }

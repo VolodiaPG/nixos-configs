@@ -45,5 +45,10 @@ in
       file = ./samba-user-password.age;
     }
     // rootReadable;
+
+    cachix-token = {
+      file = ./cachix-token.age;
+    }
+    // rootReadable;
   };
 }
