@@ -16,6 +16,9 @@
       catppuccin.nixosModules.catppuccin
       nixarr.nixosModules.default
     ])
+    (with outputs.commonModules; [
+      common-nix-settings
+    ])
     (with outputs.nixosModules; [
       common-nix
       kernel

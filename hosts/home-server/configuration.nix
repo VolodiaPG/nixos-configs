@@ -8,6 +8,9 @@
 }:
 {
   imports = lib.flatten [
+    (with outputs.commonModules; [
+      common-nix-settings
+    ])
     (with outputs.nixosModules; [
       common-nix
       kernel

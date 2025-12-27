@@ -2,12 +2,8 @@
   pkgs,
   user,
   lib,
-  inputs,
   ...
 }:
-let
-  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
-in
 {
   nixpkgs.config = {
     allowUnfree = true;
@@ -16,41 +12,23 @@ in
 
   nix = {
     settings = {
-      keep-outputs = true;
-      keep-derivations = true;
-      warn-dirty = false;
-      build-users-group = "nixbld";
-      builders-use-substitutes = true;
-      max-jobs = "auto";
-      cores = 0;
-      log-lines = 50;
-      fallback = true;
+      # keep-outputs = true;
+      # keep-derivations = true;
       experimental-features = [
         "nix-command"
         "flakes"
       ];
       extra-experimental-features = "parallel-eval";
-      eval-cores = 0;
-      lazy-trees = true;
-      flake-registry = "";
 
       allowed-users = [
         "root"
         user.username
-        "@admin"
-        "@wheel"
       ];
       trusted-users = [
         "root"
         user.username
-        "@admin"
-        "@wheel"
       ];
     };
-
-    channel.enable = false;
-    registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
-    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
 
     gc.dates = "weekly";
     optimise = {

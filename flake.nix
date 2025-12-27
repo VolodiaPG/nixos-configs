@@ -197,6 +197,7 @@
       # Module registries
       nixosModules = import ./nix-modules;
       darwinModules = import ./darwin-modules;
+      commonModules = import ./common-modules;
       homeModules = import ./home-modules;
 
       # NixOS configurations
@@ -268,6 +269,7 @@
             }
             outputs.darwinModules.common-darwin
             outputs.darwinModules.autoupdate
+            outputs.commonModules.common-nix-settings
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
