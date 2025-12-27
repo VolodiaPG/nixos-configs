@@ -37,7 +37,7 @@
     ];
 
     inherit (config.nix.settings)
-      nix-path
+      # nix-path
       download-buffer-size
       log-lines
       fallback

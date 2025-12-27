@@ -2,7 +2,6 @@
   pkgs,
   user,
   lib,
-  inputs,
   config,
   ...
 }:
@@ -57,7 +56,7 @@ let
 
   common-nix-settings = {
     download-buffer-size = "1073741824"; # 1 GiB
-    nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
+    # nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
 
     log-lines = 50;
     fallback = true;
@@ -92,9 +91,9 @@ in
 {
   # settings get written into /etc/nix/nix.custom.conf
   nix = {
-    channel.enable = false;
-    registry.nixpkgs.flake = inputs.nixpkgs;
-    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+    # channel.enable = false;
+    # registry.nixpkgs.flake = inputs.nixpkgs;
+    # nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     settings = common-nix-settings;
   };
 }
