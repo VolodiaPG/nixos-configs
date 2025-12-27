@@ -8,7 +8,7 @@
 let
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
-    #!/bin/bash
+    #!/usr/bin/env bash
     CACHIX_NAME="${user.cachixName}"
     IGNORE_PATTERNS="${
       lib.concatStringsSep " " (

@@ -1,12 +1,10 @@
 let
   # Define the primary user for owning user-specific secrets.
   # Adjust if your username is different or managed more dynamically.
-  # secretsUser = "volodia";
-  # userReadable = {
-  #   mode = "0500";
-  #   owner = secretsUser;
-  # };
-  #
+  userReadable = {
+    mode = "0500";
+    owner = "volodia";
+  };
   rootReadable = {
     owner = "root";
     mode = "0500";
@@ -49,6 +47,6 @@ in
     cachix-token = {
       file = ./cachix-token.age;
     }
-    // rootReadable;
+    // userReadable;
   };
 }
