@@ -29,6 +29,7 @@
       vpn
       laptop-server
       arr
+      # home-lab
       # (home-lab { inherit pkgs user config; })
     ])
     (with inputs.nixos-hardware.nixosModules; [

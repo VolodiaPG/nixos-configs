@@ -52,6 +52,7 @@
       max-jobs
       keep-derivations
       keep-outputs
+      flake-registry
       ;
   };
 

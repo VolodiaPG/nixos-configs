@@ -2,11 +2,11 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs-unstable.follows = "nixpkgs";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -70,8 +70,8 @@
     };
 
     deploy-rs = {
-      # url = "github:serokell/deploy-rs/master";
-      url = "github:apoloqize/deploy-rs/master";
+      # url = "github:serokell/deploy-rs";
+      url = "github:apoloqize/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

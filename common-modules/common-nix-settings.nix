@@ -9,7 +9,7 @@
 let
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
-    #!/usr/bin/env bash
+    #!${pkgs.bash}/bin/bash
     CACHIX_NAME="${user.cachixName}"
     IGNORE_PATTERNS="${
       lib.concatStringsSep " " (
@@ -61,7 +61,7 @@ let
 
     log-lines = 50;
     fallback = true;
-    # flake-registry = "";
+    flake-registry = "";
     lazy-trees = true;
     eval-cores = 0;
     warn-dirty = false;
@@ -91,7 +91,7 @@ let
     ];
 
   };
-  flakeInputs = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
+  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
 in
 {
   # settings get written into /etc/nix/nix.custom.conf
@@ -103,6 +103,6 @@ in
     registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
 
     # set the path for channels compat
-    nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
+    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
 }
