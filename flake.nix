@@ -106,17 +106,17 @@
 
   nixConfig = {
     extra-substituters = [
-      "https://volodiapg.cachix.org"
-      "https://install.determinate.systems"
-      "https://nixos-apple-silicon.cachix.org"
-      "https://numtide.cachix.org"
-      "https://cache.numtide.com"
+      "https://cache.nixos.org?priority=10"
+      "https://volodiapg.cachix.org?priority=20"
+      "https://install.determinate.systems?priority=50"
+      # "https://nixos-apple-silicon.cachix.org?priority=50"
+      "https://cache.numtide.com?priority=50"
     ];
     extra-trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
-      "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+      # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
   };
@@ -187,9 +187,6 @@
           inherit overlays;
           config.allowUnfree = true;
         };
-        environment.etc."nix/inputs/nixpkgs".source = "${inputs.nixpkgs}";
-        environment.etc."nix/inputs/self".source = "${self}";
-        nix.registry.nixpkgs.flake = inputs.nixpkgs;
         system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
       };
     in
@@ -324,7 +321,6 @@
                   inputs.agenix.homeManagerModules.default
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.nix-index-database.homeModules.nix-index
-                  { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
                 ];
               };
             }

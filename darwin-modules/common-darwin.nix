@@ -41,7 +41,6 @@
       download-buffer-size
       log-lines
       fallback
-      flake-registry
       lazy-trees
       eval-cores
       warn-dirty
@@ -51,6 +50,8 @@
       extra-trusted-public-keys
       builders-use-substitutes
       max-jobs
+      keep-derivations
+      keep-outputs
       ;
   };
 

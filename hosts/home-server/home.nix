@@ -43,7 +43,6 @@
       inputs.agenix.homeManagerModules.default
       inputs.catppuccin.homeModules.catppuccin
       inputs.nix-index-database.homeModules.nix-index
-      { nix.registry.nixpkgs.flake = inputs.nixpkgs; }
     ];
   };
 }

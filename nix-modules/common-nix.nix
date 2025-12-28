@@ -22,6 +22,8 @@
 
       allowed-users = [
         "root"
+        "wheel"
+        "@wheel"
         user.username
       ];
       trusted-users = [

@@ -3,6 +3,7 @@
   user,
   lib,
   config,
+  inputs,
   ...
 }:
 let
@@ -60,7 +61,7 @@ let
 
     log-lines = 50;
     fallback = true;
-    flake-registry = "";
+    # flake-registry = "";
     lazy-trees = true;
     eval-cores = 0;
     warn-dirty = false;
@@ -68,32 +69,40 @@ let
     builders-use-substitutes = true;
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
+    # for direnv GC roots
+    keep-derivations = true;
+    keep-outputs = true;
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
     extra-substituters = [
-      "https://volodiapg.cachix.org"
-      "https://install.determinate.systems"
-      "https://nixos-apple-silicon.cachix.org"
-      "https://numtide.cachix.org"
-      "https://cache.numtide.com"
+      "https://cache.nixos.org?priority=10"
+      "https://volodiapg.cachix.org?priority=20"
+      "https://install.determinate.systems?priority=50"
+      # "https://nixos-apple-silicon.cachix.org?priority=50"
+      "https://cache.numtide.com?priority=50"
     ];
     extra-trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
-      "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+      # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
 
   };
+  flakeInputs = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
 in
 {
   # settings get written into /etc/nix/nix.custom.conf
   nix = {
-    # channel.enable = false;
-    # registry.nixpkgs.flake = inputs.nixpkgs;
-    # nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+    channel.enable = false;
     settings = common-nix-settings;
+
+    # pin the registry to avoid downloading and evaling a new nixpkgs version every time
+    registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
+
+    # set the path for channels compat
+    nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
   };
 }
