@@ -37,7 +37,6 @@
     ];
 
     inherit (config.nix.settings)
-      # nix-path
       download-buffer-size
       log-lines
       fallback
@@ -53,6 +52,7 @@
       keep-derivations
       keep-outputs
       flake-registry
+      nix-path
       ;
   };
 

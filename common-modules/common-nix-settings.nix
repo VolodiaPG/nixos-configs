@@ -7,6 +7,7 @@
   ...
 }:
 let
+  registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
     #!${pkgs.bash}/bin/bash
@@ -61,7 +62,6 @@ let
 
     log-lines = 50;
     fallback = true;
-    flake-registry = "";
     lazy-trees = true;
     eval-cores = 0;
     warn-dirty = false;
@@ -89,9 +89,9 @@ let
       # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
-
+    flake-registry = "/etc/flake-registry.json";
+    nix-path = lib.mapAttrsToList (name: flake: "${name}=${flake.outPath}") registryMap;
   };
-  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
 in
 {
   # settings get written into /etc/nix/nix.custom.conf
@@ -99,10 +99,29 @@ in
     channel.enable = false;
     settings = common-nix-settings;
 
-    # pin the registry to avoid downloading and evaling a new nixpkgs version every time
-    registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
-
-    # set the path for channels compat
-    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+    # # pin the registry to avoid downloading and evaling a new nixpkgs version every time
+    # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
+    #
+    # # set the path for channels compat
+    # nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
+
+  environment.etc."flake-registry.json".text =
+    let
+      flakes = lib.mapAttrsToList (name: flake: {
+        from = {
+          id = name;
+          type = "indirect";
+        };
+        to = {
+          type = "path";
+          path = flake.outPath;
+        };
+      }) registryMap;
+    in
+    lib.strings.toJSON {
+      inherit flakes;
+      version = 2;
+    };
+
 }
