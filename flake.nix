@@ -70,7 +70,8 @@
     };
 
     deploy-rs = {
-      url = "github:serokell/deploy-rs";
+      # url = "github:serokell/deploy-rs/master";
+      url = "github:apoloqize/deploy-rs/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
