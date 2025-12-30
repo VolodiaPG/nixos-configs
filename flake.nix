@@ -5,6 +5,11 @@
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
     nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
+    flake-input-patcher = {
+      url = "github:jfly/flake-input-patcher";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -70,8 +75,7 @@
     };
 
     deploy-rs = {
-      # url = "github:serokell/deploy-rs";
-      url = "github:apoloqize/deploy-rs";
+      url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -333,6 +337,14 @@
       system:
       let
         pkgs = pkgsFor system;
+        patcher = inputs.flake-input-patcher.lib.${system};
+
+        patchedInputs = patcher.patch inputs {
+          # Patching a direct dependency:
+          nixpkgs.patches = [
+            ./deploy-rs.patch
+          ];
+        };
       in
       {
 
@@ -364,7 +376,7 @@
                 ssh-to-age
                 home-manager
               ])
-              ++ [ inputs.deploy-rs.packages.${system}.default ]
+              ++ [ patchedInputs.deploy-rs.packages.${system}.default ]
               ++ [ inputs.agenix.packages.${system}.agenix ]
               ++ (inputs.nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin
                 inputs.darwin.packages.${system}.darwin-rebuild
@@ -377,15 +389,7 @@
         apps = {
           deploy-rs = {
             type = "app";
-            program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
-            meta = {
-              description = "Deploy NixOS configurations using deploy-rs";
-              mainProgram = "deploy";
-            };
-          };
-          default = {
-            type = "app";
-            program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
+            program = "${patchedInputs.deploy-rs.packages.${system}.default}/bin/deploy";
             meta = {
               description = "Deploy NixOS configurations using deploy-rs";
               mainProgram = "deploy";
