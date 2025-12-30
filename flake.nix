@@ -341,7 +341,7 @@
 
         patchedInputs = patcher.patch inputs {
           # Patching a direct dependency:
-          nixpkgs.patches = [
+          deploy-rs.patches = [
             ./deploy-rs.patch
           ];
         };
@@ -384,7 +384,10 @@
           };
         };
 
-        packages.mosh = pkgs.mosh;
+        packages = {
+          inherit (pkgs) mosh;
+          deploy = patchedInputs.deploy-rs.packages.${system}.default;
+        };
 
         apps = {
           deploy-rs = {
