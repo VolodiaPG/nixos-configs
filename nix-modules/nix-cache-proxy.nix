@@ -1,17 +1,15 @@
 {
   pkgs,
   lib,
-  config,
+  user,
   ...
 }:
 let
-  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") (
-    [ "https://cache.nixos.org" ] ++ config.nix.settings.trusted-substituters
-  );
+  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") user.trusted-substituters;
   port = "3687";
 in
 {
-  nix.settings.substituters = lib.mkForce [ "http://127.0.0.1:${port}" ];
+  nix.settings.substituters = lib.mkForce [ "http://127.0.0.1:${port}?priority=1" ];
 
   systemd.services.nix-cache-proxy = {
     description = "Nix Cache Proxy";
