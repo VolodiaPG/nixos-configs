@@ -45,7 +45,7 @@
       warn-dirty
       accept-flake-config
       post-build-hook
-      extra-substituters
+      trusted-substituters
       extra-trusted-public-keys
       builders-use-substitutes
       max-jobs

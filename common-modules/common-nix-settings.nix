@@ -82,7 +82,7 @@ let
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
-    extra-substituters = [
+    trusted-substituters = [
       "https://cache.nixos.org?priority=10"
       "https://volodiapg.cachix.org?priority=20"
       "https://install.determinate.systems?priority=50"

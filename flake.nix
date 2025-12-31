@@ -89,10 +89,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nixos-apple-silicon = {
-    #   url = "github:nix-community/nixos-apple-silicon";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    nix-cache-proxy = {
+      url = "github:volodiapg/nix-cache-proxy";
+      # url = "github:xddxdd/nix-cache-proxy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
 
@@ -132,7 +133,8 @@
       inherit (self) outputs;
 
       # Overlays
-      mosh-overlay = _final: prev: {
+      overlay = _final: prev: {
+        nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
         mosh = prev.mosh.overrideAttrs (
           old:
           let
@@ -153,7 +155,7 @@
       };
 
       overlays = [
-        mosh-overlay
+        overlay
         inputs.vim.overlay
         inputs.nur.overlays.default
         # inputs.nixos-apple-silicon.overlays.default
@@ -272,6 +274,7 @@
             outputs.darwinModules.common-darwin
             outputs.darwinModules.autoupdate
             outputs.commonModules.common-nix-settings
+            outputs.darwinModules.nix-cache-proxy
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
