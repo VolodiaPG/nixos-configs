@@ -12,8 +12,8 @@ let
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
     #!${pkgs.bash}/bin/bash
 
-    # Run the entire push process asynchronously in the background
-    (
+    # Run the entire push process asynchronously in the background using nohup
+    ${pkgs.coreutils}/bin/nohup ${pkgs.bash}/bin/bash -c '
       CACHIX_NAME="${user.cachixName}"
       IGNORE_PATTERNS="${
         lib.concatStringsSep " " (
@@ -57,7 +57,7 @@ let
       cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
 
       ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
-    ) &
+    ' >/dev/null 2>&1 &
 
     # Immediately return to avoid blocking the build
     exit 0
