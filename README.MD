@@ -36,6 +36,7 @@ sudo chown -R volodia:staff /nix
 mount -o subvol=,ssd,compress-force=zstd:2,noatime,discard=async,space_cache=v2,autodefrag /dev/disk/by-label/root /mnt
 
 sudo launchctl unload /Library/LaunchDaemons/systems.determinate.nix-daemon.plist && sudo launchctl load /Library/LaunchDaemons/systems.determinate.nix-daemon.plist
+sudo launchctl kickstart -k system/systems.determinate.nix-daemon
 
 ## Determinate
 
