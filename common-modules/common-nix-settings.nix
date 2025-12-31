@@ -11,49 +11,56 @@ let
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
     #!${pkgs.bash}/bin/bash
-    CACHIX_NAME="${user.cachixName}"
-    IGNORE_PATTERNS="${
-      lib.concatStringsSep " " (
-        [
-          "source"
-          "etc"
-          "system"
-          "home-manager"
-          "user-environment"
-        ]
-        ++ [ user.username ]
-      )
-    }"
 
-    # Filter out ignored patterns
-    FILTERED_PATHS=""
-    for path in $OUT_PATHS; do
-      # Check if path should be ignored
-      should_ignore=false
-      if [[ -n "$IGNORE_PATTERNS" ]]; then
-        IFS=' ' read -ra PATTERN_ARRAY <<< "$IGNORE_PATTERNS"
-        for pattern in "''${PATTERN_ARRAY[@]}"; do
-          if [[ -n "$pattern" && "$path" == *"$pattern"* ]]; then
-            should_ignore=true
-            break
-          fi
-        done
+    # Run the entire push process asynchronously in the background
+    (
+      CACHIX_NAME="${user.cachixName}"
+      IGNORE_PATTERNS="${
+        lib.concatStringsSep " " (
+          [
+            "source"
+            "etc"
+            "system"
+            "home-manager"
+            "user-environment"
+          ]
+          ++ [ user.username ]
+        )
+      }"
+
+      # Filter out ignored patterns
+      FILTERED_PATHS=""
+      for path in $OUT_PATHS; do
+        # Check if path should be ignored
+        should_ignore=false
+        if [[ -n "$IGNORE_PATTERNS" ]]; then
+          IFS=' ' read -ra PATTERN_ARRAY <<< "$IGNORE_PATTERNS"
+          for pattern in "''${PATTERN_ARRAY[@]}"; do
+            if [[ -n "$pattern" && "$path" == *"$pattern"* ]]; then
+              should_ignore=true
+              break
+            fi
+          done
+        fi
+
+        if [[ "$should_ignore" == "false" ]]; then
+          FILTERED_PATHS="$FILTERED_PATHS $path"
+        fi
+      done
+
+      if [ -z "$FILTERED_PATHS" ]; then
+        echo "Nothing to push to cachix"
+        exit 0
       fi
 
-      if [[ "$should_ignore" == "false" ]]; then
-        FILTERED_PATHS="$FILTERED_PATHS $path"
-      fi
-    done
+      # Check if already authenticated by testing cachix config
+      cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
 
-    if [ -z "$FILTERED_PATHS" ]; then
-      echo "Nothing to push"
-      exit 0
-    fi
+      ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
+    ) &
 
-    echo "Authenticating with cachix..."
-    cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
-
-    ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
+    # Immediately return to avoid blocking the build
+    exit 0
   '';
 
   common-nix-settings = {
