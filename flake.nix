@@ -5,11 +5,6 @@
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
     nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
-    flake-input-patcher = {
-      url = "github:jfly/flake-input-patcher";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -340,14 +335,6 @@
       system:
       let
         pkgs = pkgsFor system;
-        patcher = inputs.flake-input-patcher.lib.${system};
-
-        patchedInputs = patcher.patch inputs {
-          # Patching a direct dependency:
-          deploy-rs.patches = [
-            ./deploy-rs.patch
-          ];
-        };
       in
       {
 
@@ -378,8 +365,9 @@
                 age
                 ssh-to-age
                 home-manager
+                deploy-rs
               ])
-              ++ [ patchedInputs.deploy-rs.packages.${system}.default ]
+              # ++ [ inputs.deploy-rs.packages.${system}.default ]
               ++ [ inputs.agenix.packages.${system}.agenix ]
               ++ (inputs.nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin
                 inputs.darwin.packages.${system}.darwin-rebuild
@@ -389,19 +377,19 @@
 
         packages = {
           inherit (pkgs) mosh;
-          deploy = patchedInputs.deploy-rs.packages.${system}.default;
+          # deploy = inputs.deploy-rs.packages.${system}.default;
         };
 
-        apps = {
-          deploy-rs = {
-            type = "app";
-            program = "${patchedInputs.deploy-rs.packages.${system}.default}/bin/deploy";
-            meta = {
-              description = "Deploy NixOS configurations using deploy-rs";
-              mainProgram = "deploy";
-            };
-          };
-        };
+        # apps = {
+        #   deploy-rs = {
+        #     type = "app";
+        #     program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
+        #     meta = {
+        #       description = "Deploy NixOS configurations using deploy-rs";
+        #       mainProgram = "deploy";
+        #     };
+        #   };
+        # };
       }
     ))
     // {
