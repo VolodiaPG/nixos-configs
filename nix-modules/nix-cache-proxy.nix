@@ -7,7 +7,7 @@ let
   port = "3687";
 in
 {
-  imports = [ inputs.nix-cache-proxy.nixosModules.default ];
+  imports = [ inputs.nix-cache-proxy.nixosModules.nix-cache-proxy ];
   services.nix-cache-proxy = {
     enable = true;
     listenAddress = "127.0.0.1:${port}";
