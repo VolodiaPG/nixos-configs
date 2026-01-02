@@ -9,8 +9,8 @@ let
   port = "3687";
 in
 {
-  nix.settings.substituters = lib.mkForce [ "http://127.0.0.1:${port}" ];
-  determinate-nix.customSettings.substituters = lib.mkForce [ "http://127.0.0.1:${port}" ];
+  nix.settings.substituters = lib.mkForce [ "http://127.0.0.1:${port}?priority=1" ];
+  determinate-nix.customSettings.substituters = lib.mkForce [ "http://127.0.0.1:${port}?priority=1" ];
 
   launchd.daemons.nix-cache-proxy = {
     script = "${lib.getExe pkgs.nix-cache-proxy} --bind 127.0.0.1:${port} ${upstreamArgs}";
