@@ -46,7 +46,7 @@
       accept-flake-config
       post-build-hook
       # trusted-substituters
-      # extra-trusted-public-keys
+      trusted-public-keys
       builders-use-substitutes
       max-jobs
       keep-derivations

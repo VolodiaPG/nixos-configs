@@ -79,6 +79,7 @@ let
     # for direnv GC roots
     keep-derivations = true;
     keep-outputs = true;
+    inherit (user) trusted-public-keys;
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
