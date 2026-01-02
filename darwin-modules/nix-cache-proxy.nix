@@ -13,7 +13,7 @@ in
   determinate-nix.customSettings.substituters = lib.mkForce [ "http://127.0.0.1:${port}" ];
 
   launchd.daemons.nix-cache-proxy = {
-    script = "${pkgs.nix-cache-proxy}/bin/nix-cache-proxy --bind 127.0.0.1:${port} ${upstreamArgs}";
+    script = "${lib.getExe pkgs.nix-cache-proxy} --bind 127.0.0.1:${port} ${upstreamArgs}";
 
     serviceConfig = {
       Label = "org.nixos.nix-cache-proxy";
