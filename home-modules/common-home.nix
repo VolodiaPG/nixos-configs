@@ -17,7 +17,7 @@
       settings = {
         git = {
           pagers = [
-            { pager = "diff-so-fancy"; }
+            { useExternalDiffGitConfig = true; }
           ];
         };
       };
@@ -90,7 +90,7 @@
       fontconfig
       tmux
       mosh
-      diff-so-fancy
+      difftastic
       ripgrep
       direnv
       findutils
