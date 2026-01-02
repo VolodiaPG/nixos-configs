@@ -129,7 +129,6 @@
 
       # Overlays
       overlay = _final: prev: {
-        nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
         mosh = prev.mosh.overrideAttrs (
           old:
           let
@@ -153,6 +152,7 @@
         overlay
         inputs.vim.overlay
         inputs.nur.overlays.default
+        inputs.nix-cache-proxy.overlay
         # inputs.nixos-apple-silicon.overlays.default
       ];
 

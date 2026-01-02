@@ -1,13 +1,11 @@
 {
   pkgs,
   lib,
-  config,
+  user,
   ...
 }:
 let
-  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") (
-    [ "https://cache.nixos.org" ] ++ config.nix.settings.trusted-substituters
-  );
+  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") user.trusted-substituters;
   port = "3687";
 in
 {
