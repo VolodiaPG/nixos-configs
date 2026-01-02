@@ -1,9 +1,18 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 {
+  # Because Opencode is special and doesn't support readonly config
+  home.activation.opencode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    cat <<EOF  > ~/.config/opencode/opencode.json
+    {
+      "plugin": ["@plannotator/opencode"]
+    }
+    EOF
+  '';
   home.packages = [
     pkgs.cachix
     pkgs.nvim
