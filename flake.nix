@@ -175,15 +175,15 @@
           hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
           trusted-substituters = [
             "https://cache.nixos.org?priority=10"
-            "https://volodiapg.cachix.org?priority=20"
-            "https://install.determinate.systems?priority=50"
+            "https://volodiapg.cachix.org?priority=30"
             # "https://nixos-apple-silicon.cachix.org?priority=50"
-            "https://cache.numtide.com?priority=50"
+            "https://cache.numtide.com?priority=20"
+            "https://cache.flakehub.com?priority=20"
+            "https://install.determinate.systems?priority=20"
           ];
           trusted-public-keys = [
             "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
             "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
-            "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
             # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
             "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
           ];
