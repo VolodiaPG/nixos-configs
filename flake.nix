@@ -35,7 +35,7 @@
     };
 
     vim = {
-      url = "github:volodiapg/vim";
+      url = "github:volodiapg/vim/no_lvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -195,7 +195,10 @@
         system:
         import inputs.nixpkgs {
           inherit system overlays;
-          config.allowUnfree = true;
+          config = {
+            allowUnfree = true;
+            doCheck = false;
+          };
         };
 
       flakeModule = {
