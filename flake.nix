@@ -129,6 +129,7 @@
 
       # Overlays
       overlay = _final: prev: {
+        nix = inputs.determinate.packages."${prev.stdenv.hostPlatform.system}".default;
         mosh = prev.mosh.overrideAttrs (
           old:
           let
