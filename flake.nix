@@ -130,7 +130,7 @@
       # Overlays
       overlay = _final: prev: {
         # Make sure the standard nix package is determinate nix rather than the default nix
-        nix = inputs.determinate.packages."${prev.stdenv.hostPlatform.system}".default;
+        nix = inputs.determinate.inputs.nix.packages."${prev.stdenv.system}".default;
         mosh = prev.mosh.overrideAttrs (
           old:
           let
