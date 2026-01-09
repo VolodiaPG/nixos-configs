@@ -9,7 +9,7 @@
   home.activation.opencode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     cat <<EOF  > ~/.config/opencode/opencode.json
     {
-      "plugin": ["@plannotator/opencode"]
+      "plugin": ["@plannotator/opencode@latest"]
     }
     EOF
   '';
