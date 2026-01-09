@@ -28,7 +28,7 @@
       impermanence
       vpn
       laptop-server
-      arr
+      # arr
       nix-cache-proxy
       # home-lab
       # (home-lab { inherit pkgs user config; })
