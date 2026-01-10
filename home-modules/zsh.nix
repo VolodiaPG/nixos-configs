@@ -157,6 +157,26 @@ in
 
       bindkey "^[[1;3C" forward-word
       bindkey "^[[1;3D" backward-word
+
+      # If in tmux, rename the session to the current git project, if any, and if no session name is set
+      if [ -n "$TMUX" ]; then
+        function refresh_tmux_session_name() {
+          local current_session=$(tmux display-message -p '#S')
+          local current_dir=$(basename "$PWD")
+
+          if [ ! "$current_session" = "$current_dir" ]; then
+            if git rev-parse --git-dir > /dev/null 2>&1; then
+              tmux rename-session $(basename $(git rev-parse --show-toplevel))
+            else
+              tmux rename-session "$current_dir"
+            fi
+          fi
+        }
+        chpwd() {
+          refresh_tmux_session_name
+        }
+        refresh_tmux_session_name
+      fi
     '';
     shellAliases = {
       ll = "ls -l";
