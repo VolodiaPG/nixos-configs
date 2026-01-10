@@ -70,7 +70,8 @@
     };
 
     deploy-rs = {
-      url = "github:serokell/deploy-rs";
+      # url = "github:serokell/deploy-rs";
+      url = "github:szlend/deploy-rs/fix-show-derivation-parsing";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -384,9 +385,8 @@
                 age
                 ssh-to-age
                 home-manager
-                deploy-rs
               ])
-              # ++ [ inputs.deploy-rs.packages.${system}.default ]
+              ++ [ inputs.deploy-rs.packages.${system}.default ]
               ++ [ inputs.agenix.packages.${system}.agenix ]
               ++ (inputs.nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin
                 inputs.darwin.packages.${system}.darwin-rebuild
