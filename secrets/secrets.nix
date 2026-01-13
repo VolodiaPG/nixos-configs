@@ -11,4 +11,5 @@ in
   "rss-password.age".publicKeys = [ publicKey ];
   "samba-user-password.age".publicKeys = [ publicKey ];
   "cachix-token.age".publicKeys = [ publicKey ];
+  "fizzy-env.age".publicKeys = [ publicKey ];
 }

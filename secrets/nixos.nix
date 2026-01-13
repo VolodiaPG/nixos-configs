@@ -48,5 +48,10 @@ in
       file = ./cachix-token.age;
     }
     // userReadable;
+
+    fizzy-env = {
+      file = ./fizzy-env.age;
+    }
+    // rootReadable;
   };
 }

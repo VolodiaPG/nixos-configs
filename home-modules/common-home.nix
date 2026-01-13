@@ -112,6 +112,7 @@
       tmux
       bottom
       libgtop
+      lsof
     ];
 
     sessionVariables = {

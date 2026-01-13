@@ -4,6 +4,7 @@
   user,
   lib,
   pkgs,
+  config,
   ...
 }:
 {
@@ -30,8 +31,9 @@
       laptop-server
       # arr
       nix-cache-proxy
+      caddy
       # home-lab
-      # (home-lab { inherit pkgs user config; })
+      (home-lab { inherit user config; })
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel-cpu-only
