@@ -35,7 +35,7 @@
     };
 
     vim = {
-      url = "github:volodiapg/vim/no_lvim";
+      url = "github:volodiapg/vim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
