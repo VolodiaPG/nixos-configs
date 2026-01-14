@@ -36,7 +36,7 @@
 
     vim = {
       url = "github:volodiapg/vim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     impermanence = {
@@ -365,7 +365,7 @@
           pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
-              nixfmt-rfc-style.enable = true;
+              nixfmt.enable = true;
               statix.enable = true;
               deadnix.enable = true;
               commitizen.enable = true;
