@@ -31,7 +31,7 @@
 
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     vim = {
@@ -45,7 +45,7 @@
 
     agenix = {
       url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     disko = {
@@ -72,7 +72,7 @@
     deploy-rs = {
       # url = "github:serokell/deploy-rs";
       url = "github:szlend/deploy-rs/fix-show-derivation-parsing";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-index-database = {
@@ -88,7 +88,7 @@
     nix-cache-proxy = {
       url = "github:volodiapg/nix-cache-proxy";
       # url = "github:xddxdd/nix-cache-proxy";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
