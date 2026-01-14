@@ -15,5 +15,5 @@ test:
 darwin:
   #!/usr/bin/env bash
   set -e
-  result=$(nix build .#darwinConfigurations.Volodias-MacBook-Pro.system --print-out-paths --accept-flake-config)
+  result=$(nix build  --print-out-paths --log-format internal-json -v .#darwinConfigurations.Volodias-MacBook-Pro.system |& nom --json)
   sudo $result/activate || echo Failed $result

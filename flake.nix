@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
-    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -26,26 +25,39 @@
 
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
     };
 
     pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
     };
 
     vim = {
       url = "github:volodiapg/vim";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     impermanence = {
       url = "github:nix-community/impermanence";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
     };
 
     agenix = {
       url = "github:ryantm/agenix";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        darwin.follows = "darwin";
+        home-manager.follows = "home-manager";
+        systems.follows = "flake-utils/systems";
+      };
     };
 
     disko = {
@@ -72,7 +84,10 @@
     deploy-rs = {
       # url = "github:serokell/deploy-rs";
       url = "github:szlend/deploy-rs/fix-show-derivation-parsing";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        utils.follows = "flake-utils";
+      };
     };
 
     nix-index-database = {
@@ -88,15 +103,22 @@
     nix-cache-proxy = {
       url = "github:volodiapg/nix-cache-proxy";
       # url = "github:xddxdd/nix-cache-proxy";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
     };
 
-    llm-agents.url = "github:numtide/llm-agents.nix";
-
-    laputil = {
-      url = "github:volodiapg/laputil";
-      inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
     };
+
+    # laputil = {
+    #   url = "github:volodiapg/laputil";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixarr = {
       url = "github:rasmus-kirk/nixarr";
@@ -132,6 +154,7 @@
       overlay = _final: prev: {
         # Make sure the standard nix package is determinate nix rather than the default nix
         nix = inputs.determinate.inputs.nix.packages."${prev.stdenv.system}".default;
+
         mosh = prev.mosh.overrideAttrs (
           old:
           let
@@ -229,7 +252,7 @@
             flakeModule
             inputs.determinate.nixosModules.default
             inputs.agenix.nixosModules.default
-            inputs.laputil.nixosModules.default
+            # inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
             inputs.catppuccin.nixosModules.catppuccin
             ./secrets/nixos.nix
@@ -254,7 +277,7 @@
             flakeModule
             inputs.determinate.nixosModules.default
             inputs.agenix.nixosModules.default
-            inputs.laputil.nixosModules.default
+            # inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
             inputs.catppuccin.nixosModules.catppuccin
             ./secrets/nixos.nix
@@ -357,13 +380,20 @@
         pkgs = pkgsFor system;
       in
       {
-
         # Development tools
         formatter = pkgs.nixfmt-tree;
 
         checks = {
           pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-            src = ./.;
+            src = self;
+            imports = [
+              (
+                { lib, ... }:
+                {
+                  config.package = lib.mkForce pkgs.prek;
+                }
+              )
+            ];
             hooks = {
               nixfmt.enable = true;
               statix.enable = true;
@@ -379,6 +409,7 @@
             inherit (outputs.checks.${system}.pre-commit-check) shellHook;
             packages =
               (with pkgs; [
+                nix-output-monitor
                 just
                 git
                 git-crypt
