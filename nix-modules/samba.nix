@@ -34,8 +34,8 @@ in
         security = "user";
       };
 
-      movies = mount { path = "/data/media/torrents/radarr"; };
-      series = mount { path = "/data/media/torrents/sonarr"; };
+      movies = mount { path = "/data/media/library/movies"; };
+      series = mount { path = "/data/media/library/shows"; };
     };
   };
 
