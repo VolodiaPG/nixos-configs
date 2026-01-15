@@ -15,5 +15,6 @@ test:
 darwin:
   #!/usr/bin/env bash
   set -e
-  result=$(nix build  --print-out-paths --log-format internal-json -v .#darwinConfigurations.Volodias-MacBook-Pro.system |& nom --json)
+  result=$(nom build  --print-out-paths .#darwinConfigurations.Volodias-MacBook-Pro.system)
+  echo $result
   sudo $result/activate || echo Failed $result
