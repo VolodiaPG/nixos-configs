@@ -310,18 +310,18 @@
               };
             }
             outputs.darwinModules.common-darwin
-            outputs.darwinModules.autoupdate
+            # outputs.darwinModules.autoupdate
             outputs.commonModules.common-nix-settings
             outputs.darwinModules.nix-cache-proxy
             inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
             {
-              services.darwinAutoUpdate = {
-                enable = true;
-                flake = "github:volodiapg/nixos-configs";
-                hostName = "Volodias-MacBook-Pro";
-              };
+              # services.darwinAutoUpdate = {
+              #   enable = true;
+              #   flake = "github:volodiapg/nixos-configs";
+              #   hostName = "Volodias-MacBook-Pro";
+              # };
               home-manager = {
                 users."${specialArgs'.user.username}" =
                   {
