@@ -40,13 +40,13 @@ in
       };
 
       boot = {
-        extraModulePackages = [
-          pkgs.cpufreq-laputil
-        ];
+        # extraModulePackages = [
+        #   pkgs.cpufreq-laputil
+        # ];
 
         kernelModules = [
           "ecryptfs"
-          "cpufreq-laputil"
+          # "cpufreq-laputil"
         ];
       };
 
