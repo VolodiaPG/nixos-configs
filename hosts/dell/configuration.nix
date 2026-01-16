@@ -12,7 +12,7 @@
     (with inputs; [
       determinate.nixosModules.default
       agenix.nixosModules.default
-      laputil.nixosModules.default
+      # laputil.nixosModules.default
       impermanence.nixosModules.impermanence
       catppuccin.nixosModules.catppuccin
       nixarr.nixosModules.default
