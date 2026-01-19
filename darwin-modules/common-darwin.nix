@@ -1,63 +1,46 @@
 {
   pkgs,
   user,
-  lib,
-  config,
   ...
 }:
 {
   imports = [ ];
 
-  determinate-nix.customSettings = {
-    trusted-users = [
-      "root"
-      "@wheel"
-      "${lib.escapeShellArg user.username}"
-    ];
-
-    extra-experimental-features = [ "parallel-eval external-builders" ];
-    extra-platforms = "x86_64-darwin";
-
-    # Enable Determinate Nix's native Linux builder (requires access approval)
-    external-builders = builtins.toJSON [
-      {
-        systems = [
-          "aarch64-linux"
-          "x86_64-linux"
-        ];
-        program = "/usr/local/bin/determinate-nixd";
-        args = [
-          "builder"
-          "--memory-size"
-          "12884901888"
-          "--cpu-count"
-          "8"
-        ];
-      }
-    ];
-
-    inherit (config.nix.settings)
-      download-buffer-size
-      log-lines
-      fallback
-      lazy-trees
-      eval-cores
-      warn-dirty
-      accept-flake-config
-      post-build-hook
-      # trusted-substituters
-      trusted-public-keys
-      builders-use-substitutes
-      max-jobs
-      keep-derivations
-      keep-outputs
-      flake-registry
-      nix-path
-      ;
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowUnfreePredicate = _pkg: true;
   };
 
   nix = {
-    enable = false;
+    enable = true;
+    package = pkgs.lixPackageSets.latest.lix;
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+
+      allowed-users = [
+        "root"
+        "wheel"
+        "@wheel"
+        user.username
+      ];
+      trusted-users = [
+        "root"
+        user.username
+      ];
+    };
+
+    gc = {
+      automatic = true;
+      interval = {
+        Weekday = 1;
+        Hour = 0;
+        Minute = 0;
+      };
+      options = "--delete-older-than 8d";
+    };
   };
 
   users.users."${user.username}" = {

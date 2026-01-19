@@ -66,13 +66,13 @@ let
   '';
 
   common-nix-settings = {
-    download-buffer-size = "1073741824"; # 1 GiB
+    # download-buffer-size = "1073741824"; # 1 GiB
     # nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
 
     log-lines = 50;
     fallback = true;
-    lazy-trees = true;
-    eval-cores = 0;
+    # lazy-trees = true;
+    # eval-cores = 0;
     warn-dirty = false;
     accept-flake-config = true;
     builders-use-substitutes = true;
@@ -86,7 +86,7 @@ let
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
     flake-registry = "/etc/flake-registry.json";
-    nix-path = lib.mapAttrsToList (name: flake: "${name}=${flake.outPath}") registryMap;
+    nix-path = lib.mapAttrsToList (name: flake: "${name}=flake:${flake.outPath}") registryMap;
   };
 in
 {

@@ -15,6 +15,6 @@ test:
 darwin:
   #!/usr/bin/env bash
   set -e
-  result=$(nom build  --print-out-paths .#darwinConfigurations.Volodias-MacBook-Pro.system)
+  result=$(nom build  --print-out-paths --extra-experimental-features "nix-command flakes" .#darwinConfigurations.Volodias-MacBook-Pro.system)
   echo $result
   sudo $result/activate || echo Failed $result

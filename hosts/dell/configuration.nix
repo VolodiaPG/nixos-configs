@@ -10,7 +10,6 @@
 {
   imports = lib.flatten [
     (with inputs; [
-      determinate.nixosModules.default
       agenix.nixosModules.default
       # laputil.nixosModules.default
       impermanence.nixosModules.impermanence

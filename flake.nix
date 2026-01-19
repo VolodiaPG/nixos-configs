@@ -23,13 +23,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    determinate = {
-      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs = {
@@ -152,8 +145,11 @@
 
       # Overlays
       overlay = _final: prev: {
-        # Make sure the standard nix package is determinate nix rather than the default nix
-        nix = inputs.determinate.inputs.nix.packages."${prev.stdenv.system}".default;
+        inherit (prev.lixPackageSets.stable)
+          nixpkgs-review
+          nix-eval-jobs
+          nix-fast-build
+          ;
 
         mosh = prev.mosh.overrideAttrs (
           old:
@@ -250,7 +246,6 @@
           modules = [
             ./hosts/msi/configuration.nix
             flakeModule
-            inputs.determinate.nixosModules.default
             inputs.agenix.nixosModules.default
             # inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
@@ -275,7 +270,6 @@
           modules = [
             ./hosts/home-server/configuration.nix
             flakeModule
-            inputs.determinate.nixosModules.default
             inputs.agenix.nixosModules.default
             # inputs.laputil.nixosModules.default
             inputs.impermanence.nixosModules.impermanence
@@ -313,7 +307,6 @@
             # outputs.darwinModules.autoupdate
             outputs.commonModules.common-nix-settings
             outputs.darwinModules.nix-cache-proxy
-            inputs.determinate.darwinModules.default
             inputs.home-manager.darwinModules.home-manager
             inputs.agenix.darwinModules.default
             {
