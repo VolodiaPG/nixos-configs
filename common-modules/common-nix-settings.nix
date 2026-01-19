@@ -9,58 +9,60 @@
 let
   registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
+  asyncScript = pkgs.writeScript "cachix-push-hook" ''
+    exec >>/var/log/nix-push-hook.log 2>&1
+    echo "===== Starting cachix push at $(date) ====="
+    CACHIX_NAME="${user.cachixName}"
+    IGNORE_PATTERNS="${
+      lib.concatStringsSep " " (
+        [
+          "source"
+          "etc"
+          "system"
+          "home-manager"
+          "user-environment"
+        ]
+        ++ [ user.username ]
+      )
+    }"
+
+    # Filter out ignored patterns
+    FILTERED_PATHS=""
+    for path in $OUT_PATHS; do
+      # Check if path should be ignored
+      should_ignore=false
+      if [[ -n "$IGNORE_PATTERNS" ]]; then
+        IFS=' ' read -ra PATTERN_ARRAY <<< "$IGNORE_PATTERNS"
+        for pattern in "''${PATTERN_ARRAY[@]}"; do
+          if [[ -n "$pattern" && "$path" == *"$pattern"* ]]; then
+            should_ignore=true
+            break
+          fi
+        done
+      fi
+
+      if [[ "$should_ignore" == "false" ]]; then
+        FILTERED_PATHS="$FILTERED_PATHS $path"
+      fi
+    done
+
+    if [ -z "$FILTERED_PATHS" ]; then
+      echo "Nothing to push to cachix"
+      exit 0
+    fi
+
+    # Check if already authenticated by testing cachix config
+    cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
+
+    ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
+    echo "===== Finished cachix push at $(date) ====="
+  '';
+
   cachixHook = pkgs.writeScript "cachix-push-hook" ''
     #!${pkgs.bash}/bin/bash
 
     # Run the entire push process asynchronously in the background using nohup
-    ${pkgs.coreutils}/bin/nohup ${pkgs.bash}/bin/bash -c '
-      CACHIX_NAME="${user.cachixName}"
-      IGNORE_PATTERNS="${
-        lib.concatStringsSep " " (
-          [
-            "source"
-            "etc"
-            "system"
-            "home-manager"
-            "user-environment"
-          ]
-          ++ [ user.username ]
-        )
-      }"
-
-      # Filter out ignored patterns
-      FILTERED_PATHS=""
-      for path in $OUT_PATHS; do
-        # Check if path should be ignored
-        should_ignore=false
-        if [[ -n "$IGNORE_PATTERNS" ]]; then
-          IFS=' ' read -ra PATTERN_ARRAY <<< "$IGNORE_PATTERNS"
-          for pattern in "''${PATTERN_ARRAY[@]}"; do
-            if [[ -n "$pattern" && "$path" == *"$pattern"* ]]; then
-              should_ignore=true
-              break
-            fi
-          done
-        fi
-
-        if [[ "$should_ignore" == "false" ]]; then
-          FILTERED_PATHS="$FILTERED_PATHS $path"
-        fi
-      done
-
-      if [ -z "$FILTERED_PATHS" ]; then
-        echo "Nothing to push to cachix"
-        exit 0
-      fi
-
-      # Check if already authenticated by testing cachix config
-      cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
-
-      ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
-    ' >/dev/null 2>&1 &
-
-    # Immediately return to avoid blocking the build
-    exit 0
+    ${pkgs.coreutils}/bin/nohup ${asyncScript}&
   '';
 
   common-nix-settings = {
@@ -99,6 +101,7 @@ in
     # # set the path for channels compat
     # nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
+  nixpkgs.flake.source = inputs.nixpkgs;
 
   environment.etc."flake-registry.json".text =
     let
