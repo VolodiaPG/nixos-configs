@@ -978,11 +978,11 @@
         "plugins-vimtex": "plugins-vimtex"
       },
       "locked": {
-        "lastModified": 1768425892,
-        "narHash": "sha256-Nc8VJ0pjV+BAA/CjhMnX1gVsnG5tAuOGVtq1ydCP8x4=",
+        "lastModified": 1768833508,
+        "narHash": "sha256-ZJOdGCW+EQy2L/4u+OOrr5kNR0ATxj8KdkbYePiB9vU=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "a4c42eb4349e408ea0432e73ea98fe6178a2db3f",
+        "rev": "f4e957d02112628d420695b6379826d562501c65",
         "type": "github"
       },
       "original": {
