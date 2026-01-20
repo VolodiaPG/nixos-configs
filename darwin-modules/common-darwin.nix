@@ -13,7 +13,7 @@
 
   nix = {
     enable = true;
-    package = pkgs.lixPackageSets.latest.lix;
+    package = pkgs.lixPackageSets.stable.lix;
     settings = {
       experimental-features = [
         "nix-command"

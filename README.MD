@@ -43,3 +43,7 @@ sudo launchctl kickstart -k system/systems.determinate.nix-daemon
 needed to ulimit -n 51200
 
 nix build -v --system x86_64-linux --impure --expr "with import <nixpkgs> { }; runCommand \"check-ulimit\" { } \"echo $(date -u +"%Y-%m-%dT%H:%M:%SZ") > \$out\nulimit -n >> \$out\"" && cat result
+
+## uninstall
+
+First, uninstall nix darwin, then the nix itself
