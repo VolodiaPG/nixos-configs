@@ -65,9 +65,16 @@ let
     ${pkgs.coreutils}/bin/nohup ${asyncScript}&
   '';
 
+  # nix-path = lib.mapAttrsToList (name: flake: "${name}=flake:${flake.outPath}") registryMap;
+
   common-nix-settings = {
-    # download-buffer-size = "1073741824"; # 1 GiB
-    # nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
+    # download-buffer-size = 1073741824; # 1 GiB
+    # Keep derivations for store paths
+    keep-derivations = true;
+    # Add derivations to profile gc roots
+    keep-env-derivations = true;
+    # Keep the deps of envs
+    keep-outputs = true;
 
     log-lines = 50;
     fallback = true;
@@ -79,21 +86,54 @@ let
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
     # for direnv GC roots
-    keep-derivations = true;
-    keep-outputs = true;
     inherit (user) trusted-public-keys;
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
-    flake-registry = "/etc/flake-registry.json";
-    nix-path = lib.mapAttrsToList (name: flake: "${name}=flake:${flake.outPath}") registryMap;
+    # flake-registry = "/etc/flake-registry.json";
+
+    nix-path = config.nix.nixPath;
   };
 in
 {
   # settings get written into /etc/nix/nix.custom.conf
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowUnfreePredicate = _pkg: true;
+  };
+
   nix = {
     channel.enable = false;
-    settings = common-nix-settings;
+
+    package = pkgs.lixPackageSets.stable.lix;
+
+    settings = common-nix-settings // {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+
+      allowed-users = [
+        "root"
+        "wheel"
+        "@wheel"
+        user.username
+      ];
+      trusted-users = [
+        "root"
+        user.username
+      ];
+    };
+
+    gc = {
+      automatic = true;
+      # interval = {
+      #   Weekday = 1;
+      #   Hour = 0;
+      #   Minute = 0;
+      # };
+      options = "--delete-older-than 8d";
+    };
 
     # # pin the registry to avoid downloading and evaling a new nixpkgs version every time
     # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;

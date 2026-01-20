@@ -6,42 +6,33 @@
 {
   imports = [ ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = _pkg: true;
-  };
-
-  nix = {
-    enable = true;
-    package = pkgs.lixPackageSets.stable.lix;
-    settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-
-      allowed-users = [
-        "root"
-        "wheel"
-        "@wheel"
-        user.username
-      ];
-      trusted-users = [
-        "root"
-        user.username
-      ];
-    };
-
-    gc = {
-      automatic = true;
-      interval = {
-        Weekday = 1;
-        Hour = 0;
-        Minute = 0;
-      };
-      options = "--delete-older-than 8d";
-    };
-  };
+  # nixpkgs.config = {
+  #   allowUnfree = true;
+  #   allowUnfreePredicate = _pkg: true;
+  # };
+  #
+  # nix = {
+  #   enable = true;
+  #   package = pkgs.lixPackageSets.stable.lix;
+  #   settings = {
+  #     experimental-features = [
+  #       "nix-command"
+  #       "flakes"
+  #     ];
+  #
+  #     allowed-users = [
+  #       "root"
+  #       "wheel"
+  #       "@wheel"
+  #       user.username
+  #     ];
+  #     trusted-users = [
+  #       "root"
+  #       user.username
+  #     ];
+  #   };
+  #
+  # };
 
   users.users."${user.username}" = {
     name = user.username;

@@ -5,34 +5,15 @@
   ...
 }:
 {
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = _pkg: true;
-  };
+  # nixpkgs.config = {
+  #   allowUnfree = true;
+  #   allowUnfreePredicate = _pkg: true;
+  # };
 
   nix = {
-    settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-
-      allowed-users = [
-        "root"
-        "wheel"
-        "@wheel"
-        user.username
-      ];
-      trusted-users = [
-        "root"
-        user.username
-      ];
-    };
-
-    gc.dates = "weekly";
     optimise = {
       automatic = true;
-      dates = [ "weekly" ];
+      persistent = true;
     };
   };
 
