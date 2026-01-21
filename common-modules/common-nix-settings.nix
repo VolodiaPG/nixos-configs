@@ -124,6 +124,10 @@ in
       ];
     };
 
+    optimise = {
+      automatic = true;
+    };
+
     gc = {
       automatic = true;
       # interval = {

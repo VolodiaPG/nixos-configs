@@ -12,7 +12,6 @@
 
   nix = {
     optimise = {
-      automatic = true;
       persistent = true;
     };
   };
