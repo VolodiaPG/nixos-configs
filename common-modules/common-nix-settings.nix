@@ -3,11 +3,10 @@
   user,
   lib,
   config,
-  inputs,
   ...
 }:
 let
-  registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
+  # registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
     exec >>/var/log/nix-push-hook.log 2>&1
@@ -141,24 +140,23 @@ in
     # # set the path for channels compat
     # nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
-  nixpkgs.flake.source = inputs.nixpkgs;
 
-  environment.etc."flake-registry.json".text =
-    let
-      flakes = lib.mapAttrsToList (name: flake: {
-        from = {
-          id = name;
-          type = "indirect";
-        };
-        to = {
-          type = "path";
-          path = flake.outPath;
-        };
-      }) registryMap;
-    in
-    lib.strings.toJSON {
-      inherit flakes;
-      version = 2;
-    };
+  # environment.etc."flake-registry.json".text =
+  #   let
+  #     flakes = lib.mapAttrsToList (name: flake: {
+  #       from = {
+  #         id = name;
+  #         type = "indirect";
+  #       };
+  #       to = {
+  #         type = "path";
+  #         path = flake.outPath;
+  #       };
+  #     }) registryMap;
+  #   in
+  #   lib.strings.toJSON {
+  #     inherit flakes;
+  #     version = 2;
+  #   };
 
 }
