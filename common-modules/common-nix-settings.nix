@@ -104,7 +104,7 @@ in
   nix = {
     channel.enable = false;
 
-    package = pkgs.lixPackageSets.stable.lix;
+    package = pkgs.lix;
 
     settings = common-nix-settings // {
       experimental-features = [
