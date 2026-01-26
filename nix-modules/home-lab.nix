@@ -9,6 +9,7 @@
     containers = {
       fizzy = {
         image = "ghcr.io/basecamp/fizzy:main";
+        pull = "always";
         ports = [ "8888:80" ];
         environmentFiles = [ config.age.secrets.fizzy-env.path ];
         environment = {
