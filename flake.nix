@@ -6,7 +6,7 @@
     nixpkgs.url = "https://channels.nixos.org/nixos-25.11-small/nixexprs.tar.xz";
 
     # nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    # nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -165,6 +165,10 @@
             nix-eval-jobs
             nix-fast-build
             nix-serve-ng
+            ;
+
+          inherit (inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system})
+            devenv
             ;
 
           mosh = prev.mosh.overrideAttrs (

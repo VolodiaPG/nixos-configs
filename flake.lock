@@ -554,6 +554,19 @@
         "type": "github"
       }
     },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1769170682,
+        "narHash": "sha256-nlVMTH3lSEtF+jygHr2bRqCxEcceCz3UzA9wsyO+RB4=",
+        "rev": "c5296fdd05cfa2c187990dd909864da9658df755",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre933481.c5296fdd05cf/nixexprs.tar.xz?lastModified=1769170682&rev=c5296fdd05cfa2c187990dd909864da9658df755"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -696,6 +709,7 @@
         "nixarr": "nixarr",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "pre-commit-hooks": "pre-commit-hooks",
         "srvos": "srvos",
