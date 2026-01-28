@@ -60,7 +60,7 @@ let
     esac
   '';
   isClean = inputs.self ? rev;
-  status = if isClean then '''' else ''"dirty" '';
+  status = if isClean then "" else ''"dirty" '';
 in
 {
   programs.zsh = {
