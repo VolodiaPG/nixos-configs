@@ -45,8 +45,8 @@
   };
 
   environment.systemPackages = with pkgs; [
-    kitty
     terminal-notifier
+    kitty
 
     yabai
     skhd

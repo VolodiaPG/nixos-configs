@@ -801,11 +801,11 @@
         "plugins-vimtex": "plugins-vimtex"
       },
       "locked": {
-        "lastModified": 1768833508,
-        "narHash": "sha256-ZJOdGCW+EQy2L/4u+OOrr5kNR0ATxj8KdkbYePiB9vU=",
+        "lastModified": 1769709225,
+        "narHash": "sha256-grcNNFi6pf6rxPBT84BSioM3KMbFTnt6tWHe16r0V2E=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "f4e957d02112628d420695b6379826d562501c65",
+        "rev": "9b56f2f1ee7929d83fedbea288694fd06ec91f15",
         "type": "github"
       },
       "original": {

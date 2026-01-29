@@ -171,6 +171,10 @@
             devenv
             ;
 
+          inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
+            opencode
+            ;
+
           mosh = prev.mosh.overrideAttrs (
             old:
             let

@@ -74,7 +74,7 @@ in
         "match_prev_cmd"
       ];
     };
-    syntaxHighlighting.enable = true;
+    syntaxHighlighting.enable = false;
     initContent = ''
       export LC_ALL="C.UTF-8"
 

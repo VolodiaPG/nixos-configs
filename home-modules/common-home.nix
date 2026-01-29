@@ -5,12 +5,30 @@
   ...
 }:
 {
+  imports = [
+    ./catppuccin-theme.nix
+    ./kitty.nix
+    ./tmux.nix
+    ./theme-daemon.nix
+  ];
+
   fonts.fontconfig.enable = true;
 
-  catppuccin.enable = true;
+  # Configure Catppuccin theme switching, extending the default catppuccin module
+  catppuccin = {
+    enable = true;
+    autoThemeSwitch = true;
+    darkFlavor = "mocha"; # Your preferred dark theme
+    lightFlavor = "latte"; # Your preferred light theme
+    # TODO: make use of light and dark flavors in the script itself, hard coded for now
+  };
+
+  # Enable the theme daemon for automatic switching
+  services.theme-daemon.enable = true;
 
   programs = {
     home-manager.enable = true;
+    opencode.enable = true;
     lazygit = {
       enable = true;
       enableZshIntegration = true;
@@ -88,7 +106,6 @@
     inherit (user) username homeDirectory;
     packages = with pkgs; [
       fontconfig
-      tmux
       mosh
       difftastic
       ripgrep
@@ -109,10 +126,11 @@
       grc
       libnotify
       notify-desktop
-      tmux
       bottom
       libgtop
       lsof
+      # Theme daemon dependencies
+      (if stdenv.isDarwin then dark-mode-notify else darkman)
     ];
 
     sessionVariables = {
@@ -135,7 +153,7 @@
         }
       '';
       ".ssh/authorized_keys".text = lib.concatStringsSep "\n" user.keys;
-      ".config/kitty/kitty.conf".source = ./kitty.conf;
+      # Old kitty.conf is now managed by kitty.nix module
     };
 
     stateVersion = "22.05";
