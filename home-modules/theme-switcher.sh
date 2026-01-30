@@ -209,11 +209,11 @@ apply_nvim_theme() {
     # Find all nvim instances and send theme change command
     for server in /tmp/nvim_*; do
       if [[ -S "$server" ]]; then
-        if [[ "$theme" == "light" ]]; then
+        (if [[ "$theme" == "light" ]]; then
           nvr --servername "$server" -c "colorscheme catppuccin-latte" 2>/dev/null || true
         else
           nvr --servername "$server" -c "colorscheme catppuccin-mocha" 2>/dev/null || true
-        fi
+        fi)&
       fi
     done
 
