@@ -190,7 +190,7 @@ apply_tmux_theme() {
     cat ~/.config/tmux/tmux.conf > "$conf_path"
   fi
 
-  tmux source-file "$conf_path" 2>/dev/null || true
+  tmux source "$conf_path" 2>/dev/null || true
 
   rm $conf_path 2>/dev/null || true
 

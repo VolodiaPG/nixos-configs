@@ -10,7 +10,6 @@
 
     settings = {
       # Cursor customization
-      cursor = "white";
       cursor_blink_interval = 0;
       cursor_trail = 3;
       cursor_trail_decay = "0.1 0.4";
