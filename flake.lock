@@ -168,7 +168,7 @@
     "elixir-expert": {
       "inputs": {
         "beam-flakes": "beam-flakes",
-        "flake-parts": "flake-parts_3",
+        "flake-parts": "flake-parts_2",
         "nixpkgs": [
           "vim",
           "nixpkgs"
@@ -239,27 +239,6 @@
       }
     },
     "flake-parts_2": {
-      "inputs": {
-        "nixpkgs-lib": [
-          "nur",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1733312601,
-        "narHash": "sha256-4pDvzqnegAfRkPwO3wmwBhVi/Sye1mzps0zHWYnP88c=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "205b12d8b7cd4802fbcb8e8ef6a0f1408781a4f9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
-    "flake-parts_3": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib_2"
       },
@@ -567,27 +546,6 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
-    "nur": {
-      "inputs": {
-        "flake-parts": "flake-parts_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1769592617,
-        "narHash": "sha256-D+Er8HijrKhtRJc2ZG4fXye8I2LSaXC4AQDmcqsnNKQ=",
-        "owner": "nix-community",
-        "repo": "NUR",
-        "rev": "257efa7e8f33ae1de4c91fee210bb51377ffa7b4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "NUR",
-        "type": "github"
-      }
-    },
     "plugins-catppuccin": {
       "flake": false,
       "locked": {
@@ -710,7 +668,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nur": "nur",
         "pre-commit-hooks": "pre-commit-hooks",
         "srvos": "srvos",
         "vim": "vim"
@@ -801,11 +758,11 @@
         "plugins-vimtex": "plugins-vimtex"
       },
       "locked": {
-        "lastModified": 1769709225,
-        "narHash": "sha256-grcNNFi6pf6rxPBT84BSioM3KMbFTnt6tWHe16r0V2E=",
+        "lastModified": 1769763584,
+        "narHash": "sha256-PZhGf3nwEkVaBdVfoKiuIRw2PBDWfspnwz2FRc/d2SM=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "9b56f2f1ee7929d83fedbea288694fd06ec91f15",
+        "rev": "80cda3f50a1801f69bdd73682faa0a3dd8d38a48",
         "type": "github"
       },
       "original": {

@@ -41,7 +41,6 @@
       qbittorrent
       distrobox
       vlc
-      nur.repos.Ev357.helium
       drawio
       easyeffects
     ]

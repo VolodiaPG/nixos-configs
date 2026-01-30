@@ -92,10 +92,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nur = {
+    #   url = "github:nix-community/NUR";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nix-cache-proxy = {
       url = "github:volodiapg/nix-cache-proxy";
@@ -197,7 +197,7 @@
       overlays = [
         overlay
         inputs.vim.overlay
-        inputs.nur.overlays.default
+        # inputs.nur.overlays.default
         inputs.nix-cache-proxy.overlay
         # inputs.nixos-apple-silicon.overlays.default
       ];
