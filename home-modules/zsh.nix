@@ -92,7 +92,7 @@ in
       HISTORY_IGNORE="(ls|ll|ls -alh|pwd|clear|c|history|htop)"
 
       SHELL=${lib.getExe pkgs.zsh}
-      TERM=xterm-256color
+      TERM=screen-256color
 
       source ${pkgs.just}/share/zsh/site-functions/_just
 

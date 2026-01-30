@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   programs.tmux = {
     enable = true;
@@ -6,11 +6,16 @@
     historyLimit = 10000;
     keyMode = "vi";
     prefix = "C-a";
-    terminal = "tmux-256color";
+    # default-terminal = "screen-256color";
 
     extraConfig = ''
       # Enable true color support
-      set -ga terminal-overrides ",*256col*:Tc"
+      # set -ga terminal-overrides ",*256col*:Tc"
+      set -g default-terminal "screen-256color"
+      set-option -sa terminal-overrides ",xerm-kitty:RGB"
+
+      set-option -sg escape-time 10
+      set-option -g focus-events on
 
       set-option -g detach-on-destroy off
 
