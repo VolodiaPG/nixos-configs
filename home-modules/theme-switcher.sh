@@ -80,15 +80,10 @@ detect_system_theme() {
       fi
     fi
 
-    # Try darkman if available
-    if command -v darkman &> /dev/null; then
-      darkman get 2>/dev/null || echo "dark"
-      return
-    fi
+    # Get the last saved theme
+    local last_theme=$(get_saved_theme)
+    echo "$last_theme"
 
-    # Default to dark if no detection method available
-    warn "Could not detect system theme, defaulting to dark"
-    echo "dark"
   else
     # Unknown OS, default to dark
     warn "Unknown OS, defaulting to dark theme"

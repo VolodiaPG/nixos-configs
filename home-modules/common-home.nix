@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   user,
   lib,
   ...
@@ -7,9 +8,16 @@
 {
   imports = [
     ./catppuccin-theme.nix
-    ./kitty.nix
+    (import ./kitty.nix { inherit user; })
     ./tmux.nix
-    ./theme-daemon.nix
+    (import ./theme-daemon.nix {
+      inherit
+        pkgs
+        lib
+        config
+        user
+        ;
+    })
   ];
 
   fonts.fontconfig.enable = true;
