@@ -350,7 +350,7 @@
                     imports = lib.flatten [
                       (with outputs.homeModules; [
                         (common-home {
-                          inherit pkgs lib;
+                          inherit pkgs lib config;
                           inherit (specialArgs') user;
                         })
                         (git {
