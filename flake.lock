@@ -131,16 +131,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1767558108,
+        "lastModified": 1770019181,
         "narHash": "sha256-hwsYgDnby50JNVpTRYlF3UR/Rrpt01OrxVuryF40CFY=",
-        "owner": "szlend",
+        "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "7edf1f4fd866fc5718aa5358dc720f4ee90909e3",
+        "rev": "77c906c0ba56aabdbc72041bf9111b565cdd6171",
         "type": "github"
       },
       "original": {
-        "owner": "szlend",
-        "ref": "fix-show-derivation-parsing",
+        "owner": "serokell",
         "repo": "deploy-rs",
         "type": "github"
       }
@@ -492,15 +491,15 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769580691,
-        "narHash": "sha256-Qwcpftw6ua2PD1Q/1YZGrlyR28+09innxos6ipFLCkc=",
-        "rev": "c6d9bb8b737709895a799d931de48fa76b572dc8",
+        "lastModified": 1769900590,
+        "narHash": "sha256-OGuC+gtMQt8j7FPOx3p5ASig+SkaXnpf9yNjRpetg4Y=",
+        "rev": "41e216c0ca66c83b12ab7a98cc326b5db01db646",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/25.11-small/nixos-25.11.4878.c6d9bb8b7377/nixexprs.tar.xz?lastModified=1769580691&rev=c6d9bb8b737709895a799d931de48fa76b572dc8"
+        "url": "https://releases.nixos.org/nixos/25.11/nixos-25.11.5065.41e216c0ca66/nixexprs.tar.xz?lastModified=1769900590&rev=41e216c0ca66c83b12ab7a98cc326b5db01db646"
       },
       "original": {
         "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-25.11-small/nixexprs.tar.xz"
+        "url": "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz"
       }
     },
     "nixpkgs-lib": {

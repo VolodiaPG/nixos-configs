@@ -20,7 +20,14 @@
       {
         imports = lib.flatten [
           (with outputs.homeModules; [
-            (common-home { inherit pkgs user lib; })
+            (common-home {
+              inherit
+                pkgs
+                config
+                user
+                lib
+                ;
+            })
             (git { inherit pkgs user; })
             (zsh {
               inherit

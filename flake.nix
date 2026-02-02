@@ -3,7 +3,7 @@
 
   inputs = {
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.11-small/nixexprs.tar.xz";
+    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
 
     # nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
@@ -79,8 +79,7 @@
     };
 
     deploy-rs = {
-      # url = "github:serokell/deploy-rs";
-      url = "github:szlend/deploy-rs/fix-show-derivation-parsing";
+      url = "github:serokell/deploy-rs";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         utils.follows = "flake-utils";
