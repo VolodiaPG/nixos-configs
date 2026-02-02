@@ -5,9 +5,9 @@
 {
   programs.opencode = {
     enable = true;
-    settings = {
-      "plugin" = [ "@plannotator/opencode@latest" ];
-    };
+    # settings = {
+    #   "plugin" = [ "@plannotator/opencode@latest" ];
+    # };
   };
   home.packages = [
     pkgs.cachix
