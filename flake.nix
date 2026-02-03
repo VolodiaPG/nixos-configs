@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    pre-commit-hooks = {
+    git-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
@@ -91,14 +91,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nur = {
-    #   url = "github:nix-community/NUR";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
     nix-cache-proxy = {
       url = "github:volodiapg/nix-cache-proxy";
-      # url = "github:xddxdd/nix-cache-proxy";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
@@ -111,17 +105,17 @@
       };
     };
 
-    # laputil = {
-    #   url = "github:volodiapg/laputil";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
     nixarr = {
       url = "github:rasmus-kirk/nixarr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     flake-utils.url = "github:numtide/flake-utils";
+
+    # nixos-unified - the main addition
+    nixos-unified.url = "github:srid/nixos-unified";
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   nixConfig = {
@@ -129,363 +123,74 @@
       "https://cache.nixos.org?priority=10"
       "https://volodiapg.cachix.org?priority=20"
       "https://install.determinate.systems?priority=50"
-      # "https://nixos-apple-silicon.cachix.org?priority=50"
       "https://cache.numtide.com?priority=50"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
   };
 
+  # Wired using https://nixos-unified.org/autowiring.html
   outputs =
     inputs@{ self, ... }:
-    let
-      inherit (self) outputs;
-
-      # Overlays
-      overlay =
-        _final: prev:
-        let
-          lixPackageSets = prev.lixPackageSets.override {
-            inherit (prev)
-              nix-direnv
-              nix-fast-build
-              ;
-          };
-        in
-        {
-          inherit (lixPackageSets.stable)
-            lix
-            nix-direnv
-            nix-eval-jobs
-            nix-fast-build
-            nix-serve-ng
-            ;
-
-          inherit (inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system})
-            devenv
-            ;
-
-          inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
-            opencode
-            ;
-
-          mosh = prev.mosh.overrideAttrs (
-            old:
-            let
-              patches = inputs.nixpkgs.lib.lists.remove (prev.fetchpatch {
-                url = "https://github.com/mobile-shell/mosh/commit/eee1a8cf413051c2a9104e8158e699028ff56b26.patch";
-                hash = "sha256-CouLHWSsyfcgK3k7CvTK3FP/xjdb1pfsSXYYQj3NmCQ=";
-              }) old.patches;
-            in
-            {
-              inherit patches;
-              src = inputs.mosh;
-              # remove perl diag to fix build on determinate nix builder
-              preBuild = ''
-                sed -i 's/perl -Mdiagnostics -c /perl -c /g' scripts/Makefile.am
-              '';
-            }
-          );
-        };
-
-      overlays = [
-        overlay
-        inputs.vim.overlay
-        # inputs.nur.overlays.default
-        inputs.nix-cache-proxy.overlay
-        # inputs.nixos-apple-silicon.overlays.default
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
       ];
+      imports =
+        with builtins;
+        map (fn: ./modules/flake-parts/${fn}) (attrNames (readDir ./modules/flake-parts));
 
-      # User data
-      specialArgs = {
-        inherit inputs outputs;
-        user = {
-          name = "Volodia P.G.";
-          username = "volodia";
-          cachixName = "volodiapg";
-          homeDirectory = "/home/volodia";
-          macosHomeDirectory = "/Users/volodia";
-          tailname = "goblin-alewife.ts.net";
-          email = "volodia.parol-guarino@proton.me";
-          signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
-          keys = [
-            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi"
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"
-          ];
-          hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
-          trusted-substituters = [
-            "https://cache.nixos.org?priority=10"
-            "https://volodiapg.cachix.org?priority=30"
-            # "https://nixos-apple-silicon.cachix.org?priority=50"
-            "https://cache.numtide.com?priority=20"
-            "https://cache.flakehub.com?priority=20"
-            "https://install.determinate.systems?priority=20"
-          ];
-          trusted-public-keys = [
-            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-            "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
-            # "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
-            "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-          ];
-        };
-      };
-
-      # Helper function to create pkgs with overlays
-      pkgsFor =
-        system:
-        import inputs.nixpkgs {
-          inherit system overlays;
-          config = {
-            allowUnfree = true;
-            doCheck = false;
-          };
-        };
-
-      flakeModule = {
-        nixpkgs = {
-          inherit overlays;
-          config.allowUnfree = true;
-        };
-        system.configurationRevision = inputs.nixpkgs.lib.mkIf (self ? rev) self.rev;
-      };
-    in
-    {
-      # Module registries
-      nixosModules = import ./nix-modules;
-      darwinModules = import ./darwin-modules;
-      commonModules = import ./common-modules;
-      homeModules = import ./home-modules;
-
-      # NixOS configurations
-      nixosConfigurations = {
-        msi = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          inherit specialArgs;
-          modules = [
-            ./hosts/msi/configuration.nix
-            flakeModule
-            inputs.agenix.nixosModules.default
-            # inputs.laputil.nixosModules.default
-            inputs.impermanence.nixosModules.impermanence
-            inputs.catppuccin.nixosModules.catppuccin
-            ./secrets/nixos.nix
-          ];
-        };
-
-        dell = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          inherit specialArgs;
-          modules = [
-            ./hosts/dell/configuration.nix
-            flakeModule
-            ./secrets/nixos.nix
-          ];
-        };
-
-        home-server = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          inherit specialArgs;
-          modules = [
-            ./hosts/home-server/configuration.nix
-            flakeModule
-            inputs.agenix.nixosModules.default
-            # inputs.laputil.nixosModules.default
-            inputs.impermanence.nixosModules.impermanence
-            inputs.catppuccin.nixosModules.catppuccin
-            ./secrets/nixos.nix
-          ];
-        };
-      };
-
-      # Darwin configurations
-      darwinConfigurations."Volodias-MacBook-Pro" =
-        let
-          specialArgs' = specialArgs // {
-            user = specialArgs.user // {
-              homeDirectory = specialArgs.user.macosHomeDirectory;
-            };
-          };
-        in
-        inputs.darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          specialArgs = specialArgs';
-          modules = [
-            {
-              system = {
-                stateVersion = 5;
-                primaryUser = specialArgs'.user.username;
-              };
-              nixpkgs = {
-                hostPlatform = "aarch64-darwin";
-                inherit overlays;
-                config.allowUnfree = true;
-              };
-            }
-            outputs.darwinModules.common-darwin
-            # outputs.darwinModules.autoupdate
-            outputs.commonModules.common-nix-settings
-            outputs.darwinModules.nix-cache-proxy
-            inputs.home-manager.darwinModules.home-manager
-            inputs.agenix.darwinModules.default
-            {
-              # services.darwinAutoUpdate = {
-              #   enable = true;
-              #   flake = "github:volodiapg/nixos-configs";
-              #   hostName = "Volodias-MacBook-Pro";
-              # };
-              home-manager = {
-                users."${specialArgs'.user.username}" =
-                  {
-                    lib,
-                    config,
-                    pkgs,
-                    ...
-                  }:
-                  {
-                    imports = lib.flatten [
-                      (with outputs.homeModules; [
-                        (common-home {
-                          inherit pkgs lib config;
-                          inherit (specialArgs') user;
-                        })
-                        (git {
-                          inherit pkgs;
-                          inherit (specialArgs') user;
-                        })
-                        (zsh {
-                          inherit
-                            pkgs
-                            lib
-                            config
-                            inputs
-                            ;
-                        })
-                        (ssh {
-                          inherit pkgs;
-                          inherit (specialArgs') user;
-                        })
-                        syncthing
-                        mail
-                        packages-personal
-                      ])
-                    ];
-                  };
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = specialArgs';
-                sharedModules = [
-                  ./secrets/home-manager.nix
-                  inputs.agenix.homeManagerModules.default
-                  inputs.catppuccin.homeModules.catppuccin
-                  inputs.nix-index-database.homeModules.nix-index
+      perSystem =
+        { lib, system, ... }:
+        {
+          # Make our overlay available to the devShell
+          # "Flake parts does not yet come with an endorsed module that initializes the pkgs argument.""
+          # So we must do this manually; https://flake.parts/overlays#consuming-an-overlay
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = lib.attrValues self.overlays ++ [
+              inputs.vim.overlay
+              inputs.nix-cache-proxy.overlay
+            ];
+            config.allowUnfree = true;
+            # User data passed as specialArgs to all configurations
+            specialArgs = {
+              user = {
+                name = "Volodia P.G.";
+                username = "volodia";
+                cachixName = "volodiapg";
+                homeDirectory = "/home/volodia";
+                macosHomeDirectory = "/Users/volodia";
+                tailname = "goblin-alewife.ts.net";
+                email = "volodia.parol-guarino@proton.me";
+                signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";
+                keys = [
+                  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpDmkY5OctLdxrPUcnRafndhDvvgw/GNYvgo4I9LrPJ341vGzwgqSi90YRvn725DkYHmEi1bN7i3W2x1AQbuvEBzxMG3BlwtEGtz+/5rIMY+5LRzB4ppN+Ju/ySbPKSD2XpVgVOCegc7ZtZ4XpAevVsi/kyg35RPNGmljEyuN1wIxBVARZXZezsGf1MHzxEqiNogeAEncPCk/P44B6xBRt9qSxshIT/23Cq3M/CpFyvbI0vtdLaVFIPox6ACwlmTgdReC7p05EefKEXaxVe61yhBquzRwLZWf6Y8VESLFFPZ+lEF0Shffk15k97zJICVUmNPF0Wfx1Fn5tQyDeGe2nA5d2aAxHqvl2mJk/fccljzi5K6j6nWNf16pcjWjPqCCOTs8oTo1f7gVXQFCzslPnuPIVUbJItE3Ui+mSTv9KF/Q9oH02FF40mSuKtq5WmntV0kACfokRJLZ6slLabo0LgVzGoixdiGwsuJbWAsNNHURoi3lYb8fMOxZ/2o4GZik= volodia@volodia-msi"
+                  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"
+                ];
+                hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
+                trusted-substituters = [
+                  "https://cache.nixos.org?priority=10"
+                  "https://volodiapg.cachix.org?priority=30"
+                  "https://cache.numtide.com?priority=20"
+                  "https://cache.flakehub.com?priority=20"
+                  "https://install.determinate.systems?priority=20"
+                ];
+                trusted-public-keys = [
+                  "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+                  "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
+                  "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
                 ];
               };
-            }
-            ./secrets/nixos.nix
-          ];
-        };
-    }
-    // (inputs.flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = pkgsFor system;
-      in
-      {
-        # Development tools
-        formatter = pkgs.nixfmt-tree;
-
-        checks = {
-          pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-            src = self;
-            imports = [
-              (
-                { lib, ... }:
-                {
-                  config.package = lib.mkForce pkgs.prek;
-                }
-              )
-            ];
-            hooks = {
-              nixfmt.enable = true;
-              statix.enable = true;
-              deadnix.enable = true;
-              commitizen.enable = true;
-              actionlint.enable = true;
             };
-          };
-        };
 
-        devShells = {
-          default = pkgs.mkShell {
-            inherit (outputs.checks.${system}.pre-commit-check) shellHook;
-            packages =
-              (with pkgs; [
-                nix-output-monitor
-                just
-                git
-                git-crypt
-                age
-                ssh-to-age
-                home-manager
-              ])
-              ++ [ inputs.deploy-rs.packages.${system}.default ]
-              ++ [ inputs.agenix.packages.${system}.agenix ]
-              ++ (inputs.nixpkgs.lib.lists.optional pkgs.stdenv.isDarwin
-                inputs.darwin.packages.${system}.darwin-rebuild
-              );
           };
         };
-
-        packages = {
-          inherit (pkgs) mosh;
-          # deploy = inputs.deploy-rs.packages.${system}.default;
-        };
-
-        # apps = {
-        #   deploy-rs = {
-        #     type = "app";
-        #     program = "${inputs.deploy-rs.packages.${system}.default}/bin/deploy";
-        #     meta = {
-        #       description = "Deploy NixOS configurations using deploy-rs";
-        #       mainProgram = "deploy";
-        #     };
-        #   };
-        # };
-      }
-    ))
-    // {
-      # Deploy-rs configuration
-      deploy.nodes = {
-        msi = {
-          hostname = "msi";
-          profiles.system = {
-            user = "root";
-            sshUser = "volodia";
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
-          };
-        };
-        dell = {
-          hostname = "dell";
-          profiles.system = {
-            user = "root";
-            sshUser = "volodia";
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dell;
-          };
-        };
-        home-server = {
-          hostname = "home-server";
-          profiles.system = {
-            user = "root";
-            sshUser = "volodia";
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
-            fastConnection = true;
-          };
-        };
-      };
     };
 }
