@@ -176,13 +176,23 @@ apply_tmux_theme() {
     return
   fi
 
+  local plugin_location=$(cat ~/.config/tmux/tmux.conf | sed -rn 's/^run-shell (.*catppuccin.*)$/\1/p')
+  # ../
+  plugin_location=$(dirname "$plugin_location")
+
   info "Applying $theme theme to tmux..."
 
   local conf_path=$(mktemp)
+
+  # Fix hot reloading of tmux catppuccin theme: https://github.com/catppuccin/tmux/issues/426
+  cat <<EOF > "$conf_path"
+run "rg -Io 'set.*@(\\\\w+)\\\\s' -r '@\$1' $plugin_location | uniq | xargs -n1 -P0 tmux set -Ugq"
+EOF
+
   if [ "$theme" == "light" ]; then
-    cat ~/.config/tmux/tmux.conf | sed -e "s/mocha/latte/g" > "$conf_path"
+    cat ~/.config/tmux/tmux.conf | sed -e "s/mocha/latte/g" >> "$conf_path"
   else
-    cat ~/.config/tmux/tmux.conf > "$conf_path"
+    cat ~/.config/tmux/tmux.conf >> "$conf_path"
   fi
 
   tmux source "$conf_path" 2>/dev/null || true

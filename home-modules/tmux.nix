@@ -78,7 +78,7 @@
       # {
       #   plugin = catppuccin;
       #   extraConfig = ''
-      #     set -g @catppuccin_flavour 'macchiato'
+      #     set -g @catppuccin_flavour 'mocha'
       #   '';
       # }
     ];
