@@ -39,7 +39,7 @@
             })
             (ssh { inherit pkgs user; })
             syncthing
-            (packages-personal { inherit pkgs inputs lib; })
+            (packages-personal { inherit pkgs config lib; })
           ])
         ];
       };
