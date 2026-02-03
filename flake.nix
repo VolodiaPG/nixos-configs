@@ -483,6 +483,7 @@
             user = "root";
             sshUser = "volodia";
             path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
+            fastConnection = true;
           };
         };
       };
