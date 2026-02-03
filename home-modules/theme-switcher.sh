@@ -242,10 +242,12 @@ switch_theme() {
   info "Switching theme from '${saved_theme:-none}' to '$new_theme'"
 
   # Apply theme to all applications
-  apply_kitty_theme "$new_theme"
-  apply_tmux_theme "$new_theme"
-  apply_lazygit_theme "$new_theme"
-  apply_nvim_theme "$new_theme"
+  apply_kitty_theme "$new_theme"&
+  apply_tmux_theme "$new_theme"&
+  apply_lazygit_theme "$new_theme"&
+  apply_nvim_theme "$new_theme"&
+
+  wait
 
   # Save the new theme
   save_theme "$new_theme"
