@@ -1,10 +1,12 @@
 {
   pkgs,
   config,
-  user,
+  flake,
   ...
 }:
 let
+  inherit (flake.config) me;
+
   mount =
     { path }:
     {
@@ -66,9 +68,9 @@ in
       RemainAfterExit = true;
     };
     script = ''
-      if ! ${pkgs.samba}/bin/pdbedit -L | grep -q '^${user.username}:'; then
+      if ! ${pkgs.samba}/bin/pdbedit -L | grep -q '^${me.username}:'; then
         passwd="$(cat ${config.age.secrets.samba-user-password.path})";
-        (echo "$$passwd"; echo "$$passwd") | ${pkgs.samba}/bin/smbpasswd -s -a ${user.username}
+        (echo "$$passwd"; echo "$$passwd") | ${pkgs.samba}/bin/smbpasswd -s -a ${me.username}
       fi
     '';
   };

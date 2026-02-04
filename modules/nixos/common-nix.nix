@@ -1,10 +1,12 @@
 {
   pkgs,
-  user,
+  flake,
   lib,
   ...
 }:
 {
+  inherit (flake.config) me;
+
   # nixpkgs.config = {
   #   allowUnfree = true;
   #   allowUnfreePredicate = _pkg: true;
@@ -109,7 +111,7 @@
   security = {
     sudo.extraRules = [
       {
-        users = [ user.username ];
+        users = [ me.username ];
         commands = [
           {
             command = "ALL";
@@ -126,9 +128,9 @@
   users = {
     mutableUsers = false;
     users = {
-      "${user.username}" = {
+      "${me.username}" = {
         isNormalUser = true;
-        description = user.name;
+        description = me.name;
         linger = true;
         extraGroups = [
           "wheel"
@@ -141,12 +143,12 @@
           "networkmanager"
           "docker"
         ];
-        openssh.authorizedKeys.keys = user.keys;
-        inherit (user) hashedPassword;
+        openssh.authorizedKeys.keys = me.keys;
+        inherit (me) hashedPassword;
         shell = pkgs.zsh;
       };
       root = {
-        openssh.authorizedKeys.keys = user.keys;
+        openssh.authorizedKeys.keys = me.keys;
       };
     };
   };

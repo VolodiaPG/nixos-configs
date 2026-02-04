@@ -1,4 +1,7 @@
-{ user, ... }:
+{ flake, ... }:
+let
+  inherit (flake.config) me;
+in
 {
   programs.kitty = {
     enable = true;
@@ -39,7 +42,7 @@
       # dynamic_background_opacity = true;
 
       # Shell
-      shell = "/etc/profiles/per-user/${user.username}/bin/zsh";
+      shell = "/etc/profiles/per-user/${me.username}/bin/zsh";
       editor = "nvim";
 
       # macOS specific

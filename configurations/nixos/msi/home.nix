@@ -2,7 +2,7 @@
 let
   inherit (flake) inputs;
   inherit (inputs) self;
-  inherit (flake.config) user;
+  inherit (flake.config) me;
 in
 {
   imports = [
@@ -10,7 +10,7 @@ in
   ];
 
   home-manager = {
-    users."${user.username}" =
+    users."${me.username}" =
       {
         lib,
         config,
@@ -19,8 +19,8 @@ in
       {
         imports = lib.flatten [
           (with self.homeModules; [
-            (common-home { inherit pkgs user lib; })
-            (git { inherit pkgs user; })
+            (common-home { inherit pkgs me lib; })
+            (git { inherit pkgs me; })
             (zsh {
               inherit
                 pkgs
@@ -29,7 +29,7 @@ in
                 inputs
                 ;
             })
-            (ssh { inherit pkgs user; })
+            (ssh { inherit pkgs me; })
             syncthing
             gnome
             mail

@@ -1,42 +1,22 @@
 {
   pkgs,
-  user,
+  flake,
   ...
 }:
+let
+  inherit (flake.config) me;
+  inherit (flake) inputs;
+in
 {
-  imports = [ ];
-
-  # nixpkgs.config = {
-  #   allowUnfree = true;
-  #   allowUnfreePredicate = _pkg: true;
-  # };
-  #
-  # nix = {
-  #   enable = true;
-  #   package = pkgs.lixPackageSets.stable.lix;
-  #   settings = {
-  #     experimental-features = [
-  #       "nix-command"
-  #       "flakes"
-  #     ];
-  #
-  #     allowed-users = [
-  #       "root"
-  #       "wheel"
-  #       "@wheel"
-  #       user.username
-  #     ];
-  #     trusted-users = [
-  #       "root"
-  #       user.username
-  #     ];
-  #   };
-  #
-  # };
-
-  users.users."${user.username}" = {
-    name = user.username;
-    home = user.homeDirectory;
+  imports = [
+    inputs.agenix.darwinModules.age
+    ./common-overlays.nix
+    ./common-nix-settings.nix
+    ../../secrets/nixos.nix
+  ];
+  users.users."${me.username}" = {
+    name = me.username;
+    home = me.homeDirectory pkgs.stdenv;
     shell = pkgs.zsh;
   };
 

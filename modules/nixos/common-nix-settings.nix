@@ -1,17 +1,18 @@
 {
   pkgs,
   lib,
-  user,
   config,
+  flake,
   ...
 }:
 let
+  inherit (flake.config) me;
   # registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
     exec >>/var/log/nix-push-hook.log 2>&1
     echo "===== Starting cachix push at $(date) ====="
-    CACHIX_NAME="${user.cachixName}"
+    CACHIX_NAME="${me.cachixName}"
     IGNORE_PATTERNS="${
       lib.concatStringsSep " " (
         [
@@ -21,7 +22,7 @@ let
           "home-manager"
           "user-environment"
         ]
-        ++ [ user.username ]
+        ++ [ me.username ]
       )
     }"
 
@@ -85,7 +86,7 @@ let
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
     # for direnv GC roots
-    inherit (user) trusted-public-keys;
+    inherit (me) trusted-public-keys;
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
@@ -116,11 +117,11 @@ in
         "root"
         "wheel"
         "@wheel"
-        user.username
+        me.username
       ];
       trusted-users = [
         "root"
-        user.username
+        me.username
       ];
     };
 

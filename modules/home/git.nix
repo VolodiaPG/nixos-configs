@@ -1,5 +1,5 @@
 {
-  user,
+  flake,
   ...
 }:
 {
@@ -7,7 +7,7 @@
     enable = true;
     settings = {
       user = {
-        inherit (user) name email;
+        inherit (flake.config.me) name email;
       };
       rebase.autostash = true;
       init.defaultBranch = "main";
@@ -17,7 +17,7 @@
     };
     signing = {
       format = "ssh";
-      key = user.signingKey;
+      key = flake.config.me.signingKey;
       signByDefault = true;
     };
   };

@@ -1,17 +1,20 @@
 {
+  flake,
   inputs,
   outputs,
-  user,
   pkgs,
   ...
 }:
+let
+  inherit (flake.config) me;
+in
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
 
   home-manager = {
-    users."${user.username}" =
+    users."${me.username}" =
       {
         lib,
         config,
@@ -20,8 +23,8 @@
       {
         imports = lib.flatten [
           (with outputs.homeModules; [
-            (common-home { inherit pkgs user lib; })
-            (git { inherit pkgs user; })
+            (common-home { inherit pkgs me lib; })
+            (git { inherit pkgs me; })
             (zsh {
               inherit
                 pkgs
@@ -30,7 +33,7 @@
                 inputs
                 ;
             })
-            (ssh { inherit pkgs user; })
+            (ssh { inherit pkgs me; })
             syncthing
             gnome
             mail

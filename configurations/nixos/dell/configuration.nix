@@ -8,7 +8,7 @@
 let
   inherit (flake) inputs;
   inherit (inputs) self;
-  inherit (flake.config) user;
+  inherit (flake.config) me;
 in
 {
   imports = lib.flatten [
@@ -35,7 +35,7 @@ in
       nix-cache-proxy
       caddy
       # home-lab
-      (home-lab { inherit user config; })
+      (home-lab { inherit me config; })
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel-cpu-only
@@ -48,7 +48,7 @@ in
       inherit
         inputs
         self
-        user
+        me
         pkgs
         lib
         ;

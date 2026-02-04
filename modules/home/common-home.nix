@@ -1,23 +1,21 @@
 {
   pkgs,
-  config,
-  user,
+  flake,
   lib,
   ...
 }:
+let
+  inherit (flake.config) me;
+in
 {
   imports = [
+    # inputs.catppuccin.homeModules.catppuccin
+    # inputs.agenix.homeManagerModules.default
+    # inputs.nix-index-database.homeModules.nix-index
     ./catppuccin-theme.nix
-    (import ./kitty.nix { inherit user; })
+    ./kitty.nix
     ./tmux.nix
-    (import ./theme-daemon.nix {
-      inherit
-        pkgs
-        lib
-        config
-        user
-        ;
-    })
+    ./theme-daemon.nix
   ];
 
   fonts.fontconfig.enable = true;
@@ -111,7 +109,8 @@
   };
 
   home = {
-    inherit (user) username homeDirectory;
+    inherit (me) username;
+    homeDirectory = me.homeDirectory pkgs.stdenv;
     packages = with pkgs; [
       fontconfig
       mosh
@@ -160,7 +159,7 @@
           }
         }
       '';
-      ".ssh/authorized_keys".text = lib.concatStringsSep "\n" user.keys;
+      ".ssh/authorized_keys".text = lib.concatStringsSep "\n" me.keys;
       # Old kitty.conf is now managed by kitty.nix module
     };
 

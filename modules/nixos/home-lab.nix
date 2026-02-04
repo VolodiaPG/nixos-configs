@@ -1,9 +1,10 @@
 {
-  user,
+  flake,
   config,
   ...
 }:
 {
+  inherit (flake.config) me;
   virtualisation.oci-containers = {
     backend = "docker";
     containers = {
@@ -19,7 +20,7 @@
           SMTP_ADDRESS = "smtp.gmail.com";
           SMTP_USERNAME = "bot.volodia@gmail.com";
         };
-        volumes = [ "/home/${user.username}/Documents/Sync/services/fizzy:/rails/storage" ];
+        volumes = [ "/home/${me.username}/Documents/Sync/services/fizzy:/rails/storage" ];
       };
     };
   };
@@ -28,8 +29,8 @@
     #   freshrss = {
     #     enable = true;
     #     dataDir = "/persistent/home-lab/freshrss";
-    #     virtualHost = "https://rss.${user.tailname}";
-    #     baseUrl = "https://rss.${user.tailname}";
+    #     virtualHost = "https://rss.${me.tailname}";
+    #     baseUrl = "https://rss.${me.tailname}";
     #     # passwordFile = config.age.secrets.rss-password.path;
     #     authType = "http_auth";
     #     webserver = "caddy";
@@ -42,7 +43,7 @@
     #   #https://msfjarvis.dev/posts/creating-private-services-on-nixos-using-tailscale-and-caddy/
     caddy = {
       virtualHosts = {
-        "https://fizzy.${user.tailname}" = {
+        "https://fizzy.${me.tailname}" = {
           extraConfig = ''
             bind tailscale/fizzy
             reverse_proxy http://127.0.0.1:8888 {

@@ -2,7 +2,7 @@
 let
   inherit (flake) inputs;
   inherit (inputs) self;
-  inherit (flake.config) user;
+  inherit (flake.config) me;
 in
 {
   imports = [
@@ -10,7 +10,7 @@ in
   ];
 
   home-manager = {
-    users."${user.username}" =
+    users."${me.username}" =
       {
         lib,
         config,
@@ -23,11 +23,11 @@ in
               inherit
                 pkgs
                 config
-                user
+                me
                 lib
                 ;
             })
-            (git { inherit pkgs user; })
+            (git { inherit pkgs me; })
             (zsh {
               inherit
                 pkgs
@@ -36,7 +36,7 @@ in
                 inputs
                 ;
             })
-            (ssh { inherit pkgs user; })
+            (ssh { inherit pkgs me; })
             syncthing
             (packages-personal { inherit pkgs config lib; })
           ])

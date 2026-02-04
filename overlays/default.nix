@@ -28,6 +28,12 @@ in
     opencode
     ;
 
+  inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
+
+  inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system}) theme-switcher;
+
+  nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
+
   mosh = prev.mosh.overrideAttrs (
     old:
     let

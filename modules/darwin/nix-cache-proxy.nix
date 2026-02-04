@@ -1,11 +1,12 @@
 {
   pkgs,
   lib,
-  user,
+  flake,
   ...
 }:
 let
-  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") user.trusted-substituters;
+  inherit (flake.config) me;
+  upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") me.trusted-substituters;
   port = "3687";
 in
 {

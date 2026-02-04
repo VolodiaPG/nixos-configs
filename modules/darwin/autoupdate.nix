@@ -2,11 +2,12 @@
   config,
   pkgs,
   lib,
-  user,
+  flake,
   ...
 }:
 with lib;
 let
+  inherit (flake.config) me;
   cfg = config.services.darwinAutoUpdate;
 
   # The main update script
@@ -21,7 +22,7 @@ let
     TIMESTAMP_FILE="$STATE_DIR/last-update"
     REVISION_FILE="$STATE_DIR/last-revision"
     LOG_FILE="${cfg.logFile}"
-    NOTIFY_USER="${user.username}"
+    NOTIFY_USER="${me.username}"
 
     # Ensure state directory exists
     mkdir -p "$STATE_DIR"

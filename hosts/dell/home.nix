@@ -1,17 +1,20 @@
 {
+  flake,
   inputs,
   outputs,
-  user,
   pkgs,
   ...
 }:
+let
+  inherit (flake.config) me;
+in
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
 
   home-manager = {
-    users."${user.username}" =
+    users."${me.username}" =
       {
         lib,
         config,
@@ -24,11 +27,11 @@
               inherit
                 pkgs
                 config
-                user
+                me
                 lib
                 ;
             })
-            (git { inherit pkgs user; })
+            (git { inherit pkgs me; })
             (zsh {
               inherit
                 pkgs
@@ -37,7 +40,7 @@
                 inputs
                 ;
             })
-            (ssh { inherit pkgs user; })
+            (ssh { inherit pkgs me; })
             syncthing
             (packages-personal { inherit pkgs config lib; })
           ])

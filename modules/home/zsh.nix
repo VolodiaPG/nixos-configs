@@ -1,11 +1,12 @@
 {
   pkgs,
   lib,
+  flake,
   config,
-  inputs,
   ...
 }:
 let
+  inherit (flake) inputs;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
     # Function to print colored text
     # $1: Color code

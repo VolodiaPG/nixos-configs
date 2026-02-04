@@ -2,12 +2,11 @@
   pkgs,
   lib,
   config,
-  user,
+  flake,
   ...
 }:
 let
-  themeSwitcher = pkgs.writeShellScriptBin "theme-switcher" (builtins.readFile ./theme-switcher.sh);
-
+  inherit (flake.config) me;
   inherit (pkgs.stdenv.hostPlatform) isLinux isDarwin;
 in
 {
@@ -19,8 +18,7 @@ in
 
   config = lib.mkIf config.services.theme-daemon.enable {
     home.packages = [
-      themeSwitcher
-      pkgs.neovim-remote
+      pkgs.theme-switcher
     ];
 
     # macOS: Use dark-mode-notify
@@ -29,10 +27,10 @@ in
       config = {
         ProgramArguments = [
           "${pkgs.dark-mode-notify}/bin/dark-mode-notify"
-          "${themeSwitcher}/bin/theme-switcher"
+          "${pkgs.theme-switcher}/bin/theme-switcher"
         ];
         EnvironmentVariables = {
-          PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/etc/profiles/per-user/${user.username}/bin";
+          PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/etc/profiles/per-user/${me.username}/bin";
         };
         KeepAlive = true;
         RunAtLoad = true;
@@ -68,7 +66,7 @@ in
         executable = true;
         text = ''
           #!/usr/bin/env bash
-          ${themeSwitcher}/bin/theme-switcher light
+          ${pkgs.theme-switcher}/bin/theme-switcher light
         '';
       };
 
@@ -76,7 +74,7 @@ in
         executable = true;
         text = ''
           #!/usr/bin/env bash
-          ${themeSwitcher}/bin/theme-switcher dark
+          ${pkgs.theme-switcher}/bin/theme-switcher dark
         '';
       };
 

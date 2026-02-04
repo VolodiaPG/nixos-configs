@@ -32,6 +32,7 @@
           nixfmt-rfc-style
           just
           inputs.agenix.packages.${system}.default
+          nix-output-monitor
         ];
         inherit (config.pre-commit) shellHook;
       };

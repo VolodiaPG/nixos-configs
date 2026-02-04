@@ -7,7 +7,7 @@
 let
   inherit (flake) inputs;
   inherit (inputs) self;
-  inherit (flake.config) user;
+  inherit (flake.config) me;
 in
 {
   imports = lib.flatten [
@@ -33,7 +33,7 @@ in
       inherit
         inputs
         self
-        user
+        me
         pkgs
         lib
         ;

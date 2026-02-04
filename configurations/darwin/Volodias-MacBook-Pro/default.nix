@@ -1,19 +1,45 @@
-{ flake, ... }:
+{ flake, lib, ... }:
 let
   inherit (flake) inputs;
+  inherit (flake.config) me;
   inherit (inputs) self;
-  # Define user inline - can be moved to flake.specialArgs if needed
-  user = "volodia";
 in
 {
   imports = [
-    self.darwinModules.default
+    self.darwinModules.common-darwin
+    self.darwinModules.nix-cache-proxy
+    inputs.home-manager.darwinModules.home-manager
   ];
+
+  home-manager = {
+    users.${me.username} = {
+      imports = lib.flatten (
+        with self.homeModules;
+        [
+          common-home
+          git
+          zsh
+          ssh
+          syncthing
+          mail
+          packages-personal
+        ]
+      );
+    };
+    sharedModules = [
+      ../../../secrets/home-manager.nix
+      inputs.agenix.homeManagerModules.default
+      inputs.catppuccin.homeModules.catppuccin
+      inputs.nix-index-database.homeModules.nix-index
+    ];
+    useGlobalPkgs = true;
+    useUserPackages = true;
+  };
 
   # Darwin-specific configuration
   system = {
     stateVersion = 5;
-    primaryUser = user;
+    primaryUser = me.username;
   };
 
   nixpkgs = {
@@ -22,51 +48,4 @@ in
   };
 
   # Home Manager configuration
-  home-manager = {
-    users.${user} =
-      {
-        lib,
-        config,
-        pkgs,
-        ...
-      }:
-      {
-        imports = lib.flatten [
-          (with self.homeModules; [
-            (common-home {
-              inherit pkgs lib config;
-              inherit user;
-            })
-            (git {
-              inherit pkgs;
-              inherit user;
-            })
-            (zsh {
-              inherit
-                pkgs
-                lib
-                config
-                inputs
-                ;
-            })
-            (ssh {
-              inherit pkgs;
-              inherit user;
-            })
-            syncthing
-            mail
-            packages-personal
-          ])
-        ];
-      };
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = flake.specialArgs;
-    sharedModules = [
-      ../../../secrets/home-manager.nix
-      inputs.agenix.homeManagerModules.default
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.nix-index-database.homeModules.nix-index
-    ];
-  };
 }

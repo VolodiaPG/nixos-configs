@@ -1,11 +1,11 @@
 {
-  pkgs,
-  lib,
+  flake,
   config,
-  user,
   ...
 }:
-# let
+let
+  inherit (flake.config) me;
+in
 #   # Helper function to create scheduled stop/start service pairs
 #   mkScheduledService = serviceName: {
 #     services = {
@@ -164,7 +164,7 @@
               file_server {
                   index ${
                     pkgs.replaceVars ./services-page/index.html {
-                      TAILNAME = user.tailname;
+                      TAILNAME = me.tailname;
                     }
                   }
               }
@@ -176,7 +176,7 @@
         '';
       };
 
-      "https://hass.${user.tailname}" = {
+      "https://hass.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/hass
 
@@ -185,7 +185,7 @@
           }
         '';
       };
-      "https://rss.${user.tailname}" = {
+      "https://rss.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/rss
 
@@ -194,7 +194,7 @@
           }
         '';
       };
-      "https://transmission.${user.tailname}" = {
+      "https://transmission.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/transmission
           reverse_proxy http://127.0.0.1:9091 {
@@ -202,7 +202,7 @@
           }
         '';
       };
-      "https://sonarr.${user.tailname}" = {
+      "https://sonarr.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/sonarr
           reverse_proxy http://127.0.0.1:8989 {
@@ -210,7 +210,7 @@
           }
         '';
       };
-      "https://radarr.${user.tailname}" = {
+      "https://radarr.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/radarr
           reverse_proxy http://127.0.0.1:7878 {
@@ -218,7 +218,7 @@
           }
         '';
       };
-      "https://prowlarr.${user.tailname}" = {
+      "https://prowlarr.${me.tailname}" = {
         extraConfig = ''
           bind tailscale/prowlarr
           reverse_proxy http://127.0.0.1:9696 {
