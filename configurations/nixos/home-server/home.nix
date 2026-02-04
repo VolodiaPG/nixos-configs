@@ -1,4 +1,4 @@
-{ flake, pkgs, ... }:
+{ flake, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -10,38 +10,15 @@ in
   ];
 
   home-manager = {
-    users."${me.username}" =
-      {
-        lib,
-        config,
-        ...
-      }:
-      {
-        imports = lib.flatten [
-          (with self.homeModules; [
-            (common-home {
-              inherit
-                pkgs
-                config
-                me
-                lib
-                ;
-            })
-            (git { inherit pkgs me; })
-            (zsh {
-              inherit
-                pkgs
-                lib
-                config
-                inputs
-                ;
-            })
-            (ssh { inherit pkgs me; })
-            syncthing
-          ])
-        ];
-      };
-
+    users."${me.username}" = {
+      imports = with self.homeModules; [
+        common-home
+        git
+        zsh
+        ssh
+        syncthing
+      ];
+    };
     useGlobalPkgs = true;
     useUserPackages = true;
     sharedModules = [

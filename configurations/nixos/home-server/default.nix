@@ -1,39 +1,55 @@
-{ flake, ... }:
+{ flake, lib, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
 in
 {
-  imports = [
-    self.nixosModules.default
-    ./configuration.nix
-    inputs.srvos.nixosModules.server
-    inputs.disko.nixosModules.disko
-    inputs.nixarr.nixosModules.default
-    inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
+  imports = lib.flatten [
+    [
+      ./configuration.nix
+      ./hardware-configuration.nix
+      ./disk.nix
+      ./home.nix
+      (self + "/secrets/nixos.nix")
+    ]
+    (with self.nixosModules; [
+      common-nix-settings
+      common-overlays
+      base
+      kernel
+      impermanence
+      vpn
+      laptop-server
+      recyclarr
+      arr
+      samba
+      caddy
+    ])
+    (with inputs.nixos-hardware.nixosModules; [
+      common-cpu-intel
+      common-cpu-intel-cpu-only
+      common-pc
+      common-pc-ssd
+    ])
+    (with inputs; [
+      srvos.nixosModules.server
+      disko.nixosModules.disko
+      nixarr.nixosModules.default
+      agenix.nixosModules.default
+      impermanence.nixosModules.impermanence
+    ])
   ];
-
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-  };
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "home-server";
-  networking.hostId = "30249676";
 
   services = {
     kernel.enable = true;
-    impermanence.enable = true;
+    impermanence = {
+      enable = true;
+      rootVolume = "sda";
+      disko = true;
+    };
     vpn.enable = true;
     laptopServer.enable = true;
   };
-
-  hardware.graphics.enable = false;
-
-  _module.args.disks = [ "/dev/sda" ];
 
   system.stateVersion = "22.05";
 }

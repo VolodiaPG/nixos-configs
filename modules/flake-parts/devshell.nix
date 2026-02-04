@@ -13,7 +13,7 @@
     }:
     {
       # Formatter
-      formatter = pkgs.nixfmt-rfc-style;
+      formatter = pkgs.nixfmt;
 
       # Pre-commit hooks
       pre-commit.settings.hooks = {
@@ -28,26 +28,12 @@
       devShells.default = pkgs.mkShell {
         name = "nixos-config";
         packages = with pkgs; [
-          git
-          nixfmt-rfc-style
           just
           inputs.agenix.packages.${system}.default
           nix-output-monitor
+          deploy-rs
         ];
         inherit (config.pre-commit) shellHook;
-      };
-
-      # Packages
-      packages = {
-        inherit (pkgs) lix;
-      };
-
-      # Apps
-      apps = {
-        neovim = {
-          type = "app";
-          program = "${inputs.vim.packages.${system}.default}/bin/nvim";
-        };
       };
     };
 }

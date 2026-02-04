@@ -1,54 +1,4 @@
 {
-  flake,
-  lib,
-  pkgs,
-  ...
-}:
-let
-  inherit (flake) inputs;
-  inherit (inputs) self;
-  inherit (flake.config) me;
-in
-{
-  imports = lib.flatten [
-    (with self.commonModules; [
-      common-nix-settings
-    ])
-    (with self.nixosModules; [
-      common-nix
-      kernel
-      impermanence
-      vpn
-      laptop-server
-      recyclarr
-      arr
-      samba
-      caddy
-    ])
-    (with inputs.nixos-hardware.nixosModules; [
-      common-cpu-intel
-      common-cpu-intel-cpu-only
-      common-pc
-      common-pc-ssd
-    ])
-    (with inputs; [
-      srvos.nixosModules.server
-      disko.nixosModules.disko
-      nixarr.nixosModules.default
-    ])
-    (import ./home.nix {
-      inherit
-        inputs
-        self
-        me
-        pkgs
-        lib
-        ;
-    })
-    ./hardware-configuration.nix
-    ./disk.nix
-  ];
-
   # Host-specific configuration
   boot = {
     loader = {
@@ -69,19 +19,6 @@ in
     hostName = "home-server";
     networkmanager.enable = true;
   };
-
-  services = {
-    kernel.enable = true;
-    impermanence = {
-      enable = true;
-      rootVolume = "sda";
-      disko = true;
-    };
-    vpn.enable = true;
-    laptopServer.enable = true;
-  };
-
-  _module.args.disks = [ "/dev/sda" ];
 
   hardware = {
     cpu.intel.updateMicrocode = true;
