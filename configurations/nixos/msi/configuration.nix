@@ -12,7 +12,7 @@ in
 {
   imports = lib.flatten [
     (with self.nixosModules; [
-      common-nix
+      base
       desktop
       kernel
       hifi

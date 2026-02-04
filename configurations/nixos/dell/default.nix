@@ -1,61 +1,59 @@
-{ flake, ... }:
+{ flake, lib, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
 in
 {
-  imports = [
-    self.nixosModules.default
-    ./configuration.nix
-    inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
+  imports = lib.flatten [
+    [
+      ./configuration.nix
+      ./hardware-configuration.nix
+      ./home.nix
+      (self + "/secrets/nixos.nix")
+    ]
+    (with inputs; [
+      agenix.nixosModules.default
+      # laputil.nixosModules.default
+      impermanence.nixosModules.impermanence
+      catppuccin.nixosModules.catppuccin
+      nixarr.nixosModules.default
+      agenix.nixosModules.default
+    ])
+    (with self.nixosModules; [
+      common-nix-settings
+      common-overlays
+      base
+      kernel
+      intel
+      nvidia
+      virt
+      impermanence
+      vpn
+      laptop-server
+      # arr
+      nix-cache-proxy
+      caddy
+      home-lab
+    ])
+    (with inputs.nixos-hardware.nixosModules; [
+      common-cpu-intel-cpu-only
+      common-gpu-intel
+      common-pc
+      common-pc-laptop
+      common-pc-laptop-ssd
+    ])
   ];
-
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-    gfxmodeEfi = "2560x1440";
-  };
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "dell";
-  networking.hostId = "30249675";
 
   services = {
     kernel.enable = true;
     intel.enable = true;
     nvidia.enable = true;
     virt.enable = true;
-    impermanence.enable = true;
+    impermanence = {
+      enable = true;
+      rootVolume = "nvme0n1p11";
+    };
     vpn.enable = true;
     laptopServer.enable = true;
-    home-lab.enable = true;
-    nix-cache-proxy.enable = true;
-    caddy.enable = true;
   };
-
-  hardware.cpu.intel.updateMicrocode = true;
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [
-      vaapiVdpau
-      libvdpau-va-gl
-      nvidia-vaapi-driver
-      (vaapiIntel.override { enableHybridCodec = true; })
-    ];
-  };
-
-  environment.etc."X11/xorg.conf.d/10-nvidia.conf".text = ''
-    Section "OutputClass"
-      Identifier "nvidia"
-      MatchDriver "nvidia-drm"
-      Driver "nvidia"
-      Option "PrimaryGPU" "yes"
-    EndSection
-  '';
-
-  system.stateVersion = "22.05";
 }

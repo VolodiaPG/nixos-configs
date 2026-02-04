@@ -4,8 +4,10 @@
   lib,
   ...
 }:
-{
+let
   inherit (flake.config) me;
+in
+{
 
   # nixpkgs.config = {
   #   allowUnfree = true;

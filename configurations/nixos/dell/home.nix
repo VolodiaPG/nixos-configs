@@ -1,4 +1,7 @@
-{ flake, pkgs, ... }:
+{
+  flake,
+  ...
+}:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -10,43 +13,21 @@ in
   ];
 
   home-manager = {
-    users."${me.username}" =
-      {
-        lib,
-        config,
-        ...
-      }:
-      {
-        imports = lib.flatten [
-          (with self.homeModules; [
-            (common-home {
-              inherit
-                pkgs
-                config
-                me
-                lib
-                ;
-            })
-            (git { inherit pkgs me; })
-            (zsh {
-              inherit
-                pkgs
-                lib
-                config
-                inputs
-                ;
-            })
-            (ssh { inherit pkgs me; })
-            syncthing
-            (packages-personal { inherit pkgs config lib; })
-          ])
-        ];
-      };
+    users."${me.username}" = {
+      imports = with self.homeModules; [
+        common-home
+        git
+        zsh
+        ssh
+        syncthing
+        packages-personal
+      ];
+    };
 
     useGlobalPkgs = true;
     useUserPackages = true;
     sharedModules = [
-      ../../../secrets/home-manager.nix
+      (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
       inputs.catppuccin.homeModules.catppuccin
       inputs.nix-index-database.homeModules.nix-index

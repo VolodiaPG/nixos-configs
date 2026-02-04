@@ -3,8 +3,10 @@
   config,
   ...
 }:
-{
+let
   inherit (flake.config) me;
+in
+{
   virtualisation.oci-containers = {
     backend = "docker";
     containers = {
