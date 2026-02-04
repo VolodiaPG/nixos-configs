@@ -60,7 +60,7 @@ in
 
       kanata = {
         enable = true;
-        keyboards.all.config = readFile ../assets/kanata.lisp;
+        keyboards.all.config = readFile (self + "/assets/kanata.lisp");
         keyboards.all.extraDefCfg = ''
           concurrent-tap-hold yes
         '';

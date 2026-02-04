@@ -45,7 +45,7 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     sharedModules = [
-      ../../../secrets/home-manager.nix
+      (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
       inputs.catppuccin.homeModules.catppuccin
       inputs.nix-index-database.homeModules.nix-index

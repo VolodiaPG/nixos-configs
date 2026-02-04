@@ -6,13 +6,14 @@
 let
   inherit (flake.config) me;
   inherit (flake) inputs;
+  inherit (inputs) self;
 in
 {
   imports = [
     inputs.agenix.darwinModules.age
     ./common-overlays.nix
     ./common-nix-settings.nix
-    ../../secrets/nixos.nix
+    (self + "/secrets/nixos.nix")
   ];
   users.users."${me.username}" = {
     name = me.username;
