@@ -34,6 +34,7 @@ in
       nix-cache-proxy
       caddy
       home-lab
+      backlight-off
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel-cpu-only
@@ -55,5 +56,6 @@ in
     };
     vpn.enable = true;
     laptopServer.enable = true;
+    backlightOff.enable = true;
   };
 }

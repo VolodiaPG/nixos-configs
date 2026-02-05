@@ -24,6 +24,7 @@ in
       arr
       samba
       caddy
+      backlight-off
     ])
     (with inputs.nixos-hardware.nixosModules; [
       common-cpu-intel
@@ -49,6 +50,7 @@ in
     };
     vpn.enable = true;
     laptopServer.enable = true;
+    backlightOff.enable = true;
   };
 
   system.stateVersion = "22.05";
