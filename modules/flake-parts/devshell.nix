@@ -16,12 +16,15 @@
       formatter = pkgs.nixfmt;
 
       # Pre-commit hooks
-      pre-commit.settings.hooks = {
-        nixfmt.enable = true;
-        statix.enable = true;
-        deadnix.enable = true;
-        commitizen.enable = true;
-        actionlint.enable = true;
+      pre-commit.settings = {
+        package = pkgs.prek;
+        hooks = {
+          nixfmt.enable = true;
+          statix.enable = true;
+          deadnix.enable = true;
+          commitizen.enable = true;
+          actionlint.enable = true;
+        };
       };
 
       # Development shell
