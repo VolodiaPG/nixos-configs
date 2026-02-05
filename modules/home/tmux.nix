@@ -10,9 +10,9 @@
 
     extraConfig = ''
       # Enable true color support
-      # set -ga terminal-overrides ",*256col*:Tc"
       set -g default-terminal "screen-256color"
-      set-option -sa terminal-overrides ",xerm-kitty:RGB"
+      set -ga terminal-overrides ",*256col*:Tc"
+      # set-option -sa terminal-overrides ",xerm-kitty:RGB"
 
       set-option -sg escape-time 10
       set-option -g focus-events on
