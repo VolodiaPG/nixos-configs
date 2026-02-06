@@ -2,14 +2,14 @@
 {
   flake = {
     deploy.nodes = {
-      msi = {
-        hostname = "msi";
-        profiles.system = {
-          user = "root";
-          sshUser = "volodia";
-          path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
-        };
-      };
+      # msi = {
+      #   hostname = "msi";
+      #   profiles.system = {
+      #     user = "root";
+      #     sshUser = "volodia";
+      #     path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.msi;
+      #   };
+      # };
       dell = {
         hostname = "dell";
         profiles.system = {

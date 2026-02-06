@@ -6,19 +6,13 @@
 }:
 with lib;
 let
-  cfg = config.services.myCaddy;
+  cfg = config.services.caddy;
 in
 {
-  options = {
-    services.myCaddy = with types; {
-      enable = mkEnableOption "Caddy web server";
-    };
-  };
 
   config = mkIf cfg.enable {
     services = {
       caddy = {
-        enable = true;
         environmentFile = config.age.secrets.tailscale-authkey.path;
         package = pkgs.caddy.withPlugins {
           plugins = [

@@ -188,8 +188,8 @@ in
         g = "git";
         c = "clear";
         n = "nvim";
-        oc = "${lib.getExe pkgs.opencode} --port";
-        opencode = "${lib.getExe pkgs.opencode} --port";
+        oc = "opencode --port";
+        opencode = "opencode --port";
       };
       plugins = [
         {
