@@ -16,6 +16,7 @@ in
   services = {
     commonDarwin.enable = true;
     nixCacheProxyDarwin.enable = true;
+    commonNixSettings.enable = true;
   };
 
   home-manager = {
