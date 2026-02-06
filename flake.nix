@@ -23,7 +23,7 @@
     };
 
     srvos = {
-      url = "github:nix-community/srvos/5086dcb3f4212c90ab0e5c30391c92116db7e035";
+      url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
