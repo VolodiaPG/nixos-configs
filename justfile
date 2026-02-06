@@ -5,11 +5,13 @@ boot:
 
 switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
+    set -e
     result=$(just dry {{drv}})
     sudo $result/activate || echo Failed $result
 
 dry drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
+    set -e
     result=$(nom build --print-out-paths --extra-experimental-features "nix-command flakes" {{drv}})
     nvd diff /run/current-system $result >&2
     echo $result
