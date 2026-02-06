@@ -25,7 +25,6 @@ in
     # Core system services
     base.enable = true;
     commonNixSettings.enable = true;
-    commonOverlays.enable = true;
     nixCacheProxy.enable = true;
 
     # Hardware and kernel

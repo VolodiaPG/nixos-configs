@@ -1,1 +1,3 @@
-../nixos/common-nix-settings.nix
+{
+  imports = [ ../nixos/common-nix-settings.nix ];
+}

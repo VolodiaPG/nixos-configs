@@ -18,12 +18,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    imports = [
-      flake.inputs.agenix.darwinModules.age
-      ./common-overlays.nix
-      ./common-nix-settings.nix
-      (flake.self + "/secrets/nixos.nix")
-    ];
     users.users."${flake.config.me.username}" = {
       name = flake.config.me.username;
       home = flake.config.me.homeDirectory pkgs.stdenv;

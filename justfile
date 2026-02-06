@@ -3,9 +3,9 @@ _default: boot
 boot:
     sudo nixos-rebuild boot --flake .#$(hostname)
 
-switch:
+switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
-    result=$(just dry)
+    result=$(just dry {{drv}})
     sudo $result/activate || echo Failed $result
 
 dry drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
@@ -20,5 +20,8 @@ mount hostname:
 test:
     sudo nixos-rebuild test --flake .#$(hostname)
 
+dry-darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
+    just dry {{drv}}
+
 darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-  just switch {{drv}}
+  just dry {{drv}}

@@ -1,21 +1,12 @@
 {
   flake,
-  config,
-  lib,
   ...
 }:
 let
-  inherit (flake) self;
-  cfg = config.services.commonOverlays;
+  inherit (flake.inputs) self;
 in
 {
-  options.services.commonOverlays = {
-    enable = lib.mkEnableOption "common overlays from this flake";
-  };
-
-  config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [
-      self.overlays.default
-    ];
-  };
+  nixpkgs.overlays = [
+    self.overlays.default
+  ];
 }

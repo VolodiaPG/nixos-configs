@@ -1,13 +1,15 @@
 { flake, ... }:
 let
   inherit (flake) inputs;
-  inherit (flake.config) me;
   inherit (inputs) self;
+  inherit (flake.config) me;
 in
 {
   imports = [
     self.darwinModules.all-modules
     inputs.home-manager.darwinModules.home-manager
+    flake.inputs.agenix.darwinModules.age
+    (flake.self + "/secrets/nixos.nix")
   ];
 
   # Enable Darwin-specific services
@@ -21,6 +23,13 @@ in
       imports = [
         self.homeModules.all-modules
       ];
+
+      # Enable home modules
+      services = {
+        syncthing.enable = true;
+        theme-daemon.enable = true;
+      };
+
       # Enable home modules
       commonHome.enable = true;
       interactive.enable = true;

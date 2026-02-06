@@ -31,7 +31,6 @@
 #     # Core system services
 #     base.enable = true;
 #     commonNixSettings.enable = true;
-#     commonOverlays.enable = true;
 #
 #     # Hardware and kernel
 #     kernel.enable = true;

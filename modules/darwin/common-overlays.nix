@@ -1,1 +1,3 @@
-../nixos/common-overlays.nix
+{
+  imports = [ ../nixos/common-overlays.nix ];
+}
