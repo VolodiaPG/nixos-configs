@@ -24,8 +24,6 @@ in
   ];
 
   config = mkIf cfg.enable {
-    fonts.fontconfig.enable = true;
-
     # Configure Catppuccin theme switching, extending the default catppuccin module
     catppuccin = {
       enable = true;
@@ -39,7 +37,6 @@ in
     services.theme-daemon.enable = true;
 
     programs = {
-      kitty.enable = true;
       opencode.enable = true;
       lazygit = {
         enable = true;
@@ -71,27 +68,8 @@ in
         direnv
         git-crypt
         python3
-        libnotify
-        notify-desktop
         difftastic
       ];
-
-      file = {
-        ".config/discord/settings.json".text = ''
-          {
-            "BACKGROUND_COLOR": "#202225",
-            "IS_MAXIMIZED": false,
-            "IS_MINIMIZED": true,
-            "SKIP_HOST_UPDATE": true,
-            "WINDOW_BOUNDS": {
-              "x": 307,
-              "y": 127,
-              "width": 1280,
-              "height": 725
-            }
-          }
-        '';
-      };
 
       stateVersion = "22.05";
     };

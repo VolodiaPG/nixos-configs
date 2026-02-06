@@ -35,6 +35,7 @@ in
       commonHome.enable = true;
       interactive.enable = true;
       homePackagesPersonal.enable = true;
+      gui.enable = true;
     };
     sharedModules = [
       (self + "/secrets/home-manager.nix")
