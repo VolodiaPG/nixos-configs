@@ -35,6 +35,7 @@
           inputs.agenix.packages.${system}.default
           nix-output-monitor
           deploy-rs
+          nvd
         ];
         inherit (config.pre-commit) shellHook;
       };

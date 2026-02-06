@@ -1,4 +1,4 @@
-{ flake, lib, ... }:
+{ flake, ... }:
 let
   inherit (flake) inputs;
   inherit (flake.config) me;
@@ -6,31 +6,29 @@ let
 in
 {
   imports = [
-    self.darwinModules.common-darwin
-    self.darwinModules.nix-cache-proxy
+    self.darwinModules.all-modules
     inputs.home-manager.darwinModules.home-manager
   ];
 
+  # Enable Darwin-specific services
+  services = {
+    commonDarwin.enable = true;
+    nixCacheProxyDarwin.enable = true;
+  };
+
   home-manager = {
     users.${me.username} = {
-      imports = lib.flatten (
-        with self.homeModules;
-        [
-          common-home
-          git
-          zsh
-          ssh
-          syncthing
-          mail
-          packages-personal
-        ]
-      );
+      imports = [
+        self.homeModules.all-modules
+      ];
+      # Enable home modules
+      commonHome.enable = true;
+      interactive.enable = true;
+      homePackagesPersonal.enable = true;
     };
     sharedModules = [
       (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.nix-index-database.homeModules.nix-index
     ];
     useGlobalPkgs = true;
     useUserPackages = true;

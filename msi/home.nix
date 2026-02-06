@@ -17,16 +17,22 @@ in
 
       # Enable home modules
       services = {
+        commonHome.enable = true;
         syncthing.enable = true;
       };
-      commonHome.enable = true;
-
+      programs = {
+        git.enable = true;
+        ssh.enable = true;
+      };
     };
+
     useGlobalPkgs = true;
     useUserPackages = true;
     sharedModules = [
       (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
+      inputs.catppuccin.homeModules.catppuccin
+      inputs.nix-index-database.homeModules.nix-index
     ];
   };
 }

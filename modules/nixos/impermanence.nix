@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  flake,
   ...
 }:
 with lib;
@@ -9,6 +10,8 @@ let
   cfg = config.services.impermanence;
 in
 {
+  imports = [ flake.inputs.impermanence.nixosModules.impermanence ];
+
   options = with types; {
     services.impermanence = {
       enable = mkEnableOption "impermanence";

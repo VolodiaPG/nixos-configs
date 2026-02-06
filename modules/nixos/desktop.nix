@@ -2,11 +2,13 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 with lib;
 let
   cfg = config.services.desktop;
+  kanataConfigPath = flake.self + "/static/kanata.lisp";
 in
 {
   options = {
@@ -60,7 +62,7 @@ in
 
       kanata = {
         enable = true;
-        keyboards.all.config = readFile (self + "/assets/kanata.lisp");
+        keyboards.all.config = readFile kanataConfigPath;
         keyboards.all.extraDefCfg = ''
           concurrent-tap-hold yes
         '';

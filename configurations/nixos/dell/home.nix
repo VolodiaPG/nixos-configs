@@ -14,14 +14,21 @@ in
 
   home-manager = {
     users."${me.username}" = {
-      imports = with self.homeModules; [
-        common-home
-        git
-        zsh
-        ssh
-        syncthing
-        packages-personal
+      imports = [
+        self.homeModules.all-modules
       ];
+
+      # Enable home modules
+      services = {
+        syncthing.enable = true;
+        theme-daemon.enable = true;
+      };
+      # Enable home modules
+      commonHome.enable = true;
+      interactive.enable = true;
+      homePackagesPersonal.enable = true;
+
+      home.stateVersion = "22.05";
     };
 
     useGlobalPkgs = true;
@@ -29,8 +36,7 @@ in
     sharedModules = [
       (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.nix-index-database.homeModules.nix-index
     ];
+
   };
 }

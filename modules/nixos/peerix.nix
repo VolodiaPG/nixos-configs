@@ -1,20 +1,16 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 with lib;
 let
-  cfg = config.services.mypeerix;
+  cfg = config.services.peerix;
 in
 {
   options = {
-    services.mypeerix = with types; {
-      enable = mkEnableOption "mypeerix";
+    services.peerix = with types; {
+      enable = mkEnableOption "peerix";
 
       extraHosts = mkOption {
         description = "Hosts to consider";
-        type = listOf types.str;
+        type = types.listOf types.str;
         default = [
           "asus"
           "msi"
@@ -25,16 +21,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    #services.peerix = {
-    # enable = true;
-    # openFirewall = true; # UDP/12304
-    # privateKeyFile = ../secrets/peerix-private;
-    # publicKeyFile = ../secrets/peerix-public;
-    # user = "peerix";
-    # group = "peerix";
-    # disableBroadcast = true;
-    # inherit (cfg) extraHosts; # hostnames
-    #};
     users = {
       users.peerix = {
         isSystemUser = true;

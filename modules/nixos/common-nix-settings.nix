@@ -7,6 +7,7 @@
 }:
 let
   inherit (flake.config) me;
+  cfg = config.services.commonNixSettings;
   # registryMap = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
@@ -96,72 +97,79 @@ let
   };
 in
 {
-  # settings get written into /etc/nix/nix.custom.conf
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = _pkg: true;
+  options.services.commonNixSettings = {
+    enable = lib.mkEnableOption "common Nix settings (cachix, gc, experimental features)";
   };
 
-  nix = {
-    channel.enable = false;
-
-    package = pkgs.lix;
-
-    settings = common-nix-settings // {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-
-      allowed-users = [
-        "root"
-        "wheel"
-        "@wheel"
-        me.username
-      ];
-      trusted-users = [
-        "root"
-        me.username
-      ];
+  config = lib.mkIf cfg.enable {
+    # settings get written into /etc/nix/nix.custom.conf
+    nixpkgs.config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _pkg: true;
     };
 
-    optimise = {
-      automatic = true;
+    nix = {
+      enable = true;
+      channel.enable = false;
+
+      package = lib.mkDefault pkgs.lix;
+
+      settings = common-nix-settings // {
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+
+        allowed-users = [
+          "root"
+          "wheel"
+          "@wheel"
+          me.username
+        ];
+        trusted-users = [
+          "root"
+          me.username
+        ];
+      };
+
+      optimise = {
+        automatic = true;
+      };
+
+      gc = {
+        automatic = true;
+        # interval = {
+        #   Weekday = 1;
+        #   Hour = 0;
+        #   Minute = 0;
+        # };
+        options = "--delete-older-than 8d";
+      };
+
+      # # pin the registry to avoid downloading and evaling a new nixpkgs version every time
+      # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
+      #
+      # # set the path for channels compat
+      # nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
     };
 
-    gc = {
-      automatic = true;
-      # interval = {
-      #   Weekday = 1;
-      #   Hour = 0;
-      #   Minute = 0;
-      # };
-      options = "--delete-older-than 8d";
-    };
+    # environment.etc."flake-registry.json".text =
+    #   let
+    #     flakes = lib.mapAttrsToList (name: flake: {
+    #       from = {
+    #         id = name;
+    #         type = "indirect";
+    #       };
+    #       to = {
+    #         type = "path";
+    #         path = flake.outPath;
+    #       };
+    #     }) registryMap;
+    #   in
+    #   lib.strings.toJSON {
+    #     inherit flakes;
+    #     version = 2;
+    #   };
 
-    # # pin the registry to avoid downloading and evaling a new nixpkgs version every time
-    # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
-    #
-    # # set the path for channels compat
-    # nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
-
-  # environment.etc."flake-registry.json".text =
-  #   let
-  #     flakes = lib.mapAttrsToList (name: flake: {
-  #       from = {
-  #         id = name;
-  #         type = "indirect";
-  #       };
-  #       to = {
-  #         type = "path";
-  #         path = flake.outPath;
-  #       };
-  #     }) registryMap;
-  #   in
-  #   lib.strings.toJSON {
-  #     inherit flakes;
-  #     version = 2;
-  #   };
-
 }

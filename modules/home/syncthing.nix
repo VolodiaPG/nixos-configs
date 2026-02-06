@@ -1,11 +1,17 @@
+{ config, lib, ... }:
+with lib;
+let
+  cfg = config.services.syncthing;
+in
 {
-  services.syncthing = {
-    enable = true;
-    overrideDevices = false;
-    overrideFolders = false;
-    guiAddress = "0.0.0.0:8384";
-    extraOptions = [
-      "--allow-newer-config"
-    ];
+  config = mkIf cfg.enable {
+    services.syncthing = {
+      overrideDevices = false;
+      overrideFolders = false;
+      guiAddress = "0.0.0.0:8384";
+      extraOptions = [
+        "--allow-newer-config"
+      ];
+    };
   };
 }

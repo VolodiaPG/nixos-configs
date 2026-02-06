@@ -1,17 +1,29 @@
 {
+  config,
+  lib,
   flake,
   ...
 }:
+with lib;
 let
-  port = "3687";
+  cfg = config.services.nixCacheProxy;
   inherit (flake.config) me;
   inherit (flake) inputs;
 in
 {
   imports = [ inputs.nix-cache-proxy.nixosModules.nix-cache-proxy ];
-  services.nix-cache-proxy = {
-    enable = true;
-    listenAddress = "127.0.0.1:${port}";
-    upstreams = me.trusted-substituters;
+
+  options = {
+    services.nixCacheProxy = with types; {
+      enable = mkEnableOption "Nix cache proxy";
+    };
+  };
+
+  config = mkIf cfg.enable {
+    services.nix-cache-proxy = {
+      enable = true;
+      listenAddress = "127.0.0.1:3687";
+      upstreams = me.trusted-substituters;
+    };
   };
 }

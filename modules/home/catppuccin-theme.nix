@@ -8,6 +8,7 @@ let
   # Users can override this by setting catppuccin.flavor directly
   defaultFlavor = "mocha"; # Dark theme default
   defaultLightFlavor = "latte"; # Light theme default
+  cfg = config.catppuccin;
 in
 {
   options.catppuccin = {
@@ -36,7 +37,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.autoThemeSwitch {
     # Set the default catppuccin flavor globally
     catppuccin = {
       flavor = lib.mkDefault config.catppuccin.darkFlavor;

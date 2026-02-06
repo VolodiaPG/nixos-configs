@@ -1,86 +1,96 @@
-{ pkgs, ... }:
 {
-  programs.tmux = {
-    enable = true;
-    baseIndex = 1;
-    historyLimit = 10000;
-    keyMode = "vi";
-    prefix = "C-a";
-    # default-terminal = "screen-256color";
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib;
+let
+  cfg = config.programs.tmux;
+in
+{
+  config = mkIf cfg.enable {
+    programs.tmux = {
+      baseIndex = 1;
+      historyLimit = 10000;
+      keyMode = "vi";
+      prefix = "C-a";
+      # default-terminal = "screen-256color";
 
-    extraConfig = ''
-      # Enable true color support
-      set -g default-terminal "screen-256color"
-      set -ga terminal-overrides ",*256col*:Tc"
-      # set-option -sa terminal-overrides ",xerm-kitty:RGB"
+      extraConfig = ''
+        # Enable true color support
+        set -g default-terminal "screen-256color"
+        set -ga terminal-overrides ",*256col*:Tc"
+        # set-option -sa terminal-overrides ",xerm-kitty:RGB"
 
-      set-option -sg escape-time 10
-      set-option -g focus-events on
+        set-option -sg escape-time 10
+        set-option -g focus-events on
 
-      set-option -g detach-on-destroy off
+        set-option -g detach-on-destroy off
 
-      # Unbind default prefix and set to C-a
-      unbind C-b
-      bind C-a send-prefix
+        # Unbind default prefix and set to C-a
+        unbind C-b
+        bind C-a send-prefix
 
-      # Set pane base index to 1
-      setw -g pane-base-index 1
+        # Set pane base index to 1
+        setw -g pane-base-index 1
 
-      # Automatically renumber windows
-      set -g renumber-windows on
+        # Automatically renumber windows
+        set -g renumber-windows on
 
-      # New window in current path
-      bind c new-window -c "#{pane_current_path}"
+        # New window in current path
+        bind c new-window -c "#{pane_current_path}"
 
-      # Split windows in current path
-      bind \" split-window -c "#{pane_current_path}"
-      bind % split-window -h -c "#{pane_current_path}"
-      bind -r v copy-mode
+        # Split windows in current path
+        bind \" split-window -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
+        bind -r v copy-mode
 
-      # Smart pane switching with awareness of Vim splits
-      # See: https://github.com/christoomey/vim-tmux-navigator
-      vim_pattern='(\S+/)?g?\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?'
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-          | grep -iqE '^[^TXZ ]+ +''${vim_pattern}$'"
-      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
-      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
-      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
-      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
-      tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-      if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-          "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
-      if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-          "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
+        # Smart pane switching with awareness of Vim splits
+        # See: https://github.com/christoomey/vim-tmux-navigator
+        vim_pattern='(\S+/)?g?\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?'
+        is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+            | grep -iqE '^[^TXZ ]+ +''${vim_pattern}$'"
+        bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
+        bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
+        bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
+        bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
+        tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
+        if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
+            "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
+        if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
+            "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
 
-      bind-key -T copy-mode-vi 'C-h' select-pane -L
-      bind-key -T copy-mode-vi 'C-j' select-pane -D
-      bind-key -T copy-mode-vi 'C-k' select-pane -U
-      bind-key -T copy-mode-vi 'C-l' select-pane -R
-      bind-key -T copy-mode-vi 'C-\' select-pane -l
-    '';
+        bind-key -T copy-mode-vi 'C-h' select-pane -L
+        bind-key -T copy-mode-vi 'C-j' select-pane -D
+        bind-key -T copy-mode-vi 'C-k' select-pane -U
+        bind-key -T copy-mode-vi 'C-l' select-pane -R
+        bind-key -T copy-mode-vi 'C-\' select-pane -l
+      '';
 
-    plugins = with pkgs.tmuxPlugins; [
-      {
-        plugin = resurrect;
-        extraConfig = ''
-          resurrect_dir="$HOME/.tmux/resurrect"
-          set -g @resurrect-dir $resurrect_dir
-          set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g" $target | sponge $target'
-          set -g @resurrect-processes 'nvim htop nvtop neomutt'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-        '';
-      }
-      # {
-      #   plugin = catppuccin;
-      #   extraConfig = ''
-      #     set -g @catppuccin_flavour 'mocha'
-      #   '';
-      # }
-    ];
+      plugins = with pkgs.tmuxPlugins; [
+        {
+          plugin = resurrect;
+          extraConfig = ''
+            resurrect_dir="$HOME/.tmux/resurrect"
+            set -g @resurrect-dir $resurrect_dir
+            set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g" $target | sponge $target'
+            set -g @resurrect-processes 'nvim htop nvtop neomutt'
+          '';
+        }
+        {
+          plugin = continuum;
+          extraConfig = ''
+            set -g @continuum-restore 'on'
+          '';
+        }
+        # {
+        #   plugin = catppuccin;
+        #   extraConfig = ''
+        #     set -g @catppuccin_flavour 'mocha'
+        #   '';
+        # }
+      ];
+    };
   };
 }
