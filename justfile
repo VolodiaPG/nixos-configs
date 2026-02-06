@@ -24,4 +24,4 @@ dry-darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
     just dry {{drv}}
 
 darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-  just dry {{drv}}
+    just switch {{drv}}
