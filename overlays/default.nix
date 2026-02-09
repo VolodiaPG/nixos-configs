@@ -3,22 +3,22 @@ let
   inherit (flake) inputs;
 in
 _final: prev:
-let
-  lixPackageSets = prev.lixPackageSets.override {
-    inherit (prev)
-      nix-direnv
-      nix-fast-build
-      ;
-  };
-in
+# let
+#   lixPackageSets = prev.lixPackageSets.override {
+#     inherit (prev)
+#       nix-direnv
+#       nix-fast-build
+#       ;
+#   };
+# in
 {
-  inherit (lixPackageSets.stable)
-    lix
-    nix-direnv
-    nix-eval-jobs
-    nix-fast-build
-    nix-serve-ng
-    ;
+  # inherit (lixPackageSets.stable)
+  #   lix
+  #   nix-direnv
+  #   nix-eval-jobs
+  #   nix-fast-build
+  #   nix-serve-ng
+  #   ;
 
   inherit (inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system})
     devenv

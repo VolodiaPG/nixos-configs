@@ -112,7 +112,8 @@ in
       enable = true;
       channel.enable = false;
 
-      package = lib.mkDefault pkgs.lix;
+      # package = lib.mkDefault pkgs.lix;
+      package = lib.mkDefault pkgs.nixVersions.latest;
 
       settings = common-nix-settings // {
         experimental-features = [
