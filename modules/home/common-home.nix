@@ -17,6 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    xdg.enable = true;
+
     programs = {
       home-manager.enable = true;
       git.enable = true;
