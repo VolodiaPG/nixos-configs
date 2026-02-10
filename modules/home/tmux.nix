@@ -10,6 +10,8 @@ let
 in
 {
   config = mkIf cfg.enable {
+    home.packages = [ pkgs.tmux-session-color ];
+
     programs.tmux = {
       baseIndex = 1;
       historyLimit = 10000;
@@ -66,6 +68,14 @@ in
         bind-key -T copy-mode-vi 'C-k' select-pane -U
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
+
+        # Make the status line more pleasant.
+        set -g status-left ""
+        set -g status-right '#[fg=#{@thm_crust},bg=#(tmux-session-color #S)] #S '
+
+        # Ensure that everything on the right side of the status line
+        # is included.
+        set -g status-right-length 100
       '';
 
       plugins = with pkgs.tmuxPlugins; [

@@ -30,7 +30,10 @@ _final: prev:
 
   inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
 
-  inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system}) theme-switcher;
+  inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
+    theme-switcher
+    tmux-session-color
+    ;
 
   nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
 
