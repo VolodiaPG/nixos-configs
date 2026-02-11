@@ -116,6 +116,11 @@
     nixos-unified.url = "github:srid/nixos-unified";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
+
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {

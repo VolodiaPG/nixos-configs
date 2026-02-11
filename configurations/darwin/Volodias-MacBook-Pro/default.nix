@@ -19,6 +19,8 @@ in
     commonNixSettings.enable = true;
   };
 
+  darwinLinuxBuilder.enable = true;
+
   home-manager = {
     users.${me.username} = {
       imports = [

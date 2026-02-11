@@ -129,6 +129,7 @@ in
         ];
         trusted-users = [
           "root"
+          "@admin"
           me.username
         ];
       };
