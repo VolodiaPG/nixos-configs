@@ -47,6 +47,7 @@ in
     arr.enable = true;
     caddy.enable = true;
     samba.enable = true;
+    homeLab.enable = true;
   };
 
   system.stateVersion = "22.05";
