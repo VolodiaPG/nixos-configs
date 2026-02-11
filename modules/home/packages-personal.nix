@@ -38,11 +38,11 @@ in
         "presets": {
           "custom": {
             "orchestrator": { "model": "openrouter/moonshotai/kimi-k2.5", "skills": ["*"], "mcps": ["websearch"] },
-            "oracle": { "model": "openrouter/z-ai/glm-4.7", "skills": [], "mcps": [] },
+            "oracle": { "model": "openai/gpt-5.2-codex", "skills": [], "mcps": [] },
             "librarian": { "model": "openrouter/google/gemini-3-flash-preview", "skills": [], "mcps": ["websearch", "context7", "grep_app"] },
             "explorer": { "model": "openrouter/google/gemini-3-flash-preview",  "skills": [], "mcps": [] },
             "designer": { "model": "openrouter/google/gemini-3-flash-preview",  "skills": ["agent-browser"], "mcps": [] },
-            "fixer": { "model": "openrouter/z-ai/glm-4.7-flash", "skills": [], "mcps": [] }
+            "fixer": { "model": "openrouter/google/gemini-3-flash-preview", "skills": [], "mcps": [] }
           }
         }
       }
