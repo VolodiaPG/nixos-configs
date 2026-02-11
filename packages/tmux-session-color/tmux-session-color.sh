@@ -7,19 +7,19 @@ set -euo pipefail
 # Catppuccin theme variable names (works with any flavor: latte, frappe, macchiato, mocha)
 declare -a COLOR_VARS=(
   "#{@thm_rosewater}"
-  "#{@thm_flamingo}"
+  # "#{@thm_flamingo}"
   "#{@thm_pink}"
   "#{@thm_mauve}"
   "#{@thm_red}"
-  "#{@thm_maroon}"
+  # "#{@thm_maroon}"
   "#{@thm_peach}"
   "#{@thm_yellow}"
   "#{@thm_green}"
-  "#{@thm_teal}"
+  # "#{@thm_teal}"
   "#{@thm_sky}"
-  "#{@thm_sapphire}"
+  # "#{@thm_sapphire}"
   "#{@thm_blue}"
-  "#{@thm_lavender}"
+  # "#{@thm_lavender}"
 )
 
 # Get session name from argument or stdin
