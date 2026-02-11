@@ -228,24 +228,65 @@ apply_nvim_theme() {
   fi
 }
 
+# Available targets dispatch table
+# Format: "name:function_name"
+# To add a new target, just add an entry here and define the function above
+TARGETS=(
+  "kitty:apply_kitty_theme"
+  "tmux:apply_tmux_theme"
+  "lazygit:apply_lazygit_theme"
+  "nvim:apply_nvim_theme"
+)
+
+# Get all available target names
+get_available_targets() {
+  local names=()
+  for entry in "${TARGETS[@]}"; do
+    names+=("${entry%%:*}")
+  done
+  echo "${names[*]}"
+}
+
+# Apply theme to a specific target
+apply_theme_to_target() {
+  local target="$1"
+  local theme="$2"
+
+  for entry in "${TARGETS[@]}"; do
+    local name="${entry%%:*}"
+    local func="${entry##*:}"
+    if [[ "$name" == "$target" ]]; then
+      $func "$theme" &
+      return 0
+    fi
+  done
+
+  error "Unknown target: $target (available: $(get_available_targets))"
+  return 1
+}
+
 # Main theme switching function
 switch_theme() {
   local new_theme="$1"
+  local targets="${2:-all}"
   local saved_theme=$(get_saved_theme)
-
-  # Skip if theme hasn't changed
-  # if [[ "$saved_theme" == "$new_theme" ]]; then
-  #   info "Theme already set to $new_theme, skipping"
-  #   return 0
-  # fi
 
   info "Switching theme from '${saved_theme:-none}' to '$new_theme'"
 
-  # Apply theme to all applications
-  apply_kitty_theme "$new_theme"&
-  apply_tmux_theme "$new_theme"&
-  apply_lazygit_theme "$new_theme"&
-  apply_nvim_theme "$new_theme"&
+  if [[ "$targets" == "all" ]]; then
+    # Apply theme to all applications
+    for entry in "${TARGETS[@]}"; do
+      local func="${entry##*:}"
+      $func "$new_theme" &
+    done
+  else
+    # Apply to specific targets (comma-separated)
+    IFS=',' read -ra target_list <<< "$targets"
+    for target in "${target_list[@]}"; do
+      target=$(echo "$target" | tr -d ' ')  # trim whitespace
+      apply_theme_to_target "$target" "$new_theme"
+    done
+  fi
 
   wait
 
@@ -255,10 +296,60 @@ switch_theme() {
   info "Theme switch to $new_theme completed successfully"
 }
 
+# Show usage information
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [THEME]
+
+Arguments:
+  THEME                     Theme to apply: 'light', 'dark', or 'auto' (default: auto)
+
+Options:
+  -t, --target TARGETS      Comma-separated list of targets to update (default: all)
+                            Available: $(get_available_targets)
+  -h, --help                Show this help message
+
+Examples:
+  $(basename "$0") dark                    # Apply dark theme to all targets
+  $(basename "$0") -t tmux light           # Apply light theme to tmux only
+  $(basename "$0") --target tmux,nvim      # Apply auto theme to tmux and nvim
+EOF
+}
+
 # Main execution
 main() {
-  local theme="${1:-auto}"
+  local theme="auto"
+  local targets="all"
 
+  # Parse arguments
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--target)
+        if [[ -n "${2:-}" && ! "$2" =~ ^- ]]; then
+          targets="$2"
+          shift 2
+        else
+          error "Option $1 requires an argument"
+          exit 1
+        fi
+        ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      -*)
+        error "Unknown option: $1"
+        usage
+        exit 1
+        ;;
+      *)
+        theme="$1"
+        shift
+        ;;
+    esac
+  done
+
+  # Validate theme
   if [[ "$theme" == "auto" ]]; then
     theme=$(detect_system_theme)
     info "Auto-detected system theme: $theme"
@@ -267,7 +358,7 @@ main() {
     exit 1
   fi
 
-  switch_theme "$theme"
+  switch_theme "$theme" "$targets"
 }
 
 # Run main function
