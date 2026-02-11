@@ -68,14 +68,6 @@ in
         bind-key -T copy-mode-vi 'C-k' select-pane -U
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
-
-        # Make the status line more pleasant.
-        set -g status-left ""
-        set -g status-right '#[fg=#{@thm_crust},bg=#(tmux-session-color #S)] #S '
-
-        # Ensure that everything on the right side of the status line
-        # is included.
-        set -g status-right-length 100
       '';
 
       plugins = with pkgs.tmuxPlugins; [
@@ -94,13 +86,44 @@ in
             set -g @continuum-restore 'on'
           '';
         }
-        # {
-        #   plugin = catppuccin;
-        #   extraConfig = ''
-        #     set -g @catppuccin_flavour 'mocha'
-        #   '';
-        # }
       ];
+
     };
+    catppuccin.tmux.extraConfig = ''
+      if-shell -b '[ "$(uname -a | grep Linux)" ]' {
+        set -g @catppuccin_load_text "#[fg=#{@thm_overlay_0}] #(cat /proc/loadavg | cut -d' ' -f1-3)"
+      } {
+        if-shell -b '[ "$(uname -a | grep Darwin)" ]' {
+          set -g @catppuccin_load_text "#[fg=#{@thm_overlay_0}] #(sysctl -q -n vm.loadavg | cut -d\" \" -f2-4)"
+        } {
+          set -g @catppuccin_load_text ""
+        }
+      }
+
+      set -g @catppuccin_date_time_text "#[fg=#{@thm_subtext_0}]%H:%M"
+      set -g @catppuccin_date_time_icon ""
+      set -g @catppuccin_load_icon ""
+      set -g @catppuccin_load_background "none"
+
+      set -g status-left ""
+      set -g status-right ""
+
+      set -g @catppuccin_status_left_separator ""
+      set -g @catppuccin_status_middle_separator ""
+      set -g @catppuccin_status_right_separator "█"
+      set -g @catppuccin_status_connect_separator "yes"
+      set -g @catppuccin_status_module_bg_color "#{@thm_mantle}"
+
+      set -g @catppuccin_window_current_number_color "#(tmux-session-color $(hostname))"
+
+      set -ag status-right " #{?#(echo $(( #{client_width} < 140 ))),,#{E:@catppuccin_status_load}}"
+      set -ag status-right " #{?#(echo $(( #{client_width} <  80 ))),,#{E:@catppuccin_status_date_time}}"
+      set -ag status-right " #[fg=#{@thm_crust},bg=#(tmux-session-color #S)] #S "
+
+      # Ensure that everything on the right side of the status line
+      # is included.
+      set -g status-right-length 400
+    '';
   };
+
 }
