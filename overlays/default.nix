@@ -33,6 +33,7 @@ _final: prev:
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
     theme-switcher
     tmux-session-color
+    openrouter-credits
     ;
 
   nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;

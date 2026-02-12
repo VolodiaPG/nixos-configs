@@ -10,7 +10,10 @@ let
 in
 {
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.tmux-session-color ];
+    home.packages = [
+      pkgs.tmux-session-color
+      pkgs.openrouter-credits
+    ];
 
     programs.tmux = {
       baseIndex = 1;
@@ -116,7 +119,8 @@ in
 
       set -g @catppuccin_window_current_number_color "#(tmux-session-color $(hostname))"
 
-      set -ag status-right " #{?#(echo $(( #{client_width} < 140 ))),,#{E:@catppuccin_status_load}}"
+      set -ag status-right " #[fg=#{@thm_overlay_0}]#{?#(echo $(( #{client_width} < 120 ))),,#(openrouter-credits)}"
+      set -ag status-right " #{?#(echo $(( #{client_width} < 120 ))),,#{E:@catppuccin_status_load}}"
       set -ag status-right " #{?#(echo $(( #{client_width} <  80 ))),,#{E:@catppuccin_status_date_time}}"
       set -ag status-right " #[fg=#{@thm_crust},bg=#(tmux-session-color #S)] #S "
 
