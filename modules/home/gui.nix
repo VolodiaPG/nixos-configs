@@ -27,10 +27,9 @@ in
       nix-index-database.comma.enable = true;
       direnv = {
         enable = true;
+        silent = true;
         nix-direnv.enable = true;
-        stdlib = ''
-          export DIRENV_LOG_FORMAT=""
-        '';
+        enableZshIntegration = true;
       };
     };
 
