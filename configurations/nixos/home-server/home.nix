@@ -20,7 +20,7 @@ in
         syncthing.enable = true;
       };
       commonHome.enable = true;
-
+      catppuccin.enable = false;
     };
     useGlobalPkgs = true;
     useUserPackages = true;
