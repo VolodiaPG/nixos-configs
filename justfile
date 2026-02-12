@@ -3,13 +3,19 @@ _default: boot
 boot:
     sudo nixos-rebuild boot --flake .#$(hostname)
 
-switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
+switch drv="$(hostname)":
+    just _switch ".#nixosConfigurations.{{drv}}.config.system.build.toplevel"
+
+_switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
     set -e
-    result=$(just dry {{drv}})
+    result=$(just _dry {{drv}})
     sudo $result/activate || echo Failed $result
 
-dry drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
+dry host="$(hostname)":
+    just _dry ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
+
+_dry drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
     set -e
     result=$(nom build --print-out-paths --extra-experimental-features "nix-command flakes" {{drv}})
@@ -23,7 +29,7 @@ test:
     sudo nixos-rebuild test --flake .#$(hostname)
 
 dry-darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-    just dry {{drv}}
+    just _dry {{drv}}
 
 darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-    just switch {{drv}}
+    just _switch {{drv}}
