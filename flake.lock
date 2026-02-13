@@ -342,11 +342,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770244988,
-        "narHash": "sha256-DT9HK9iYTmXUfjKcTxLRMZOeCLb9CAoFEpBiDpEku3g=",
+        "lastModified": 1770905331,
+        "narHash": "sha256-gPG7wu3K0wLwpV0nPJt7sIrLP3PrgOS/4POM5zwerVs=",
         "owner": "StevenBlack",
         "repo": "hosts",
-        "rev": "7ea67ed353b27e1dbe36363074d1b6c3ca6be46b",
+        "rev": "1af162231e6efdbf8b493857445f7b5a1d3cecd4",
         "type": "github"
       },
       "original": {
@@ -387,11 +387,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1770867923,
-        "narHash": "sha256-QG/Y/z3GqV7e2x/boQY7K8JB2/qFNTu5JUwCbc/3jSg=",
+        "lastModified": 1770971107,
+        "narHash": "sha256-r7fpi8HQxo4XKPMdDErtC5mkOjtVAxX4u2ORXvleSe8=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "8055c184e4a82af564e91ec6421c358686f9043c",
+        "rev": "27f63447255f8079a18f47c918652782786c43a0",
         "type": "github"
       },
       "original": {
@@ -625,11 +625,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1770562336,
-        "narHash": "sha256-MIMad536rq4nepqzYDTwuSDNQP+YuM0cfsvtcJJJItM=",
-        "rev": "d6c71932130818840fc8fe9509cf50be8c64634f",
+        "lastModified": 1770841267,
+        "narHash": "sha256-BKNoPyCG5hRTJUNhwnL9PlWFujr8/18VzggAVRXl6us=",
+        "rev": "ec7c70d12ce2fc37cb92aff673dcdca89d187bae",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre942779.d6c719321308/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre944744.ec7c70d12ce2/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
