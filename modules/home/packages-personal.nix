@@ -32,21 +32,53 @@ in
       };
     };
 
-    xdg.configFile."opencode/oh-my-opencode-slim.json".text = ''
-      {
-        "preset": "custom",
-        "presets": {
-          "custom": {
-            "orchestrator": { "model": "openrouter/moonshotai/kimi-k2.5", "skills": ["*"], "mcps": ["websearch"] },
-            "oracle": { "model": "openai/gpt-5.2-codex", "skills": [], "mcps": [] },
-            "librarian": { "model": "openrouter/google/gemini-3-flash-preview", "skills": [], "mcps": ["websearch", "context7", "grep_app"] },
-            "explorer": { "model": "openrouter/google/gemini-3-flash-preview",  "skills": [], "mcps": [] },
-            "designer": { "model": "openrouter/google/gemini-3-flash-preview",  "skills": ["agent-browser"], "mcps": [] },
-            "fixer": { "model": "openrouter/google/gemini-3-flash-preview", "skills": [], "mcps": [] }
-          }
-        }
-      }
-    '';
+    xdg.configFile."opencode/oh-my-opencode-slim.json".text =
+      let
+        goodModel = "openrouter/moonshotai/kimi-k2.5";
+        expensiveModel = goodModel;
+        cheapModel = "openrouter/google/gemini-2.5-flash-lite";
+      in
+      builtins.toJSON {
+        preset = "custom";
+        presets = {
+          custom = {
+            orchestrator = {
+              model = goodModel;
+              skills = [ "*" ];
+              mcps = [ "websearch" ];
+            };
+            oracle = {
+              model = expensiveModel;
+              skills = [ ];
+              mcps = [ ];
+            };
+            librarian = {
+              model = goodModel;
+              skills = [ ];
+              mcps = [
+                "websearch"
+                "context7"
+                "grep_app"
+              ];
+            };
+            explorer = {
+              model = goodModel;
+              skills = [ ];
+              mcps = [ ];
+            };
+            designer = {
+              model = goodModel;
+              skills = [ "agent-browser" ];
+              mcps = [ ];
+            };
+            fixer = {
+              model = cheapModel;
+              skills = [ ];
+              mcps = [ ];
+            };
+          };
+        };
+      };
 
     # Clean up the cache since opencode does not update automatically
     # home.activation.opencode-delete-plugin-cache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
