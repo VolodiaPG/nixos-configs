@@ -83,7 +83,7 @@ in
         ]; # Allow access from Tailscale
         flood.enable = true;
       };
-      bazarr.enable = false; # Enable Bazarr for subtitles
+      bazarr.enable = true; # Enable Bazarr for subtitles
       sonarr.enable = true; # Enable Sonarr for TV shows
       radarr.enable = true; # Enable Radarr for movies
       prowlarr.enable = true; # Enable Prowlarr for indexers
@@ -234,6 +234,14 @@ in
           extraConfig = ''
             bind tailscale/prowlarr
             reverse_proxy http://127.0.0.1:9696 {
+                header_up Host {host}
+            }
+          '';
+        };
+        "https://bazarr.${me.tailname}" = {
+          extraConfig = ''
+            bind tailscale/bazarr
+            reverse_proxy http://127.0.0.1:6767 {
                 header_up Host {host}
             }
           '';
