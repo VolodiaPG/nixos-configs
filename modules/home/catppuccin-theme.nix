@@ -109,7 +109,7 @@ in
         set -g @catppuccin_status_connect_separator "yes"
         set -g @catppuccin_status_module_bg_color "#{@thm_mantle}"
 
-        set -g @catppuccin_window_current_number_color "#(${tmux-session-color} $(hostname))"
+        set -g @catppuccin_window_current_number_color "#(${tmux-session-color} #H)"
 
         set -ag status-right " #[fg=#{@thm_overlay_0}]#{?#(echo $(( #{client_width} < 120 ))),,#(${openrouter-credits})}"
         set -ag status-right " #{?#(echo $(( #{client_width} < 120 ))),,#{E:@catppuccin_status_load}}"

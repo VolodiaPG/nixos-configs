@@ -121,6 +121,10 @@
       url = "github:cpick/nix-rosetta-builder";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-apple-silicon = {
+      url = "github:nix-community/nixos-apple-silicon";
+    };
   };
 
   nixConfig = {
@@ -129,12 +133,14 @@
       "https://volodiapg.cachix.org?priority=20"
       "https://install.determinate.systems?priority=50"
       "https://cache.numtide.com?priority=50"
+      "https://nixos-apple-silicon.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+      "nixos-apple-silicon.cachix.org-1:8psDu5SA5dAD7qA0zMy5UT292TxeEPzIz8VVEr2Js20="
     ];
   };
 

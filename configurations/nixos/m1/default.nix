@@ -1,0 +1,40 @@
+{ flake, ... }:
+let
+  inherit (flake) inputs;
+  inherit (inputs) self;
+in
+{
+  imports = [
+    ./configuration.nix
+    ./hardware-configuration.nix
+    ./home.nix
+    (self + "/secrets/nixos.nix")
+    inputs.agenix.nixosModules.default
+    self.nixosModules.all-modules
+    inputs.nixos-apple-silicon.nixosModules.default
+  ]
+  ++ (with inputs.nixos-hardware.nixosModules; [
+    common-pc
+    common-pc-laptop
+    common-pc-laptop-ssd
+  ]);
+
+  # Enable services via module options
+  services = {
+    # Core system services
+    base.enable = true;
+    commonNixSettings.enable = true;
+    nixCacheProxy.enable = true;
+
+    # Hardware and kernel
+    kernel.enable = true;
+    virt.enable = true;
+
+    # Storage and networking
+    impermanence = {
+      enable = true;
+      rootVolume = "disk/by-label/root";
+    };
+    vpn.enable = true;
+  };
+}
