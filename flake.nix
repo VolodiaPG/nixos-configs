@@ -126,6 +126,11 @@
     nixos-apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon/release-25.11";
     };
+
+    laputil = {
+      url = "github:volodiapg/laputil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {

@@ -393,6 +393,26 @@
         "type": "github"
       }
     },
+    "laputil": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1761652999,
+        "narHash": "sha256-Kkti4pHRUcF3TXCRXL3puR302/SqVsfnOcs+WDx2Q3A=",
+        "owner": "volodiapg",
+        "repo": "laputil",
+        "rev": "e09d6326dea1a51f9c54ab13b9c09e64f9c3e139",
+        "type": "github"
+      },
+      "original": {
+        "owner": "volodiapg",
+        "repo": "laputil",
+        "type": "github"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "blueprint": "blueprint",
@@ -688,6 +708,19 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1771903837,
+        "narHash": "sha256-jEA8WggGKtMFeNeCKq3NK8cLEjJmG6/RLUElYYbBZ0E=",
+        "rev": "e764fc9a405871f1f6ca3d1394fb422e0a0c3951",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/25.11/nixos-25.11.6495.e764fc9a4058/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz"
+      }
+    },
     "plugins-catppuccin": {
       "flake": false,
       "locked": {
@@ -781,6 +814,7 @@
         "home-manager": "home-manager",
         "hosts": "hosts",
         "impermanence": "impermanence",
+        "laputil": "laputil",
         "llm-agents": "llm-agents",
         "mosh": "mosh",
         "nix-cache-proxy": "nix-cache-proxy",
@@ -791,10 +825,7 @@
         "nixos-apple-silicon": "nixos-apple-silicon",
         "nixos-hardware": "nixos-hardware",
         "nixos-unified": "nixos-unified",
-        "nixpkgs": [
-          "nixos-apple-silicon",
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "srvos": "srvos",
         "vim": "vim"

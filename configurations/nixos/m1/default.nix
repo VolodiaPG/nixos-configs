@@ -33,6 +33,7 @@ in
 
     # Hardware and kernel
     kernel.enable = true;
+    laputil.enable = true;
     virt.enable = true;
 
     # Storage and networking
