@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
 
     steps:
       # - name: Free Disk Space (Ubuntu)
@@ -45,26 +45,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Tailscale
-        uses: tailscale/github-action@main
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
+      # - name: Tailscale
+      #   uses: tailscale/github-action@main
+      #   with:
+      #     oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      #     oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+      #     tags: tag:ci
 
       - uses: cachix/cachix-action@v15
         with:
           name: volodiapg
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+      # - name: Install SSH key
+      #   uses: shimataro/ssh-key-action@v2
+      #   with:
+      #     key: ${{ secrets.SSH_KEY }}
+      #     known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      #     if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
-      - name: Build and deploy
+      # - name: Build and deploy
+      #   run: |
+      #     set -euxo pipefail
+      #     nix run .#deploy-rs -- --targets .#dell,.#home-server
+      #
+
+      - name: Build to cache
         run: |
           set -euxo pipefail
-          nix run .#deploy-rs -- --targets .#dell,.#home-server
+          nix build .#m1
