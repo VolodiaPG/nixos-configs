@@ -73,4 +73,4 @@ jobs:
       - name: Build to cache
         run: |
           set -euxo pipefail
-          nix build .#m1
+          nix build --accept-flake-config .#nixosConfigurations.m1.config.system.build.toplevel
