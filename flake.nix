@@ -3,8 +3,8 @@
 
   inputs = {
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
-    # nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
-    nixpkgs.follows = "nixos-apple-silicon/nixpkgs";
+    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
+    # nixpkgs.follows = "nixos-apple-silicon/nixpkgs";
 
     # nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
