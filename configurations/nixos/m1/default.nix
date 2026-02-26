@@ -1,4 +1,3 @@
-{ flake, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -18,13 +17,18 @@ in
     common-pc-laptop
     common-pc-laptop-ssd
   ]);
-
+  #hardware.asahi.pkgs = lib.mkForce inputs.nixos-apple-silicon.packages.aarch64-linux;
+  #boot.kernelPackages = lib.mkForce (inputs.nixos-apple-silicon.inputs.nixpkgs.legacyPackages.aarch64-linux.linuxPackagesFor inputs.nixos-apple-silicon.packages.aarch64-linux.linux-asahi);
   # Enable services via module options
   services = {
     # Core system services
     base.enable = true;
     commonNixSettings.enable = true;
     nixCacheProxy.enable = true;
+    wm = {
+      enable = true;
+      gnome.enable = true;
+    };
 
     # Hardware and kernel
     kernel.enable = true;

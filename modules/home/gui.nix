@@ -38,6 +38,7 @@ in
         fontconfig
         libnotify
         notify-desktop
+        brave
       ];
 
       file = {

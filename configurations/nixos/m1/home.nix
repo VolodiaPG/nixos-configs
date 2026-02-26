@@ -26,6 +26,8 @@ in
       commonHome.enable = true;
       interactive.enable = true;
       homePackagesPersonal.enable = true;
+      gui.enable = true;
+      wm.gnome.enable = true;
 
       home.stateVersion = "22.05";
     };
