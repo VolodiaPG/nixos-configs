@@ -10,7 +10,7 @@ _switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
     set -e
     result=$(just _dry {{drv}})
-    sudo $result/activate || echo Failed $result
+    sudo $result/bin/switch-to-configuration switch
 
 dry host="$(hostname)":
     just _dry ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
