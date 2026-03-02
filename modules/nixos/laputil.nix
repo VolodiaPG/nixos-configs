@@ -32,7 +32,7 @@ in
       ];
     };
 
-    powerManagement.cpuFreqGovernor = mkForce "laputil";
+    powerManagement.cpuFreqGovernor = mkDefault "laputil";
 
     services = {
       tlp = {
