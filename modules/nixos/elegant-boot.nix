@@ -17,9 +17,9 @@ in
 
   config = mkIf cfg.enable {
     # Console
-    console = {
-      font = "Lat2-Terminus16";
-    };
+    # console = {
+    #   font = "Lat2-Terminus16";
+    # };
 
     # TTY
     # fonts.packages = with pkgs; [meslo-lgs-nf];
@@ -58,7 +58,7 @@ in
 
       # Boot Loader
       loader = {
-        timeout = 0;
+        timeout = 2;
         efi.canTouchEfiVariables = true;
       };
     };
