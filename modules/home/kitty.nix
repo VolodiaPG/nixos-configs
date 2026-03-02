@@ -14,7 +14,7 @@ in
     programs.kitty = {
       font = {
         name = "Comic Code Ligatures";
-        size = 14;
+        size = 13;
       };
 
       settings = {

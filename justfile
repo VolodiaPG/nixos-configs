@@ -11,6 +11,7 @@ _switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     set -e
     result=$(just _dry {{drv}})
     sudo $result/bin/switch-to-configuration switch
+    sudo $result/bin/switch-to-configuration boot
 
 dry host="$(hostname)":
     just _dry ".#nixosConfigurations.{{host}}.config.system.build.toplevel"

@@ -4,6 +4,7 @@
   runCommand,
   bash,
   coreutils,
+  jq,
 }:
 
 let
@@ -13,6 +14,7 @@ let
   deps = [
     bash
     coreutils
+    jq
   ];
 in
 runCommand "${binName}"

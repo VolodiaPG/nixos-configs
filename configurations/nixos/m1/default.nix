@@ -1,4 +1,4 @@
-{ flake, ... }:
+{ flake, pkgs, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -28,7 +28,21 @@ in
     nixCacheProxy.enable = true;
     wm = {
       enable = true;
-      gnome.enable = true;
+      gnome.enable = false;
+      niri = {
+        enable = true;
+      };
+    };
+
+    # Display manager for niri (since GNOME/GDM is disabled)
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
+          user = "greeter";
+        };
+      };
     };
 
     # Hardware and kernel

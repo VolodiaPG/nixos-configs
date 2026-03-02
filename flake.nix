@@ -113,8 +113,8 @@
 
     flake-utils.url = "github:numtide/flake-utils";
 
-    # nixos-unified - the main addition
     nixos-unified.url = "github:srid/nixos-unified";
+    # nixos-unified.url = "path:/home/volodia/Documents/nixos-unified";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
@@ -129,6 +129,11 @@
 
     laputil = {
       url = "github:volodiapg/laputil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

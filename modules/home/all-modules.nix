@@ -10,10 +10,10 @@ let
     );
 in
 {
-  imports = moduleFiles; # ++ [ ./packages ];
+  imports = moduleFiles ++ [ flake.inputs.noctalia.homeModules.default ];
 
   # Pass flake inputs as specialArgs to all imported modules
-  # This allows each module to self-import its flake dependencies
+  # This allows each module to self-import their flake dependencies
   _module.args = {
     inherit flake;
     # Note: 'apps' specialArg is provided by nixos-unified autowiring

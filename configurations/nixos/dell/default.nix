@@ -44,4 +44,6 @@ in
     homeLab.enable = true;
     caddy.enable = true;
   };
+
+  nixpkgs.hostPlatform = "x86_64-linux";
 }

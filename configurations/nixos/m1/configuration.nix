@@ -42,31 +42,6 @@
 
   services = {
     openssh.enable = true;
-    # libinput = {
-    #   enable = true;
-    #   touchpad = {
-    #     accelStepScroll = 0.00001;
-    #     accelStepMotion = 0.00001;
-    #     accelPointsScroll = [
-    #       0
-    #       0.0001
-    #       0.00024
-    #       0.00025
-    #     ];
-    #     accelPointsMotion = [
-    #       0
-    #       0.0001
-    #       0.00024
-    #       0.00025
-    #     ];
-    #     # accelStepMotion = 0.001;
-    #     tapping = true;
-    #     scrollMethod = "twofinger";
-    #     naturalScrolling = true;
-    #     accelProfile = "flat";
-    #     disableWhileTyping = true;
-    #   };
-    # };
   };
 
   # This value determines the NixOS release from which the default

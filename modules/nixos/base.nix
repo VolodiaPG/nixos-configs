@@ -15,12 +15,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-
-    # nixpkgs.config = {
-    #   allowUnfree = true;
-    #   allowUnfreePredicate = _pkg: true;
-    # };
-
     nix = {
       optimise = {
         persistent = true;
@@ -53,14 +47,14 @@ in
     i18n = {
       defaultLocale = "fr_FR.UTF-8";
       extraLocaleSettings = {
-        LANGUAGE = "en_US.UTF-8";
+        LANGUAGE = "fr_FR.UTF-8";
         LC_ALL = "fr_FR.UTF-8";
         LC_MONETARY = "fr_FR.UTF-8";
         LC_PAPER = "fr_FR.UTF-8";
         LC_MEASUREMENT = "fr_FR.UTF-8";
         LC_TIME = "fr_FR.UTF-8";
         LC_NUMERIC = "fr_FR.UTF-8";
-        LANG = "en_US.UTF-8";
+        LANG = "fr_FR.UTF-8";
       };
     };
 

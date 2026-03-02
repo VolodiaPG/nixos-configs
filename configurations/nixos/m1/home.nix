@@ -27,7 +27,8 @@ in
       interactive.enable = true;
       homePackagesPersonal.enable = true;
       gui.enable = true;
-      wm.gnome.enable = true;
+      wm.gnome.enable = false;
+      wm.niri.enable = true;
 
       home.stateVersion = "22.05";
     };
