@@ -503,8 +503,8 @@ in
         colorSchemes.predefinedScheme = "Catppucin-Macchiato";
         general = {
           avatarImage = "/home/${flake.config.me.username}/.face";
-          radiusRatio = 0.2;
-          animationSpeed = 0.2;
+          # radiusRatio = 0.2;
+          animationSpeed = 5;
           showChangelogOnStartup = false;
         };
         location = {
@@ -522,6 +522,8 @@ in
             }
           ];
         };
+        osd.location = "bottom_right";
+        notifications.location = "bottom_right";
       };
       # this may also be a string or a path to a JSON file.
 

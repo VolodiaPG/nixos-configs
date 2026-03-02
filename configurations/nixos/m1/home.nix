@@ -30,6 +30,8 @@ in
       wm.gnome.enable = false;
       wm.niri.enable = true;
 
+      programs.kitty.font.size = 12;
+
       home.stateVersion = "22.05";
     };
 

@@ -17,10 +17,9 @@ in
 
   config = mkIf cfg.enable {
     # Console
-    # console = {
-    #   font = "Lat2-Terminus16";
-    #   keyMap = lib.mkForce "fr";
-    # };
+    console = {
+      font = "Lat2-Terminus16";
+    };
 
     # TTY
     # fonts.packages = with pkgs; [meslo-lgs-nf];

@@ -21,6 +21,10 @@ in
       };
     };
 
+    console = {
+      keyMap = lib.mkForce "fr";
+    };
+
     systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
     systemd.network.wait-online.enable = false;
 
