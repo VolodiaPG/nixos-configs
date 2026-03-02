@@ -232,8 +232,8 @@ in
               // dwtp
               // drag false
               // drag-lock
-              accel-profile "flat"
-              scroll-factor 0.1
+              // accel-profile "flat"
+              // scroll-factor 0.1
               // scroll-factor vertical=1.0 horizontal=-2.0
               scroll-method "two-finger"
               // scroll-button 273
@@ -347,6 +347,55 @@ in
         custom-binds = lib.concatStringsSep "\n" (
           lib.mapAttrsToList (keys: action: "binds { ${keys} { ${action}; } }") cfg.keybinds
         );
+        animations = ''
+          animations {
+            // Uncomment to turn off all animations.
+            // You can also put "off" into each individual animation to disable it.
+            // off
+
+            // Slow down all animations by this factor. Values below 1 speed them up instead.
+            slowdown 0.5
+          }'';
+
+        workspaces = ''
+          workspace "browser"
+          workspace "terminal"
+          workspace "social"
+          workspace "fizzy"
+          workspace "misc"
+          workspace "music"
+          workspace "zotero"
+          workspace "misc2"
+          workspace "misc3"
+
+          window-rule {
+              match at-startup=true app-id=r#"^kitty$"#
+              open-on-workspace "terminal"
+              open-maximized true
+          }
+
+          window-rule {
+              match at-startup=true title=r#".*Fizzy$"#
+              open-on-workspace "fizzy"
+              open-maximized true
+          }
+
+          window-rule {
+              match at-startup=true app-id=r#"^brave-browser$"#
+              open-on-workspace "browser"
+              open-maximized true
+          }
+
+          window-rule {
+              match app-id=r#"^brave-browser$"#
+              scroll-factor 0.1
+          }
+
+          window-rule {
+              match title=r#".*Fizzy$"#
+              scroll-factor 0.1
+          }
+        '';
       in
       ''
         // Niri configuration
@@ -365,6 +414,10 @@ in
         ${default-binds}
 
         ${custom-binds}
+
+        ${animations}
+
+        ${workspaces}
 
         ${cfg.extraConfig}
       '';
@@ -445,35 +498,39 @@ in
                 id = "Launcher";
               }
               {
+                id = "plugin:mini-docker";
+              }
+              {
+                id = "plugin:tailscale";
+              }
+              {
                 id = "SystemMonitor";
+                compactMode = true;
+                showCpuUsage = false;
+                showCpuTemp = false;
+                showNetworkStats = true;
+                showDiskUsage = true;
               }
+              # {
+              #   id = "ActiveWindow";
+              # }
               {
-                id = "ActiveWindow";
-              }
-              {
-                id = "MiniDocker";
-              }
-              {
-                id = "MediaMini";
+                id = "plugin:catwalk";
               }
             ];
             center = [
               {
                 id = "Workspace";
-              }
-              {
-                id = "Catwalk";
+                showApplications = true;
+                iconScale = 1.0;
               }
             ];
             right = [
               {
+                id = "MediaMini";
+              }
+              {
                 id = "Tray";
-              }
-              {
-                id = "Tailscale";
-              }
-              {
-                id = "NotificationHistory";
               }
               {
                 id = "Battery";
@@ -487,7 +544,7 @@ in
                 id = "Brightness";
               }
               {
-                id = "KDEConnect";
+                id = "plugin:kde-connect";
               }
               {
                 formatHorizontal = "HH:mm";
@@ -496,15 +553,16 @@ in
                 useMonospacedFont = true;
                 usePrimaryColor = true;
               }
+              {
+                id = "NotificationHistory";
+              }
 
             ];
           };
         };
-        colorSchemes.predefinedScheme = "Catppucin-Macchiato";
+        colorSchemes.predefinedScheme = "Catppucin";
         general = {
           avatarImage = "/home/${flake.config.me.username}/.face";
-          # radiusRatio = 0.2;
-          animationSpeed = 5;
           showChangelogOnStartup = false;
         };
         location = {
@@ -522,8 +580,8 @@ in
             }
           ];
         };
-        osd.location = "bottom_right";
-        notifications.location = "bottom_right";
+        osd.location = "bottom_center";
+        notifications.location = "bottom_center";
       };
       # this may also be a string or a path to a JSON file.
 
@@ -535,24 +593,28 @@ in
             url = "https://github.com/noctalia-dev/noctalia-plugins";
           }
         ];
-        states = {
-          catwalk = {
-            enabled = true;
+        states =
+          let
             sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+          in
+          {
+            catwalk = {
+              enabled = true;
+              inherit sourceUrl;
+            };
+            kde-connect = {
+              enabled = true;
+              inherit sourceUrl;
+            };
+            tailscale = {
+              enabled = true;
+              inherit sourceUrl;
+            };
+            mini-docker = {
+              enabled = true;
+              inherit sourceUrl;
+            };
           };
-          kde-connect = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
-          tailscale = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
-          mini-docker = {
-            enabled = true;
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          };
-        };
         version = 2;
       };
       # this may also be a string or a path to a JSON file.
@@ -561,6 +623,10 @@ in
         catwalk = {
           minimumThreshold = 25;
           hideBackground = true;
+        };
+        tailscale = {
+          showIpAddress = false;
+          terminalCommand = "kitty";
         };
         # this may also be a string or a path to a JSON file.
       };
