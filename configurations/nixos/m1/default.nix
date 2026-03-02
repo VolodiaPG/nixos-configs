@@ -49,6 +49,7 @@ in
     kernel.enable = true;
     laputil.enable = true;
     virt.enable = true;
+    elegantBoot.enable = true;
 
     # Storage and networking
     impermanence = {
