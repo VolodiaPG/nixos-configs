@@ -42,19 +42,7 @@ in
 
         # pkgs-unstable.tidal-hifi
         hyperhdr
-        distrobox
-        distrobox-tui
-        kitty
-
-        signal-desktop
         gnome-tweaks
-        qpdfview
-        strawberry
-        qbittorrent
-        distrobox
-        vlc
-        drawio
-        easyeffects
       ]
       ++ lib.optionals pkgs.stdenv.isx86_64 [
         discord

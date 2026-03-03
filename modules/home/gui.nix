@@ -31,6 +31,7 @@ in
         nix-direnv.enable = true;
         enableZshIntegration = true;
       };
+      zathura.enable = true;
     };
 
     home = {
@@ -38,7 +39,18 @@ in
         fontconfig
         libnotify
         notify-desktop
+
         brave
+        distrobox
+        distrobox-tui
+        signal-desktop
+        qpdfview
+        strawberry
+        qbittorrent
+        distrobox
+        vlc
+        drawio
+        easyeffects
       ];
 
       file = {

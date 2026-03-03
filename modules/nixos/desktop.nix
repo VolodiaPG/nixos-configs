@@ -34,21 +34,22 @@ in
           concurrent-tap-hold yes
         '';
       };
+      fractalart.enable = true;
     };
 
-    environment.systemPackages = [
-      pkgs.gnome-calculator
-      pkgs.gnome-characters
-      pkgs.gnome-clocks
-      pkgs.gnome-font-viewer
-      pkgs.gnome-system-monitor
-      pkgs.gnome-weather
-      pkgs.loupe
-      pkgs.nautilus
-      pkgs.snapshot
+    environment.systemPackages = with pkgs; [
+      gnome-calculator
+      gnome-characters
+      gnome-clocks
+      gnome-font-viewer
+      gnome-system-monitor
+      loupe
+      gnome-obfuscate
+      snapshot
+      nautilus
 
       #Enable ddc
-      pkgs.ddcutil
+      ddcutil
     ];
 
     environment.variables = {

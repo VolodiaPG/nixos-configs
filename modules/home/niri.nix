@@ -246,6 +246,21 @@ in
 
               ${lib.optionalString cfg.input.touchpad.natural-scroll "natural-scroll"}
             }
+
+
+            mouse {
+                // off
+                // natural-scroll
+                // accel-speed 0.2
+                accel-profile "flat"
+                scroll-factor 2.0
+                // scroll-factor vertical=1.0 horizontal=-2.0
+                // scroll-method "no-scroll"
+                // scroll-button 273
+                // scroll-button-lock
+                // left-handed
+                // middle-emulation
+            }
           }
         '';
 
@@ -375,25 +390,28 @@ in
           }
 
           window-rule {
-              match at-startup=true title=r#".*Fizzy$"#
-              open-on-workspace "fizzy"
-              open-maximized true
-          }
-
-          window-rule {
-              match at-startup=true app-id=r#"^brave-browser$"#
+              match app-id=r#"^brave-browser$"#
               open-on-workspace "browser"
               open-maximized true
-          }
-
-          window-rule {
-              match app-id=r#"^brave-browser$"#
               scroll-factor 0.1
           }
 
           window-rule {
               match title=r#".*Fizzy$"#
+              open-on-workspace "fizzy"
+              open-maximized true
               scroll-factor 0.1
+          }
+
+          window-rule {
+              match app-id=r#"^org.pwmt.zathura$"#
+              scroll-factor 0.3
+          }
+
+          window-rule {
+              match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
+              open-on-workspace "music"
+              open-maximized true
           }
         '';
       in

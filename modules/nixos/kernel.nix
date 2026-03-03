@@ -146,20 +146,19 @@ in
           "kernel.sched_rt_runtime_us" = -1;
 
           # TCP Buffer Optimization
-          "net.core.rmem_max" = 134217728;
-          "net.core.wmem_max" = 134217728;
-          "net.ipv4.tcp_wmem" = "4096 65536 134217728";
-          "net.ipv4.tcp_rmem" = "4096 65536 134217728";
-
-          # TCP Performance Tuning
-          "net.ipv4.tcp_window_scaling" = 1;
-          "net.ipv4.tcp_timestamps" = 1;
-          "net.ipv4.tcp_no_metrics_save" = 1;
-          "net.ipv4.tcp_moderate_rcvbuf" = 1;
-
-          # Network Stack Optimization
-          "net.core.netdev_max_backlog" = 5000;
-          "net.ipv4.tcp_slow_start_after_idle" = 0;
+          # "net.core.rmem_max" = 134217728;
+          # "net.core.wmem_max" = 134217728;
+          # "net.ipv4.tcp_wmem" = "4096 65536 134217728";
+          # "net.ipv4.tcp_rmem" = "4096 65536 134217728";
+          #
+          # # TCP Performance Tuning
+          # "net.ipv4.tcp_window_scaling" = 1;
+          # "net.ipv4.tcp_timestamps" = 1;
+          # "net.ipv4.tcp_no_metrics_save" = 1;
+          # "net.ipv4.tcp_moderate_rcvbuf" = 1;
+          #
+          # # Network Stack Optimization
+          # "net.core.netdev_max_backlog" = 5000;
 
           # # "kernel.sched_migration_cost_ns" = 5000000;
           # # "kernel.sched_nr_fork_threshold" = 3;
@@ -173,7 +172,7 @@ in
 
           # # The swappiness sysctl parameter represents the kernel's preference (or avoidance) of swap space. Swappiness can have a value between 0 and 100, the default value is 60.
           # # A low value causes the kernel to avoid swapping, a higher value causes the kernel to try to use swap space. Using a low value on sufficient memory is known to improve responsiveness on many systems.
-          "vm.swappiness" = 1;
+          "vm.swappiness" = 10;
 
           # https://github.com/NixOS/nixpkgs/pull/268121/files
           "vm.watermark_boost_factor" = 0;
@@ -342,6 +341,7 @@ in
           "net.ipv4.tcp_tw_reuse" = 1;
           # Set by nix-gaming module
           # "net.ipv4.tcp_fin_timeout" = 10;
+          "net.ipv4.tcp_slow_start_after_idle" = 0;
           "net.ipv4.tcp_keepalive_time" = 60;
           "net.ipv4.tcp_keepalive_intvl" = 10;
           "net.ipv4.tcp_keepalive_probes" = 6;

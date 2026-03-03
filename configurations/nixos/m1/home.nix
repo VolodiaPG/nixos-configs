@@ -21,6 +21,7 @@ in
       # Enable home modules
       services = {
         theme-daemon.enable = true;
+        syncthing.enable = true;
       };
       # Enable home modules
       commonHome.enable = true;

@@ -9,7 +9,7 @@ let
   inherit (flake.config) me;
   cfg = config.services.commonNixSettings;
   inherit (flake) inputs;
-  flakeInputs = lib.filterAttrs (_: v: lib.isType "flake" v) inputs;
+  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
     exec >>/var/log/nix-push-hook.log 2>&1
@@ -83,7 +83,7 @@ let
     # lazy-trees = true;
     # eval-cores = 0;
     warn-dirty = false;
-    accept-flake-config = true;
+    accept-flake-config = false;
     builders-use-substitutes = true;
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
@@ -93,6 +93,7 @@ let
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 
     # flake-registry = "/etc/flake-registry.json";
+    flake-registry = "";
 
     nix-path = config.nix.nixPath;
   };
@@ -153,7 +154,10 @@ in
       # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;
       #
       # # set the path for channels compat
-      nixPath = lib.mapAttrsToList (n: _: "${n}=${n}") flakeInputs;
+      # nixPath = lib.mapAttrsToList (n: _: "${n}=${n}") flakeInputs;
+      registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
+      nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+      # nixPath = [ "nixpkgs=${pkgs.path}" ];
     };
 
     # environment.etc."flake-registry.json".text =

@@ -39,11 +39,11 @@ in
         "kernel.pid-max" = 2000000;
         "fs.file-max" = 999999;
         "vm.max_map_count" = 6000000;
-        "net.core.default_qdisc" = lib.mkForce "cake";
-        "net.ipv4.tcp_ecn" = 1;
-        "net.ipv4.tcp_sack" = 1;
-        "net.ipv4.tcp_dsack" = 1;
-        "net.ipv4.tcp_congestion_control" = lib.mkForce "bbr";
+        # "net.core.default_qdisc" = lib.mkForce "cake";
+        # "net.ipv4.tcp_ecn" = 1;
+        # "net.ipv4.tcp_sack" = 1;
+        # "net.ipv4.tcp_dsack" = 1;
+        # "net.ipv4.tcp_congestion_control" = lib.mkForce "bbr";
       };
       initrd.systemd.network.wait-online.enable = false;
     };
@@ -159,5 +159,6 @@ in
         };
       };
     };
+    boot.binfmt.emulatedSystems = lib.mkIf (pkgs.stdenv.system == "aarch64-linux") [ "x86_64-linux" ];
   };
 }

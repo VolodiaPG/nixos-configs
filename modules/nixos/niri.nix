@@ -26,6 +26,7 @@ in
       # Enable niri session
       niri = {
         enable = true;
+        useNautilus = true;
         inherit (cfg) package;
       };
       # Make sure GTK applications work properly
