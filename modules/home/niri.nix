@@ -233,7 +233,7 @@ in
               // drag false
               // drag-lock
               // accel-profile "flat"
-              // scroll-factor 0.1
+              scroll-factor 0.1
               // scroll-factor vertical=1.0 horizontal=-2.0
               scroll-method "two-finger"
               // scroll-button 273
@@ -253,7 +253,7 @@ in
                 // natural-scroll
                 // accel-speed 0.2
                 accel-profile "flat"
-                scroll-factor 2.0
+                // scroll-factor 2.0
                 // scroll-factor vertical=1.0 horizontal=-2.0
                 // scroll-method "no-scroll"
                 // scroll-button 273
@@ -355,6 +355,10 @@ in
             // Brightness control
             XF86MonBrightnessUp { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
             XF86MonBrightnessDown { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+
+            // XF86AudioNext { spawn "noctalia-shell" "ipc" "call" "media" "next"; }
+            // XF86AudioPrev { spawn "noctalia-shell" "ipc" "call" "media" "previous"; }
+            // XF86AudioPlay { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
           }
         '';
 
@@ -384,7 +388,7 @@ in
           workspace "misc3"
 
           window-rule {
-              match at-startup=true app-id=r#"^kitty$"#
+              match app-id=r#"^kitty$"#
               open-on-workspace "terminal"
               open-maximized true
           }
@@ -393,26 +397,26 @@ in
               match app-id=r#"^brave-browser$"#
               open-on-workspace "browser"
               open-maximized true
-              scroll-factor 0.1
+              //scroll-factor 0.5
           }
 
           window-rule {
               match title=r#".*Fizzy$"#
               open-on-workspace "fizzy"
               open-maximized true
-              scroll-factor 0.1
+              //scroll-factor 0.5
           }
 
           window-rule {
               match title=r#".*Proton Mail$"#
               open-on-workspace "social"
               open-maximized true
-              scroll-factor 0.1
+              //scroll-factor 0.5
           }
 
           window-rule {
               match app-id=r#"^org.pwmt.zathura$"#
-              scroll-factor 0.3
+              //scroll-factor 0.8
           }
 
           window-rule {
@@ -592,7 +596,8 @@ in
         };
         location = {
           monthBeforeDay = false;
-          name = "Rennes, France";
+          # name = "Rennes, France";
+          name = "Nages-et-Solorgues, France";
         };
         brightness = {
           brightnessStep = 5;
@@ -607,6 +612,13 @@ in
         };
         osd.location = "bottom_center";
         notifications.location = "bottom_center";
+        idle = {
+          enabled = true;
+          screenOffTimeout = 600;
+          lockTimeout = 660;
+          suspendTimeout = 99999999;
+          fadeDuration = 5;
+        };
       };
       # this may also be a string or a path to a JSON file.
 
