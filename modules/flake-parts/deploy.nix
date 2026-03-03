@@ -1,5 +1,14 @@
 { self, inputs, ... }:
 {
+  perSystem =
+    {
+      pkgs,
+      ...
+    }:
+    {
+      packages.deploy-rs = pkgs.deploy-rs;
+    };
+
   flake = {
     deploy.nodes = {
       # msi = {
