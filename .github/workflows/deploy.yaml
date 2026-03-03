@@ -49,7 +49,7 @@ jobs:
       - name: Build and deploy
         run: |
           set -euxo pipefail
-          nix run .#deploy-rs -- --skip-flake-checks --targets .#home-server
+          nix run .#deploy-rs -- --skip-checks --targets .#home-server
 
   cache:
     runs-on: ubuntu-24.04-arm
