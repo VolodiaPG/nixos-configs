@@ -37,6 +37,11 @@ in
       fractalart.enable = true;
     };
 
+    systemd.services.kanata-all.serviceConfig = {
+      Restart = "always";
+      RestartSec = "1s";
+    };
+
     environment.systemPackages = with pkgs; [
       gnome-calculator
       gnome-characters

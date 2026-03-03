@@ -404,6 +404,13 @@ in
           }
 
           window-rule {
+              match title=r#".*Proton Mail$"#
+              open-on-workspace "social"
+              open-maximized true
+              scroll-factor 0.1
+          }
+
+          window-rule {
               match app-id=r#"^org.pwmt.zathura$"#
               scroll-factor 0.3
           }
