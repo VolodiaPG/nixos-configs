@@ -47,9 +47,10 @@ in
 
     # Hardware and kernel
     kernel.enable = true;
-    laputil.enable = true;
+    laputil.enable = false;
     virt.enable = true;
     elegantBoot.enable = true;
+    hifi.enable = true;
 
     # Storage and networking
     impermanence = {
