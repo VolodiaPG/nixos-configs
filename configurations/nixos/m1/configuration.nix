@@ -36,6 +36,56 @@
         ShowButtonOutlines = false;
         AdaptiveBrightness = true;
         ActiveBrightness = 128;
+        MediaLayerKeys = [
+          {
+            Icon = "brightness_low";
+            Action = "BrightnessDown";
+          }
+          {
+            Icon = "brightness_high";
+            Action = "BrightnessUp";
+          }
+          {
+            Icon = "mic_off";
+            Action = "MicMute";
+          }
+          # {
+          #   icon = "search";
+          #   action = "Search";
+          # }
+          {
+            Icon = "backlight_low";
+            Action = "IllumDown";
+          }
+          {
+            Icon = "backlight_high";
+            Action = "IllumUp";
+          }
+          {
+            Icon = "fast_rewind";
+            Action = "PreviousSong";
+          }
+          {
+            Icon = "play_pause";
+            Action = "PlayPause";
+          }
+          {
+            Icon = "fast_forward";
+            Action = "NextSong";
+          }
+          {
+            Icon = "volume_off";
+            Action = "Mute";
+          }
+          {
+            Icon = "volume_down";
+            Action = "VolumeDown";
+          }
+          {
+            Icon = "volume_up";
+            Action = "VolumeUp";
+          }
+        ];
       };
     };
   };
