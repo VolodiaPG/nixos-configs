@@ -35,10 +35,10 @@ in
         copyKernels = true;
       };
       kernel.sysctl = {
-        "kernel.threads-max" = 2000000;
-        "kernel.pid-max" = 2000000;
-        "fs.file-max" = 999999;
-        "vm.max_map_count" = 6000000;
+        "kernel.threads-max" = lib.mkDefault 2000000;
+        # "kernel.pid-max" = lib.mkDefault 2000000;
+        "fs.file-max" = lib.mkDefault 2097152;
+        "vm.max_map_count" = lib.mkOverride 990 6000000;
         # "net.core.default_qdisc" = lib.mkForce "cake";
         # "net.ipv4.tcp_ecn" = 1;
         # "net.ipv4.tcp_sack" = 1;
