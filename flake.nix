@@ -2,12 +2,8 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
-    # nixpkgs.follows = "nixos-apple-silicon/nixpkgs";
-
-    # nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -125,6 +121,7 @@
 
     nixos-apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     laputil = {
