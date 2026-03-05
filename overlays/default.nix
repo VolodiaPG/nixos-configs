@@ -56,4 +56,25 @@ _final: prev:
       '';
     }
   );
+  signal-desktop = prev.symlinkJoin {
+    name = "signal-desktop";
+    paths = [ prev.signal-desktop ];
+    buildInputs = [ prev.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/signal-desktop\
+         --add-flags '--password-store=gnome-libsecret'\
+         --add-flags '--enable-features=UseOzonePlatform'\
+         --add-flags '--ozone-platform=wayland'
+    '';
+  };
+  brave = prev.symlinkJoin {
+    name = "brave";
+    paths = [ prev.brave ];
+    buildInputs = [ prev.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/brave \
+         --add-flags '--enable-features=UseOzonePlatform'\
+         --add-flags '--ozone-platform=wayland'
+    '';
+  };
 }

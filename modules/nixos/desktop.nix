@@ -37,6 +37,8 @@ in
       fractalart.enable = true;
     };
 
+    security.pam.services.gdm.enableGnomeKeyring = true;
+
     systemd.services.kanata-all.serviceConfig = {
       Restart = "always";
       RestartSec = "1s";
