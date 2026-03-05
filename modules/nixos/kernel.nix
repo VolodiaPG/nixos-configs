@@ -245,14 +245,14 @@ in
           "vm.max_map_count" = 524288; # Max memory map areas (for large apps)
           # "vm.percpu_pagelist_fraction" = 0; # Disable per-CPU page list draining
 
-          # --------------------------------------------------------------------------
-          # WATCHDOG TIMERS - DISABLED FOR PERFORMANCE
-          # --------------------------------------------------------------------------
-          # Disable watchdogs to reduce overhead and improve latency consistency
-          "kernel.nmi_watchdog" = 0; # Disable NMI watchdog
-          "kernel.soft_watchdog" = 0; # Disable soft lockup watchdog
-          "kernel.watchdog" = 0; # Disable hardware watchdog
-          "kernel.watchdog_thresh" = 0; # Disable watchdog threshold
+          # # --------------------------------------------------------------------------
+          # # WATCHDOG TIMERS - DISABLED FOR PERFORMANCE
+          # # --------------------------------------------------------------------------
+          # # Disable watchdogs to reduce overhead and improve latency consistency
+          # "kernel.nmi_watchdog" = 0; # Disable NMI watchdog
+          # "kernel.soft_watchdog" = 0; # Disable soft lockup watchdog
+          # "kernel.watchdog" = 0; # Disable hardware watchdog
+          # "kernel.watchdog_thresh" = 0; # Disable watchdog threshold
 
           # --------------------------------------------------------------------------
           # OUT-OF-MEMORY BEHAVIOR
