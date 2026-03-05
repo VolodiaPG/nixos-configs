@@ -51,6 +51,7 @@ in
     virt.enable = true;
     elegantBoot.enable = true;
     hifi.enable = true;
+    betterSleep.enable = true;
 
     # Storage and networking
     impermanence = {
