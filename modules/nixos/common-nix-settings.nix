@@ -87,6 +87,7 @@ let
     builders-use-substitutes = true;
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
+    auto-optimise-store = true;
     # for direnv GC roots
     inherit (me) trusted-public-keys;
 
