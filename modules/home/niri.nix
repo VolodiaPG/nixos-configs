@@ -462,6 +462,8 @@ in
         ${cfg.extraConfig}
       '';
 
+    gtk.enable = true;
+
     # Fuzzel launcher configuration
     programs.fuzzel = {
       enable = true;
