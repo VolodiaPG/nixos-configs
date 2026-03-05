@@ -378,7 +378,7 @@ in
             // off
 
             // Slow down all animations by this factor. Values below 1 speed them up instead.
-            slowdown 0.5
+            slowdown 0.2
           }'';
 
         workspaces = ''
@@ -427,6 +427,12 @@ in
           window-rule {
               match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
               open-on-workspace "music"
+              open-maximized true
+          }
+
+          window-rule {
+              match app-id=r#"^signal$"#
+              open-on-workspace "social"
               open-maximized true
           }
         '';
