@@ -159,6 +159,5 @@ in
         };
       };
     };
-    boot.binfmt.emulatedSystems = lib.mkIf (pkgs.stdenv.system == "aarch64-linux") [ "x86_64-linux" ];
   };
 }
