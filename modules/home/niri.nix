@@ -435,6 +435,13 @@ in
               open-on-workspace "social"
               open-maximized true
           }
+
+
+          window-rule {
+              match app-id=r#"^Zotero$"#
+              open-on-workspace "zotero"
+              open-maximized true
+          }
         '';
       in
       ''

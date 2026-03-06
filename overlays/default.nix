@@ -23,6 +23,7 @@ _final: prev:
   inherit (inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system})
     devenv
     difftastic
+    zotero
     ;
 
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})

@@ -51,6 +51,7 @@ in
         vlc
         drawio
         easyeffects
+        zotero
       ];
 
       file = {
