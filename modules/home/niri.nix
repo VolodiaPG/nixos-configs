@@ -286,7 +286,10 @@ in
         );
 
         # Startup commands
-        startup-config = lib.concatStringsSep "\n" (
+        startup-config = ''
+          spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia-shell ipc call lockScreen lock"
+        ''
+        + lib.concatStringsSep "\n" (
           map (
             cmd:
             ''spawn-at-startup "${lib.head (lib.splitString " " cmd)}" ${

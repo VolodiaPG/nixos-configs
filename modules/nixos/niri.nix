@@ -60,7 +60,7 @@ in
 
       # Idle management
       swayidle
-      swaylock
+      # swaylock
 
       # Clipboard manager
       cliphist
