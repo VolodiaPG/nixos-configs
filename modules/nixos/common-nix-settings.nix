@@ -109,6 +109,7 @@ in
     nixpkgs.config = {
       allowUnfree = true;
       allowUnfreePredicate = _pkg: true;
+      allowUnsupportedSystem = true;
     };
 
     nix = {

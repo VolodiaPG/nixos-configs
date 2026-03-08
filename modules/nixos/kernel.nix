@@ -24,6 +24,12 @@ in
         type = types.bool;
         default = false;
       };
+
+      scx = mkOption {
+        description = "Enable the usage of scx";
+        type = types.bool;
+        default = false;
+      };
     };
   };
 
@@ -465,5 +471,29 @@ in
           "net.ipv4.conf.default.arp_announce" = 2;
         };
       };
+    })
+    // (mkIf (cfg.enable && cfg.scx) {
+      services.scx = {
+        enable = true;
+        scheduler = "scx_p2dq";
+        package = pkgs.scx.rustscheds;
+      };
+
+      boot.kernelPatches = [
+        {
+          name = "scx-patches";
+          patch = null;
+          structuredExtraConfig = with lib.kernel; {
+            CONFIG_BPF = yes;
+            CONFIG_BPF_SYSCALL = yes;
+            CONFIG_BPF_JIT = yes;
+            CONFIG_DEBUG_INFO_BTF = yes;
+            CONFIG_BPF_JIT_ALWAYS_ON = yes;
+            CONFIG_BPF_JIT_DEFAULT_ON = yes;
+            CONFIG_SCHED_CLASS_EXT = yes;
+          };
+        }
+      ];
+
     });
 }

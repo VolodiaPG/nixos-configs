@@ -47,6 +47,7 @@ in
 
     # Hardware and kernel
     kernel.enable = true;
+    kernel.scx = true;
     laputil.enable = false;
     virt.enable = true;
     elegantBoot.enable = true;
