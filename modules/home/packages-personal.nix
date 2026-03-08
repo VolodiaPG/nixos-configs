@@ -29,7 +29,6 @@ in
           "@tarquinen/opencode-dcp@latest"
           "oh-my-opencode-slim@latest"
         ];
-        "permission" = "allow";
       };
     };
 
