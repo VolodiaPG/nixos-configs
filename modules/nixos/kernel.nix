@@ -484,13 +484,13 @@ in
           name = "scx-patches";
           patch = null;
           structuredExtraConfig = with lib.kernel; {
-            CONFIG_BPF = yes;
-            CONFIG_BPF_SYSCALL = yes;
-            CONFIG_BPF_JIT = yes;
-            CONFIG_DEBUG_INFO_BTF = yes;
-            CONFIG_BPF_JIT_ALWAYS_ON = yes;
-            CONFIG_BPF_JIT_DEFAULT_ON = yes;
-            CONFIG_SCHED_CLASS_EXT = yes;
+            BPF = yes;
+            BPF_SYSCALL = yes;
+            BPF_JIT = lib.mkForce yes;
+            DEBUG_INFO_BTF = yes;
+            BPF_JIT_ALWAYS_ON = lib.mkForce yes;
+            BPF_JIT_DEFAULT_ON = yes;
+            SCHED_CLASS_EXT = yes;
           };
         }
       ];
