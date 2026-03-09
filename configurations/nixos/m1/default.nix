@@ -47,7 +47,11 @@ in
 
     # Hardware and kernel
     kernel.enable = true;
-    kernel.scx = true;
+    kernel.scx = {
+      enable = true;
+      battery.extraArgs = "--primary-domain 0-3";
+      ac.extraArgs = "--primary-domain 4-7";
+    };
     laputil.enable = false;
     virt.enable = true;
     elegantBoot.enable = true;
@@ -60,5 +64,9 @@ in
       rootVolume = "disk/by-label/root";
     };
     vpn.enable = true;
+  };
+
+  systemd.slices."system".sliceConfig = {
+    AllowedCPUs = "0-3"; # E-cores
   };
 }

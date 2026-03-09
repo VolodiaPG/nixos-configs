@@ -7,6 +7,23 @@
 with lib;
 let
   cfg = config.services.kernel;
+  scheds = types.enum [
+    "scx_bpfland"
+    "scx_central"
+    "scx_flash"
+    "scx_lavd"
+    "scx_layered"
+    "scx_nest"
+    "scx_p2dq"
+    "scx_rlfifo"
+    "scx_rustland"
+    "scx_rusty"
+    "scx_sdt"
+    "scx_simple"
+    "scx_tickless"
+    "scx_userland"
+    "scx_cosmos"
+  ];
 in
 {
   options = {
@@ -25,10 +42,52 @@ in
         default = false;
       };
 
-      scx = mkOption {
-        description = "Enable the usage of scx";
-        type = types.bool;
-        default = false;
+      scx = {
+        enable = mkOption {
+          description = "Enable the usage of scx";
+          type = types.bool;
+          default = false;
+        };
+
+        battery = {
+          scheduler = mkOption {
+            description = "scx scheduler to use on battery power";
+            type = scheds;
+            default = "scx_cosmos";
+          };
+
+          args = mkOption {
+            description = "Command line arguments for the battery scheduler";
+            type = types.str;
+            default = "-a -d -p 5000";
+          };
+
+          extraArgs = mkOption {
+            description = "Extra arguments for the battery scheduler";
+            type = types.str;
+            default = "-m powersave ";
+          };
+        };
+
+        ac = {
+          scheduler = mkOption {
+            description = "scx scheduler to use on AC power";
+            type = scheds;
+            default = "scx_cosmos";
+          };
+
+          args = mkOption {
+            description = "Command line arguments for the AC scheduler";
+            type = types.str;
+            default = "-a -s 20000 -d -c 0 -p 0";
+          };
+
+          extraArgs = mkOption {
+            description = "Extra arguments for the AC scheduler";
+            type = types.str;
+            default = "-m turbo";
+          };
+        };
       };
     };
   };
@@ -472,12 +531,10 @@ in
         };
       };
     })
-    // (mkIf (cfg.enable && cfg.scx) {
-      services.scx = {
-        enable = true;
-        scheduler = "scx_p2dq";
-        package = pkgs.scx.rustscheds;
-      };
+    // (mkIf (cfg.enable && cfg.scx.enable) {
+      # https://wiki.cachyos.org/configuration/sched-ext/
+
+      environment.systemPackages = [ pkgs.scx.rustscheds ];
 
       boot.kernelPatches = [
         {
@@ -495,5 +552,84 @@ in
         }
       ];
 
+      # ============================================================================
+      # POWER MODE SWITCHING (Battery/AC)
+      # ============================================================================
+      # Automatically switches scheduler between powersave and performance modes
+      # based on power supply status. Uses udev rules to detect AC adapter changes.
+
+      services.udev.extraRules = ''
+        # Trigger scx power mode switch when AC adapter is connected/disconnected
+        SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl start scx-powersave.service"
+        SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl start scx-performance.service"
+      '';
+
+      # Disable the default scx service since we manage it manually
+      systemd.services = {
+        scx.enable = lib.mkForce false;
+
+        scx-powersave = {
+          description = "scx scheduler (powersave mode for battery)";
+          after = [ "basic.target" ];
+          conflicts = [ "scx-performance.service" ];
+          serviceConfig = {
+            Type = "simple";
+            ExecStart = "${pkgs.scx.rustscheds}/bin/${cfg.scx.battery.scheduler} ${cfg.scx.battery.args} ${cfg.scx.battery.extraArgs}";
+            ExecStartPre = "-${pkgs.systemd}/bin/systemctl stop scx-performance.service";
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
+        };
+
+        scx-performance = {
+          description = "scx scheduler (performance mode for AC)";
+          after = [ "basic.target" ];
+          conflicts = [ "scx-powersave.service" ];
+          serviceConfig = {
+            Type = "simple";
+            ExecStart = "${pkgs.scx.rustscheds}/bin/${cfg.scx.ac.scheduler} ${cfg.scx.ac.args} ${cfg.scx.ac.extraArgs}";
+            ExecStartPre = "-${pkgs.systemd}/bin/systemctl stop scx-powersave.service";
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
+        };
+
+        # Service to set initial scx mode based on power status at boot
+        systemd.services.scx-init = {
+          description = "Initialize scx power mode based on AC status";
+          wantedBy = [
+            "multi-user.target"
+            "post-resume.target"
+          ];
+          after = [
+            "systemd-udev-settle.service"
+            "post-resume.target"
+          ];
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = pkgs.writeShellScript "scx-init" ''
+              # Check if we're on AC power
+              AC_ONLINE=0
+              for psu in /sys/class/power_supply/*/online; do
+                if [ -f "$psu" ]; then
+                  STATUS=$(cat "$psu" 2>/dev/null || echo 0)
+                  if [ "$STATUS" = "1" ]; then
+                    AC_ONLINE=1
+                    break
+                  fi
+                fi
+              done
+
+              if [ "$AC_ONLINE" = "1" ]; then
+                echo "AC power detected, starting performance mode"
+                ${pkgs.systemd}/bin/systemctl start scx-performance.service
+              else
+                echo "Battery power detected, starting powersave mode"
+                ${pkgs.systemd}/bin/systemctl start scx-powersave.service
+              fi
+            '';
+          };
+        };
+      };
     });
 }
