@@ -24,6 +24,9 @@ in
           servers {
               protocols h1 h2
           }
+          tailscale {
+            ephemeral
+          }
         '';
       };
     };
