@@ -65,7 +65,7 @@ in
     vpn.enable = true;
   };
 
-  systemd.slices."system".sliceConfig = {
-    AllowedCPUs = "0-3"; # E-cores
-  };
+  # systemd.slices."system".sliceConfig = {
+  #   AllowedCPUs = "0-3"; # E-cores
+  # };
 }
