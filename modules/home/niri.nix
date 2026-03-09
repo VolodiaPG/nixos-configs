@@ -637,8 +637,8 @@ in
         notifications.location = "bottom_center";
         idle = {
           enabled = true;
-          screenOffTimeout = 600;
-          lockTimeout = 660;
+          screenOffTimeout = 120;
+          lockTimeout = 200;
           suspendTimeout = 99999999;
           fadeDuration = 5;
         };
