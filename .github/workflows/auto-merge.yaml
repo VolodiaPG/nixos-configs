@@ -11,6 +11,8 @@ jobs:
             runner: ubuntu-24.04-arm
           - config: home-server
             runner: ubuntu-24.04
+          - config: dell
+            runner: ubuntu-24.04
     steps:
       - uses: wimpysworld/nothing-but-nix@main
         with:
