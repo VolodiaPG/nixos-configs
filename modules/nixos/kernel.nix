@@ -595,7 +595,7 @@ in
         };
 
         # Service to set initial scx mode based on power status at boot
-        systemd.services.scx-init = {
+        scx-init = {
           description = "Initialize scx power mode based on AC status";
           wantedBy = [
             "multi-user.target"
