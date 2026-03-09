@@ -26,6 +26,7 @@ in
           }
           tailscale {
             ephemeral
+            tags tag:homelab
           }
         '';
       };
