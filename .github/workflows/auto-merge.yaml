@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Run nix flake check for ${{ matrix.config }}
+      - name: Run nix eval for ${{ matrix.config }}
         run: nix eval .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
 
   auto-merge-dependency-updates:
