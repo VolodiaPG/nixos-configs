@@ -52,7 +52,6 @@ in
       battery.extraArgs = "--primary-domain 0-3";
       ac.extraArgs = "--primary-domain 4-7";
     };
-    laputil.enable = false;
     virt.enable = true;
     elegantBoot.enable = true;
     hifi.enable = true;
