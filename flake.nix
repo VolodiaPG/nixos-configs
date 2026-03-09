@@ -122,7 +122,7 @@
     nixos-apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon";
       # url = "github:nix-community/nixos-apple-silicon/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     noctalia = {
