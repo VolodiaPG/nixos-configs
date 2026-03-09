@@ -14,10 +14,6 @@ jobs:
           - config: dell
             runner: ubuntu-24.04
     steps:
-      - uses: wimpysworld/nothing-but-nix@main
-        with:
-          hatchet-protocol: "holster"
-
       - uses: DeterminateSystems/determinate-nix-action@v3
         with:
           extra-conf: |
