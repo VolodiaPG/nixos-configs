@@ -241,6 +241,7 @@ in
             ".supermaven"
             ".hyperhdr"
             ".tmux"
+            ".zotero"
           ];
           files = [
             ".bash_history"
