@@ -632,16 +632,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1768483968,
-        "narHash": "sha256-VswZPsLS2c/Gx+4dbCQGYJxQAkZCRguYtotohv5fK6k=",
+        "lastModified": 1772952158,
+        "narHash": "sha256-RDR+7v1vaojweHI3FdPnuYPy4wRGfTKgeD5GXrXbfT0=",
         "owner": "nix-community",
         "repo": "nixos-apple-silicon",
-        "rev": "74b2c7a12c4edbed7c455f45b2913888331ca221",
+        "rev": "55b7c3c03e9b778d96a71f44400bbdda9a4cfda7",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
-        "ref": "release-25.11",
         "repo": "nixos-apple-silicon",
         "type": "github"
       }
@@ -777,11 +776,11 @@
         "noctalia-qs": "noctalia-qs"
       },
       "locked": {
-        "lastModified": 1773072922,
-        "narHash": "sha256-Uy4eH1ANTNHH19fjiFZNdET9bV5aKtxuU4phgG4l+UY=",
+        "lastModified": 1773074065,
+        "narHash": "sha256-pZUy6O6RWnM/1HkonvH3LeEa6NzFDzr6MNr0QABu6zE=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "4d0897d6ed672d2d39b9805bb718ae55c5dbd117",
+        "rev": "54ec0878fe0ac427b7b1b5ab81b8ebefe5890ff7",
         "type": "github"
       },
       "original": {
