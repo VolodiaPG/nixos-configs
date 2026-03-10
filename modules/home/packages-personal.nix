@@ -34,9 +34,9 @@ in
 
     xdg.configFile."opencode/oh-my-opencode-slim.json".text =
       let
-        goodModel = "openrouter/moonshotai/kimi-k2.5";
+        goodModel = "opencode/kimi-k2.5";
         expensiveModel = goodModel;
-        cheapModel = "openrouter/google/gemini-2.5-flash-lite";
+        cheapModel = "opencode/minimax-m2.5";
       in
       builtins.toJSON {
         preset = "custom";
