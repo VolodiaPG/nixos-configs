@@ -17,9 +17,10 @@ in
       enable = true;
       cacheDir = "/nix/var/cache/ccache";
       # Would work for any kernel, but not for linux-ashi since it's package differently
-      # packageNames = [
-      #   "linux-asahi"
-      # ];
+      packageNames = [
+        #   "linux-asahi"
+        "scx.rustscheds"
+      ];
     };
 
     nixpkgs.overlays = [
