@@ -45,6 +45,9 @@ in
 
       # Fix nautilus network share
       gvfs.enable = true;
+
+      # Wallpaper
+      fractalart.enable = true;
     };
 
     # Required for Wayland compositors
