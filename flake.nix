@@ -120,7 +120,8 @@
     };
 
     nixos-apple-silicon = {
-      url = "github:nix-community/nixos-apple-silicon/release-25.11";
+      # url = "github:nix-community/nixos-apple-silicon/release-25.11";
+      url = "github:nix-community/nixos-apple-silicon";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
