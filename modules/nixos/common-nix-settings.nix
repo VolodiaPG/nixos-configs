@@ -88,6 +88,8 @@ let
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
     auto-optimise-store = true;
+    narinfo-cache-negative-ttl = 600;
+    narinfo-cache-positive-ttl = 600;
     # for direnv GC roots
     inherit (me) trusted-public-keys;
 
