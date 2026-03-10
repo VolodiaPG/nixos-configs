@@ -67,6 +67,12 @@ in
             type = types.str;
             default = "-m powersave ";
           };
+
+          governor = mkOption {
+            description = "CPU governor to use for the battery scheduler";
+            type = types.str;
+            default = "conservative";
+          };
         };
 
         ac = {
@@ -86,6 +92,12 @@ in
             description = "Extra arguments for the AC scheduler";
             type = types.str;
             default = "-m turbo";
+          };
+
+          governor = mkOption {
+            description = "CPU governor to use for the AC scheduler";
+            type = types.str;
+            default = "performance";
           };
         };
       };
@@ -114,28 +126,28 @@ in
         power-profiles-daemon.enable = false;
         thermald.enable = pkgs.stdenv.isx86_64;
         acpid.enable = true;
-        tlp = {
-          enable = false;
-          settings = {
-            CPU_BOOST_ON_BAT = 0;
-            CPU_BOOST_ON_AC = 1;
-            CPU_HWP_DYN_BOOST_ON_AC = 1;
-            CPU_HWP_DYN_BOOST_ON_BAT = 0;
-            CPU_SCALING_GOVERNOR_ON_BATTERY = "conservative";
-            CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
-            CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-            CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-            PLATFORM_PROFILE_ON_AC = "performance";
-            PLATFORM_PROFILE_ON_BAT = "low-power";
-            AMDGPU_ABM_LEVEL_ON_AC = 0;
-            AMDGPU_ABM_LEVEL_ON_BAT = 3;
-            WIFI_PWR_ON_AC = "off";
-            WIFI_PWR_ON_BAT = "on";
-            RUNTIME_PM_ON_BAT = "auto";
-            WOL_DISABLE = "Y";
-            MEM_SLEEP_ON_BAT = "deep";
-          };
-        };
+        # tlp = {
+        #   enable = false;
+        #   settings = {
+        #     CPU_BOOST_ON_BAT = 0;
+        #     CPU_BOOST_ON_AC = 1;
+        #     CPU_HWP_DYN_BOOST_ON_AC = 1;
+        #     CPU_HWP_DYN_BOOST_ON_BAT = 0;
+        #     CPU_SCALING_GOVERNOR_ON_BATTERY = "conservative";
+        #     CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
+        #     CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+        #     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+        #     PLATFORM_PROFILE_ON_AC = "performance";
+        #     PLATFORM_PROFILE_ON_BAT = "low-power";
+        #     AMDGPU_ABM_LEVEL_ON_AC = 0;
+        #     AMDGPU_ABM_LEVEL_ON_BAT = 3;
+        #     WIFI_PWR_ON_AC = "off";
+        #     WIFI_PWR_ON_BAT = "on";
+        #     RUNTIME_PM_ON_BAT = "auto";
+        #     WOL_DISABLE = "Y";
+        #     MEM_SLEEP_ON_BAT = "deep";
+        #   };
+        # };
       };
 
       # ============================================================================
@@ -574,7 +586,12 @@ in
           conflicts = [ "scx-performance.service" ];
           serviceConfig = {
             Type = "simple";
-            ExecStart = "${pkgs.scx.rustscheds}/bin/${cfg.scx.battery.scheduler} ${cfg.scx.battery.args} ${cfg.scx.battery.extraArgs}";
+            ExecStart = pkgs.writeShellScript "scx-battery-start" ''
+              cpupower frequency-set -g ${cfg.scx.battery.governor}
+              exec ${pkgs.scx.rustscheds}/bin/${cfg.scx.battery.scheduler} \
+                ${cfg.scx.battery.args} \
+                ${cfg.scx.battery.extraArgs}
+            '';
             ExecStartPre = "-${pkgs.systemd}/bin/systemctl stop scx-performance.service";
             Restart = "on-failure";
             RestartSec = 5;
@@ -587,7 +604,12 @@ in
           conflicts = [ "scx-powersave.service" ];
           serviceConfig = {
             Type = "simple";
-            ExecStart = "${pkgs.scx.rustscheds}/bin/${cfg.scx.ac.scheduler} ${cfg.scx.ac.args} ${cfg.scx.ac.extraArgs}";
+            ExecStart = pkgs.writeShellScript "start-scx-scheduler" ''
+              cpupower frequency-set -g ${cfg.scx.ac.governor}
+              exec ${pkgs.scx.rustscheds}/bin/${cfg.scx.ac.scheduler} \
+                ${cfg.scx.ac.args} \
+                ${cfg.scx.ac.extraArgs}
+            '';
             ExecStartPre = "-${pkgs.systemd}/bin/systemctl stop scx-powersave.service";
             Restart = "on-failure";
             RestartSec = 5;
