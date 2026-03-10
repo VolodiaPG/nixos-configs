@@ -36,10 +36,15 @@ in
     };
 
     # Enable display manager with niri support
-    services.displayManager = {
-      sessionPackages = [ cfg.package ];
-      # Use greetd or similar minimal DM, or allow direct launch
-      # Users can override this in their host config
+    services = {
+      displayManager = {
+        sessionPackages = [ cfg.package ];
+        # Use greetd or similar minimal DM, or allow direct launch
+        # Users can override this in their host config
+      };
+
+      # Fix nautilus network share
+      gvfs.enable = true;
     };
 
     # Required for Wayland compositors

@@ -535,6 +535,7 @@ in
       enable = true;
       settings = {
         # configure noctalia here
+        dock.enabled = true;
         bar = {
           density = "default";
           barType = "simple";
@@ -562,6 +563,7 @@ in
                 showCpuTemp = false;
                 showNetworkStats = true;
                 showDiskUsage = true;
+                showSwapUsage = true;
               }
               # {
               #   id = "ActiveWindow";
