@@ -56,7 +56,7 @@ in
     elegantBoot.enable = true;
     hifi.enable = true;
     betterSleep.enable = true;
-    ccache.enable = true;
+    # ccache.enable = true;
 
     # Storage and networking
     impermanence = {
