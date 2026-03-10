@@ -19,7 +19,7 @@ in
       # Would work for any kernel, but not for linux-ashi since it's package differently
       packageNames = [
         #   "linux-asahi"
-        "scx.rustscheds"
+        # "scx.rustscheds"
       ];
     };
 
@@ -59,6 +59,8 @@ in
               // {
                 # Inject your custom stdenv here
                 stdenv = final.ccacheStdenv;
+
+                autoModules = true;
 
                 # If you want to modify buildLinux itself:
                 buildLinux =
