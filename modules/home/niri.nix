@@ -180,6 +180,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    nirius.enable = true;
     home.packages = with pkgs; [
       cfg.package
 
@@ -352,6 +353,9 @@ in
             // Lock screen
             Mod+Escape { spawn "${noctalia-shell}" "ipc" "call" "lockScreen" "lock"; }
 
+            // Pin a window to all workspaces
+            Mod+P { spawn "nirius" "toggle-follow-mode"; }
+
             // Volume control
             XF86AudioRaiseVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "increase"; }
             XF86AudioLowerVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "decrease"; }
@@ -445,6 +449,45 @@ in
               open-on-workspace "zotero"
               open-maximized true
           }
+
+          // Open the Firefox picture-in-picture window as floating.
+          window-rule {
+              match title="Picture-in-Picture"
+
+              open-floating true
+              default-column-width { fixed 480; }
+              default-window-height { fixed 270; }
+              default-floating-position x=0 y=0 relative-to="bottom-right"
+              opacity 0.5
+          }
+
+          window-rule {
+              geometry-corner-radius 12
+              clip-to-geometry true
+          }
+
+          // Indicate screencasted windows with red colors.
+          window-rule {
+              match is-window-cast-target=true
+
+              focus-ring {
+                  active-color "#f38ba8"
+                  inactive-color "#7d0d2d"
+              }
+
+              border {
+                  inactive-color "#7d0d2d"
+              }
+
+              shadow {
+                  color "#7d0d2d70"
+              }
+
+              tab-indicator {
+                  active-color "#f38ba8"
+                  inactive-color "#7d0d2d"
+              }
+          }
         '';
       in
       ''
@@ -501,7 +544,7 @@ in
 
         border = {
           width = 2;
-          radius = 8;
+          radius = 12;
         };
       };
     };
