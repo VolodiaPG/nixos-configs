@@ -42,6 +42,7 @@ in
         movies = mount { path = "/data/media/library/movies"; };
         series = mount { path = "/data/media/library/shows"; };
         torrents = mount { path = "/data/media/torrents"; };
+        documents = mount { path = "/home/${me.username}/Documents"; };
       };
     };
 
