@@ -586,9 +586,9 @@ in
           conflicts = [ "scx-performance.service" ];
           serviceConfig = {
             Type = "simple";
-            ExecStart = pkgs.writeShellScript "scx-battery-start" ''
-              cpupower frequency-set -g ${cfg.scx.battery.governor}
-              exec ${pkgs.scx.rustscheds}/bin/${cfg.scx.battery.scheduler} \
+            ExecStart = pkgs.writeShellScript "battery" ''
+              echo ${cfg.scx.battery.governor} | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+              ${pkgs.scx.rustscheds}/bin/${cfg.scx.battery.scheduler} \
                 ${cfg.scx.battery.args} \
                 ${cfg.scx.battery.extraArgs}
             '';
@@ -604,9 +604,9 @@ in
           conflicts = [ "scx-powersave.service" ];
           serviceConfig = {
             Type = "simple";
-            ExecStart = pkgs.writeShellScript "start-scx-scheduler" ''
-              cpupower frequency-set -g ${cfg.scx.ac.governor}
-              exec ${pkgs.scx.rustscheds}/bin/${cfg.scx.ac.scheduler} \
+            ExecStart = pkgs.writeShellScript "ac" ''
+              echo ${cfg.scx.ac.governor} | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+              ${pkgs.scx.rustscheds}/bin/${cfg.scx.ac.scheduler} \
                 ${cfg.scx.ac.args} \
                 ${cfg.scx.ac.extraArgs}
             '';
