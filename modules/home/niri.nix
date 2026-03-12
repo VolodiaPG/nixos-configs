@@ -210,311 +210,361 @@ in
       # KDE Connect
       pkgs.kdePackages.qttools
     ];
+    xdg = {
+      portal = {
+        enable = true;
+        config = {
+          common = {
+            default = [
+              "gtk"
+              "gnome"
+            ];
+          };
+          niri = {
+            default = [
+              "gtk"
+              "gnome"
+            ];
+          };
+        };
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-gtk
+          xdg-desktop-portal-gnome
+        ];
+        xdgOpenUsePortal = true;
+      };
 
-    # Niri configuration file
-    xdg.configFile."niri/config.kdl".text =
-      let
-        # Input configuration
-        input-config = ''
-          input {
-            keyboard {
-              xkb {
-                layout "${cfg.input.keyboard.xkb.layout}"
-                ${lib.optionalString (
-                  cfg.input.keyboard.xkb.variant != null
-                ) "variant \"${cfg.input.keyboard.xkb.variant}\""}
-                ${lib.optionalString (
-                  cfg.input.keyboard.xkb.options != null
-                ) "options \"${cfg.input.keyboard.xkb.options}\""}
-              }
-            }
-
-            touchpad {
-              //tap
-              // dwt
-              // dwtp
-              // drag false
-              // drag-lock
-              // accel-profile "flat"
-              scroll-factor 0.1
-              // scroll-factor vertical=1.0 horizontal=-2.0
-              scroll-method "two-finger"
-              // scroll-button 273
-              // scroll-button-lock
-              // tap-button-map "left-middle-right"
-              // click-method "clickfinger"
-              // left-handed
-              // disabled-on-external-mouse
-              // middle-emulation
-
-              ${lib.optionalString cfg.input.touchpad.natural-scroll "natural-scroll"}
-            }
-
-
-            mouse {
-                // off
-                // natural-scroll
-                // accel-speed 0.2
-                accel-profile "flat"
-                // scroll-factor 2.0
-                // scroll-factor vertical=1.0 horizontal=-2.0
-                // scroll-method "no-scroll"
-                // scroll-button 273
-                // scroll-button-lock
-                // left-handed
-                // middle-emulation
-            }
-          }
-        '';
-
-        # Layout configuration
-        layout-config = ''
-          layout {
-            gaps ${toString cfg.layout.gaps}
-            ${lib.optionalString cfg.layout.center-focused-column "center-focused-column"}
-            ${lib.optionalString (cfg.layout.default-column-width != null) (
-              if lib.isAttrs cfg.layout.default-column-width then
-                "default-column-width { proportion ${toString cfg.layout.default-column-width.proportion}; }"
-              else
-                "default-column-width ${toString cfg.layout.default-column-width}"
-            )}
-          }
-        '';
-
-        # Environment variables
-        env-config = lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (name: value: ''environment "${name}" "${value}"'') cfg.environment
-        );
-
-        # Startup commands
-        startup-config = ''
-          spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia-shell ipc call lockScreen lock"
-        ''
-        + lib.concatStringsSep "\n" (
-          map (
-            cmd:
-            ''spawn-at-startup "${lib.head (lib.splitString " " cmd)}" ${
-              lib.concatMapStringsSep " " (x: ''"${x}"'') (lib.tail (lib.splitString " " cmd))
-            }''
-          ) cfg.spawn-at-startup
-        );
-
-        # Default keybinds (can be overridden/extended via cfg.keybinds)
-        default-binds = ''
-          binds {
-            // Window management
-            Mod+Space { spawn "fuzzel"; }
-            Mod+Shift+E { quit; }
-
-            // Window focus
-            Mod+h { focus-column-left; }
-            Mod+l { focus-column-right; }
-            Mod+k { focus-window-up; }
-            Mod+j { focus-window-down; }
-
-            // Window movement
-            Mod+Left { move-column-left; }
-            Mod+Right { move-column-right; }
-            Mod+Up { move-window-up; }
-            Mod+Down { move-window-down; }
-
-            // Window actions
-            Mod+Q { close-window; }
-            Mod+F { maximize-column; }
-            Mod+Shift+F { fullscreen-window; }
-
-            // Workspaces
-            Mod+Ampersand { focus-workspace 1; }
-            Mod+Eacute { focus-workspace 2; }
-            Mod+Quotedbl { focus-workspace 3; }
-            Mod+Apostrophe { focus-workspace 4; }
-            Mod+Parenleft { focus-workspace 5; }
-            Mod+Minus { focus-workspace 6; }
-            Mod+Egrave { focus-workspace 7; }
-            Mod+Underscore { focus-workspace 8; }
-            Mod+Ccedilla { focus-workspace 9; }
-            Mod+Agrave { focus-workspace 10; }
-
-            Mod+Shift+Ampersand { move-column-to-workspace 1; }
-            Mod+Shift+Eacute { move-column-to-workspace 2; }
-            Mod+Shift+Quotedbl { move-column-to-workspace 3; }
-            Mod+Shift+Apostrophe { move-column-to-workspace 4; }
-            Mod+Shift+Parenleft { move-column-to-workspace 5; }
-            Mod+Shift+Minus { move-column-to-workspace 6; }
-            Mod+Shift+Egrave{ move-column-to-workspace 7; }
-            Mod+Shift+Underscore { move-column-to-workspace 8; }
-            Mod+Shift+Ccedilla { move-column-to-workspace 9; }
-            Mod+Shift+Agrave { move-column-to-workspace 10; }
-
-            // Screenshot
-            Mod+Shift+S { spawn "sh" "-c" "grim -g $(slurp) - | satty -f -"; }
-            Print { spawn "sh" "-c" "grim - | wl-copy"; }
-
-            // Lock screen
-            Mod+Escape { spawn "${noctalia-shell}" "ipc" "call" "lockScreen" "lock"; }
-
-            // Pin a window to all workspaces
-            Mod+P { spawn "nirius" "toggle-follow-mode"; }
-
-            // Volume control
-            XF86AudioRaiseVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "increase"; }
-            XF86AudioLowerVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "decrease"; }
-            XF86AudioMute { spawn "${noctalia-shell}" "ipc" "call" "volume" "muteOutput"; }
-
-            // Brightness control
-            XF86MonBrightnessUp { spawn "${noctalia-shell}" "ipc" "call" "brightness" "increase"; }
-            XF86MonBrightnessDown { spawn "${noctalia-shell}" "ipc" "call" "brightness" "decrease"; }
-
-            XF86AudioNext { spawn "${noctalia-shell}" "ipc" "call" "media" "next"; }
-            XF86AudioPrev { spawn "${noctalia-shell}" "ipc" "call" "media" "previous"; }
-            XF86AudioPlay { spawn "${noctalia-shell}" "ipc" "call" "media" "playPause"; }
-
-            XF86KbdBrightnessUp { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%+"; }
-            XF86KbdBrightnessDown { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%-"; }
-          }
-        '';
-
-        # Custom keybinds
-        custom-binds = lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (keys: action: "binds { ${keys} { ${action}; } }") cfg.keybinds
-        );
-        animations = ''
-          animations {
-            // Uncomment to turn off all animations.
-            // You can also put "off" into each individual animation to disable it.
-            // off
-
-            // Slow down all animations by this factor. Values below 1 speed them up instead.
-            slowdown 0.2
-          }'';
-
-        workspaces = ''
-          workspace "browser"
-          workspace "terminal"
-          workspace "social"
-          workspace "fizzy"
-          workspace "misc"
-          workspace "music"
-          workspace "zotero"
-          workspace "misc2"
-          workspace "misc3"
-
-          window-rule {
-              match app-id=r#"^kitty$"#
-              open-on-workspace "terminal"
-              open-maximized true
-          }
-
-          window-rule {
-              match app-id=r#"^brave-browser$"#
-              open-on-workspace "browser"
-              open-maximized true
-              //scroll-factor 0.5
-          }
-
-          window-rule {
-              match title=r#".*Fizzy$"#
-              open-on-workspace "fizzy"
-              open-maximized true
-              //scroll-factor 0.5
-          }
-
-          window-rule {
-              match title=r#".*Proton Mail$"#
-              open-on-workspace "social"
-              open-maximized true
-              //scroll-factor 0.5
-          }
-
-          window-rule {
-              match app-id=r#"^org.pwmt.zathura$"#
-              //scroll-factor 0.8
-          }
-
-          window-rule {
-              match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
-              open-on-workspace "music"
-              open-maximized true
-          }
-
-          window-rule {
-              match app-id=r#"^signal$"#
-              open-on-workspace "social"
-              open-maximized true
-          }
-
-
-          window-rule {
-              match app-id=r#"^Zotero$"#
-              open-on-workspace "zotero"
-              open-maximized true
-          }
-
-          // Open the Firefox picture-in-picture window as floating.
-          window-rule {
-              match title="Picture-in-Picture"
-
-              open-floating true
-              default-column-width { fixed 480; }
-              default-window-height { fixed 270; }
-              default-floating-position x=0 y=0 relative-to="bottom-right"
-              opacity 0.5
-          }
-
-          window-rule {
-              geometry-corner-radius 12
-              clip-to-geometry true
-          }
-
-          // Indicate screencasted windows with red colors.
-          window-rule {
-              match is-window-cast-target=true
-
-              focus-ring {
-                  active-color "#f38ba8"
-                  inactive-color "#7d0d2d"
-              }
-
-              border {
-                  inactive-color "#7d0d2d"
-              }
-
-              shadow {
-                  color "#7d0d2d70"
-              }
-
-              tab-indicator {
-                  active-color "#f38ba8"
-                  inactive-color "#7d0d2d"
-              }
-          }
-        '';
-      in
-      ''
-        // Niri configuration
-        // Auto-generated by Home Manager
-
-        ${input-config}
-
-        ${layout-config}
-
-        ${monitors}
-
-        ${env-config}
-
-        ${startup-config}
-
-        ${default-binds}
-
-        ${custom-binds}
-
-        ${animations}
-
-        ${workspaces}
-
-        ${cfg.extraConfig}
+      # e.g. for slack, etc
+      configFile."electron-flags.conf".text = ''
+        --enable-features=UseOzonePlatform
+        --ozone-platform=wayland
       '';
 
+      # Niri configuration file
+      configFile."niri/config.kdl".text =
+        let
+          # Input configuration
+          input-config = ''
+            input {
+              keyboard {
+                xkb {
+                  layout "${cfg.input.keyboard.xkb.layout}"
+                  ${lib.optionalString (
+                    cfg.input.keyboard.xkb.variant != null
+                  ) "variant \"${cfg.input.keyboard.xkb.variant}\""}
+                  ${lib.optionalString (
+                    cfg.input.keyboard.xkb.options != null
+                  ) "options \"${cfg.input.keyboard.xkb.options}\""}
+                }
+              }
+
+              touchpad {
+                //tap
+                // dwt
+                // dwtp
+                // drag false
+                // drag-lock
+                // accel-profile "flat"
+                scroll-factor 0.1
+                // scroll-factor vertical=1.0 horizontal=-2.0
+                scroll-method "two-finger"
+                // scroll-button 273
+                // scroll-button-lock
+                // tap-button-map "left-middle-right"
+                // click-method "clickfinger"
+                // left-handed
+                // disabled-on-external-mouse
+                // middle-emulation
+
+                ${lib.optionalString cfg.input.touchpad.natural-scroll "natural-scroll"}
+              }
+
+
+              mouse {
+                  // off
+                  // natural-scroll
+                  // accel-speed 0.2
+                  accel-profile "flat"
+                  // scroll-factor 2.0
+                  // scroll-factor vertical=1.0 horizontal=-2.0
+                  // scroll-method "no-scroll"
+                  // scroll-button 273
+                  // scroll-button-lock
+                  // left-handed
+                  // middle-emulation
+              }
+            }
+          '';
+
+          # Layout configuration
+          layout-config = ''
+            layout {
+              gaps ${toString cfg.layout.gaps}
+              ${lib.optionalString cfg.layout.center-focused-column "center-focused-column"}
+              ${lib.optionalString (cfg.layout.default-column-width != null) (
+                if lib.isAttrs cfg.layout.default-column-width then
+                  "default-column-width { proportion ${toString cfg.layout.default-column-width.proportion}; }"
+                else
+                  "default-column-width ${toString cfg.layout.default-column-width}"
+              )}
+            }
+          '';
+
+          # Environment variables
+          env-config = lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (name: value: ''environment "${name}" "${value}"'') cfg.environment
+          );
+
+          # Startup commands
+          startup-config = ''
+            spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia-shell ipc call lockScreen lock"
+          ''
+          + lib.concatStringsSep "\n" (
+            map (
+              cmd:
+              ''spawn-at-startup "${lib.head (lib.splitString " " cmd)}" ${
+                lib.concatMapStringsSep " " (x: ''"${x}"'') (lib.tail (lib.splitString " " cmd))
+              }''
+            ) cfg.spawn-at-startup
+          );
+
+          # Default keybinds (can be overridden/extended via cfg.keybinds)
+          default-binds = ''
+            binds {
+              // Window management
+              Mod+Space { spawn "fuzzel"; }
+              Mod+Shift+E { quit; }
+
+              // Window focus
+              Mod+h { focus-column-left; }
+              Mod+l { focus-column-right; }
+              Mod+k { focus-window-up; }
+              Mod+j { focus-window-down; }
+
+              // Window movement
+              Mod+Left { move-column-left; }
+              Mod+Right { move-column-right; }
+              Mod+Up { move-window-up; }
+              Mod+Down { move-window-down; }
+
+              // Window actions
+              Mod+Q { close-window; }
+              Mod+F { maximize-column; }
+              Mod+Shift+F { fullscreen-window; }
+
+              // Workspaces
+              Mod+Ampersand { focus-workspace 1; }
+              Mod+Eacute { focus-workspace 2; }
+              Mod+Quotedbl { focus-workspace 3; }
+              Mod+Apostrophe { focus-workspace 4; }
+              Mod+Parenleft { focus-workspace 5; }
+              Mod+Minus { focus-workspace 6; }
+              Mod+Egrave { focus-workspace 7; }
+              Mod+Underscore { focus-workspace 8; }
+              Mod+Ccedilla { focus-workspace 9; }
+              Mod+Agrave { focus-workspace 10; }
+
+              Mod+Shift+Ampersand { move-column-to-workspace 1; }
+              Mod+Shift+Eacute { move-column-to-workspace 2; }
+              Mod+Shift+Quotedbl { move-column-to-workspace 3; }
+              Mod+Shift+Apostrophe { move-column-to-workspace 4; }
+              Mod+Shift+Parenleft { move-column-to-workspace 5; }
+              Mod+Shift+Minus { move-column-to-workspace 6; }
+              Mod+Shift+Egrave{ move-column-to-workspace 7; }
+              Mod+Shift+Underscore { move-column-to-workspace 8; }
+              Mod+Shift+Ccedilla { move-column-to-workspace 9; }
+              Mod+Shift+Agrave { move-column-to-workspace 10; }
+
+              // Screenshot
+              Mod+Shift+S { spawn "sh" "-c" "grim -g $(slurp) - | satty -f -"; }
+              Print { spawn "sh" "-c" "grim - | wl-copy"; }
+
+              // Lock screen
+              Mod+Escape { spawn "${noctalia-shell}" "ipc" "call" "lockScreen" "lock"; }
+
+              // Pin a window to all workspaces
+              Mod+P { spawn "nirius" "toggle-follow-mode"; }
+
+              Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
+
+              // Volume control
+              XF86AudioRaiseVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "increase"; }
+              XF86AudioLowerVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "decrease"; }
+              XF86AudioMute { spawn "${noctalia-shell}" "ipc" "call" "volume" "muteOutput"; }
+
+              // Brightness control
+              XF86MonBrightnessUp { spawn "${noctalia-shell}" "ipc" "call" "brightness" "increase"; }
+              XF86MonBrightnessDown { spawn "${noctalia-shell}" "ipc" "call" "brightness" "decrease"; }
+
+              XF86AudioNext { spawn "${noctalia-shell}" "ipc" "call" "media" "next"; }
+              XF86AudioPrev { spawn "${noctalia-shell}" "ipc" "call" "media" "previous"; }
+              XF86AudioPlay { spawn "${noctalia-shell}" "ipc" "call" "media" "playPause"; }
+
+              XF86KbdBrightnessUp { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%+"; }
+              XF86KbdBrightnessDown { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%-"; }
+            }
+          '';
+
+          # Custom keybinds
+          custom-binds = lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (keys: action: "binds { ${keys} { ${action}; } }") cfg.keybinds
+          );
+          animations = ''
+            animations {
+              // Uncomment to turn off all animations.
+              // You can also put "off" into each individual animation to disable it.
+              // off
+
+              // Slow down all animations by this factor. Values below 1 speed them up instead.
+              slowdown 0.2
+            }'';
+
+          workspaces = ''
+            workspace "browser"
+            workspace "terminal"
+            workspace "social"
+            workspace "fizzy"
+            workspace "misc"
+            workspace "music"
+            workspace "zotero"
+            workspace "misc2"
+            workspace "misc3"
+
+            window-rule {
+                match app-id=r#"^kitty$"#
+                open-on-workspace "terminal"
+                open-maximized true
+            }
+
+            window-rule {
+                match app-id=r#"^brave-browser$"#
+                open-on-workspace "browser"
+                open-maximized true
+                //scroll-factor 0.5
+            }
+
+            window-rule {
+                match title=r#".*Fizzy$"#
+                open-on-workspace "fizzy"
+                open-maximized true
+                //scroll-factor 0.5
+            }
+
+            window-rule {
+                match title=r#".*Proton Mail$"#
+                open-on-workspace "social"
+                open-maximized true
+                //scroll-factor 0.5
+            }
+
+            window-rule {
+                match app-id=r#"^org.pwmt.zathura$"#
+                //scroll-factor 0.8
+            }
+
+            window-rule {
+                match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
+                open-on-workspace "music"
+                open-maximized true
+            }
+
+            window-rule {
+                match app-id=r#"^signal$"#
+                open-on-workspace "social"
+                open-maximized true
+            }
+
+
+            window-rule {
+                match app-id=r#"^Zotero$"#
+                open-on-workspace "zotero"
+                open-maximized true
+            }
+
+            // Open the Firefox picture-in-picture window as floating.
+            window-rule {
+                match title="Picture-in-Picture"
+
+                open-floating true
+                default-column-width { fixed 480; }
+                default-window-height { fixed 270; }
+                default-floating-position x=0 y=0 relative-to="bottom-right"
+                opacity 0.5
+            }
+
+            window-rule {
+                geometry-corner-radius 12
+                clip-to-geometry true
+            }
+
+            // Indicate screencasted windows with red colors.
+            window-rule {
+                match is-window-cast-target=true
+
+                focus-ring {
+                    active-color "#f38ba8"
+                    inactive-color "#7d0d2d"
+                }
+
+                border {
+                    inactive-color "#7d0d2d"
+                }
+
+                shadow {
+                    color "#7d0d2d70"
+                }
+
+                tab-indicator {
+                    active-color "#f38ba8"
+                    inactive-color "#7d0d2d"
+                }
+            }
+
+            // Block out password managers from screencasts.
+            window-rule {
+                match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+                match app-id=r#"^org\.gnome\.World\.Secrets$"#
+                match app-id=r#"^signal$"#
+                match title=r#".*Proton Mail$"#
+                match title=r#"mail"#
+                match title=r#"Bitwarden"#
+
+                block-out-from "screencast"
+            }
+
+            // Block out mako notifications from screencasts.
+            layer-rule {
+                match namespace="^notifications$"
+
+                block-out-from "screencast"
+            }
+          '';
+        in
+        ''
+          // Niri configuration
+          // Auto-generated by Home Manager
+
+          ${input-config}
+
+          ${layout-config}
+
+          ${monitors}
+
+          ${env-config}
+
+          ${startup-config}
+
+          ${default-binds}
+
+          ${custom-binds}
+
+          ${animations}
+
+          ${workspaces}
+
+          ${cfg.extraConfig}
+        '';
+    };
     gtk.enable = true;
 
     # Fuzzel launcher configuration
@@ -659,7 +709,7 @@ in
         };
         colorSchemes.predefinedScheme = "Catppucin";
         general = {
-          avatarImage = "/home/${flake.config.me.username}/.face";
+          avatarImage = "/home/${flake.config.me.username}/Pictures/.face";
           showChangelogOnStartup = false;
         };
         location = {
@@ -678,7 +728,11 @@ in
             }
           ];
         };
-        osd.location = "bottom_center";
+        osd = {
+          location = "bottom_center";
+          autoHideMs = 700;
+          backgroundOpacity = 0;
+        };
         notifications.location = "bottom_center";
         idle = {
           enabled = true;

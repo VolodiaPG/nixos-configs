@@ -68,6 +68,12 @@ in
     services = {
       pulseaudio.enable = false;
       pipewire = {
+        enable = true;
+        alsa.enable = true;
+        pulse.enable = true;
+        alsa.support32Bit = true;
+        jack.enable = true;
+
         # Pulse configuration optimized for low latency and quality
         extraConfig.pipewire-pulse = {
           "99-pulse-custom" = {
@@ -158,50 +164,48 @@ in
           };
         };
 
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-        jack.enable = true;
-
         # ALSA optimizations for USB DAC stability
-        wireplumber.extraConfig = {
-          # USB DAC-specific rules to prevent crackling
-          "51-usb-dac-config" = {
-            "monitor.alsa.rules" = [
-              {
-                matches = [
-                  {
-                    "device.bus-path" = "usb";
-                  }
-                ];
-                actions = {
-                  update-props = {
-                    # Larger period size for USB stability
-                    "api.alsa.period-size" = 1024;
-                    # Headroom to prevent underruns
-                    "api.alsa.headroom" = 1024;
-                    # Disable batch mode for lower latency
-                    "api.alsa.disable-batch" = true;
-                    # Enable mmap (better for USB)
-                    "api.alsa.disable-mmap" = false;
-                    # Support all hi-res rates
-                    "audio.allowed-rates" = "44100,48000,88200,96000,176400,192000";
-                    # Never idle - keeps DAC active
-                    "session.suspend-timeout-seconds" = 0;
+        wireplumber = {
+          enable = true;
+          extraConfig = {
+            # USB DAC-specific rules to prevent crackling
+            "51-usb-dac-config" = {
+              "monitor.alsa.rules" = [
+                {
+                  matches = [
+                    {
+                      "device.bus-path" = "usb";
+                    }
+                  ];
+                  actions = {
+                    update-props = {
+                      # Larger period size for USB stability
+                      "api.alsa.period-size" = 1024;
+                      # Headroom to prevent underruns
+                      "api.alsa.headroom" = 1024;
+                      # Disable batch mode for lower latency
+                      "api.alsa.disable-batch" = true;
+                      # Enable mmap (better for USB)
+                      "api.alsa.disable-mmap" = false;
+                      # Support all hi-res rates
+                      "audio.allowed-rates" = "44100,48000,88200,96000,176400,192000";
+                      # Never idle - keeps DAC active
+                      "session.suspend-timeout-seconds" = 0;
+                    };
                   };
-                };
-              }
-            ];
-          };
+                }
+              ];
+            };
 
-          # Bluetooth codec preferences (if using wireless)
-          bluetooth-monitor = {
-            properties = {
-              "bluez5.enable-sbc-xq" = true;
-              "bluez5.enable-msbc" = true;
-              "bluez5.enable-hw-volume" = true;
-              "bluez5.codec.ldac.quality" = "hq";
-              "bluez5.codec.aac.bitrate" = 320000;
+            # Bluetooth codec preferences (if using wireless)
+            bluetooth-monitor = {
+              properties = {
+                "bluez5.enable-sbc-xq" = true;
+                "bluez5.enable-msbc" = true;
+                "bluez5.enable-hw-volume" = true;
+                "bluez5.codec.ldac.quality" = "hq";
+                "bluez5.codec.aac.bitrate" = 320000;
+              };
             };
           };
         };
