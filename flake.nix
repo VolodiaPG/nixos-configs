@@ -129,6 +129,11 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    tidal-to-strawberry = {
+      url = "github:volodiapg/tidal-to-strawberry";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {

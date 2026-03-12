@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  flake,
   ...
 }:
 with lib;
@@ -15,12 +16,21 @@ in
     };
   };
 
+  imports = [
+    flake.inputs.tidal-to-strawberry.homeManagerModules.default
+  ];
+
   config = mkIf cfg.enable {
     fonts.fontconfig.enable = true;
 
     # Enable the theme daemon for automatic switching
-    services.theme-daemon.enable = true;
-
+    services = {
+      theme-daemon.enable = true;
+      tidal-to-strawberry = {
+        enable = true;
+        workingDirectory = "/home/${flake.config.me.username}/Music";
+      };
+    };
     programs = {
       kitty.enable = true;
       nix-index.enable = true;
