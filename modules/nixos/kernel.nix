@@ -59,7 +59,7 @@ in
           args = mkOption {
             description = "Command line arguments for the battery scheduler";
             type = types.str;
-            default = "-a -d -p 5000";
+            default = "-a -d -p 5000 --flat-idle-scan --preferred-idle-scan";
           };
 
           extraArgs = mkOption {
@@ -85,7 +85,7 @@ in
           args = mkOption {
             description = "Command line arguments for the AC scheduler";
             type = types.str;
-            default = "-a -s 20000 -d -c 0 -p 0";
+            default = "-a -s 20000 -d -c 0 -p 0 --flat-idle-scan --preferred-idle-scan";
           };
 
           extraArgs = mkOption {
