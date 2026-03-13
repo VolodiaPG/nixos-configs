@@ -741,8 +741,18 @@ in
           suspendTimeout = 99999999;
           fadeDuration = 5;
         };
+        hooks = {
+          enabled = true;
+          wallpaperChange = "";
+          darkModeChange = "";
+          screenLock = "";
+          screenUnlock = "";
+          performanceModeEnabled = "sudo systemctl start scx-performance.service";
+          performanceModeDisabled = "sudo systemctl start scx-powersave.service";
+          startup = "";
+          session = "";
+        };
       };
-      # this may also be a string or a path to a JSON file.
 
       plugins = {
         sources = [
