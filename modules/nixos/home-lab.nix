@@ -24,8 +24,6 @@ in
           image = "ghcr.io/basecamp/fizzy:main";
           pull = "always";
           ports = [ "8888:80" ];
-          memory = "512m";
-          cpu = "0.5";
           environmentFiles = [ config.age.secrets.fizzy-env.path ];
           environment = {
             BASE_URL = "https://fizzy.goblin-alewife.ts.net";
