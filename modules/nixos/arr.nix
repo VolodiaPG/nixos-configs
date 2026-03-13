@@ -89,6 +89,7 @@ in
       prowlarr.enable = true; # Enable Prowlarr for indexers
       jellyfin.enable = false; # Enable Jellyfin for media
       recyclarr.enable = true;
+      autobrr.enable = true;
     };
 
     services.transmission.settings = {
@@ -246,6 +247,15 @@ in
             }
           '';
         };
+        "https://autobrr.${me.tailname}" = {
+          extraConfig = ''
+            bind tailscale/autobrr
+            reverse_proxy http://127.0.0.1:7474 {
+                header_up Host {host}
+            }
+          '';
+        };
+
       };
     };
   };
