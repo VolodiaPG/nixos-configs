@@ -54,14 +54,13 @@ in
         distrobox
         distrobox-tui
         signal-desktop
-        qpdfview
         strawberry
         qbittorrent
         distrobox
         vlc
-        drawio
         easyeffects
         zotero
+        drawio
       ];
 
       file = {

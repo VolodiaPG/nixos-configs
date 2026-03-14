@@ -97,7 +97,7 @@ in
           governor = mkOption {
             description = "CPU governor to use for the AC scheduler";
             type = types.str;
-            default = "performance";
+            default = "schedutil";
           };
         };
       };

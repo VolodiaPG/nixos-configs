@@ -110,7 +110,6 @@ in
     # settings get written into /etc/nix/nix.custom.conf
     nixpkgs.config = {
       allowUnfree = true;
-      allowUnfreePredicate = _pkg: true;
       allowUnsupportedSystem = true;
     };
 

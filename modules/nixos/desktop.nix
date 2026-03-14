@@ -34,7 +34,6 @@ in
           concurrent-tap-hold yes
         '';
       };
-      fractalart.enable = true;
     };
 
     security.pam.services.gdm.enableGnomeKeyring = true;
