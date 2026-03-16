@@ -116,11 +116,11 @@ in
         powertop.enable = true;
       };
 
-      boot = {
-        kernelModules = [
-          "ecryptfs"
-        ];
-      };
+      # boot = {
+      #   kernelModules = [
+      #     "ecryptfs"
+      #   ];
+      # };
 
       services = {
         power-profiles-daemon.enable = false;
@@ -173,7 +173,7 @@ in
           # ----------------------------------------------------------------------------
           # FILESYSTEM SUPPORT
           # ----------------------------------------------------------------------------
-          "ecryptfs" # Enable eCryptfs filesystem support
+          # "ecryptfs" # Enable eCryptfs filesystem support
 
           # ----------------------------------------------------------------------------
           # SECURITY MITIGATIONS - DISABLED FOR PERFORMANCE

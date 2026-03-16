@@ -214,7 +214,6 @@ in
     };
     environment.systemPackages = with pkgs; [
       pavucontrol
-      helvum
       qpwgraph
       alsa-utils
       pulseaudio

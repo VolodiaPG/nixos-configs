@@ -24,6 +24,8 @@ _final: prev:
     devenv
     difftastic
     zotero
+    bluez
+    bluez-experimental
     ;
 
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
