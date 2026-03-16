@@ -71,7 +71,7 @@ in
           governor = mkOption {
             description = "CPU governor to use for the battery scheduler";
             type = types.str;
-            default = "conservative";
+            default = "schedutil";
           };
         };
 
