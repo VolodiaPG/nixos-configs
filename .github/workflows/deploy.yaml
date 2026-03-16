@@ -9,48 +9,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: wimpysworld/nothing-but-nix@main
-        with:
-          hatchet-protocol: "holster"
-
-      - uses: DeterminateSystems/determinate-nix-action@v3
-        with:
-          extra-conf: |
-            lazy-trees = true
-
-      - name: Checkout repository
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 0
-
-      - name: Tailscale
-        uses: tailscale/github-action@main
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
-
-      - uses: cachix/cachix-action@v15
-        with:
-          name: volodiapg
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-
-      - name: Build and deploy
-        run: |
-          set -euxo pipefail
-          nix run .#deploy-rs -- --skip-checks --targets .#home-server
-
+  # deploy:
+  #   runs-on: ubuntu-24.04
+  #
+  #   steps:
+  #     - uses: wimpysworld/nothing-but-nix@main
+  #       with:
+  #         hatchet-protocol: "holster"
+  #
+  #     - uses: DeterminateSystems/determinate-nix-action@v3
+  #       with:
+  #         extra-conf: |
+  #           lazy-trees = true
+  #
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
+  #       with:
+  #         fetch-depth: 0
+  #
+  #     - name: Tailscale
+  #       uses: tailscale/github-action@main
+  #       with:
+  #         oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+  #         oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+  #         tags: tag:ci
+  #
+  #     - uses: cachix/cachix-action@v15
+  #       with:
+  #         name: volodiapg
+  #         authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+  #
+  #     - name: Install SSH key
+  #       uses: shimataro/ssh-key-action@v2
+  #       with:
+  #         key: ${{ secrets.SSH_KEY }}
+  #         known_hosts: ${{ secrets.KNOWN_HOSTS }}
+  #         if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+  #
+  #     - name: Build and deploy
+  #       run: |
+  #         set -euxo pipefail
+  #         nix run .#deploy-rs -- --skip-checks --targets .#home-server
+  #
   cache:
     runs-on: ubuntu-24.04-arm
 
