@@ -66,9 +66,32 @@ in
       rootVolume = "disk/by-label/root";
     };
     vpn.enable = true;
+
+    # From nixos
+    blueman.enable = true;
   };
 
-  # systemd.slices."system".sliceConfig = {
-  #   AllowedCPUs = "0-3"; # E-cores
-  # };
+  systemd = {
+    slices = {
+      # "pcore.slice" = {
+      #   description = "P-core high performance slice";
+      #   sliceConfig = {
+      #     AllowedCPUs = "";
+      #     CPUWeight = 100;
+      #   };
+      # };
+      "allcore.slice" = {
+        sliceConfig = {
+          AllowedCPUs = "0-7";
+          CPUWeight = 50; # Not that important
+        };
+      };
+      "system".sliceConfig = {
+        AllowedCPUs = "0-3"; # E-cores
+      };
+    };
+    services.nix-daemon.serviceConfig = {
+      Slice = "allcore.slice";
+    };
+  };
 }

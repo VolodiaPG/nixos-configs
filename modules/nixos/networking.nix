@@ -25,6 +25,7 @@ in
         enable = true;
         blockFakenews = true;
         blockGambling = true;
+        blockPorn = true;
       };
       useNetworkd = true;
       useDHCP = false;

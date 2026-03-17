@@ -62,14 +62,28 @@ in
       };
     };
 
-    services.fail2ban = {
-      enable = true;
-      maxretry = 5;
-      ignoreIP = [
-        "127.0.0.0/8"
-        "10.0.0.0/8"
-        "192.168.1.0/16"
-      ];
+    services = {
+      fail2ban = {
+        enable = true;
+        maxretry = 5;
+        ignoreIP = [
+          "127.0.0.0/8"
+          "10.0.0.0/8"
+          "192.168.1.0/16"
+        ];
+      };
+
+      # Free memory
+      earlyoom = {
+        enable = true;
+        freeMemThreshold = 5;
+        freeSwapThreshold = 5;
+      };
+
+      journald.extraConfig = ''
+        SystemMaxUse=200M
+        RuntimeMaxUse=50M
+      '';
     };
 
     programs = {
