@@ -59,7 +59,7 @@ in
           args = mkOption {
             description = "Command line arguments for the battery scheduler";
             type = types.str;
-            default = "-a -d -p 5000 --flat-idle-scan --preferred-idle-scan";
+            default = "--disable-numa -f -s 2000 -a -d -p 1000";
           };
 
           extraArgs = mkOption {
@@ -71,7 +71,7 @@ in
           governor = mkOption {
             description = "CPU governor to use for the battery scheduler";
             type = types.str;
-            default = "schedutil";
+            default = "conservative";
           };
         };
 
@@ -85,7 +85,7 @@ in
           args = mkOption {
             description = "Command line arguments for the AC scheduler";
             type = types.str;
-            default = "-a -s 20000 -d -c 0 -p 0 --flat-idle-scan --preferred-idle-scan";
+            default = "--disable-numa -a -s 2000 --preferred-idle-scan";
           };
 
           extraArgs = mkOption {
@@ -97,7 +97,7 @@ in
           governor = mkOption {
             description = "CPU governor to use for the AC scheduler";
             type = types.str;
-            default = "schedutil";
+            default = "ondemand";
           };
         };
       };

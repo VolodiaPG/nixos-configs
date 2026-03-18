@@ -1124,11 +1124,11 @@
         "plugins-vimtex": "plugins-vimtex"
       },
       "locked": {
-        "lastModified": 1773770918,
-        "narHash": "sha256-d73pXZQhfaqd+wiBnxv7MIpkC0UVHWBZJKwsSqCYE2U=",
+        "lastModified": 1773784649,
+        "narHash": "sha256-fOUVt4d/ZaMKGpFtYp/TDU7RHpZHqDD9+Fb4sM+7cAQ=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "a39814b17cca3b7db7d78e4ac1aa6d0363a0ce57",
+        "rev": "f5d99666221cba59fcec2e532ef4695a85cca5f1",
         "type": "github"
       },
       "original": {
