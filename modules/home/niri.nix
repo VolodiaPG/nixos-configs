@@ -413,10 +413,10 @@ in
             animations {
               // Uncomment to turn off all animations.
               // You can also put "off" into each individual animation to disable it.
-              // off
+              off
 
               // Slow down all animations by this factor. Values below 1 speed them up instead.
-              slowdown 0.2
+              // slowdown 0.1
             }'';
 
           workspaces = ''
@@ -628,9 +628,9 @@ in
       enable = true;
       settings = {
         # configure noctalia here
-        dock.enabled = true;
+        dock.enabled = false;
         bar = {
-          density = "default";
+          density = "mini";
           barType = "simple";
           position = "bottom";
           showCapsule = true;
