@@ -68,7 +68,7 @@ in
     vpn.enable = true;
 
     # From nixos
-    blueman.enable = true;
+    # blueman.enable = true;
   };
 
   systemd = {
