@@ -61,6 +61,7 @@ in
         easyeffects
         zotero
         drawio
+        libreoffice-qt-fresh
       ];
 
       file = {
