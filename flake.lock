@@ -1058,11 +1058,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773840531,
-        "narHash": "sha256-bTUjJ8xk3IE/rdLWogFnjVsEpdOzD8nCUpb4FnDi9F0=",
+        "lastModified": 1773908393,
+        "narHash": "sha256-MdfdU7WWBWmrfSBEa56hrM2UbjUL/wayDj22gCxNNS4=",
         "owner": "volodiapg",
         "repo": "tidal-to-strawberry",
-        "rev": "4c99ecd8f60587b2199121411236d27056c0f136",
+        "rev": "ffa819c0d4a69d9e3da2eac6d012fea63d7e886d",
         "type": "github"
       },
       "original": {
