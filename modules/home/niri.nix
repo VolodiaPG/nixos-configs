@@ -376,7 +376,7 @@ in
               Mod+Shift+Agrave { move-column-to-workspace 10; }
 
               // Screenshot
-              Mod+Shift+S { spawn "sh" "-c" "grim -g "$(slurp -c '#ff0000ff')" -t ppm - | satty --filename - --output-filename ~/Pictures/satty-$(date '+%Y%m%d-%H:%M:%S').png"; }
+              Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -c '#ff0000ff')\" -t ppm - | satty --filename - --output-filename ~/Pictures/satty-$(date '+%Y%m%d-%H:%M:%S').png"; }
               Print { spawn "sh" "-c" "grim - | wl-copy"; }
 
               // Lock screen
