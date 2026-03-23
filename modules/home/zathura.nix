@@ -6,11 +6,11 @@ let
     bg = "#0a0e1a";
     bg-alt = "#0f1419";
     fg = "#e6e1cf";
-    primary = "#00d4ff";
-    secondary = "#ff0080";
-    accent = "#39ff14";
-    warning = "#ff6600";
-    error = "#ff0040";
+    primary = "#00d4ff80";
+    secondary = "#ff008080";
+    accent = "#39ff1480";
+    warning = "#ff660080";
+    error = "#ff004080";
     surface = "#1a1f2e";
   };
   cfg = config.programs.zathura;
@@ -41,21 +41,44 @@ in
         recolor-lightcolor = colors.bg;
         recolor-darkcolor = colors.fg;
 
-        # Settings
-        recolor = true;
-        recolor-keephue = true;
-        selection-clipboard = "clipboard";
-        smooth-scroll = true;
-        zoom-min = 10;
-        zoom-max = 1000;
-        zoom-step = 20;
-        page-padding = 5;
-        statusbar-basename = true;
+        # --- Performance ---
+        render-loading = true;
+        render-loading-bg = colors.bg;
+        render-loading-fg = colors.fg;
+        page-cache-size = 50; # Cache more pages for faster navigation
+        pages-per-row = 1;
+        scroll-page-aware = true;
+        scroll-full-overlap = "0.01";
+        scroll-step = 100;
+
+        # --- UI & Appearance ---
         statusbar-home-tilde = true;
         window-title-home-tilde = true;
         window-title-basename = true;
+        guioptions = "shv"; # Show statusbar, horizontal/vertical scrollbars
+
+        # --- Search ---
+        incremental-search = true;
+        nohlsearch = false; # Keep search highlights visible
+
+        # --- Clipboard ---
+        selection-clipboard = "clipboard"; # Use system clipboard for selections
+        selection-notification = true;
+
+        # --- Zoom ---
+        zoom-min = 10;
+        zoom-max = 1000;
+        zoom-step = 20;
         adjust-open = "best-fit";
-        scroll-page-aware = true;
+
+        # Settings
+        recolor = true;
+        recolor-keephue = true;
+        smooth-scroll = true;
+        page-padding = 5;
+        statusbar-basename = true;
+
+        synctex = true;
       };
 
       mappings = {
@@ -75,11 +98,8 @@ in
         "G" = "goto bottom";
 
         # Search
-        "/" = "search forward";
-        "!" = "search forward";
-        "?" = "search backward";
-        "n" = "search next";
-        "N" = "search previous";
+        "[normal] n" = "search forward";
+        "[normal] N" = "search backward";
 
         # Modes
         "r" = "recolor";
@@ -89,7 +109,18 @@ in
 
         # Quit
         "q" = "quit";
+
+        # Index (table of contents)
+        "<Tab>" = "toggle_index";
       };
+      extraConfig = ''
+        # Additional settings
+        set database sqlite
+        set sandbox normal
+        set page-padding 2
+        set show-recent 20
+        set first-page-column 1
+      '';
     };
   };
 }
