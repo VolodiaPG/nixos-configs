@@ -59,8 +59,20 @@ in
           args = mkOption {
             description = "Command line arguments for the battery scheduler";
             type = types.str;
-            default = "--disable-numa -f -s 2000 -a -d -p 1000";
+            default = lib.concatStrings [
+              " --slice-us 2500"
+              " --cpu-busy-thresh 85"
+              " --polling-ms 250"
+              " --mm-affinity"
+              " --flat-idle-scan"
+              " --no-early-clear"
+              # " --perf-sticky cache-misses"
+              " --perf-sticky 0xbf" # DCACHE_LOAD_MISS
+              " --perf-sticky-threshold 50"
+            ];
           };
+
+          # https://github.com/dougallj/applecpu/blob/main/timer-hacks/bench.py#L85
 
           extraArgs = mkOption {
             description = "Extra arguments for the battery scheduler";
@@ -85,7 +97,20 @@ in
           args = mkOption {
             description = "Command line arguments for the AC scheduler";
             type = types.str;
-            default = "--disable-numa -a -s 2000 --preferred-idle-scan";
+            default = lib.concatStrings [
+              " --slice-us 1000"
+              " --cpu-busy-thresh 60"
+              " --polling-ms 100"
+              " --mm-affinity"
+              " --preferred-idle-scan"
+              " --gpu"
+              " --no-early-clear"
+              # " --perf-sticky LLC-load-misses"
+              " --perf-sticky 0xbf" # DCACHE_LOAD_MISS
+              " --perf-sticky-threshold 100"
+              " --perf-config 0xbf" # DCACHE_LOAD_MISS
+              " --perf-threshold 1500"
+            ];
           };
 
           extraArgs = mkOption {
