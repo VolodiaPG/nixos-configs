@@ -14,16 +14,23 @@ jobs:
           - config: dell
             runner: ubuntu-24.04
     steps:
-      - uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Install nix
+        uses: cachix/install-nix-action@v30
         with:
-          extra-conf: |
-            lazy-trees = true
+          nix_path: nixpkgs=channel:nixos-unstable
+          github_access_token: ${{ secrets.GH_PRIVATE_REPO_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            extra-experimental-features = nix-command flakes
+            log-lines = 50
 
-      - name: Set up FlakeHub Cache and local cache
-        uses: DeterminateSystems/flakehub-cache-action@main
+      - uses: cachix/cachix-action@v17
+        with:
+          name: volodiapg
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}

@@ -28,16 +28,25 @@
       };
 
       # Development shell
-      devShells.default = pkgs.mkShell {
-        name = "nixos-config";
-        packages = with pkgs; [
-          just
-          inputs.agenix.packages.${system}.default
-          nix-output-monitor
-          deploy-rs
-          nvd
-        ];
-        inherit (config.pre-commit) shellHook;
+      devShells = {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            just
+            inputs.agenix.packages.${system}.default
+            nix-output-monitor
+            deploy-rs
+            nvd
+            nvfetcher
+          ];
+          inherit (config.pre-commit) shellHook;
+        };
+        ci = pkgs.mkShell {
+          packages = with pkgs; [
+            deploy-rs
+            nvfetcher
+          ];
+        };
       };
+
     };
 }
