@@ -186,6 +186,8 @@ in
         j = "just";
         jl = "just --list";
         g = "git";
+        gm = "git comit -m";
+        ga = "git add .";
         c = "clear";
         n = "nvim";
         oc = "opencode --port";
