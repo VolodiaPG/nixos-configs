@@ -1,0 +1,28 @@
+{
+    "scx": {
+        "cargoLock": {
+            "Cargo.lock": [
+                "sha256-nOoxpSv6QVJTY2HT_WULagFq2nspHYk5ehja2GB6xns=/Cargo.lock",
+                {}
+            ]
+        },
+        "date": "2026-03-22",
+        "extract": null,
+        "name": "scx",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "sched-ext",
+            "repo": "scx",
+            "rev": "610db46d5bc502e6a4439af68a15f3a331f00de1",
+            "sha256": "sha256-nOoxpSv6QVJTY2HT/WULagFq2nspHYk5ehja2GB6xns=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "610db46d5bc502e6a4439af68a15f3a331f00de1"
+    }
+}

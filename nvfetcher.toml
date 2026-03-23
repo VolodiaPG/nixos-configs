@@ -1,0 +1,6 @@
+[scx]
+fetch.github = "sched-ext/scx"
+src.git = "https://github.com/sched-ext/scx"
+src.branch = "main"
+cargo_lock = ["Cargo.lock"]
+

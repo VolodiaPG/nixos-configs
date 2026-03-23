@@ -24,6 +24,7 @@ _final: prev:
     devenv
     difftastic
     zotero
+    nvfetcher
     ;
 
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
@@ -37,6 +38,23 @@ _final: prev:
     tmux-session-color
     openrouter-credits
     ;
+
+  scx.rustscheds =
+    let
+      sources = prev.callPackage (../_sources/generated.nix) { };
+    in
+    prev.scx.rustscheds.overrideAttrs (_old: {
+      version = "${sources.scx.date}-${sources.scx.version}";
+      inherit (sources.scx) src;
+      doCheck = false;
+      cargoBuildFlags = [
+        "-p"
+        "scx_cosmos"
+      ];
+      cargoDeps = prev.rustPlatform.importCargoLock {
+        inherit (sources.scx.cargoLock."Cargo.lock") lockFile outputHashes;
+      };
+    });
 
   nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
 
