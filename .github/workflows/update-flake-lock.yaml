@@ -38,7 +38,7 @@ jobs:
           private-key: ${{ secrets.CI_PRIVATE_KEY }}
 
       - name: Checkout repository
-        uses: actions/checkouta@v6
+        uses: actions/checkout@v6
 
       - name: Build nix packages
         run: |
