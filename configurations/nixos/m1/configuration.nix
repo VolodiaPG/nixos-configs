@@ -15,8 +15,6 @@
     ];
   };
 
-  zramSwap.enable = true;
-
   networking = {
     hostId = "30249679";
     hostName = "m1";

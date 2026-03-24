@@ -47,7 +47,7 @@ in
 
     # Hardware and kernel
     kernel.enable = true;
-    kernel.scx = {
+    myScx = {
       enable = true;
       battery.extraArgs = "--primary-domain 0-3";
       ac.extraArgs = "--primary-domain 4-7";
