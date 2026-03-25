@@ -23,7 +23,26 @@ let
     "scx_tickless"
     "scx_userland"
     "scx_cosmos"
+    "scx_cake"
   ];
+
+  sources = pkgs.callPackage (../../_sources/generated.nix) { };
+  rustsched =
+    sched:
+    pkgs.scx.rustscheds.overrideAttrs (_old: {
+      version = "${sources.scx.date}-${sources.scx.version}";
+      inherit (sources.scx) src;
+      doCheck = false;
+      cargoBuildFlags = [
+        "-p"
+        # "scx_cosmos"Q
+        sched
+      ];
+      cargoDeps = pkgs.rustPlatform.importCargoLock {
+        inherit (sources.scx.cargoLock."Cargo.lock") lockFile outputHashes;
+      };
+    });
+
 in
 {
   options = {
@@ -105,7 +124,10 @@ in
   config = mkIf cfg.enable {
     # https://wiki.cachyos.org/configuration/sched-ext/
 
-    environment.systemPackages = [ pkgs.scx.rustscheds ];
+    environment.systemPackages = [
+      (rustsched cfg.ac.scheduler)
+      (rustsched cfg.battery.scheduler)
+    ];
 
     boot.kernelPatches = [
       {
@@ -147,7 +169,7 @@ in
           Type = "simple";
           ExecStart = pkgs.writeShellScript "battery" ''
             echo ${cfg.battery.governor} | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-            ${pkgs.scx.rustscheds}/bin/${cfg.battery.scheduler} \
+            ${rustsched cfg.battery.scheduler}/bin/${cfg.battery.scheduler} \
               ${cfg.battery.args} \
               ${cfg.battery.extraArgs}
           '';
@@ -165,7 +187,7 @@ in
           Type = "simple";
           ExecStart = pkgs.writeShellScript "ac" ''
             echo ${cfg.ac.governor} | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-            ${pkgs.scx.rustscheds}/bin/${cfg.ac.scheduler} \
+            ${rustsched cfg.battery.scheduler}/bin/${cfg.ac.scheduler} \
               ${cfg.ac.args} \
               ${cfg.ac.extraArgs}
           '';

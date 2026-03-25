@@ -12,8 +12,7 @@ _final: prev:
 #   };
 # in
 {
-  # inherit (lixPackageSets.stable)
-  #   lix
+  # inherit (prev.lixPackageSets.git)
   #   nix-direnv
   #   nix-eval-jobs
   #   nix-fast-build
@@ -38,23 +37,6 @@ _final: prev:
     tmux-session-color
     openrouter-credits
     ;
-
-  scx.rustscheds =
-    let
-      sources = prev.callPackage (../_sources/generated.nix) { };
-    in
-    prev.scx.rustscheds.overrideAttrs (_old: {
-      version = "${sources.scx.date}-${sources.scx.version}";
-      inherit (sources.scx) src;
-      doCheck = false;
-      cargoBuildFlags = [
-        "-p"
-        "scx_cosmos"
-      ];
-      cargoDeps = prev.rustPlatform.importCargoLock {
-        inherit (sources.scx.cargoLock."Cargo.lock") lockFile outputHashes;
-      };
-    });
 
   nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
 

@@ -49,8 +49,28 @@ in
     kernel.enable = true;
     myScx = {
       enable = true;
-      battery.extraArgs = "--primary-domain 0-3";
-      ac.extraArgs = "--primary-domain 4-7";
+      ac = {
+        # scheduler = "scx_flash";
+        # args = "-w -C 0 -f";
+        # # extraArgs = "--primary-domain 4-7";
+        # # extraArgs = "--primary-domain 0xF";
+        # extraArgs = "--primary-domain performance";
+        # governor = "schedutil";
+        scheduler = "scx_lavd";
+        args = "--performance";
+        extraArgs = "";
+      };
+      battery = {
+        # scheduler = "scx_flash";
+        # args = "-I 10000 -t 10000 -s 10000 -S 1000 -f";
+        # # extraArgs = "--primary-domain 0-3";
+        # # extraArgs = "--primary-domain 0x78";
+        # extraArgs = "--primary-domain powersave";
+        # governor = "schedutil";
+        scheduler = "scx_lavd";
+        args = "--powsersave";
+        extraArgs = "";
+      };
     };
     virt.enable = true;
     elegantBoot.enable = true;
