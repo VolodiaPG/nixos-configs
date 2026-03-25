@@ -629,11 +629,13 @@ in
       settings = {
         # configure noctalia here
         dock.enabled = false;
+        ui.backgroundOpacity = 1;
         bar = {
           density = "mini";
           barType = "simple";
           position = "bottom";
           showCapsule = true;
+          backgroundOpacity = 1;
           widgets = {
             left = [
               {
@@ -711,6 +713,9 @@ in
         general = {
           avatarImage = "/home/${flake.config.me.username}/Pictures/.face";
           showChangelogOnStartup = false;
+          animationDisabled = false;
+          enableLockScreenMediaControls = true;
+          lockScreenBlur = 1;
         };
         location = {
           monthBeforeDay = false;
@@ -731,7 +736,7 @@ in
         osd = {
           location = "bottom_center";
           autoHideMs = 700;
-          backgroundOpacity = 0;
+          backgroundOpacity = 1;
         };
         notifications.location = "bottom_center";
         idle = {
