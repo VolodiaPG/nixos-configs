@@ -58,7 +58,7 @@ in
         # governor = "schedutil";
         scheduler = "scx_lavd";
         args = "--performance";
-        extraArgs = "";
+        extraArgs = "--cpu-pref-order 4-7";
       };
       battery = {
         # scheduler = "scx_flash";
@@ -68,8 +68,8 @@ in
         # extraArgs = "--primary-domain powersave";
         # governor = "schedutil";
         scheduler = "scx_lavd";
-        args = "--powsersave";
-        extraArgs = "";
+        args = "--powersave";
+        extraArgs = "--cpu-pref-order 0-3";
       };
     };
     virt.enable = true;
