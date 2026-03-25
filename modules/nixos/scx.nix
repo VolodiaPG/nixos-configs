@@ -45,15 +45,11 @@ in
           description = "Command line arguments for the battery scheduler";
           type = types.str;
           default = lib.concatStrings [
-            " --slice-us 500"
-            " --cpu-busy-thresh 90"
+            " --slice-us 3000"
+            " --cpu-busy-thresh 80"
             " --polling-ms 100"
+            " --preferred-idle-scan"
             " --mm-affinity"
-            " --flat-idle-scan"
-            " --no-early-clear"
-            # " --perf-sticky cache-misses"
-            " --perf-sticky 0xbf" # DCACHE_LOAD_MISS
-            " --perf-sticky-threshold 50"
           ];
         };
 
@@ -62,7 +58,7 @@ in
         extraArgs = mkOption {
           description = "Extra arguments for the battery scheduler";
           type = types.str;
-          default = "-m powersave ";
+          default = "--primary-domain powersave";
         };
 
         governor = mkOption {
@@ -83,31 +79,24 @@ in
           description = "Command line arguments for the AC scheduler";
           type = types.str;
           default = lib.concatStrings [
-            " --slice-us 100"
-            " --cpu-busy-thresh 20"
-            " --polling-ms 10"
-            " --mm-affinity"
+            " --slice-us 1000"
+            " --cpu-busy-thresh 50"
+            " --polling-ms 50"
             " --preferred-idle-scan"
-            " --gpu"
-            " --no-early-clear"
-            # " --perf-sticky LLC-load-misses"
-            " --perf-sticky 0xbf" # DCACHE_LOAD_MISS
-            " --perf-sticky-threshold 100"
-            " --perf-config 0xbf" # DCACHE_LOAD_MISS
-            " --perf-threshold 3000"
+            " --mm-affinity"
           ];
         };
 
         extraArgs = mkOption {
           description = "Extra arguments for the AC scheduler";
           type = types.str;
-          default = "-m turbo";
+          default = "--primary-domain performance";
         };
 
         governor = mkOption {
           description = "CPU governor to use for the AC scheduler";
           type = types.str;
-          default = "ondemand";
+          default = "schedutil";
         };
       };
     };
