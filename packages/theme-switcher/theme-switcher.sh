@@ -228,6 +228,28 @@ apply_nvim_theme() {
   fi
 }
 
+# Apply theme to noctalia-shell (via IPC)
+apply_noctalia_theme() {
+  local theme="$1"
+
+  if ! command -v noctalia-shell &> /dev/null; then
+    error "noctalia-shell not found"
+    return
+  fi
+
+  info "Applying $theme theme to noctalia-shell..."
+
+  if [ "$theme" == "light" ]; then
+    noctalia-shell ipc call darkMode setLight 2>/dev/null || true
+  else
+    noctalia-shell ipc call darkMode setDark 2>/dev/null || true
+  fi
+
+  noctalia-shell ipc call colorScheme set Catppuccin 2>/dev/null || true
+
+  log "Noctalia theme applied"
+}
+
 # Available targets dispatch table
 # Format: "name:function_name"
 # To add a new target, just add an entry here and define the function above
@@ -236,6 +258,7 @@ TARGETS=(
   "tmux:apply_tmux_theme"
   "lazygit:apply_lazygit_theme"
   "nvim:apply_nvim_theme"
+  "noctalia:apply_noctalia_theme"
 )
 
 # Get all available target names
