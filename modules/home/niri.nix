@@ -380,7 +380,7 @@ in
               Print { spawn "sh" "-c" "grim - | wl-copy"; }
 
               // Lock screen
-              Mod+Escape { spawn "${noctalia-shell}" "ipc" "call" "lockScreen" "lock"; }
+              Mod+Escape { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
 
               // Pin a window to all workspaces
               Mod+P { spawn "nirius" "toggle-follow-mode"; }
@@ -388,17 +388,17 @@ in
               Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
 
               // Volume control
-              XF86AudioRaiseVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "increase"; }
-              XF86AudioLowerVolume { spawn "${noctalia-shell}" "ipc" "call" "volume" "decrease"; }
-              XF86AudioMute { spawn "${noctalia-shell}" "ipc" "call" "volume" "muteOutput"; }
+              XF86AudioRaiseVolume { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
+              XF86AudioLowerVolume { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
+              XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
 
               // Brightness control
-              XF86MonBrightnessUp { spawn "${noctalia-shell}" "ipc" "call" "brightness" "increase"; }
-              XF86MonBrightnessDown { spawn "${noctalia-shell}" "ipc" "call" "brightness" "decrease"; }
+              XF86MonBrightnessUp { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
+              XF86MonBrightnessDown { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
 
-              XF86AudioNext { spawn "${noctalia-shell}" "ipc" "call" "media" "next"; }
-              XF86AudioPrev { spawn "${noctalia-shell}" "ipc" "call" "media" "previous"; }
-              XF86AudioPlay { spawn "${noctalia-shell}" "ipc" "call" "media" "playPause"; }
+              XF86AudioNext { spawn "noctalia-shell" "ipc" "call" "media" "next"; }
+              XF86AudioPrev { spawn "noctalia-shell" "ipc" "call" "media" "previous"; }
+              XF86AudioPlay { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
 
               XF86KbdBrightnessUp { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%+"; }
               XF86KbdBrightnessDown { spawn "${lib.getExe pkgs.brightnessctl}" "--device" "kbd_backlight" "set" "10%-"; }
