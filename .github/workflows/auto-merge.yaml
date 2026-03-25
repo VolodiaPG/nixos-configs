@@ -14,6 +14,11 @@ jobs:
           - config: dell
             runner: ubuntu-24.04
     steps:
+      - name: Create nix daemon tmpdir path
+        run: |
+          sudo mkdir -p /nix/tmpdir
+          sudo chown "$(whoami)" /nix/tmpdir
+
       - name: Install nix
         uses: cachix/install-nix-action@v30
         with:
@@ -23,6 +28,7 @@ jobs:
             experimental-features = nix-command flakes
             extra-experimental-features = nix-command flakes
             log-lines = 50
+            build-dir = /nix/tmpdir
 
       - uses: cachix/cachix-action@v17
         with:

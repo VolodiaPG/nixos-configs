@@ -59,6 +59,11 @@ jobs:
         with:
           hatchet-protocol: "holster"
 
+      - name: Create nix daemon tmpdir path
+        run: |
+          sudo mkdir -p /nix/tmpdir
+          sudo chown "$(whoami)" /nix/tmpdir
+
       - name: Install nix
         uses: cachix/install-nix-action@v30
         with:
@@ -68,6 +73,7 @@ jobs:
             experimental-features = nix-command flakes
             extra-experimental-features = nix-command flakes
             log-lines = 50
+            build-dir = /nix/tmpdir
 
       - name: Checkout repository
         uses: actions/checkout@v6
