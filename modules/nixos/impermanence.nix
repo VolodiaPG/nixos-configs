@@ -246,6 +246,7 @@ in
           files = [
             ".bash_history"
             ".zsh_history"
+            ".cache/noctalia/wallpapers.json"
             # ".local/share/fish/fish_history"
             # ".local/share/nvim/harpoon.json"
           ];
