@@ -41,6 +41,10 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Check flat inputs
+        run: |
+          nix run github:linyinfeng/flat-flake -- check --lock-file ./flake.lock
+
       - name: Run nix eval for ${{ matrix.config }}
         run: nix eval .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
 

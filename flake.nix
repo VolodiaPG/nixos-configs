@@ -15,6 +15,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
+
+    gitignore = {
+      url = "github:hercules-ci/gitignore.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
     };
@@ -28,12 +38,67 @@
       url = "github:cachix/git-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        gitignore.follows = "gitignore";
       };
+    };
+
+    nixCats.url = "github:BirdeeHub/nixCats-nvim";
+
+    beam-flakes = {
+      url = "github:elixir-tools/nix-beam-flakes";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
+    elixir-expert = {
+      url = "github:elixir-lang/expert";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        beam-flakes.follows = "beam-flakes";
+      };
+    };
+
+    plugins-treesitter-textobjects = {
+      url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
+      flake = false;
+    };
+
+    plugins-inlay-hints = {
+      url = "github:MysticalDevil/inlay-hints.nvim";
+      flake = false;
+    };
+
+    plugins-catppuccin = {
+      url = "github:catppuccin/nvim";
+      flake = false;
+    };
+
+    plugins-vimtex = {
+      url = "github:lervag/vimtex";
+      flake = false;
+    };
+
+    plugins-opencode-nvim = {
+      url = "github:NickvanDyke/opencode.nvim";
+      flake = false;
     };
 
     vim = {
       url = "github:volodiapg/vim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixCats.follows = "nixCats";
+        elixir-expert.follows = "elixir-expert";
+        plugins-catppuccin.follows = "plugins-catppuccin";
+        plugins-inlay-hints.follows = "plugins-inlay-hints";
+        plugins-opencode-nvim.follows = "plugins-opencode-nvim";
+        plugins-treesitter-textobjects.follows = "plugins-treesitter-textobjects";
+        plugins-vimtex.follows = "plugins-vimtex";
+      };
     };
 
     impermanence = {
@@ -80,6 +145,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         utils.follows = "flake-utils";
+        flake-compat.follows = "flake-compat";
       };
     };
 
@@ -92,27 +158,78 @@
       url = "github:volodiapg/nix-cache-proxy";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+
+    blueprint = {
+      url = "github:numtide/blueprint";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
+    };
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    import-tree.url = "github:vic/import-tree";
+
+    bun2nix = {
+      url = "github:nix-community/bun2nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+        flake-parts.follows = "flake-parts";
+        import-tree.follows = "import-tree";
       };
     };
 
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
-      # inputs = {
-      #  nixpkgs.follows = "nixpkgs";
-      #};
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        blueprint.follows = "blueprint";
+        bun2nix.follows = "bun2nix";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
+
+    vpnconfinement = {
+      url = "github:Maroka-chan/VPN-Confinement";
+    };
+
+    website-builder = {
+      url = "github:rasmus-kirk/website-builder";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixarr = {
       url = "github:rasmus-kirk/nixarr";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        vpnconfinement.follows = "vpnconfinement";
+        website-builder.follows = "website-builder";
+      };
     };
 
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
+
+    systems.url = "github:nix-systems/default";
 
     nixos-unified.url = "github:srid/nixos-unified";
     # nixos-unified.url = "path:/home/volodia/Documents/nixos-unified";
 
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
 
     nix-rosetta-builder = {
       url = "github:cpick/nix-rosetta-builder";
@@ -122,17 +239,55 @@
     nixos-apple-silicon = {
       # url = "github:nix-community/nixos-apple-silicon/release-25.11";
       url = "github:nix-community/nixos-apple-silicon";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+      };
+    };
+
+    noctalia-qs = {
+      url = "github:noctalia-dev/noctalia-qs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+      };
     };
 
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        noctalia-qs.follows = "noctalia-qs";
+      };
     };
 
     tidal-to-strawberry = {
       url = "github:volodiapg/tidal-to-strawberry";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
+
+    crane.url = "github:ipetkov/crane";
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    flat-flake = {
+      url = "github:linyinfeng/flat-flake";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+        crane.follows = "crane";
+        rust-overlay.follows = "rust-overlay";
+      };
     };
   };
 
@@ -164,9 +319,14 @@
         "aarch64-linux"
         "aarch64-darwin"
       ];
-      imports =
-        with builtins;
-        map (fn: ./modules/flake-parts/${fn}) (attrNames (readDir ./modules/flake-parts));
+      imports = [
+        inputs.flat-flake.flakeModules.flatFlake
+      ]
+      ++ (
+        with builtins; map (fn: ./modules/flake-parts/${fn}) (attrNames (readDir ./modules/flake-parts))
+      );
+
+      flatFlake.config.allowed = [ ];
 
       perSystem =
         { lib, system, ... }:
