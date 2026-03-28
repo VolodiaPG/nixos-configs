@@ -239,13 +239,16 @@ apply_noctalia_theme() {
 
   info "Applying $theme theme to noctalia-shell..."
 
+  # Use --any-display to apply theme to all displays
+  # https://github.com/noctalia-dev/noctalia-shell/issues/2266
+
   if [ "$theme" == "light" ]; then
-    noctalia-shell ipc call darkMode setLight 2>/dev/null || true
+    noctalia-shell ipc --any-display call darkMode setLight  || true
   else
-    noctalia-shell ipc call darkMode setDark 2>/dev/null || true
+    noctalia-shell ipc --any-display call darkMode setDark  || true
   fi
 
-  noctalia-shell ipc call colorScheme set Catppuccin 2>/dev/null || true
+  noctalia-shell ipc --any-display call colorScheme set Catppuccin  || true
 
   log "Noctalia theme applied"
 }

@@ -13,6 +13,7 @@
   ripgrep,
   # Linux-specific
   glib,
+  noctalia-shell ? null,
 }:
 
 let
@@ -33,6 +34,7 @@ let
   # Linux-specific dependencies (gsettings for theme detection)
   linuxDeps = lib.optionals stdenv.isLinux [
     glib # provides gsettings
+    noctalia-shell # provides noctalia-shell
   ];
 
   # Darwin uses `defaults` which is built into macOS, no extra packages needed
