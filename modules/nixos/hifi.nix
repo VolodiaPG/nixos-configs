@@ -120,10 +120,9 @@ in
 
           "12-buffer-quality" = {
             context.properties = {
-              # ~10.7ms default quantum for good lip-sync at 48kHz
-              "default.clock.quantum" = 512;
-              "default.clock.min-quantum" = 256; # ~5.3ms minimum
-              "default.clock.max-quantum" = 1024; # ~21ms maximum
+              "default.clock.quantum" = 1024;
+              "default.clock.min-quantum" = 512;
+              "default.clock.max-quantum" = 2048;
               "default.clock.quantum-limit" = 8192;
               "default.clock.monotonic" = true;
               "clock.power-of-two-quantum" = true;
@@ -150,10 +149,12 @@ in
               {
                 name = "libpipewire-module-rt";
                 args = {
-                  "nice.level" = -20;
-                  "rt.prio" = 99;
-                  "rt.time.soft" = 2000000;
-                  "rt.time.hard" = 2000000;
+                  # 2. Prevent the core RT scheduler from fighting LAVD.
+                  # Setting this to 0 disables SCHED_FIFO and lets LAVD "see" and manage the thread.
+                  "nice.level" = -15;
+                  "rt.prio" = 0;
+                  "rt.time.soft" = -1;
+                  "rt.time.hard" = -1;
                 };
                 flags = [
                   "ifexists"
@@ -168,6 +169,20 @@ in
         wireplumber = {
           enable = true;
           extraConfig = {
+            "10-alsa-headroom" = {
+              "monitor.alsa.rules" = [
+                {
+                  matches = [
+                    { "node.name" = "~alsa_output.*"; }
+                  ];
+                  actions = {
+                    update-props = {
+                      "api.alsa.headroom" = 1024;
+                    };
+                  };
+                }
+              ];
+            };
             # USB DAC-specific rules to prevent crackling
             "51-usb-dac-config" = {
               "monitor.alsa.rules" = [
