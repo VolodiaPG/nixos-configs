@@ -6,6 +6,18 @@
   dockerTools,
 }:
 {
+  fairydust = {
+    pname = "fairydust";
+    version = "61b6e714dd19b7bee1c0e6ec4234199e640c2932";
+    src = fetchFromGitHub {
+      owner = "AsahiLinux";
+      repo = "linux";
+      rev = "61b6e714dd19b7bee1c0e6ec4234199e640c2932";
+      fetchSubmodules = false;
+      sha256 = "sha256-5eAgJTKcRdjEFzHDSrh/XReaT6Db9YN2RN1SwOs28NE=";
+    };
+    date = "2026-02-15";
+  };
   scx = {
     pname = "scx";
     version = "a27e8edfccf4f3e37c6c0a5b9595d9653ea95825";
@@ -19,7 +31,7 @@
     cargoLock."Cargo.lock" = {
       lockFile = ./. + "/sha256-YMyvTJjShnORsEH5hVSxKcQyAF3_tVq1WotcMVZQkZY=/Cargo.lock";
       outputHashes = {
-        
+
       };
     };
     date = "2026-03-26";
