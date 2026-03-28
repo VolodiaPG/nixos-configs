@@ -713,7 +713,7 @@ in
         general = {
           avatarImage = "/home/${flake.config.me.username}/Pictures/.face";
           showChangelogOnStartup = false;
-          animationDisabled = false;
+          animationDisabled = true;
           enableLockScreenMediaControls = true;
           lockScreenBlur = 1;
         };

@@ -62,6 +62,7 @@ in
         zotero
         drawio
         libreoffice-qt-fresh
+        freerdp
       ];
 
       file = {
