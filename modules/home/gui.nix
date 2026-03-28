@@ -63,6 +63,7 @@ in
         drawio
         libreoffice-qt-fresh
         freerdp
+        legcord
       ];
 
       file = {

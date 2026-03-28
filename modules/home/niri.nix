@@ -474,6 +474,10 @@ in
                 open-maximized true
             }
 
+            window-rule {
+                match app-id=r#"^legcord$"#
+                open-on-workspace "social"
+            }
 
             window-rule {
                 match app-id=r#"^Zotero$"#
