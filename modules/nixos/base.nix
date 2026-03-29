@@ -25,8 +25,12 @@ in
       keyMap = lib.mkForce "fr";
     };
 
-    systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
-    systemd.network.wait-online.enable = false;
+    systemd = {
+      services.NetworkManager-wait-online.enable = lib.mkForce false;
+      network.wait-online.enable = false;
+      # Disable competing default OOM daemon
+      oomd.enable = false;
+    };
 
     boot = {
       loader.grub = {
@@ -78,6 +82,14 @@ in
         enable = true;
         freeMemThreshold = 5;
         freeSwapThreshold = 5;
+        enableNotifications = true;
+        extraArgs = [
+          "-g" # send SIGTERM first
+          "--prefer"
+          "'^(zotero|signal|brave|nvim)$'"
+          "--avoid"
+          "'^(niri|noctalia-shell|kanata)$'"
+        ];
       };
 
       journald.extraConfig = ''
