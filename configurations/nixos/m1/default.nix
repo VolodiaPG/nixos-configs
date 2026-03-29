@@ -1,7 +1,21 @@
-{ flake, pkgs, ... }:
+{
+  flake,
+  pkgs,
+  ...
+}:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
+  # sources = pkgs.callPackage (../../../_sources/generated.nix) { };
+  # asahisrc =
+  #   _:
+  #   pkgs.linuxPackagesFor (
+  #     inputs.nixos-apple-silicon.packages.${pkgs.stdenv.system}.linux-asahi.overrideAttrs (old: {
+  #       inherit (sources.fairydust) src;
+  #     })
+  #   );
+  # asahi2 = pkgs.callPackage asahisrc { };
+  # asahi = asahi2.override { _kernelPatches = config.boot.kernelPatches; };
 in
 {
   imports = [
@@ -20,6 +34,9 @@ in
   ]);
   #hardware.asahi.pkgs = lib.mkForce inputs.nixos-apple-silicon.packages.aarch64-linux;
   #boot.kernelPackages = lib.mkForce (inputs.nixos-apple-silicon.inputs.nixpkgs.legacyPackages.aarch64-linux.linuxPackagesFor inputs.nixos-apple-silicon.packages.aarch64-linux.linux-asahi);
+
+  # boot.kernelPackages = lib.mkForce asahi;
+
   # Enable services via module options
   services = {
     # Core system services
@@ -52,10 +69,10 @@ in
       ac = {
         # scheduler = "scx_flash";
         # args = "-w -C 0 -f";
-        # # extraArgs = "--primary-domain 4-7";
+        # extraArgs = "--primary-domain 4-7";
         # # extraArgs = "--primary-domain 0xF";
         # extraArgs = "--primary-domain performance";
-        # governor = "schedutil";
+        governor = "schedutil";
         scheduler = "scx_lavd";
         args = "--performance";
         extraArgs = "--cpu-pref-order 4-7";
@@ -63,15 +80,36 @@ in
       battery = {
         # scheduler = "scx_flash";
         # args = "-I 10000 -t 10000 -s 10000 -S 1000 -f";
-        # # extraArgs = "--primary-domain 0-3";
+        # extraArgs = "--primary-domain 0-3";
         # # extraArgs = "--primary-domain 0x78";
         # extraArgs = "--primary-domain powersave";
-        # governor = "schedutil";
+        governor = "schedutil";
         scheduler = "scx_lavd";
         args = "--powersave";
         extraArgs = "--cpu-pref-order 0-3";
       };
     };
+    # myScx = {
+    #      enable = true;
+    #      ac = {
+    #        # scx_lavd: Latency-Aware Virtual Deadline scheduler
+    #        # Best for desktop interactivity under heavy load
+    #        # --autopower: Automatically adapts to system load and power profile
+    #        # --performance: Forces performance mode (all cores, race-to-idle)
+    #        scheduler = "scx_lavd";
+    #        args = "--performance";
+    #        extraArgs = "";
+    #        governor = "schedutil";
+    #      };
+    #      battery = {
+    #        # Same scheduler for battery - autopower mode handles the transition
+    #        # When on battery, it automatically uses powersave characteristics
+    #        scheduler = "scx_lavd";
+    #        args = "--powersave";
+    #        extraArgs = "";
+    #        governor = "schedutil";
+    #      };
+    #    };
     virt.enable = true;
     elegantBoot.enable = true;
     hifi.enable = true;

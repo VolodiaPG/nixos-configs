@@ -4,8 +4,8 @@ src.git = "https://github.com/sched-ext/scx"
 src.branch = "main"
 cargo_lock = ["Cargo.lock"]
 
-[fairydust]
-fetch.github = "AsahiLinux/linux"
-src.git = "https://github.com/AsahiLinux/linux"
-src.branch = "fairydust"
+# [fairydust]
+# fetch.github = "AsahiLinux/linux"
+# src.git = "https://github.com/AsahiLinux/linux"
+# src.branch = "fairydust"
 

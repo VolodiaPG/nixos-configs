@@ -6,34 +6,22 @@
   dockerTools,
 }:
 {
-  fairydust = {
-    pname = "fairydust";
-    version = "61b6e714dd19b7bee1c0e6ec4234199e640c2932";
-    src = fetchFromGitHub {
-      owner = "AsahiLinux";
-      repo = "linux";
-      rev = "61b6e714dd19b7bee1c0e6ec4234199e640c2932";
-      fetchSubmodules = false;
-      sha256 = "sha256-5eAgJTKcRdjEFzHDSrh/XReaT6Db9YN2RN1SwOs28NE=";
-    };
-    date = "2026-02-15";
-  };
   scx = {
     pname = "scx";
-    version = "a27e8edfccf4f3e37c6c0a5b9595d9653ea95825";
+    version = "d9da4ca0adbed83ab4e8c5bdd24cd73711a8f2ee";
     src = fetchFromGitHub {
       owner = "sched-ext";
       repo = "scx";
-      rev = "a27e8edfccf4f3e37c6c0a5b9595d9653ea95825";
+      rev = "d9da4ca0adbed83ab4e8c5bdd24cd73711a8f2ee";
       fetchSubmodules = false;
-      sha256 = "sha256-YMyvTJjShnORsEH5hVSxKcQyAF3/tVq1WotcMVZQkZY=";
+      sha256 = "sha256-lhA8/86JSlQQLE4DHoh1DwwRBqIYwg8D1AXYN22ubc8=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./. + "/sha256-YMyvTJjShnORsEH5hVSxKcQyAF3_tVq1WotcMVZQkZY=/Cargo.lock";
+      lockFile = ./. + "/sha256-lhA8_86JSlQQLE4DHoh1DwwRBqIYwg8D1AXYN22ubc8=/Cargo.lock";
       outputHashes = {
 
       };
     };
-    date = "2026-03-26";
+    date = "2026-03-28";
   };
 }
