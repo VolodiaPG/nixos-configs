@@ -633,12 +633,12 @@ in
       settings = {
         # configure noctalia here
         dock.enabled = false;
-        ui.backgroundOpacity = 1;
+        ui.panelBackgroundOpacity = 1;
         bar = {
           density = "mini";
           barType = "simple";
           position = "bottom";
-          showCapsule = true;
+          showCapsule = false;
           backgroundOpacity = 1;
           widgets = {
             left = [
