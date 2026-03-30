@@ -24,6 +24,7 @@ _final: prev:
     difftastic
     zotero
     nvfetcher
+    kanata
     ;
 
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
