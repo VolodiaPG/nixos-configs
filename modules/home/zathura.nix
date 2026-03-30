@@ -83,35 +83,35 @@ in
 
       mappings = {
         # Navigation
-        "J" = "scroll half-down";
-        "K" = "scroll half-up";
-        "H" = "scroll half-left";
-        "L" = "scroll half-right";
+        "[normal] J" = "scroll half-down";
+        "[normal] K" = "scroll half-up";
+        "[normal] H" = "scroll half-left";
+        "[normal] L" = "scroll half-right";
 
         # Zoom
-        "+" = "zoom in";
-        "-" = "zoom out";
-        "=" = "zoom in";
+        "[normal] +" = "zoom in";
+        "[normal] -" = "zoom out";
+        "[normal] =" = "zoom in";
 
         # Page navigation
-        "gg" = "goto top";
-        "G" = "goto bottom";
+        "[normal] gg" = "goto top";
+        "[normal] G" = "goto bottom";
 
         # Search
         "[normal] n" = "search forward";
         "[normal] N" = "search backward";
 
         # Modes
-        "r" = "recolor";
-        "R" = "reload";
-        "f" = "toggle_fullscreen";
-        "s" = "toggle_statusbar";
+        "[normal] r" = "recolor";
+        "[normal] R" = "reload";
+        "[normal] f" = "toggle_fullscreen";
+        "[normal] s" = "toggle_statusbar";
 
         # Quit
-        "q" = "quit";
+        "[normal] q" = "quit";
 
         # Index (table of contents)
-        "<Tab>" = "toggle_index";
+        "[normal] <Tab>" = "toggle_index";
       };
       extraConfig = ''
         # Additional settings
