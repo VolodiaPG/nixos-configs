@@ -670,6 +670,9 @@ in
               {
                 id = "plugin:catwalk";
               }
+              {
+                id = "plugin:pomodoro";
+              }
             ];
             center = [
               {
@@ -789,6 +792,10 @@ in
               inherit sourceUrl;
             };
             mini-docker = {
+              enabled = true;
+              inherit sourceUrl;
+            };
+            pomodoro = {
               enabled = true;
               inherit sourceUrl;
             };
