@@ -65,7 +65,7 @@ in
     # Hardware and kernel
     kernel.enable = true;
     myScx = {
-      enable = true;
+      enable = false;
       ac = {
         # scheduler = "scx_flash";
         # args = "-w -C 0 -f";
@@ -110,6 +110,7 @@ in
     #        governor = "schedutil";
     #      };
     #    };
+    myAnanicy.enable = true;
     virt.enable = true;
     elegantBoot.enable = true;
     hifi.enable = true;

@@ -24,6 +24,7 @@ let
     "scx_userland"
     "scx_cosmos"
     "scx_cake"
+    "scx_beerland"
   ];
 
   sources = pkgs.callPackage (../../_sources/generated.nix) { };
@@ -35,7 +36,6 @@ let
       doCheck = false;
       cargoBuildFlags = [
         "-p"
-        # "scx_cosmos"Q
         sched
       ];
       cargoDeps = pkgs.rustPlatform.importCargoLock {
@@ -122,7 +122,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    # https://wiki.cachyos.org/configuration/sched-ext/
+    boot.kernel.sysctl = {
+      "kernel.sched_autogroup_enabled" = 1;
+      "kernel.sched_child_runs_first" = 0;
+    };
 
     environment.systemPackages = [
       (rustsched cfg.ac.scheduler)
@@ -141,6 +144,24 @@ in
           BPF_JIT_ALWAYS_ON = lib.mkForce yes;
           BPF_JIT_DEFAULT_ON = yes;
           SCHED_CLASS_EXT = yes;
+          # Required for cgroup subscription features (sub_attach, sub_detach, sub_cgroup_id)
+          #
+          # CGROUPS = yes;
+          # CGROUP_SCHED = yes;
+          # CGROUP_PIDS = yes;
+          # CGROUP_RDMA = yes;
+          # CGROUP_FREEZER = yes;
+          # CGROUP_DEVICE = yes;
+          # CGROUP_CPUACCT = yes;
+          # CGROUP_PERF = yes;
+          # CGROUP_BPF = yes;
+          # CGROUP_MISC = yes;
+          # # Additional BPF features for sched_ext
+          # BPF_EVENTS = yes;
+          # BPF_STREAM_PARSER = yes;
+          # BPF_LSM = yes;
+          # BPF_LIRC_MODE2 = yes;
+
         };
       }
     ];
