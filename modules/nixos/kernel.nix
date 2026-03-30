@@ -45,7 +45,7 @@ in
     };
 
     services = {
-      power-profiles-daemon.enable = false;
+      # power-profiles-daemon.enable = false;
       thermald.enable = pkgs.stdenv.isx86_64;
       acpid.enable = true;
       # tlp = {

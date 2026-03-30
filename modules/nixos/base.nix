@@ -32,6 +32,8 @@ in
       oomd.enable = false;
     };
 
+    powerManagement.enable = lib.mkDefault true;
+
     boot = {
       loader.grub = {
         configurationLimit = 20;
@@ -67,6 +69,8 @@ in
     };
 
     services = {
+      upower.enable = lib.mkDefault true;
+      power-profiles-daemon.enable = true;
       fail2ban = {
         enable = true;
         maxretry = 5;
