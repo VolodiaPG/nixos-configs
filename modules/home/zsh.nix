@@ -180,6 +180,12 @@ in
           }
           refresh_tmux_session_name
         fi
+
+        if [[ -o interactive ]]; then
+          if command -v theme-switcher &> /dev/null; then
+            theme-switcher -t tmux,kitty &> /dev/null &|
+          fi
+        fi
       '';
       shellAliases = {
         ll = "ls -l";
