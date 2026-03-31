@@ -71,6 +71,17 @@ _final: prev:
          --add-flags '--ozone-platform=wayland'
     '';
   };
+  strawberry = prev.symlinkJoin {
+    name = "strawberry";
+    paths = [
+      prev.strawberry
+    ];
+    buildInputs = [ prev.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/strawberry \
+      --run "systemctl --user restart pipewire pipewire-pulse wireplumber tidal-to-strawberry"
+    '';
+  };
   brave = prev.symlinkJoin {
     name = "brave";
     paths = [ prev.brave ];
