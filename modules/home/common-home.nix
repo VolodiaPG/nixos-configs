@@ -105,7 +105,6 @@ in
         htop
         nmap
         wget
-        fzf
         grc
         bottom
         libgtop

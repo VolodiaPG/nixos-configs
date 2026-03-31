@@ -38,6 +38,7 @@ in
 
     programs = {
       opencode.enable = true;
+      fzf.enable = true;
       lazygit = {
         enable = true;
         enableZshIntegration = true;
