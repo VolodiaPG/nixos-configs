@@ -196,8 +196,8 @@ in
         ga = "git add .";
         c = "clear";
         n = "nvim";
-        oc = "opencode --port";
         opencode = "opencode --port";
+        oc = "opencode";
       };
       plugins = [
         {
