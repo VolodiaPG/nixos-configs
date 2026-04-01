@@ -86,8 +86,11 @@ in
       packages = with pkgs; [
         corefonts
         roboto
+        roboto-serif
         joypixels
         nerd-fonts.iosevka-term
+        noto-fonts-cjk-sans
+        noto-fonts-cjk-serif
       ];
       fontconfig.defaultFonts = {
         monospace = [
@@ -96,6 +99,10 @@ in
 
         sansSerif = [
           "Roboto"
+        ];
+
+        serif = [
+          "Roboto Serif"
         ];
       };
     };
