@@ -299,7 +299,8 @@ in
         # NETWORK - CONGESTION CONTROL AND QUEUEING
         # --------------------------------------------------------------------------
         # CAKE (Common Applications Kept Enhanced) - fair queueing with low latency
-        "net.core.default_qdisc" = "cake";
+        # "net.core.default_qdisc" = "cake";
+        "net.core.default_qdisc" = "fq";
 
         # BBR (Bottleneck Bandwidth and RTT) - Google's congestion control algorithm
         # Provides higher throughput and lower latency than CUBIC
