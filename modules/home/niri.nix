@@ -417,7 +417,15 @@ in
 
               // Slow down all animations by this factor. Values below 1 speed them up instead.
               // slowdown 0.1
-            }'';
+            }
+
+            // Disable the hot corners.
+            gestures {
+                hot-corners {
+                    off
+                }
+            }
+          '';
 
           workspaces = ''
             workspace "browser"
