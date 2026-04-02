@@ -2,7 +2,8 @@ name: update-flake-lock
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
-    - cron: "00 6 * * *" # runs at 4 AM UTC
+    - cron: "0 6 * * *"
+      timezone: "Europe/Paris"
 
 jobs:
   lockfile:
