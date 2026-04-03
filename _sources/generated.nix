@@ -8,16 +8,16 @@
 {
   scx = {
     pname = "scx";
-    version = "7c09a8833235f708d7f0e64e794001aebe5182d2";
+    version = "ecc79ea8719b44ada359a0d085de295eff8394e9";
     src = fetchFromGitHub {
       owner = "sched-ext";
       repo = "scx";
-      rev = "7c09a8833235f708d7f0e64e794001aebe5182d2";
+      rev = "ecc79ea8719b44ada359a0d085de295eff8394e9";
       fetchSubmodules = false;
-      sha256 = "sha256-Fj83IB0tKYal/EEa/S6+VKjcRW6nn3pqd5zDyubxw2I=";
+      sha256 = "sha256-gfgojQRFUW12RKgTQPcNy/cI9XXwhbfD902qEDp6JH8=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./. + "/sha256-Fj83IB0tKYal_EEa_S6+VKjcRW6nn3pqd5zDyubxw2I=/Cargo.lock";
+      lockFile = ./. + "/sha256-gfgojQRFUW12RKgTQPcNy_cI9XXwhbfD902qEDp6JH8=/Cargo.lock";
       outputHashes = {
         
       };
