@@ -1,9 +1,10 @@
 {
-  me = {
+  me = rec {
     name = "Volodia P.G.";
     username = "volodia";
     cachixName = "volodiapg";
     homeDirectory = stdenv: if stdenv.isDarwin then "/Users/volodia" else "/home/volodia";
+    chezmoiDirectory = stdenv: "${homeDirectory stdenv}/Documents/nixos-configs";
     tailname = "goblin-alewife.ts.net";
     email = "volodia.parol-guarino@proton.me";
     signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT";

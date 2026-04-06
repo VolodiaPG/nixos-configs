@@ -30,6 +30,7 @@ in
       gui.enable = true;
       wm.gnome.enable = false;
       wm.niri.enable = true;
+      chezmoi.enable = true;
 
       programs.kitty.font.size = 12;
 

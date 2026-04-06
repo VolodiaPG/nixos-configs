@@ -44,6 +44,9 @@ let
       trusted-public-keys = lib.mkOption {
         type = lib.types.listOf lib.types.str;
       };
+      chezmoiDirectory = lib.mkOption {
+        type = lib.types.functionTo lib.types.path;
+      };
     };
   };
 in

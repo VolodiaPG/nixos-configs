@@ -185,6 +185,8 @@ in
           if command -v theme-switcher &> /dev/null; then
             theme-switcher -t tmux,kitty &> /dev/null &|
           fi
+
+        eval "$(starship init zsh)"
         fi
       '';
       shellAliases = {

@@ -32,31 +32,31 @@ in
       };
       ssh.enable = true;
       tmux.enable = true;
-      starship = {
-        enable = true;
-        enableZshIntegration = true;
-        settings = {
-          add_newline = false;
-          format = lib.concatStrings [
-            "$directory"
-            "$git_branch"
-            "$git_status"
-            "$cmd_duration"
-            "$character"
-          ];
-
-          directory = {
-            format = "[$path]($style) ";
-          };
-
-          character = {
-            success_symbol = "[➜](green)";
-            error_symbol = "[➜](red)";
-          };
-
-          scan_timeout = 10;
-        };
-      };
+      # starship = {
+      #   enable = true;
+      #   enableZshIntegration = true;
+      #   settings = {
+      #     add_newline = false;
+      #     format = lib.concatStrings [
+      #       "$directory"
+      #       "$git_branch"
+      #       "$git_status"
+      #       "$cmd_duration"
+      #       "$character"
+      #     ];
+      #
+      #     directory = {
+      #       format = "[$path]($style) ";
+      #     };
+      #
+      #     character = {
+      #       success_symbol = "[➜](green)";
+      #       error_symbol = "[➜](red)";
+      #     };
+      #
+      #     scan_timeout = 10;
+      #   };
+      # };
       keychain = {
         enable = true;
         enableZshIntegration = true;
@@ -109,6 +109,8 @@ in
         bottom
         libgtop
         lsof
+        chezmoi
+        starship
       ];
 
       sessionVariables = {
