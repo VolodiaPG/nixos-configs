@@ -2,7 +2,6 @@
   pkgs,
   config,
   lib,
-  flake,
   ...
 }:
 with lib;
@@ -638,192 +637,192 @@ in
 
     programs.noctalia-shell = {
       enable = true;
-      settings = {
-        # configure noctalia here
-        dock.enabled = false;
-        ui.panelBackgroundOpacity = 1;
-        bar = {
-          density = "mini";
-          barType = "simple";
-          position = "bottom";
-          showCapsule = false;
-          backgroundOpacity = 1;
-          widgets = {
-            left = [
-              {
-                id = "ControlCenter";
-                useDistroLogo = true;
-              }
-              {
-                id = "Launcher";
-              }
-              {
-                id = "plugin:mini-docker";
-              }
-              {
-                id = "plugin:tailscale";
-              }
-              {
-                id = "SystemMonitor";
-                compactMode = true;
-                showCpuUsage = false;
-                showCpuTemp = false;
-                showNetworkStats = true;
-                showDiskUsage = true;
-                showSwapUsage = true;
-              }
-              # {
-              #   id = "ActiveWindow";
-              # }
-              {
-                id = "plugin:catwalk";
-              }
-              {
-                id = "plugin:pomodoro";
-              }
-            ];
-            center = [
-              {
-                id = "Workspace";
-                showApplications = true;
-                iconScale = 1.0;
-              }
-            ];
-            right = [
-              {
-                id = "MediaMini";
-              }
-              {
-                id = "Tray";
-              }
-              {
-                id = "Battery";
-                alwaysShowPercentage = true;
-                warningThreshold = 50;
-              }
-              {
-                id = "Volume";
-              }
-              {
-                id = "Brightness";
-              }
-              {
-                id = "plugin:kde-connect";
-              }
-              {
-                formatHorizontal = "HH:mm";
-                formatVertical = "HH mm";
-                id = "Clock";
-                useMonospacedFont = true;
-                usePrimaryColor = true;
-              }
-              {
-                id = "NotificationHistory";
-              }
-
-            ];
-          };
-        };
-        colorSchemes.predefinedScheme = "Catppucin";
-        general = {
-          avatarImage = "/home/${flake.config.me.username}/Pictures/.face";
-          showChangelogOnStartup = false;
-          animationDisabled = true;
-          enableLockScreenMediaControls = true;
-          lockScreenBlur = 1;
-        };
-        location = {
-          monthBeforeDay = false;
-          # name = "Rennes, France";
-          name = "Nages-et-Solorgues, France";
-        };
-        brightness = {
-          brightnessStep = 5;
-          enforceMinimum = true;
-          enableDdcSupport = true;
-          backlightDeviceMappings = [
-            {
-              output = "eDP-1";
-              device = "/sys/class/backlight/apple-panel-bl";
-            }
-          ];
-        };
-        osd = {
-          location = "bottom_center";
-          autoHideMs = 700;
-          backgroundOpacity = 1;
-        };
-        notifications.location = "bottom_center";
-        idle = {
-          enabled = true;
-          screenOffTimeout = 120;
-          lockTimeout = 200;
-          suspendTimeout = 99999999;
-          fadeDuration = 5;
-        };
-        hooks = {
-          enabled = true;
-          wallpaperChange = "";
-          darkModeChange = "";
-          screenLock = "";
-          screenUnlock = "";
-          performanceModeEnabled = "sudo systemctl start scx-performance.service";
-          performanceModeDisabled = "sudo systemctl start scx-powersave.service";
-          startup = "";
-          session = "";
-        };
-      };
-
-      plugins = {
-        sources = [
-          {
-            enabled = true;
-            name = "Official Noctalia Plugins";
-            url = "https://github.com/noctalia-dev/noctalia-plugins";
-          }
-        ];
-        states =
-          let
-            sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-          in
-          {
-            catwalk = {
-              enabled = true;
-              inherit sourceUrl;
-            };
-            kde-connect = {
-              enabled = true;
-              inherit sourceUrl;
-            };
-            tailscale = {
-              enabled = true;
-              inherit sourceUrl;
-            };
-            mini-docker = {
-              enabled = true;
-              inherit sourceUrl;
-            };
-            pomodoro = {
-              enabled = true;
-              inherit sourceUrl;
-            };
-          };
-        version = 2;
-      };
-      # this may also be a string or a path to a JSON file.
-
-      pluginSettings = {
-        catwalk = {
-          minimumThreshold = 25;
-          hideBackground = true;
-        };
-        tailscale = {
-          showIpAddress = false;
-          terminalCommand = "kitty";
-          compactMode = true;
-        };
-        # this may also be a string or a path to a JSON file.
-      };
+      #   settings = {
+      #     # configure noctalia here
+      #     dock.enabled = false;
+      #     ui.panelBackgroundOpacity = 1;
+      #     bar = {
+      #       density = "mini";
+      #       barType = "simple";
+      #       position = "bottom";
+      #       showCapsule = false;
+      #       backgroundOpacity = 1;
+      #       widgets = {
+      #         left = [
+      #           {
+      #             id = "ControlCenter";
+      #             useDistroLogo = true;
+      #           }
+      #           {
+      #             id = "Launcher";
+      #           }
+      #           {
+      #             id = "plugin:mini-docker";
+      #           }
+      #           {
+      #             id = "plugin:tailscale";
+      #           }
+      #           {
+      #             id = "SystemMonitor";
+      #             compactMode = true;
+      #             showCpuUsage = false;
+      #             showCpuTemp = false;
+      #             showNetworkStats = true;
+      #             showDiskUsage = true;
+      #             showSwapUsage = true;
+      #           }
+      #           # {
+      #           #   id = "ActiveWindow";
+      #           # }
+      #           {
+      #             id = "plugin:catwalk";
+      #           }
+      #           {
+      #             id = "plugin:pomodoro";
+      #           }
+      #         ];
+      #         center = [
+      #           {
+      #             id = "Workspace";
+      #             showApplications = true;
+      #             iconScale = 1.0;
+      #           }
+      #         ];
+      #         right = [
+      #           {
+      #             id = "MediaMini";
+      #           }
+      #           {
+      #             id = "Tray";
+      #           }
+      #           {
+      #             id = "Battery";
+      #             alwaysShowPercentage = true;
+      #             warningThreshold = 50;
+      #           }
+      #           {
+      #             id = "Volume";
+      #           }
+      #           {
+      #             id = "Brightness";
+      #           }
+      #           {
+      #             id = "plugin:kde-connect";
+      #           }
+      #           {
+      #             formatHorizontal = "HH:mm";
+      #             formatVertical = "HH mm";
+      #             id = "Clock";
+      #             useMonospacedFont = true;
+      #             usePrimaryColor = true;
+      #           }
+      #           {
+      #             id = "NotificationHistory";
+      #           }
+      #
+      #         ];
+      #       };
+      #     };
+      #     colorSchemes.predefinedScheme = "Catppucin";
+      #     general = {
+      #       avatarImage = "/home/${flake.config.me.username}/Pictures/.face";
+      #       showChangelogOnStartup = false;
+      #       animationDisabled = true;
+      #       enableLockScreenMediaControls = true;
+      #       lockScreenBlur = 1;
+      #     };
+      #     location = {
+      #       monthBeforeDay = false;
+      #       # name = "Rennes, France";
+      #       name = "Nages-et-Solorgues, France";
+      #     };
+      #     brightness = {
+      #       brightnessStep = 5;
+      #       enforceMinimum = true;
+      #       enableDdcSupport = true;
+      #       backlightDeviceMappings = [
+      #         {
+      #           output = "eDP-1";
+      #           device = "/sys/class/backlight/apple-panel-bl";
+      #         }
+      #       ];
+      #     };
+      #     osd = {
+      #       location = "bottom_center";
+      #       autoHideMs = 700;
+      #       backgroundOpacity = 1;
+      #     };
+      #     notifications.location = "bottom_center";
+      #     idle = {
+      #       enabled = true;
+      #       screenOffTimeout = 120;
+      #       lockTimeout = 200;
+      #       suspendTimeout = 99999999;
+      #       fadeDuration = 5;
+      #     };
+      #     hooks = {
+      #       enabled = true;
+      #       wallpaperChange = "";
+      #       darkModeChange = "";
+      #       screenLock = "";
+      #       screenUnlock = "";
+      #       performanceModeEnabled = "sudo systemctl start scx-performance.service";
+      #       performanceModeDisabled = "sudo systemctl start scx-powersave.service";
+      #       startup = "";
+      #       session = "";
+      #     };
+      #   };
+      #
+      #   plugins = {
+      #     sources = [
+      #       {
+      #         enabled = true;
+      #         name = "Official Noctalia Plugins";
+      #         url = "https://github.com/noctalia-dev/noctalia-plugins";
+      #       }
+      #     ];
+      #     states =
+      #       let
+      #         sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+      #       in
+      #       {
+      #         catwalk = {
+      #           enabled = true;
+      #           inherit sourceUrl;
+      #         };
+      #         kde-connect = {
+      #           enabled = true;
+      #           inherit sourceUrl;
+      #         };
+      #         tailscale = {
+      #           enabled = true;
+      #           inherit sourceUrl;
+      #         };
+      #         mini-docker = {
+      #           enabled = true;
+      #           inherit sourceUrl;
+      #         };
+      #         pomodoro = {
+      #           enabled = true;
+      #           inherit sourceUrl;
+      #         };
+      #       };
+      #     version = 2;
+      #   };
+      #   # this may also be a string or a path to a JSON file.
+      #
+      #   pluginSettings = {
+      #     catwalk = {
+      #       minimumThreshold = 25;
+      #       hideBackground = true;
+      #     };
+      #     tailscale = {
+      #       showIpAddress = false;
+      #       terminalCommand = "kitty";
+      #       compactMode = true;
+      #     };
+      #     # this may also be a string or a path to a JSON file.
+      #   };
     };
   };
 }
