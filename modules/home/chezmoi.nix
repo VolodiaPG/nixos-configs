@@ -31,7 +31,7 @@ in
         # a lot of my chezmoi scripts needs system programs to work, might be a bad idea idk
         PATH=$PATH:/usr/local/bin:/usr/bin:/bin
 
-        run ${pkgs.chezmoi}/bin/chezmoi apply -S ${self} $VERBOSE_ARG
+        run ${pkgs.chezmoi}/bin/chezmoi apply -S ${self} --force $VERBOSE_ARG
 
         # return it back
         PATH=$_saved_path

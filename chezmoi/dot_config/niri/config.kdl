@@ -1,0 +1,281 @@
+// Niri configuration
+
+input {
+  keyboard {
+    xkb {
+      layout "fr"
+
+
+    }
+  }
+
+  touchpad {
+    //tap
+    // dwt
+    // dwtp
+    // drag false
+    // drag-lock
+    // accel-profile "flat"
+    scroll-factor 0.1
+    // scroll-factor vertical=1.0 horizontal=-2.0
+    scroll-method "two-finger"
+    // scroll-button 273
+    // scroll-button-lock
+    // tap-button-map "left-middle-right"
+    // click-method "clickfinger"
+    // left-handed
+    // disabled-on-external-mouse
+    // middle-emulation
+
+    natural-scroll
+  }
+
+
+  mouse {
+      // off
+      // natural-scroll
+      // accel-speed 0.2
+      accel-profile "flat"
+      // scroll-factor 2.0
+      // scroll-factor vertical=1.0 horizontal=-2.0
+      // scroll-method "no-scroll"
+      // scroll-button 273
+      // scroll-button-lock
+      // left-handed
+      // middle-emulation
+  }
+}
+
+
+layout {
+  gaps 8
+
+
+}
+
+
+
+
+
+
+spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia-shell ipc call lockScreen lock"
+spawn-at-startup "noctalia-shell"
+
+binds {
+  // Window management
+  Mod+Space { spawn "fuzzel"; }
+  Mod+Shift+E { quit; }
+
+  // Window focus
+  Mod+h { focus-column-left; }
+  Mod+l { focus-column-right; }
+  Mod+k { focus-window-up; }
+  Mod+j { focus-window-down; }
+
+  // Window movement
+  Mod+Left { move-column-left; }
+  Mod+Right { move-column-right; }
+  Mod+Up { move-window-up; }
+  Mod+Down { move-window-down; }
+
+  // Window actions
+  Mod+Q { close-window; }
+  Mod+F { maximize-column; }
+  Mod+Shift+F { fullscreen-window; }
+
+  // Workspaces
+  Mod+Ampersand { focus-workspace 1; }
+  Mod+Eacute { focus-workspace 2; }
+  Mod+Quotedbl { focus-workspace 3; }
+  Mod+Apostrophe { focus-workspace 4; }
+  Mod+Parenleft { focus-workspace 5; }
+  Mod+Minus { focus-workspace 6; }
+  Mod+Egrave { focus-workspace 7; }
+  Mod+Underscore { focus-workspace 8; }
+  Mod+Ccedilla { focus-workspace 9; }
+  Mod+Agrave { focus-workspace 10; }
+
+  Mod+Shift+Ampersand { move-column-to-workspace 1; }
+  Mod+Shift+Eacute { move-column-to-workspace 2; }
+  Mod+Shift+Quotedbl { move-column-to-workspace 3; }
+  Mod+Shift+Apostrophe { move-column-to-workspace 4; }
+  Mod+Shift+Parenleft { move-column-to-workspace 5; }
+  Mod+Shift+Minus { move-column-to-workspace 6; }
+  Mod+Shift+Egrave{ move-column-to-workspace 7; }
+  Mod+Shift+Underscore { move-column-to-workspace 8; }
+  Mod+Shift+Ccedilla { move-column-to-workspace 9; }
+  Mod+Shift+Agrave { move-column-to-workspace 10; }
+
+  // Screenshot
+  Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -c '#ff0000ff')\" -t ppm - | satty --filename - --output-filename ~/Pictures/satty-$(date '+%Y%m%d-%H:%M:%S').png"; }
+  Print { spawn "sh" "-c" "grim - | wl-copy"; }
+
+  // Lock screen
+  Mod+Escape { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+
+  // Pin a window to all workspaces
+  Mod+P { spawn "nirius" "toggle-follow-mode"; }
+
+  Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
+
+  // Volume control
+  XF86AudioRaiseVolume { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
+  XF86AudioLowerVolume { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
+  XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
+
+  // Brightness control
+  XF86MonBrightnessUp { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
+  XF86MonBrightnessDown { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+
+  XF86AudioNext { spawn "noctalia-shell" "ipc" "call" "media" "next"; }
+  XF86AudioPrev { spawn "noctalia-shell" "ipc" "call" "media" "previous"; }
+  XF86AudioPlay { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
+
+  XF86KbdBrightnessUp { spawn "brightnessctl" "--device" "kbd_backlight" "set" "10%+"; }
+  XF86KbdBrightnessDown { spawn "brightnessctl" "--device" "kbd_backlight" "set" "10%-"; }
+}
+
+
+
+
+animations {
+  // Uncomment to turn off all animations.
+  // You can also put "off" into each individual animation to disable it.
+  off
+
+  // Slow down all animations by this factor. Values below 1 speed them up instead.
+  // slowdown 0.1
+}
+
+// Disable the hot corners.
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+
+workspace "browser"
+workspace "terminal"
+workspace "social"
+workspace "fizzy"
+workspace "misc"
+workspace "music"
+workspace "zotero"
+workspace "misc2"
+workspace "misc3"
+
+window-rule {
+    match app-id=r#"^kitty$"#
+    open-on-workspace "terminal"
+    open-maximized true
+}
+
+window-rule {
+    match app-id=r#"^brave-browser$"#
+    open-on-workspace "browser"
+    open-maximized true
+    //scroll-factor 0.5
+}
+
+window-rule {
+    match title=r#".*Fizzy$"#
+    open-on-workspace "fizzy"
+    open-maximized true
+    //scroll-factor 0.5
+}
+
+window-rule {
+    match title=r#".*Proton Mail$"#
+    open-on-workspace "social"
+    open-maximized true
+    //scroll-factor 0.5
+}
+
+window-rule {
+    match app-id=r#"^org.pwmt.zathura$"#
+    //scroll-factor 0.8
+}
+
+window-rule {
+    match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
+    open-on-workspace "music"
+    open-maximized true
+}
+
+window-rule {
+    match app-id=r#"^signal$"#
+    open-on-workspace "social"
+    open-maximized true
+}
+
+window-rule {
+    match app-id=r#"^legcord$"#
+    open-on-workspace "social"
+}
+
+window-rule {
+    match app-id=r#"^Zotero$"#
+    open-on-workspace "zotero"
+    open-maximized true
+}
+
+// Open the Firefox picture-in-picture window as floating.
+window-rule {
+    match title="Picture-in-Picture"
+
+    open-floating true
+    default-column-width { fixed 480; }
+    default-window-height { fixed 270; }
+    default-floating-position x=0 y=0 relative-to="bottom-right"
+    opacity 0.5
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// Indicate screencasted windows with red colors.
+window-rule {
+    match is-window-cast-target=true
+
+    focus-ring {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+
+    border {
+        inactive-color "#7d0d2d"
+    }
+
+    shadow {
+        color "#7d0d2d70"
+    }
+
+    tab-indicator {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+}
+
+// Block out password managers from screencasts.
+window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+    match app-id=r#"^signal$"#
+    match title=r#".*Proton Mail$"#
+    match title=r#"mail"#
+    match title=r#"Bitwarden"#
+
+    block-out-from "screencast"
+}
+
+// Block out mako notifications from screencasts.
+layer-rule {
+    match namespace="^notifications$"
+
+    block-out-from "screencast"
+}
+
+
