@@ -26,7 +26,6 @@ in
       # Enable home modules
       commonHome.enable = true;
       interactive.enable = true;
-      homePackagesPersonal.enable = true;
       gui.enable = true;
       wm.gnome.enable = false;
       wm.niri.enable = true;

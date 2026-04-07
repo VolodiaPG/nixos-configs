@@ -70,6 +70,9 @@ in
         git-crypt
         python3
         difftastic
+        cachix
+        nvim
+        devenv
       ];
 
       stateVersion = "22.05";

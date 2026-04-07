@@ -41,7 +41,6 @@ in
         nix-direnv.enable = true;
         enableZshIntegration = true;
       };
-      zathura.enable = true;
     };
 
     home = {
@@ -64,6 +63,7 @@ in
         libreoffice-qt-fresh
         freerdp
         legcord
+        zathura
       ];
 
       file = {

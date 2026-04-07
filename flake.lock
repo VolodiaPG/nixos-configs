@@ -1003,11 +1003,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775140654,
-        "narHash": "sha256-bC/2rwdk/mRLzWPidrSpRsE1UlCzXhS2xvaonkc/dpE=",
+        "lastModified": 1775564031,
+        "narHash": "sha256-f2KRsB2urmfwNO3cIPP6m84Z66sotL7ytWrFbuV6x/s=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "6b164e8202ccd2cd21b5e4c14323a00399e50a04",
+        "rev": "ab477c464c85dff9789e398bd0be5a354919aa5e",
         "type": "github"
       },
       "original": {

@@ -1,0 +1,25 @@
+{
+  "preset": "custom",
+  "presets": {
+    "custom": {
+      "designer": {
+        "mcps": [],
+        "model": "opencode/kimi-k2.5",
+        "skills": ["agent-browser"]
+      },
+      "explorer": { "mcps": [], "model": "opencode/kimi-k2.5", "skills": [] },
+      "fixer": { "mcps": [], "model": "opencode/minimax-m2.5", "skills": [] },
+      "librarian": {
+        "mcps": ["websearch", "context7", "grep_app"],
+        "model": "opencode/kimi-k2.5",
+        "skills": []
+      },
+      "oracle": { "mcps": [], "model": "opencode/kimi-k2.5", "skills": [] },
+      "orchestrator": {
+        "mcps": ["websearch"],
+        "model": "opencode/kimi-k2.5",
+        "skills": ["*"]
+      }
+    }
+  }
+}
