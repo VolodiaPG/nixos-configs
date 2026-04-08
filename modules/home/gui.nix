@@ -32,7 +32,6 @@ in
       };
     };
     programs = {
-      kitty.enable = true;
       nix-index.enable = true;
       nix-index-database.comma.enable = true;
       direnv = {
@@ -64,6 +63,8 @@ in
         freerdp
         legcord
         zathura
+        kitty-themes
+        kitty
       ];
 
       file = {
