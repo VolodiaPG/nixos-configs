@@ -27,11 +27,14 @@ _final: prev:
     kanata
     ;
 
+  nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;
+
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
     opencode
     ;
 
-  inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
+  # inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
+  nvim = prev.neovim;
 
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
     theme-switcher

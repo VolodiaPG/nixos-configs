@@ -184,7 +184,7 @@
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixpkgs-unstable";
         blueprint.follows = "blueprint";
         bun2nix.follows = "bun2nix";
         flake-parts.follows = "flake-parts";
