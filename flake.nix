@@ -135,11 +135,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hosts = {
-      url = "github:StevenBlack/hosts";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs = {

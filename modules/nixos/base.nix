@@ -143,6 +143,7 @@ in
       pkgs.lm_sensors
       pkgs.ecryptfs
       pkgs.fscrypt-experimental
+      pkgs.jq
     ];
 
     security = {

@@ -128,6 +128,7 @@ in
 
     # From nixos
     # blueman.enable = true;
+    blocky.enable = true;
   };
 
   systemd = {

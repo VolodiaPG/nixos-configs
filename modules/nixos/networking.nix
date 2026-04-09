@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  flake,
   ...
 }:
 with lib;
@@ -9,10 +8,6 @@ let
   cfg = config.services.networking;
 in
 {
-  imports = [
-    flake.inputs.hosts.nixosModule
-  ];
-
   options = {
     services.networking = with types; {
       enable = mkEnableOption "networking configuration";
@@ -21,12 +16,6 @@ in
 
   config = mkIf cfg.enable {
     networking = {
-      stevenBlackHosts = {
-        enable = true;
-        blockFakenews = true;
-        blockGambling = true;
-        blockPorn = true;
-      };
       useNetworkd = true;
       useDHCP = false;
     };
