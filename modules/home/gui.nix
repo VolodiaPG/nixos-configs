@@ -63,11 +63,12 @@ in
         freerdp
         legcord
         zathura
-        kitty-themes
         kitty
+        kitty-themes
       ];
 
       file = {
+        ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";
         ".config/discord/settings.json".text = ''
           {
             "BACKGROUND_COLOR": "#202225",
