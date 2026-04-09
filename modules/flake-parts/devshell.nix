@@ -33,7 +33,7 @@
           packages = with pkgs; [
             just
             inputs.agenix.packages.${system}.default
-            nix-output-monitor
+            # nix-output-monitor
             deploy-rs
             nvd
             nvfetcher
