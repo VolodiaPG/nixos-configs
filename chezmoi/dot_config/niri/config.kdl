@@ -268,14 +268,28 @@ window-rule {
     match title=r#"mail"#
     match title=r#"Bitwarden"#
 
-    block-out-from "screencast"
+    // block-out-from "screencast"
+    block-out-from "screen-capture"
 }
 
 // Block out mako notifications from screencasts.
 layer-rule {
     match namespace="^notifications$"
 
-    block-out-from "screencast"
+    block-out-from "screen-capture"
+}
+
+// Block out mako notifications from screencasts.
+layer-rule {
+    match namespace="^noctalia-wallpaper*"
+
+    block-out-from "screen-capture"
+}
+
+layer-rule {
+    match namespace="^noctalia-bar-exclusion*"
+
+    block-out-from "screen-capture"
 }
 
 
