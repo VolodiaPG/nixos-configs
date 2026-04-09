@@ -18,7 +18,7 @@
         "skills": []
       },
       "librarian": {
-        "mcps": ["websearch", "context7", "grep_app"],
+        "mcps": ["websearch", "grep_app"],
         "model": "opencode/kimi-k2.5",
         "skills": []
       },

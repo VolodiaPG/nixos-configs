@@ -292,4 +292,9 @@ layer-rule {
     block-out-from "screen-capture"
 }
 
+// Mirror screen
+binds {
+    Mod+P repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
+}
+
 
