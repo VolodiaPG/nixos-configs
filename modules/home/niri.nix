@@ -50,7 +50,9 @@ in
       polkit_gnome
 
       # KDE Connect
-      pkgs.kdePackages.qttools
+      kdePackages.qttools
+
+      wl-mirror
     ];
     xdg = {
       portal = {
