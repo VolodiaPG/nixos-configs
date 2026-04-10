@@ -53,6 +53,22 @@
         "type": "github"
       }
     },
+    "blocklist": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775768383,
+        "narHash": "sha256-Oky4jgEwhafxhVxPaNse7h9fya8aFcvlvMLQwU5dtrY=",
+        "owner": "Ultimate-Hosts-Blacklist",
+        "repo": "Ultimate.Hosts.Blacklist",
+        "rev": "5c7a3285d50ab9811815acfa3323e2dc31875394",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Ultimate-Hosts-Blacklist",
+        "repo": "Ultimate.Hosts.Blacklist",
+        "type": "github"
+      }
+    },
     "blueprint": {
       "inputs": {
         "nixpkgs": [
@@ -804,6 +820,7 @@
       "inputs": {
         "agenix": "agenix",
         "beam-flakes": "beam-flakes",
+        "blocklist": "blocklist",
         "blueprint": "blueprint",
         "bun2nix": "bun2nix",
         "catppuccin": "catppuccin",
