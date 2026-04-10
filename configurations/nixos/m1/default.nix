@@ -116,7 +116,7 @@ in
     hifi.enable = true;
     betterSleep.enable = true;
     # ccache.enable = true;
-    caddy.enable = true;
+    caddy.enable = false;
     homeLab.enable = true;
 
     # Storage and networking
@@ -128,7 +128,7 @@ in
 
     # From nixos
     # blueman.enable = true;
-    blocky.enable = true;
+    blocky.enable = false;
   };
 
   systemd = {
