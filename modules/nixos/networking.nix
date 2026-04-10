@@ -28,10 +28,10 @@ in
         "${flake.inputs.blocklist}/superhosts.deny/superhosts5.deny"
       ];
       extraHosts = ''
-        ALL: 0.0.0.0usage-ping.brave.com
-        ALL: 0.0.0.0star-randsrv.bsg.brave.com
-        ALL: 0.0.0.0variations.brave.com
-        ALL: 0.0.0.0collector.bsg.brave.com
+        ALL: usage-ping.brave.com
+        ALL: star-randsrv.bsg.brave.com
+        ALL: variations.brave.com
+        ALL: collector.bsg.brave.com
       '';
     };
     # systemd.network = {
