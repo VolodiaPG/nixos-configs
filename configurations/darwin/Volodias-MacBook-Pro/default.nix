@@ -36,7 +36,7 @@ in
       # Enable home modules
       commonHome.enable = true;
       interactive.enable = true;
-      homePackagesPersonal.enable = true;
+      chezmoi.enable = true;
       gui.enable = true;
     };
     sharedModules = [

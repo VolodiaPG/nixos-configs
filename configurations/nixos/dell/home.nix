@@ -26,7 +26,7 @@ in
       # Enable home modules
       commonHome.enable = true;
       interactive.enable = true;
-      homePackagesPersonal.enable = true;
+      chezmoi.enable = true;
 
       home.stateVersion = "22.05";
     };
