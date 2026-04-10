@@ -116,6 +116,9 @@ binds {
   // Pin a window to all workspaces
   Mod+P { spawn "nirius" "toggle-follow-mode"; }
 
+  // Mirror screen
+  Mod+Ctrl+Shift+P repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
+
   Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
 
   // Volume control
@@ -290,11 +293,6 @@ layer-rule {
     match namespace="^noctalia-bar-exclusion*"
 
     block-out-from "screen-capture"
-}
-
-// Mirror screen
-binds {
-    Mod+P repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
 }
 
 
