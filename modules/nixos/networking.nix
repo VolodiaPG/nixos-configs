@@ -20,18 +20,18 @@ in
       # useNetworkd = true;
       # useDHCP = false;
       hostFiles = [
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts0.deny"
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts1.deny"
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts2.deny"
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts3.deny"
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts4.deny"
-        "${flake.inputs.blocklist}/superhosts.deny/superhosts5.deny"
+        "${flake.inputs.blocklist}/hosts/hosts0"
+        "${flake.inputs.blocklist}/hosts/hosts1"
+        "${flake.inputs.blocklist}/hosts/hosts2"
+        "${flake.inputs.blocklist}/hosts/hosts3"
+        "${flake.inputs.blocklist}/hosts/hosts4"
+        "${flake.inputs.blocklist}/hosts/hosts5"
       ];
       extraHosts = ''
-        ALL: usage-ping.brave.com
-        ALL: star-randsrv.bsg.brave.com
-        ALL: variations.brave.com
-        ALL: collector.bsg.brave.com
+        0.0.0.0 usage-ping.brave.com
+        0.0.0.0 star-randsrv.bsg.brave.com
+        0.0.0.0 variations.brave.com
+        0.0.0.0 collector.bsg.brave.com
       '';
     };
     # systemd.network = {
