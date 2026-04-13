@@ -53,6 +53,9 @@ in
       kdePackages.qttools
 
       wl-mirror
+
+      # Keyboard brightness
+      brightnessctl
     ];
     xdg = {
       portal = {
