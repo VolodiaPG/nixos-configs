@@ -172,7 +172,7 @@ in
 
             if [ ! "$current_session" = "$current_dir" ]; then
               if git rev-parse --git-dir > /dev/null 2>&1; then
-                tmux rename-session $(basename $(git rev-parse --show-toplevel))
+                tmux rename-session "$(basename $(git rev-parse --show-toplevel)) ($(git branch --show-current))"
               else
                 tmux rename-session "$current_dir"
               fi
