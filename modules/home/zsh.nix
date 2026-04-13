@@ -164,6 +164,9 @@ in
         # If in tmux, rename the session to the current git project, if any, and if no session name is set
         if [ -n "$TMUX" ]; then
           function refresh_tmux_session_name() {
+            local pane_index=$(tmux display-message -p '#P')
+            [ "$pane_index" != "1" ] && return
+
             local current_session=$(tmux display-message -p '#S')
             local current_dir=$(basename "$PWD")
 
@@ -186,7 +189,7 @@ in
             theme-switcher -t tmux,kitty &> /dev/null &|
           fi
 
-        eval "$(starship init zsh)"
+          eval "$(starship init zsh)"
         fi
       '';
       shellAliases = {
@@ -198,8 +201,8 @@ in
         ga = "git add .";
         c = "clear";
         n = "nvim";
-        opencode = "opencode --port";
         oc = "opencode";
+        opencode-agents = "OPENCODE_CONFIG=$XDG_CONFIG_HOME/opencode/opencode-agents.json opencode";
       };
       plugins = [
         {
