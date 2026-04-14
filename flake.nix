@@ -284,11 +284,6 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
-
-    blocklist = {
-      url = "github:Ultimate-Hosts-Blacklist/Ultimate.Hosts.Blacklist";
-      flake = false;
-    };
   };
 
   nixConfig = {

@@ -124,7 +124,7 @@ in
       enable = true;
       rootVolume = "disk/by-label/root";
     };
-    networking.enable = true;
+    networking.enable = false;
     vpn.enable = true;
 
     # From nixos
