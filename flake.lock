@@ -56,11 +56,11 @@
     "blocklist": {
       "flake": false,
       "locked": {
-        "lastModified": 1776025974,
-        "narHash": "sha256-8cr903kRXOXiZ2RPAqj9b7vA0vXuz3FIMuQXjPZiRWM=",
+        "lastModified": 1776113870,
+        "narHash": "sha256-qE2pJGIg++67tnEqTsooZmj0XnljC7iODIi3QdNHa7c=",
         "owner": "Ultimate-Hosts-Blacklist",
         "repo": "Ultimate.Hosts.Blacklist",
-        "rev": "c5dcbe8580893a6317b371addfc93fc989713645",
+        "rev": "3fb25562c2d942febac22e4ada394ad23b08fb28",
         "type": "github"
       },
       "original": {
@@ -453,11 +453,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776060920,
-        "narHash": "sha256-5dTpNW3eFY76G1A4PgAdic276H+vIFvTWgBxLx7Xy9Y=",
+        "lastModified": 1776137484,
+        "narHash": "sha256-3gUwNO4y8ZmTyQBb3fCrLNRnqzAuuwNNSlPjmhrGnMo=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "df5704a3d06edd7ba96ed86a922bbce0e5a498df",
+        "rev": "e70ca11dc1a327e99c58dcd580ed209056a61130",
         "type": "github"
       },
       "original": {
@@ -662,11 +662,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1775811116,
-        "narHash": "sha256-VLpXI9ENHktgKNXHXFLFLLic6crXitfAcbogAOMG35s=",
-        "rev": "54170c54449ea4d6725efd30d719c5e505f1c10e",
+        "lastModified": 1776067740,
+        "narHash": "sha256-lqD8zuEPIDAyjLbbOn8O5jX/dm9xD7L4YrdOBrfJP1o=",
+        "rev": "7e495b747b51f95ae15e74377c5ce1fe69c1765f",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/25.11/nixos-25.11.9067.54170c54449e/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/25.11/nixos-25.11.9214.7e495b747b51/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
@@ -770,11 +770,11 @@
     "plugins-opencode-nvim": {
       "flake": false,
       "locked": {
-        "lastModified": 1775746206,
-        "narHash": "sha256-rMTGNbhyo6YOmhVTyIkkl9HMl/73jYO8SdKGktHd+nU=",
+        "lastModified": 1776118924,
+        "narHash": "sha256-mCXSkB8yGhEiWDFGupGpLeEtf4zrdmcX8xjPc5x7IDo=",
         "owner": "NickvanDyke",
         "repo": "opencode.nvim",
-        "rev": "6ed56733b19dce45d1f02abc34547cb21857ca95",
+        "rev": "4002092d701007acbb5b8fb1a47924ea719241b0",
         "type": "github"
       },
       "original": {
@@ -874,11 +874,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776050130,
-        "narHash": "sha256-/f/6/1WOfBJaGMfqV3VxWD9lpFRbPpF+Cx4MO+0mGok=",
+        "lastModified": 1776136407,
+        "narHash": "sha256-Cp8XrVLGruSDBTRs8L4LmvaEcd76tHHU9esLk7Ysa4E=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "3c27f4c92a7d977556dd2c10bb564d9c61b375e9",
+        "rev": "753568957a87312ed599cba5699e67126eded6c0",
         "type": "github"
       },
       "original": {
