@@ -1,0 +1,218 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "sisyphus": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/kimi-k2.5"
+        },
+        {
+          "model": "opencode/kimi-k2.5",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/glm-5"
+        },
+        {
+          "model": "opencode/big-pickle"
+        }
+      ]
+    },
+    "hephaestus": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "oracle": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        }
+      ]
+    },
+    "explore": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/minimax-m2.7"
+        },
+        {
+          "model": "opencode/gpt-5-nano"
+        }
+      ]
+    },
+    "multimodal-looker": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "medium",
+      "fallback_models": [
+        {
+          "model": "opencode/gpt-5-nano"
+        }
+      ]
+    },
+    "prometheus": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "max",
+      "fallback_models": [
+        {
+          "model": "opencode/kimi-k2.5",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro"
+        }
+      ]
+    },
+    "metis": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "max",
+      "fallback_models": [
+        {
+          "model": "opencode/kimi-k2.5",
+          "variant": "high"
+        }
+      ]
+    },
+    "momus": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "xhigh",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        }
+      ]
+    },
+    "atlas": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/kimi-k2.5",
+          "variant": "medium"
+        }
+      ]
+    },
+    "sisyphus-junior": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/kimi-k2.5",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/big-pickle"
+        }
+      ]
+    }
+  },
+  "categories": {
+    "visual-engineering": {
+      "model": "opencode/gemini-3.1-pro",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "opencode/glm-5"
+        },
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        }
+      ]
+    },
+    "ultrabrain": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        },
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        }
+      ]
+    },
+    "deep": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/gemini-3.1-pro",
+          "variant": "high"
+        }
+      ]
+    },
+    "artistry": {
+      "model": "opencode/kimi-k2.5",
+      "variant": "high",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-opus-4-6",
+          "variant": "max"
+        },
+        {
+          "model": "opencode/kimi-k2.5"
+        }
+      ]
+    },
+    "quick": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-haiku-4-5"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        },
+        {
+          "model": "opencode/gpt-5-nano"
+        }
+      ]
+    },
+    "unspecified-low": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/gpt-5.3-codex",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        }
+      ]
+    },
+    "unspecified-high": {
+      "model": "opencode/kimi-k2.5",
+      "fallback_models": [
+        {
+          "model": "opencode/gpt-5.3-codex",
+          "variant": "medium"
+        },
+        {
+          "model": "opencode/gemini-3-flash"
+        }
+      ]
+    },
+    "writing": {
+      "model": "opencode/gemini-3-flash",
+      "fallback_models": [
+        {
+          "model": "opencode/claude-sonnet-4-6"
+        }
+      ]
+    }
+  }
+}

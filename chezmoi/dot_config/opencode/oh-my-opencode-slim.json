@@ -2,35 +2,40 @@
   "preset": "custom",
   "presets": {
     "custom": {
-      "designer": {
-        "mcps": [],
+      "orchestrator": {
         "model": "opencode/kimi-k2.5",
-        "skills": ["agent-browser"]
-      },
-      "explorer": {
-        "mcps": [],
-        "model": "opencode/kimi-k2.5",
-        "skills": []
-      },
-      "fixer": {
-        "mcps": [],
-        "model": "opencode/gemini-3-flash",
-        "skills": []
-      },
-      "librarian": {
-        "mcps": ["websearch", "grep_app"],
-        "model": "opencode/kimi-k2.5",
-        "skills": []
+        "skills": ["*"],
+        "mcps": ["*"]
       },
       "oracle": {
-        "mcps": [],
         "model": "opencode/kimi-k2.5",
-        "skills": []
+        "variant": "high",
+        "skills": ["simplify"],
+        "mcps": []
       },
-      "orchestrator": {
-        "mcps": ["websearch"],
+      "librarian": {
         "model": "opencode/kimi-k2.5",
-        "skills": ["*"]
+        "variant": "low",
+        "skills": [],
+        "mcps": ["websearch", "context7", "grep_app"]
+      },
+      "explorer": {
+        "model": "opencode/kimi-k2.5",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
+      },
+      "designer": {
+        "model": "opencode/kimi-k2.5",
+        "variant": "medium",
+        "skills": ["agent-browser"],
+        "mcps": []
+      },
+      "fixer": {
+        "model": "opencode/kimi-k2.5",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
       }
     }
   }
