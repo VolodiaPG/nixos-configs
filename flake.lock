@@ -53,22 +53,6 @@
         "type": "github"
       }
     },
-    "blocklist": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1776113870,
-        "narHash": "sha256-qE2pJGIg++67tnEqTsooZmj0XnljC7iODIi3QdNHa7c=",
-        "owner": "Ultimate-Hosts-Blacklist",
-        "repo": "Ultimate.Hosts.Blacklist",
-        "rev": "3fb25562c2d942febac22e4ada394ad23b08fb28",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Ultimate-Hosts-Blacklist",
-        "repo": "Ultimate.Hosts.Blacklist",
-        "type": "github"
-      }
-    },
     "blueprint": {
       "inputs": {
         "nixpkgs": [
@@ -820,7 +804,6 @@
       "inputs": {
         "agenix": "agenix",
         "beam-flakes": "beam-flakes",
-        "blocklist": "blocklist",
         "blueprint": "blueprint",
         "bun2nix": "bun2nix",
         "catppuccin": "catppuccin",
@@ -993,11 +976,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775806789,
-        "narHash": "sha256-xl8IdyftF/tBFg8NUL13G/RmQ7u1I3UukuQnmw4rE1A=",
+        "lastModified": 1776168258,
+        "narHash": "sha256-LIwzsOFg0XfVI9oRwg/VDkUaMh5KkkNlzdq256hxn1Q=",
         "owner": "volodiapg",
         "repo": "vim",
-        "rev": "e48f5fca0e3bb89121f85fde81485ddc4d7ed623",
+        "rev": "dbc7e3c4146872d2b880714c13a9b2dd972d8f42",
         "type": "github"
       },
       "original": {
