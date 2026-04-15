@@ -4,6 +4,7 @@ let
   userReadable = {
     mode = "0500";
     owner = "volodia";
+    group = "volodia";
   };
   rootReadable = {
     owner = "root";
@@ -53,5 +54,23 @@ in
       file = ./fizzy-env.age;
     }
     // rootReadable;
+
+    pythong5k = {
+      file = ./pythong5k.age;
+      path = "/run/agenix/pythong5k";
+    }
+    // userReadable;
+
+    envvars = {
+      file = ./envvars.age;
+      path = "/run/agenix/envvars";
+    }
+    // userReadable;
+
+    mail_inria_password = {
+      file = ./mail.inria.password.age;
+      path = "/run/agenix/mail_inria_password";
+    }
+    // userReadable;
   };
 }
