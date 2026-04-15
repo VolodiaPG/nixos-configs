@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  pkgs,
-  flake,
   ...
 }:
 with lib;
