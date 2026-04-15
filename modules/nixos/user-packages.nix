@@ -3,7 +3,6 @@
   lib,
   pkgs,
   pkgs-unstable,
-  flake,
   ...
 }:
 with lib;
@@ -37,7 +36,8 @@ in
 
   config = mkIf cfg.enable {
     # Common packages - basic shell tools and utilities
-    environment.systemPackages = with pkgs;
+    environment.systemPackages =
+      with pkgs;
       (mkIf cfg.common.enable [
         git
         zsh
@@ -63,8 +63,7 @@ in
         starship
         cocogitto
       ])
-      ++
-      (mkIf cfg.interactive.enable [
+      ++ (mkIf cfg.interactive.enable [
         fzf
         lazygit
         nix-index
@@ -77,45 +76,46 @@ in
         devenv
         nvim
       ])
-      ++
-      (mkIf cfg.gui.enable ([
-        brave
-        signal-desktop
-        legcord
-        vlc
-        zathura
-        mpv
-        play-with-mpv
-        kitty
-        kitty-themes
-        fuzzel
-        grim
-        slurp
-        cliphist
-        kdePackages.qttools
-        distrobox
-        distrobox-tui
-        strawberry
-        qbittorrent
-        easyeffects
-        zotero
-        drawio
-        libreoffice-qt-fresh
-        freerdp
-        libnotify
-        notify-desktop
-        satty
-        wl-clipboard
-        swaybg
-        wpaperd
-        wlogout
-        wlr-randr
-        polkit_gnome
-        wl-mirror
-        brightnessctl
-      ]
-      ++ [
-        pkgs-unstable.mpv
-      ]));
+      ++ (mkIf cfg.gui.enable (
+        [
+          brave
+          signal-desktop
+          legcord
+          vlc
+          zathura
+          mpv
+          play-with-mpv
+          kitty
+          kitty-themes
+          fuzzel
+          grim
+          slurp
+          cliphist
+          kdePackages.qttools
+          distrobox
+          distrobox-tui
+          strawberry
+          qbittorrent
+          easyeffects
+          zotero
+          drawio
+          libreoffice-qt-fresh
+          freerdp
+          libnotify
+          notify-desktop
+          satty
+          wl-clipboard
+          swaybg
+          wpaperd
+          wlogout
+          wlr-randr
+          polkit_gnome
+          wl-mirror
+          brightnessctl
+        ]
+        ++ [
+          pkgs-unstable.mpv
+        ]
+      ));
   };
 }
