@@ -21,7 +21,6 @@ in
   imports = [
     ./configuration.nix
     ./hardware-configuration.nix
-    ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules

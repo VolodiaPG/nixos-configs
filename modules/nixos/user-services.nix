@@ -28,7 +28,7 @@ in
       programs.gnupg.agent = {
         enable = true;
         enableSSHSupport = true;
-        pinentryFlavor = "tty";
+        pinentryPackage = pkgs.pinentry-tty;
       };
     })
 

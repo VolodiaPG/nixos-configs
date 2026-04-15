@@ -7,7 +7,6 @@ in
   imports = [
     ./configuration.nix
     ./hardware-configuration.nix
-    ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
@@ -43,6 +42,25 @@ in
     backlightOff.enable = true;
     homeLab.enable = true;
     caddy.enable = true;
+
+    # User services
+    chezmoi-activation.enable = true;
+  };
+
+  # Enable user packages (CLI-only, no GUI)
+  userPackages = {
+    enable = true;
+    common.enable = true;
+    interactive.enable = true;
+  };
+
+  # Enable user session environment
+  userSession.enable = true;
+
+  # Enable user services
+  user-services = {
+    gpg-agent = true;
+    darkman = true;
   };
 
   nixpkgs.hostPlatform = "x86_64-linux";

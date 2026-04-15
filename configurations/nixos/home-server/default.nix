@@ -8,7 +8,6 @@ in
     ./configuration.nix
     ./hardware-configuration.nix
     ./disk.nix
-    ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
@@ -48,7 +47,15 @@ in
     caddy.enable = true;
     samba.enable = true;
     homeLab.enable = true;
+
+    # User services (migrated from home-manager)
+    chezmoi-activation.enable = true;
   };
+
+  # User environment (migrated from home-manager)
+  userPackages.common.enable = true;
+  userSession.enable = true;
+  user-services.syncthing = true;
 
   system.stateVersion = "22.05";
 }
