@@ -1,0 +1,25 @@
+# Alias for the gateway (not really needed, but convenient)
+Host *
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_ed25519
+    ForwardAgent yes
+    Compression yes
+    IgnoreUnknown UseKeychain
+
+Host pro
+  User volodia
+  Hostname dell
+
+Host access.grid5000.fr
+  User volparolguarino
+
+Host !access.grid5000.fr *.grid5000.fr
+   User volparolguarino
+   ProxyJump access.grid5000.fr
+   StrictHostKeyChecking no
+   UserKnownHostsFile /dev/null
+
+Host linux-builder
+  Hostname 127.0.0.1
+  HostKeyAlias linux-builder
+  Port 31022
