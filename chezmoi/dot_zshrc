@@ -1,0 +1,195 @@
+# ~/.zshrc — managed by chezmoi
+
+# ── Locale ────────────────────────────────────────────────────────────────────
+export LC_ALL="C.UTF-8"
+
+# ── History ───────────────────────────────────────────────────────────────────
+HISTSIZE=10000
+SAVEHIST=2000000
+HISTFILE=~/.zsh_history
+setopt appendhistory
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt share_history
+
+HISTORY_IGNORE="(ls|ll|ls -alh|pwd|clear|c|history|htop)"
+
+# ── Environment ───────────────────────────────────────────────────────────────
+SHELL=/run/current-system/sw/bin/zsh
+TERM=screen-256color
+export EDITOR=nvim
+export NIXOS_OZONE_WL=1
+export MOZ_ENABLE_WAYLAND=1
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+
+# ── Oh-my-zsh ────────────────────────────────────────────────────────────────
+ZSH_PLUGIN_DIR=/run/current-system/sw/share
+plugins=(git zsh-autosuggestions zsh-completions zsh-syntax-highlighting)
+
+# ── Aliases ───────────────────────────────────────────────────────────────────
+alias ll="ls -l"
+alias j="just"
+alias jl="just --list"
+alias g="git"
+alias gm="git comit -m"
+alias ga="git add ."
+alias c="clear"
+alias n="nvim"
+alias oc="opencode"
+alias opencode-agents='OPENCODE_CONFIG=$XDG_CONFIG_HOME/opencode/opencode-agents.json opencode'
+
+# ── Keychain (SSH agent) ─────────────────────────────────────────────────────
+if command -v keychain &>/dev/null; then
+  eval "$(keychain --eval id_ed25519)"
+fi
+
+# ── Zoxide (smart cd) ────────────────────────────────────────────────────────
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
+
+# ── Direnv ────────────────────────────────────────────────────────────────────
+export DIRENV_LOG_FORMAT=""
+if command -v direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+fi
+
+# ── FZF ───────────────────────────────────────────────────────────────────────
+if [ -f /run/current-system/sw/share/fzf/key-bindings.zsh ]; then
+  source /run/current-system/sw/share/fzf/key-bindings.zsh
+fi
+if [ -f /run/current-system/sw/share/fzf/completion.zsh ]; then
+  source /run/current-system/sw/share/fzf/completion.zsh
+fi
+
+# ── Just completions ──────────────────────────────────────────────────────────
+if [ -f /run/current-system/sw/share/zsh/site-functions/_just ]; then
+  source /run/current-system/sw/share/zsh/site-functions/_just
+fi
+
+# ── Nix-index (command-not-found) ────────────────────────────────────────────
+if command -v nix-index &>/dev/null; then
+  source /run/current-system/sw/share/nix-index/nix-index.zsh 2>/dev/null || true
+fi
+
+# ── Secrets (agenix) ─────────────────────────────────────────────────────────
+if [ -f /run/agenix/envvars ]; then
+  source /run/agenix/envvars
+fi
+
+# ── GPG agent ────────────────────────────────────────────────────────────────
+export GPG_TTY=$(tty)
+gpgconf --launch gpg-agent 2>/dev/null || true
+
+# ── Zsh plugins (manual source) ──────────────────────────────────────────────
+# Autosuggestions
+if [ -f /run/current-system/sw/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /run/current-system/sw/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd)
+fi
+
+# Zsh completions
+if [ -f /run/current-system/sw/share/zsh-completions/zsh-completions.zsh ]; then
+  source /run/current-system/sw/share/zsh-completions/zsh-completions.zsh
+fi
+
+# Nix zsh completions
+if [ -f /run/current-system/sw/share/nix-zsh-completions/nix-zsh-completions.zsh ]; then
+  source /run/current-system/sw/share/nix-zsh-completions/nix-zsh-completions.zsh
+fi
+
+# Zsh syntax highlighting (must be last)
+if [ -f /run/current-system/sw/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /run/current-system/sw/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# ── Keybindings ──────────────────────────────────────────────────────────────
+typeset -g -A key
+
+key[Home]="${terminfo[khome]}"
+key[End]="${terminfo[kend]}"
+key[Insert]="${terminfo[kich1]}"
+key[Backspace]="${terminfo[kbs]}"
+key[Delete]="${terminfo[kdch1]}"
+key[Up]="${terminfo[kcuu1]}"
+key[Down]="${terminfo[kcud1]}"
+key[Left]="${terminfo[kcub1]}"
+key[Right]="${terminfo[kcuf1]}"
+key[PageUp]="${terminfo[kpp]}"
+key[PageDown]="${terminfo[knp]}"
+key[Shift-Tab]="${terminfo[kcbt]}"
+
+[[ -n "${key[Home]}"      ]] && bindkey -- "${key[Home]}"       beginning-of-line
+[[ -n "${key[End]}"       ]] && bindkey -- "${key[End]}"        end-of-line
+[[ -n "${key[Insert]}"    ]] && bindkey -- "${key[Insert]}"     overwrite-mode
+[[ -n "${key[Backspace]}" ]] && bindkey -- "${key[Backspace]}"  backward-delete-char
+[[ -n "${key[Delete]}"    ]] && bindkey -- "${key[Delete]}"     delete-char
+[[ -n "${key[Up]}"        ]] && bindkey -- "${key[Up]}"         up-line-or-history
+[[ -n "${key[Down]}"      ]] && bindkey -- "${key[Down]}"       down-line-or-history
+[[ -n "${key[Left]}"      ]] && bindkey -- "${key[Left]}"       backward-char
+[[ -n "${key[Right]}"     ]] && bindkey -- "${key[Right]}"      forward-char
+[[ -n "${key[PageUp]}"    ]] && bindkey -- "${key[PageUp]}"     beginning-of-buffer-or-history
+[[ -n "${key[PageDown]}"  ]] && bindkey -- "${key[PageDown]}"   end-of-buffer-or-history
+[[ -n "${key[Shift-Tab]}" ]] && bindkey -- "${key[Shift-Tab]}"  reverse-menu-complete
+
+# Ensure terminal is in application mode when zle is active
+if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
+  autoload -Uz add-zle-hook-widget
+  function zle_application_mode_start { echoti smkx }
+  function zle_application_mode_stop { echoti rmkx }
+  add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+  add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+fi
+
+# ZLE search
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+[[ -n "${key[Up]}"   ]] && bindkey -- "${key[Up]}"   up-line-or-beginning-search
+[[ -n "${key[Down]}" ]] && bindkey -- "${key[Down]}" down-line-or-beginning-search
+
+# Alt+Left / Alt+Right word movement
+bindkey "^[[1;3C" forward-word
+bindkey "^[[1;3D" backward-word
+
+# ── Tmux session auto-renaming ────────────────────────────────────────────────
+if [ -n "$TMUX" ]; then
+  function refresh_tmux_session_name() {
+    local pane_index=$(tmux display-message -p '#P')
+    [ "$pane_index" != "1" ] && return
+
+    local current_session=$(tmux display-message -p '#S')
+    local current_dir=$(basename "$PWD")
+
+    if [ ! "$current_session" = "$current_dir" ]; then
+      if git rev-parse --git-dir > /dev/null 2>&1; then
+        tmux rename-session "$(basename $(git rev-parse --show-toplevel)) ($(git branch --show-current))"
+      else
+        tmux rename-session "$current_dir"
+      fi
+    fi
+  }
+  chpwd() {
+    refresh_tmux_session_name
+  }
+  refresh_tmux_session_name
+fi
+
+# ── Theme switcher ────────────────────────────────────────────────────────────
+if [[ -o interactive ]]; then
+  if command -v theme-switcher &>/dev/null; then
+    theme-switcher -t tmux,kitty &>/dev/null &|
+  fi
+fi
+
+# ── Starship prompt ──────────────────────────────────────────────────────────
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
+
+# ── NixOS version greeting ───────────────────────────────────────────────────
+if command -v nixos-version &>/dev/null; then
+  echo "Running Nixos $(nixos-version)"
+fi

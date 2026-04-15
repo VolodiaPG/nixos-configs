@@ -42,6 +42,9 @@ in
         git
         zsh
         tmux
+        tmuxPlugins.resurrect
+        tmuxPlugins.continuum
+        tmuxPlugins.catppuccin
         keychain
         zoxide
         openssh
