@@ -1,0 +1,12 @@
+gui:
+  showFileTree: true
+  theme:
+    selectedLineBgColor:
+      - reverse
+    selectedRangeBgColor:
+      - reverse
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never

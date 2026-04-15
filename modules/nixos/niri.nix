@@ -70,31 +70,28 @@ in
       # Clipboard manager
       cliphist
     ];
-    # # Enable xdg portal for screen sharing and other integrations
-    # xdg.portal = {
-    #   enable = true;
-    #   extraPortals = [
-    #     pkgs.xdg-desktop-portal-gtk
-    #     pkgs.xdg-desktop-portal-gnome
-    #     pkgs.xdg-desktop-portal-wlr
-    #   ];
-    #   # config.common.default = "*";
-    #   # Portal Configuration
-    #   config = {
-    #     # 'common' applies to all desktops unless overridden
-    #     common = {
-    #       default = [ "gtk" ];
-    #       "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-    #     };
-    #
-    #     niri = {
-    #       "org.freedesktop.impl.portal.Access" = "gtk";
-    #       "org.freedesktop.impl.portal.FileChooser" = "gtk";
-    #       "org.freedesktop.impl.portal.Notification" = "gtk";
-    #       "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-    #     };
-    #   };
-    # };
+    # Enable xdg portal for screen sharing and other integrations
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-gnome
+      ];
+      config = {
+        common = {
+          default = [
+            "gtk"
+            "gnome"
+          ];
+        };
+        niri = {
+          default = [
+            "gtk"
+            "gnome"
+          ];
+        };
+      };
+    };
 
     # Polkit for privilege escalation
     security.polkit.enable = true;

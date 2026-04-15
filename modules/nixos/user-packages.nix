@@ -115,6 +115,7 @@ in
           polkit_gnome
           wl-mirror
           brightnessctl
+          noctalia-shell
         ]
         ++ [
           pkgs-unstable.mpv
