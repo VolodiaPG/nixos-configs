@@ -15,11 +15,11 @@ in
   # Enable Darwin-specific services
   services = {
     commonDarwin.enable = true;
-    nixCacheProxyDarwin.enable = true;
+    nixCacheProxyDarwin.enable = false;
     commonNixSettings.enable = true;
   };
 
-  darwinLinuxBuilder.enable = true;
+  # darwinLinuxBuilder.enable = false;
 
   home-manager = {
     users.${me.username} = {

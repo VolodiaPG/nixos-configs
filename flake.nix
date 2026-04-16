@@ -2,16 +2,21 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
+    #    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    #   nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
     nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nix-darwin = {
+      #      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
+      url = "github:lnl7/nix-darwin/nix-darwin-25.11";
 
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-darwin = {
-      url = "github:lnl7/nix-darwin/nix-darwin-25.11";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -226,10 +231,10 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    nix-rosetta-builder = {
-      url = "github:cpick/nix-rosetta-builder";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nix-rosetta-builder = {
+    #   url = "github:cpick/nix-rosetta-builder";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixos-apple-silicon = {
       # url = "github:nix-community/nixos-apple-silicon/release-25.11";

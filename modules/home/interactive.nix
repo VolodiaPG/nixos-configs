@@ -65,7 +65,6 @@ in
       inherit (flake.config.me) username;
       homeDirectory = flake.config.me.homeDirectory pkgs.stdenv;
       packages = with pkgs; [
-        fontconfig
         direnv
         git-crypt
         python3

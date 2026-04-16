@@ -54,11 +54,11 @@ in
     };
 
     home = {
-      activation.lazygit-theme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [[ ! -f "${config.xdg.configHome}/lazygit/theme.yml" ]]; then
-          ln -s "${config.xdg.configHome}/lazygit/theme.dark.yml" "${config.catppuccin.sources.lazygit}/mocha/${config.catppuccin.accent}.yml"
-        fi
-      '';
+      #     activation.lazygit-theme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      #      if [[ ! -f "${config.xdg.configHome}/lazygit/theme.yml" ]]; then
+      #       ln -fs "${config.xdg.configHome}/lazygit/theme.dark.yml" "${config.catppuccin.sources.lazygit}/mocha/${config.catppuccin.accent}.yml"
+      #    fi
+      # '';
 
       sessionVariables =
         let

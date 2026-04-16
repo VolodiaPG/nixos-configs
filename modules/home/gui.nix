@@ -16,20 +16,20 @@ in
     };
   };
 
-  imports = [
-    flake.inputs.tidal-to-strawberry.homeManagerModules.default
-  ];
+  # imports = [
+  #   flake.inputs.tidal-to-strawberry.homeManagerModules.default
+  # ];
 
   config = mkIf cfg.enable {
-    fonts.fontconfig.enable = true;
+    fonts.fontconfig.enable = pkgs.stdenv.isLinux;
 
     # Enable the theme daemon for automatic switching
     services = {
       theme-daemon.enable = true;
-      tidal-to-strawberry = {
-        enable = true;
-        workingDirectory = "/home/${flake.config.me.username}/Music";
-      };
+      # tidal-to-strawberry = {
+      #   enable = pkgs.stdenv.isLinux;
+      #   workingDirectory = "/home/${flake.config.me.username}/Music";
+      # };
     };
     programs = {
       nix-index.enable = true;
@@ -43,29 +43,30 @@ in
     };
 
     home = {
-      packages = with pkgs; [
-        fontconfig
-        libnotify
-        notify-desktop
-
-        brave
-        distrobox
-        distrobox-tui
-        signal-desktop
-        strawberry
-        qbittorrent
-        distrobox
-        vlc
-        easyeffects
-        zotero
-        drawio
-        libreoffice-qt-fresh
-        freerdp
-        legcord
-        zathura
-        kitty
-        kitty-themes
-      ];
+      packages =
+        (with pkgs; [
+          brave
+          signal-desktop
+          qbittorrent
+          #          zotero
+          drawio
+          zathura
+          kitty
+          kitty-themes
+        ])
+        ++ (lib.optionals pkgs.stdenv.isLinux [
+          libnotify
+          vlc
+          legcord
+          strawberry
+          notify-desktop
+          fontconfig
+          distrobox
+          distrobox-tui
+          easyeffects
+          libreoffice-qt-fresh
+          freerdp
+        ]);
 
       file = {
         ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";

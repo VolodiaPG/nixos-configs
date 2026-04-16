@@ -37,6 +37,7 @@
             deploy-rs
             nvd
             nvfetcher
+            nix-output-monitor
           ];
           inherit (config.pre-commit) shellHook;
         };

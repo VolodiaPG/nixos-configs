@@ -87,7 +87,7 @@ let
     builders-use-substitutes = true;
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
-    auto-optimise-store = true;
+    # auto-optimise-store = true;
     narinfo-cache-negative-ttl = 600;
     narinfo-cache-positive-ttl = 600;
     # for direnv GC roots
@@ -139,19 +139,19 @@ in
         ];
       };
 
-      optimise = {
-        automatic = true;
-      };
+      # optimise = {
+      #  automatic = true;
+      # };
 
-      gc = {
-        automatic = true;
-        # interval = {
-        #   Weekday = 1;
-        #   Hour = 0;
-        #   Minute = 0;
-        # };
-        options = "--delete-older-than 8d";
-      };
+      #     gc = {
+      #      automatic = true;
+      # interval = {
+      #   Weekday = 1;
+      #   Hour = 0;
+      #   Minute = 0;
+      # };
+      #     options = "--delete-older-than 8d";
+      #  };
 
       # # pin the registry to avoid downloading and evaling a new nixpkgs version every time
       # registry = lib.mapAttrs (_: v: { flake = v; }) flakeInputs;

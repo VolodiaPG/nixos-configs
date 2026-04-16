@@ -10,8 +10,10 @@ _switch drv=".#nixosConfigurations.$(hostname).config.system.build.toplevel":
     #!/usr/bin/env bash
     set -e
     result=$(just _dry {{drv}})
-    sudo $result/bin/switch-to-configuration switch
-    sudo $result/bin/switch-to-configuration boot
+    echo $result
+    (sudo $result/bin/switch-to-configuration switch && \
+    sudo $result/bin/switch-to-configuration boot) || \
+    sudo $result/activate
 
 dry host="$(hostname)":
     just _dry ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
@@ -33,4 +35,4 @@ dry-darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
     just _dry {{drv}}
 
 darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-    just _switch {{drv}}
+    sudo darwin-rebuild switch --flake .#Volodias-MacBook-Pro

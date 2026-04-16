@@ -25,6 +25,7 @@ _final: prev:
     zotero
     nvfetcher
     kanata
+    yabai
     ;
 
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;
