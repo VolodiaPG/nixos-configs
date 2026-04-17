@@ -8,20 +8,20 @@
 {
   scx = {
     pname = "scx";
-    version = "8e1cc4bdc74e39140de697c4f24bf50a88c30f5b";
+    version = "d1aacb9826f10fd4792e1b7dff8fba892e40c4f0";
     src = fetchFromGitHub {
       owner = "sched-ext";
       repo = "scx";
-      rev = "8e1cc4bdc74e39140de697c4f24bf50a88c30f5b";
+      rev = "d1aacb9826f10fd4792e1b7dff8fba892e40c4f0";
       fetchSubmodules = false;
-      sha256 = "sha256-ReliULm0ULNo8pfaPBu+Kc4i9euglBsJzBRLeRyDoD0=";
+      sha256 = "sha256-WJHUSmE0Qc6AqqbuUAE0IeOhDv0aeeS3Ax01yqnosf8=";
     };
     cargoLock."Cargo.lock" = {
-      lockFile = ./. + "/sha256-ReliULm0ULNo8pfaPBu+Kc4i9euglBsJzBRLeRyDoD0=/Cargo.lock";
+      lockFile = ./. + "/sha256-WJHUSmE0Qc6AqqbuUAE0IeOhDv0aeeS3Ax01yqnosf8=/Cargo.lock";
       outputHashes = {
         
       };
     };
-    date = "2026-04-15";
+    date = "2026-04-16";
   };
 }
