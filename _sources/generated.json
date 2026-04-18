@@ -2,11 +2,11 @@
     "scx": {
         "cargoLock": {
             "Cargo.lock": [
-                "sha256-WJHUSmE0Qc6AqqbuUAE0IeOhDv0aeeS3Ax01yqnosf8=/Cargo.lock",
+                "sha256-kipfHPC+tYCr9LdEy3Wgbkd6P+R+_+0+cDM8fIo7u1w=/Cargo.lock",
                 {}
             ]
         },
-        "date": "2026-04-16",
+        "date": "2026-04-17",
         "extract": null,
         "name": "scx",
         "passthru": null,
@@ -18,11 +18,11 @@
             "name": null,
             "owner": "sched-ext",
             "repo": "scx",
-            "rev": "d1aacb9826f10fd4792e1b7dff8fba892e40c4f0",
-            "sha256": "sha256-WJHUSmE0Qc6AqqbuUAE0IeOhDv0aeeS3Ax01yqnosf8=",
+            "rev": "d639b45a153c1453d08af9a899056c327f68bcdf",
+            "sha256": "sha256-kipfHPC+tYCr9LdEy3Wgbkd6P+R+/+0+cDM8fIo7u1w=",
             "sparseCheckout": [],
             "type": "github"
         },
-        "version": "d1aacb9826f10fd4792e1b7dff8fba892e40c4f0"
+        "version": "d639b45a153c1453d08af9a899056c327f68bcdf"
     }
 }
