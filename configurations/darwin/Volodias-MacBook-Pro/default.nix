@@ -38,6 +38,7 @@ in
       interactive.enable = true;
       chezmoi.enable = true;
       gui.enable = true;
+      ollama.enable = true;
     };
     sharedModules = [
       (self + "/secrets/home-manager.nix")

@@ -2,14 +2,10 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    #    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    #   nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
-    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nix-darwin = {
-      #      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
-      url = "github:lnl7/nix-darwin/nix-darwin-25.11";
-
+      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -123,6 +119,8 @@
         systems.follows = "flake-utils/systems";
       };
     };
+
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     disko = {
       url = "github:nix-community/disko";

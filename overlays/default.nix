@@ -26,6 +26,7 @@ _final: prev:
     nvfetcher
     kanata
     yabai
+    ollama
     ;
 
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;

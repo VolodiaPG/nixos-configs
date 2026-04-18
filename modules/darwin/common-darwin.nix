@@ -17,11 +17,31 @@ in
     };
   };
 
+  imports = [ flake.inputs.nix-homebrew.darwinModules.nix-homebrew ];
+
   config = mkIf cfg.enable {
     users.users."${flake.config.me.username}" = {
       name = flake.config.me.username;
       home = flake.config.me.homeDirectory pkgs.stdenv;
       shell = pkgs.zsh;
+    };
+
+    nix-homebrew = {
+      # Install Homebrew under the default prefix
+      enable = true;
+
+      # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+      enableRosetta = true;
+
+      # User owning the Homebrew prefix
+      user = flake.config.me.username;
+    };
+
+    homebrew = {
+      enable = true;
+      brews = [
+        "ollama"
+      ];
     };
 
     # programs = {

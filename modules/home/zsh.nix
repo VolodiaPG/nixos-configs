@@ -191,6 +191,8 @@ in
 
           eval "$(starship init zsh)"
         fi
+
+        export PATH="/opt/homebrew/bin:$PATH"
       '';
       shellAliases = {
         ll = "ls -l";
