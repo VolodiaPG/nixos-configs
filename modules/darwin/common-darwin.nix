@@ -42,6 +42,9 @@ in
       brews = [
         "ollama"
       ];
+      casks = [
+        "hiddenbar"
+      ];
     };
 
     # programs = {
