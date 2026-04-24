@@ -152,13 +152,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-cache-proxy = {
-      url = "github:volodiapg/nix-cache-proxy";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-      };
-    };
+    # nix-cache-proxy = {
+    #   url = "github:volodiapg/nix-cache-proxy";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     flake-parts.follows = "flake-parts";
+    #   };
+    # };
 
     blueprint = {
       url = "github:numtide/blueprint";

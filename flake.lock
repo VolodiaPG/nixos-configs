@@ -624,29 +624,6 @@
         "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%2A"
       }
     },
-    "nix-cache-proxy": {
-      "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1767348112,
-        "narHash": "sha256-lJcd37+bdRxw9htRWRQDcA1PIvV0rwOJeN9+786bXPs=",
-        "owner": "volodiapg",
-        "repo": "nix-cache-proxy",
-        "rev": "c06673d24829ee3940dc1b961e497dc36e5d9d01",
-        "type": "github"
-      },
-      "original": {
-        "owner": "volodiapg",
-        "repo": "nix-cache-proxy",
-        "type": "github"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -1039,7 +1016,6 @@
         "import-tree": "import-tree",
         "llm-agents": "llm-agents",
         "mosh": "mosh",
-        "nix-cache-proxy": "nix-cache-proxy",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nix-index-database": "nix-index-database",
