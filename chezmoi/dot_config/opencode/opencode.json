@@ -11,7 +11,8 @@
   "model": "ollama/gemma4",
   "plugin": [
     "@simonwjackson/opencode-direnv@latest",
-    "@tarquinen/opencode-dcp@latest"
+    "@tarquinen/opencode-dcp@latest",
+    "oh-my-opencode-slim@latest"
   ],
   "provider": {
     "ollama": {
@@ -33,4 +34,3 @@
     }
   }
 }
-
