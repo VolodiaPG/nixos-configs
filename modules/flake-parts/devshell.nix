@@ -33,11 +33,9 @@
           packages = with pkgs; [
             just
             inputs.agenix.packages.${system}.default
-            # nix-output-monitor
             deploy-rs
-            nvd
             nvfetcher
-            nix-output-monitor
+            nh
           ];
           inherit (config.pre-commit) shellHook;
         };

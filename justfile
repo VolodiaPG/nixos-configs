@@ -35,4 +35,6 @@ dry-darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
     just _dry {{drv}}
 
 darwin drv=".#darwinConfigurations.Volodias-MacBook-Pro.system":
-    sudo darwin-rebuild switch --flake .#Volodias-MacBook-Pro
+    # sudo darwin-rebuild switch --flake .#Volodias-MacBook-Pro
+    nh darwin switch . -H Volodias-MacBook-Pro
+
