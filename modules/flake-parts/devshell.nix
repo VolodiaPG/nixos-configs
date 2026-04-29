@@ -35,6 +35,7 @@
             inputs.agenix.packages.${system}.default
             deploy-rs
             nvfetcher
+            git
             nh
           ];
           inherit (config.pre-commit) shellHook;
