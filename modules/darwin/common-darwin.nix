@@ -63,6 +63,7 @@ in
       kitty
       fswatch
       qbittorrent
+      zotero
 
       # yabai
       # skhd
