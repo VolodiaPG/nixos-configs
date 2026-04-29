@@ -15,10 +15,10 @@
   nix.enable = lib.mkForce false;
   determinateNix = {
     enable = true;
-    # customSettings.trusted-users = [
-    #   "root"
-    #   "@admin"
-    #   flake.config.me.username
-    # ];
+    customSettings.trusted-users = [
+      "root"
+      flake.config.me.username
+      "@admin"
+    ];
   };
 }

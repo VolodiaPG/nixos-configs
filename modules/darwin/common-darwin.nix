@@ -44,6 +44,13 @@ in
       ];
       casks = [
         "hiddenbar"
+        "karabiner-elements"
+        "tg-pro"
+        "bettermouse"
+        "alt-tab"
+        "tidal"
+        "parsec"
+        "signal"
       ];
     };
 
@@ -55,6 +62,7 @@ in
       terminal-notifier
       kitty
       fswatch
+      qbittorrent
 
       # yabai
       # skhd
