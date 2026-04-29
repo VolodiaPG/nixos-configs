@@ -1,0 +1,227 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "manipulators": [
+                            {
+                                "description": "Change caps_lock to control",
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "left_control" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Home row mods (kl) - return combo",
+                        "manipulators": [
+                            {
+                                "description": "k + l = return",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "k" },
+                                        { "key_code": "l" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "k" },
+                                        { "key_code": "l" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "return_or_enter"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "return_or_enter"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "l + k = return (reverse order)",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "l" },
+                                        { "key_code": "k" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "l" },
+                                        { "key_code": "k" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "return_or_enter"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "return_or_enter"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Home row mods (df) - escape combo",
+                        "manipulators": [
+                            {
+                                "description": "d + f = escape",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "d" },
+                                        { "key_code": "f" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "d" },
+                                        { "key_code": "f" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "f + d = escape (reverse order)",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "f" },
+                                        { "key_code": "d" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "f" },
+                                        { "key_code": "d" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Home row mods (jk) - backspace combo",
+                        "manipulators": [
+                            {
+                                "description": "j+k=backspace",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "j" },
+                                        { "key_code": "k" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "j" },
+                                        { "key_code": "k" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_or_backspace"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_or_backspace"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "j + k = backspace (reverse order)",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "k" },
+                                        { "key_code": "j" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "k" },
+                                        { "key_code": "j" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_or_backspace"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_or_backspace"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
+        }
+    ]
+}
