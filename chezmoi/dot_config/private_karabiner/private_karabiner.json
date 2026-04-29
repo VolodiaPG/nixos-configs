@@ -4,6 +4,73 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "description": "Home row mods (sd) - delete forward combo",
+                        "manipulators": [
+                            {
+                                "description": "s+d=delete",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "s" },
+                                        { "key_code": "d" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "s" },
+                                        { "key_code": "d" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_forward"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_forward"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "d + s = delete forward (reverse order)",
+                                "from": {
+                                    "modifiers": { "optional": ["any"] },
+                                    "simultaneous": [
+                                        { "key_code": "d" },
+                                        { "key_code": "s" }
+                                    ],
+                                    "simultaneous_options": { "key_down_order": "strict" }
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        { "key_code": "d" },
+                                        { "key_code": "s" }
+                                    ],
+                                    "to_if_invoked": [{ "key_code": "vk_none" }]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_forward"
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "delete_forward"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "manipulators": [
                             {
                                 "description": "Change caps_lock to control",
