@@ -45,7 +45,6 @@ in
     home = {
       packages =
         (with pkgs; [
-          brave
           signal-desktop
           qbittorrent
           #          zotero
@@ -55,6 +54,7 @@ in
           kitty-themes
         ])
         ++ (lib.optionals pkgs.stdenv.isLinux [
+          brave
           libnotify
           vlc
           legcord
