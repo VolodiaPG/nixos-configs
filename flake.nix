@@ -12,12 +12,12 @@
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "https://flakehub.com/f/nix-community/home-manager/0.2511";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     flake-compat = {
-      url = "github:edolstra/flake-compat";
+      url = "https://flakehub.com/f/edolstra/flake-compat/1";
       flake = false;
     };
 
@@ -27,7 +27,7 @@
     };
 
     nixos-hardware = {
-      url = "github:nixos/nixos-hardware";
+      url = "https://flakehub.com/f/nixos/nixos-hardware/0";
     };
 
     srvos = {
@@ -36,7 +36,7 @@
     };
 
     git-hooks = {
-      url = "github:cachix/git-hooks.nix";
+      url = "https://flakehub.com/f/cachix/git-hooks.nix/0";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-compat.follows = "flake-compat";
@@ -103,7 +103,7 @@
     };
 
     impermanence = {
-      url = "github:nix-community/impermanence";
+      url = "https://flakehub.com/f/nix-community/impermanence/0";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";
@@ -123,7 +123,7 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     disko = {
-      url = "github:nix-community/disko";
+      url = "https://flakehub.com/f/nix-community/disko/1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -167,7 +167,7 @@
     };
 
     treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
+      url = "https://flakehub.com/f/numtide/treefmt-nix/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -215,7 +215,7 @@
     };
 
     flake-utils = {
-      url = "github:numtide/flake-utils";
+      url = "https://flakehub.com/f/numtide/flake-utils/0";
       inputs.systems.follows = "systems";
     };
 
