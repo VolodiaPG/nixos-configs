@@ -41,6 +41,7 @@ in
       enable = true;
       brews = [
         "ollama"
+        "mpv"
       ];
       casks = [
         "hiddenbar"
@@ -51,6 +52,8 @@ in
         "tidal"
         "parsec"
         "signal"
+        "vlc"
+        "calibre"
       ];
     };
 
