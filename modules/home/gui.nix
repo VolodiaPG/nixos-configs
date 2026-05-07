@@ -44,7 +44,8 @@ in
 
     home = {
       packages =
-        (with pkgs; [
+        with pkgs;
+        [
           signal-desktop
           qbittorrent
           #          zotero
@@ -52,7 +53,7 @@ in
           zathura
           kitty
           kitty-themes
-        ])
+        ]
         ++ (lib.optionals pkgs.stdenv.isLinux [
           brave
           libnotify

@@ -42,7 +42,7 @@ in
     # Core system services
     base.enable = true;
     commonNixSettings.enable = true;
-    nixCacheProxy.enable = true;
+    # nixCacheProxy.enable = true;
     wm = {
       enable = true;
       gnome.enable = false;

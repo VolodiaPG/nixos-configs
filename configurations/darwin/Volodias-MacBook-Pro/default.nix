@@ -15,7 +15,7 @@ in
   # Enable Darwin-specific services
   services = {
     commonDarwin.enable = true;
-    nixCacheProxyDarwin.enable = false;
+    # nixCacheProxyDarwin.enable = false;
     commonNixSettings.enable = true;
   };
 

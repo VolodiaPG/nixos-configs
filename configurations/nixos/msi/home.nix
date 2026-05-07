@@ -14,16 +14,20 @@ in
       imports = [
         self.homeModules.all-modules
       ];
-
       # Enable home modules
       services = {
-        commonHome.enable = true;
+        theme-daemon.enable = true;
         syncthing.enable = true;
       };
-      programs = {
-        git.enable = true;
-        ssh.enable = true;
-      };
+      # Enable home modules
+      commonHome.enable = true;
+      interactive.enable = true;
+      gui.enable = true;
+      wm.gnome.enable = false;
+      wm.niri.enable = true;
+      chezmoi.enable = true;
+
+      home.stateVersion = "22.05";
     };
 
     useGlobalPkgs = true;
@@ -31,8 +35,6 @@ in
     sharedModules = [
       (self + "/secrets/home-manager.nix")
       inputs.agenix.homeManagerModules.default
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.nix-index-database.homeModules.nix-index
     ];
   };
 }
