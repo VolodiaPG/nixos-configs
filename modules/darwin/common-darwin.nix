@@ -54,6 +54,8 @@ in
         "signal"
         "vlc"
         "calibre"
+        "steam"
+        "betterdisplay"
       ];
     };
 
