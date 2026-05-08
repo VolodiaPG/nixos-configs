@@ -6,8 +6,6 @@
 }:
 let
   inherit (flake) inputs;
-  inherit (inputs) self;
-  inherit (flake.config) me;
 in
 {
   imports = lib.flatten [
@@ -54,6 +52,8 @@ in
   };
 
   hardware = {
+    opengl.enable = true;
+    opengl.driSupport32Bit = true;
     cpu.intel.updateMicrocode = true;
     graphics = {
       enable = true;
@@ -64,7 +64,7 @@ in
     };
     nvidia = {
       prime.offload.enable = false;
-      open = true;
+      open = false;
     };
   };
 

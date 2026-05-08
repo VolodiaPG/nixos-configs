@@ -23,8 +23,8 @@ in
       commonHome.enable = true;
       interactive.enable = true;
       gui.enable = true;
-      wm.gnome.enable = false;
-      wm.niri.enable = true;
+      wm.gnome.enable = true;
+      wm.niri.enable = false;
       chezmoi.enable = true;
 
       home.stateVersion = "22.05";

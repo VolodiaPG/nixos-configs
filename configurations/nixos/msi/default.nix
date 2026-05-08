@@ -38,20 +38,9 @@ in
     # nixCacheProxy.enable = true;
     wm = {
       enable = true;
-      gnome.enable = false;
+      gnome.enable = true;
       niri = {
-        enable = true;
-      };
-    };
-
-    # Display manager for niri (since GNOME/GDM is disabled)
-    greetd = {
-      enable = true;
-      settings = {
-        default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
-          user = "greeter";
-        };
+        enable = false;
       };
     };
 

@@ -37,6 +37,17 @@ in
 
     # Enable display manager with niri support
     services = {
+      # Display manager for niri (since GNOME/GDM is disabled)
+      greetd = {
+        enable = true;
+        settings = {
+          default_session = {
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
+            user = "greeter";
+          };
+        };
+      };
+
       displayManager = {
         sessionPackages = [ cfg.package ];
         # Use greetd or similar minimal DM, or allow direct launch

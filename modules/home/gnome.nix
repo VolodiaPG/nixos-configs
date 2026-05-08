@@ -32,7 +32,7 @@ in
         # gnomeExtensions.impatience
         # gnomeExtensions.hibernate-status-button
         gnomeExtensions.brightness-control-using-ddcutil
-        gnomeExtensions.paperwm
+        # gnomeExtensions.paperwm
         gnomeExtensions.tailscale-status
         gnomeExtensions.just-perfection
         gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
