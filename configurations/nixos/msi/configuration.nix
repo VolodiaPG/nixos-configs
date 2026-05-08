@@ -52,7 +52,6 @@ in
   };
 
   hardware = {
-    opengl.enable = true;
     cpu.intel.updateMicrocode = true;
     graphics = {
       enable = true;
@@ -64,7 +63,7 @@ in
     };
     nvidia = {
       prime.offload.enable = false;
-      open = false;
+      open = true;
     };
   };
 
