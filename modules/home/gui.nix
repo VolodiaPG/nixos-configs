@@ -16,9 +16,9 @@ in
     };
   };
 
-  # imports = [
-  #   flake.inputs.tidal-to-strawberry.homeManagerModules.default
-  # ];
+  imports = [
+    flake.inputs.tidal-to-strawberry.homeManagerModules.default
+  ];
 
   config = mkIf cfg.enable {
     fonts.fontconfig.enable = pkgs.stdenv.isLinux;
@@ -26,10 +26,10 @@ in
     # Enable the theme daemon for automatic switching
     services = {
       theme-daemon.enable = true;
-      # tidal-to-strawberry = {
-      #   enable = pkgs.stdenv.isLinux;
-      #   workingDirectory = "/home/${flake.config.me.username}/Music";
-      # };
+      tidal-to-strawberry = {
+        enable = pkgs.stdenv.isLinux;
+        workingDirectory = "/home/${flake.config.me.username}/Music";
+      };
     };
     programs = {
       nix-index.enable = true;

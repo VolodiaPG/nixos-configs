@@ -45,7 +45,10 @@ in
     };
 
     # Hardware and kernel
-    kernel.enable = true;
+    kernel = {
+      enable = true;
+      latestKernel = true;
+    };
 
     myAnanicy.enable = true;
     virt.enable = true;
