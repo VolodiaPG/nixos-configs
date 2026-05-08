@@ -180,6 +180,8 @@ in
             "usb"
             "networkmanager"
             "docker"
+            "dialout"
+            "plugdev"
           ];
           openssh.authorizedKeys.keys = me.keys;
           inherit (me) hashedPassword;
