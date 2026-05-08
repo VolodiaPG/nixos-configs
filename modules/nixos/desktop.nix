@@ -34,6 +34,7 @@ in
           concurrent-tap-hold yes
         '';
       };
+      helium.enable = true;
     };
 
     security.pam.services.gdm.enableGnomeKeyring = true;

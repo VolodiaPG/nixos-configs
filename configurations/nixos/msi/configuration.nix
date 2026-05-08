@@ -53,10 +53,10 @@ in
 
   hardware = {
     opengl.enable = true;
-    opengl.driSupport32Bit = true;
     cpu.intel.updateMicrocode = true;
     graphics = {
       enable = true;
+      # support32Bit = true;
       extraPackages = with pkgs; [
         libva-vdpau-driver
         libvdpau-va-gl
