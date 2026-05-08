@@ -395,7 +395,7 @@ in
         "com/ftpix/transparentbar" = {
           "dark-full-screen" = false;
           "disable-text-shadow" = true;
-          "transparency" = 0;
+          "transparency" = 70;
         };
       };
     };
