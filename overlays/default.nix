@@ -27,6 +27,7 @@ _final: prev:
     kanata
     yabai
     ollama
+    tailscale
     ;
 
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;

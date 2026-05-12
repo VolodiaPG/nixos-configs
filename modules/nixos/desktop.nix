@@ -35,6 +35,7 @@ in
         '';
       };
       helium.enable = true;
+      flatpak.enable = true;
     };
 
     security.pam.services.gdm.enableGnomeKeyring = true;

@@ -132,39 +132,38 @@ in
       (rustsched cfg.battery.scheduler)
     ];
 
-    boot.kernelPatches = [
-      {
-        name = "scx-patches";
-        patch = null;
-        structuredExtraConfig = with lib.kernel; {
-          BPF = yes;
-          BPF_SYSCALL = yes;
-          BPF_JIT = lib.mkForce yes;
-          DEBUG_INFO_BTF = yes;
-          BPF_JIT_ALWAYS_ON = lib.mkForce yes;
-          BPF_JIT_DEFAULT_ON = yes;
-          SCHED_CLASS_EXT = yes;
-          # Required for cgroup subscription features (sub_attach, sub_detach, sub_cgroup_id)
-          #
-          # CGROUPS = yes;
-          # CGROUP_SCHED = yes;
-          # CGROUP_PIDS = yes;
-          # CGROUP_RDMA = yes;
-          # CGROUP_FREEZER = yes;
-          # CGROUP_DEVICE = yes;
-          # CGROUP_CPUACCT = yes;
-          # CGROUP_PERF = yes;
-          # CGROUP_BPF = yes;
-          # CGROUP_MISC = yes;
-          # # Additional BPF features for sched_ext
-          # BPF_EVENTS = yes;
-          # BPF_STREAM_PARSER = yes;
-          # BPF_LSM = yes;
-          # BPF_LIRC_MODE2 = yes;
-
-        };
-      }
-    ];
+    # boot.kernelPatches = [
+    #   {
+    #     name = "scx-patches";
+    #     patch = null;
+    #     structuredExtraConfig = with lib.kernel; {
+    #       BPF = yes;
+    #       BPF_SYSCALL = yes;
+    #       BPF_JIT = lib.mkForce yes;
+    #       DEBUG_INFO_BTF = yes;
+    #       BPF_JIT_ALWAYS_ON = lib.mkForce yes;
+    #       BPF_JIT_DEFAULT_ON = yes;
+    #       SCHED_CLASS_EXT = yes;
+    #       # Required for cgroup subscription features (sub_attach, sub_detach, sub_cgroup_id)
+    #       #
+    #       # CGROUPS = yes;
+    #       # CGROUP_SCHED = yes;
+    #       # CGROUP_PIDS = yes;
+    #       # CGROUP_RDMA = yes;
+    #       # CGROUP_FREEZER = yes;
+    #       # CGROUP_DEVICE = yes;
+    #       # CGROUP_CPUACCT = yes;
+    #       # CGROUP_PERF = yes;
+    #       # CGROUP_BPF = yes;
+    #       # CGROUP_MISC = yes;
+    #       # # Additional BPF features for sched_ext
+    #       # BPF_EVENTS = yes;
+    #       # BPF_STREAM_PARSER = yes;
+    #       # BPF_LSM = yes;
+    #       # BPF_LIRC_MODE2 = yes;
+    #     };
+    #   }
+    # ];
 
     # ============================================================================
     # POWER MODE SWITCHING (Battery/AC)
@@ -233,8 +232,9 @@ in
           Type = "oneshot";
           ExecStart = pkgs.writeShellScript "scx-init" ''
             # Check if we're on AC power
-            AC_ONLINE=0
+            AC_ONLINE=1
             for psu in /sys/class/power_supply/*/online; do
+              AC_ONLINE=0
               if [ -f "$psu" ]; then
                 STATUS=$(cat "$psu" 2>/dev/null || echo 0)
                 if [ "$STATUS" = "1" ]; then

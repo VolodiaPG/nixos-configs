@@ -20,7 +20,7 @@ in
     };
 
     services.xserver.videoDrivers = [ "nvidia" ];
-    services.xserver.enable = false;
+    services.xserver.enable = lib.mkDefault false;
 
     virtualisation.docker = {
       enable = true;
@@ -37,31 +37,42 @@ in
     # also an interesting resource https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/cdi.html
     hardware = {
       nvidia-container-toolkit.enable = true;
-      graphics.enable32Bit = true;
-
+      graphics = {
+        enable = true;
+        # support32Bit = true;
+        extraPackages = with pkgs; [
+          intel-compute-runtime
+          intel-media-driver # LIBVA_DRIVER_NAME=iHD
+          intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+          libva-vdpau-driver
+          libvdpau-va-gl
+          mesa
+          nvidia-vaapi-driver
+          nv-codec-headers-12
+        ];
+      };
       nvidia = {
+        package = config.boot.kernelPackages.nvidiaPackages.production;
+        open = true;
+        modesetting.enable = true; # For wayland
+        prime.offload.enable = false;
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
         # https://docs.aws.amazon.com/dlami/latest/devguide/appendix-ami-release-notes.html
         # https://aws.amazon.com/releasenotes/aws-deep-learning-base-gpu-ami-ubuntu-22-04/
         # ^ Shows that AWS AMIs use 535 drivers. Unsure if these can be upgraded alghough I don't see why not
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-        package = config.boot.kernelPackages.nvidiaPackages.latest;
-        nvidiaPersistenced = true;
+        # package = config.boot.kernelPackages.nvidiaPackages.latest;
+        nvidiaPersistenced = false;
         nvidiaSettings = true;
-        modesetting.enable = true;
         powerManagement.enable = true;
-        # datacenter = {
-        #   enable = true;
-        # };
-        open = false;
       };
     };
     systemd.services.nvidia-fabricmanager.enable = lib.mkForce false;
 
     environment.systemPackages = with pkgs; [
       # ollama-cuda # wasn't cached and took forever to build
-      nvtopPackages.nvidia
-      cudaPackages.cudatoolkit
+      # nvtopPackages.nvidia
+      # cudaPackages.cudatoolkit
       nvidia-container-toolkit
     ];
   };

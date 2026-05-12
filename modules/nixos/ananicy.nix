@@ -51,7 +51,7 @@ in
         }
         {
           name = "editor";
-          nice = -8;
+          nice = 0;
           ioclass = "best-effort";
           ionice = 3;
         }
@@ -79,7 +79,7 @@ in
         }
         {
           name = "terminal";
-          nice = -8;
+          nice = 0;
           ioclass = "best-effort";
           ionice = 3;
         }
@@ -124,7 +124,7 @@ in
 
         {
           name = "kitty";
-          type = "terminal";
+          type = "editor";
         }
         {
           name = "signal-desktop";
@@ -395,8 +395,8 @@ in
     };
 
     boot.kernel.sysctl = {
-      "kernel.sched_autogroup_enabled" = 1;
-      "kernel.sched_child_runs_first" = 0;
+      "kernel.sched_autogroup_enabled" = lib.mkDefault 1;
+      "kernel.sched_child_runs_first" = lib.mkDefault 0;
     };
 
     # https://github.com/CachyOS/ananicy-rules/issues/207

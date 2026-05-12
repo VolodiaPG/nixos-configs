@@ -18,18 +18,6 @@ in
     common-pc-ssd
   ]);
 
-  # Bootloader
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-    gfxmodeEfi = "3440x1440";
-  };
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "msi";
-  networking.hostId = "30249671";
-
   # Enable services via module options
   services = {
     # Core system services
@@ -47,7 +35,26 @@ in
     # Hardware and kernel
     kernel = {
       enable = true;
-      latestKernel = true;
+      latestKernel = false;
+      cachyKernel = false;
+    };
+
+    nvidia.enable = true;
+
+    myScx = {
+      enable = false;
+      ac = {
+        governor = "schedutil";
+        scheduler = "scx_lavd";
+        args = "--performance";
+        extraArgs = "";
+      };
+      battery = {
+        governor = "schedutil";
+        scheduler = "scx_lavd";
+        args = "--powersave";
+        extraArgs = "";
+      };
     };
 
     myAnanicy.enable = true;
@@ -70,6 +77,11 @@ in
     # From nixos
     # blueman.enable = true;
     blocky.enable = false;
+
+    immich-ml = {
+      enable = true;
+      cuda.enable = true;
+    };
   };
 
   # Hardware

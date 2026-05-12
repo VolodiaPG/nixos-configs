@@ -37,6 +37,7 @@ in
         gnomeExtensions.just-perfection
         gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
         gnomeExtensions.transparent-top-bar-adjustable-transparency
+        gnomeExtensions.smart-auto-move-ng
 
         gnome-obfuscate
 
@@ -119,6 +120,7 @@ in
             "just-perfection-desktop@just-perfection"
             "instantworkspaceswitcher@amalantony.net"
             "transparent-top-bar@ftpix.com"
+            "martAutoMoveNG@lauinger-clan.de"
           ];
         };
 
@@ -316,6 +318,8 @@ in
         };
         "org/gnome/desktop/interface" = {
           monospace-font-name = "Comic Code Ligatures";
+          font-name = "Roboto 11";
+          document-font-name = "Roboto 12";
         };
         "org/gnome/shell/extensions/mediacontrols" = {
           extension-position = "right";

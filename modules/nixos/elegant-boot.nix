@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 with lib;
@@ -50,7 +51,6 @@ in
       };
       kernelParams = [
         "quiet"
-        "splash"
         "rd.systemd.show_status=auto"
         "udev.log_priority=3"
         "boot.shell_on_fail"
@@ -58,8 +58,16 @@ in
 
       # Boot Loader
       loader = {
-        timeout = 2;
         efi.canTouchEfiVariables = true;
+
+        grub = {
+          theme = pkgs.sleek-grub-theme.override {
+            withBanner = "Welcome, ${flake.config.me.name}!";
+            withStyle = "dark";
+          };
+          default = "saved";
+          gfxmodeEfi = "1920x1080,auto";
+        };
       };
     };
   };

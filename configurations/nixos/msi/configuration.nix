@@ -1,7 +1,6 @@
 {
   flake,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -26,7 +25,6 @@ in
         enable = true;
         device = "nodev";
         efiSupport = true;
-        gfxmodeEfi = "3440x1440";
       };
     };
     blacklistedKernelModules = [
@@ -41,30 +39,18 @@ in
     networkmanager.enable = true;
   };
 
-  services = {
-    undervolt = {
-      enable = true;
-      coreOffset = -95;
-      gpuOffset = -95;
-      uncoreOffset = -95;
-      analogioOffset = -95;
-    };
-  };
+  # services = {
+  #   undervolt = {
+  #     enable = true;
+  #     coreOffset = -95;
+  #     gpuOffset = -95;
+  #     uncoreOffset = -95;
+  #     analogioOffset = -95;
+  #   };
+  # };
 
   hardware = {
     cpu.intel.updateMicrocode = true;
-    graphics = {
-      enable = true;
-      # support32Bit = true;
-      extraPackages = with pkgs; [
-        libva-vdpau-driver
-        libvdpau-va-gl
-      ];
-    };
-    nvidia = {
-      prime.offload.enable = false;
-      open = true;
-    };
   };
 
   environment = {

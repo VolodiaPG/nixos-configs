@@ -173,6 +173,7 @@ in
           extraGroups = [
             "wheel"
             "video"
+            "render"
             "audio"
             "realtime"
             "disk"
