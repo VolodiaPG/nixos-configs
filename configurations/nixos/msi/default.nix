@@ -36,7 +36,6 @@ in
     kernel = {
       enable = true;
       latestKernel = false;
-      cachyKernel = false;
     };
 
     nvidia.enable = true;
