@@ -48,6 +48,10 @@ in
     caddy.enable = true;
     samba.enable = true;
     homeLab.enable = true;
+
+    immich = {
+      enable = true;
+    };
   };
 
   system.stateVersion = "22.05";
