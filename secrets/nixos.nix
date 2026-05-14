@@ -53,5 +53,10 @@ in
       file = ./fizzy-env.age;
     }
     // rootReadable;
+
+    access-token = {
+      file = ./access-token.age;
+    }
+    // userReadable;
   };
 }

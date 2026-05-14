@@ -28,6 +28,7 @@ _final: prev:
     yabai
     ollama
     tailscale
+    # orca-slicer
     ;
 
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;

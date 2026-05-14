@@ -14,16 +14,17 @@ in
 
   config = lib.mkIf cfg.enable {
     nixpkgs.config = {
-      # cudaSupport = true;
+      cudaSupport = true;
       allowUnfree = true;
       nvidia.acceptLicense = true;
+      allowUnsupportedSystem = false;
     };
 
     services.xserver.videoDrivers = [ "nvidia" ];
     services.xserver.enable = lib.mkDefault false;
 
     virtualisation.docker = {
-      enable = true;
+      # enable = true;
       # https://docs.docker.com/reference/cli/dockerd/#enable-cdi-devices
       daemon.settings.features.cdi = true;
     };
@@ -67,13 +68,13 @@ in
         powerManagement.enable = true;
       };
     };
-    systemd.services.nvidia-fabricmanager.enable = lib.mkForce false;
+    # systemd.services.nvidia-fabricmanager.enable = lib.mkForce false;
 
     environment.systemPackages = with pkgs; [
       # ollama-cuda # wasn't cached and took forever to build
       # nvtopPackages.nvidia
       # cudaPackages.cudatoolkit
-      nvidia-container-toolkit
+      # nvidia-container-toolkit
     ];
   };
 }

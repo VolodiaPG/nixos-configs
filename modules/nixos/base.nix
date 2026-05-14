@@ -141,7 +141,6 @@ in
     environment.systemPackages = [
       pkgs.docker-compose
       pkgs.lm_sensors
-      pkgs.ecryptfs
       pkgs.fscrypt-experimental
       pkgs.jq
     ];

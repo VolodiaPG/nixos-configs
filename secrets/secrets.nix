@@ -12,4 +12,5 @@ in
   "samba-user-password.age".publicKeys = [ publicKey ];
   "cachix-token.age".publicKeys = [ publicKey ];
   "fizzy-env.age".publicKeys = [ publicKey ];
+  "access-token.age".publicKeys = [ publicKey ];
 }

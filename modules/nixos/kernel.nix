@@ -38,9 +38,9 @@ in
     };
 
     boot = {
-      kernelModules = [
-        "ecryptfs"
-      ];
+      # kernelModules = [
+      #   "ecryptfs"
+      # ];
       kernelPackages = lib.mkIf cfg.latestKernel (lib.mkForce pkgs.linuxPackages_latest);
     };
 

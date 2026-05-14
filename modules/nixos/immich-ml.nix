@@ -2,9 +2,11 @@
   config,
   lib,
   pkgs,
+  flake,
   ...
 }:
 let
+  inherit (flake.config) me;
   cfg = config.services.immich-ml;
 in
 {
@@ -17,76 +19,32 @@ in
         type = types.port;
         default = 3003;
       };
-
-      host = mkOption {
-        type = types.str;
-        default = "[::]";
-      };
-
-      workers = mkOption {
-        type = types.ints.positive;
-        default = 1;
-      };
-
-      workerTimeout = mkOption {
-        type = types.ints.positive;
-        default = 120;
-      };
-
-      cuda.enable = mkOption {
-        type = types.bool;
-        default = pkgs.config.cudaSupport;
-        description = "Enable CUDA for the Immich ML service";
-      };
     };
   };
 
   config = lib.mkIf cfg.enable {
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
-
-    systemd.sockets.immich-ml = {
-      wantedBy = [ "sockets.target" ];
-      listenStreams = [ "0.0.0.0:${toString cfg.port}" ];
-      socketConfig.Accept = false;
+    # Upstream CUDA-enabled ML image, pinned to the same version as the
+    # server package so client/server protocol stays in sync.
+    virtualisation.oci-containers = {
+      containers.immich-machine-learning = {
+        image = "ghcr.io/immich-app/immich-machine-learning:v${pkgs.immich.version}-cuda";
+        ports = [ "${toString cfg.port}:3003" ];
+        volumes = [ "immich-ml-cache:/cache" ];
+        extraOptions = [ "--device=nvidia.com/gpu=all" ];
+      };
     };
 
-    systemd.services.immich-ml = {
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-      environment = {
-        IMMICH_HOST = cfg.host;
-        IMMICH_PORT = toString cfg.port;
-        MACHINE_LEARNING_CACHE_FOLDER = "/var/cache/immich-ml";
-        IMMICH_MACHINE_LEARNING_WORKERS = toString cfg.workers;
-        IMMICH_MACHINE_LEARNING_WORKER_TIMEOUT = toString cfg.workerTimeout;
-        MPLCONFIGDIR = "/var/lib/immich-ml";
-      };
-      serviceConfig = {
-        ExecStart = "${lib.getExe pkgs.immich-machine-learning}";
-        PrivateDevices = !cfg.cuda.enable;
-        DeviceAllow = lib.optionals cfg.cuda.enable [
-          "/dev/nvidia0"
-          "/dev/nvidiactl"
-          "/dev/nvidia-uvm"
-        ];
-        StateDirectory = "immich-ml";
-        CacheDirectory = "immich-ml";
+    services.caddy = {
+      virtualHosts = {
+        "https://immich-ml.${me.tailname}" = {
+          extraConfig = ''
+            bind tailscale/immich-ml
 
-        # Hardening
-        DynamicUser = true;
-        PrivateMounts = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        RestrictAddressFamilies = [
-          "AF_INET"
-          "AF_INET6"
-          "AF_UNIX"
-        ];
-        RestrictRealtime = true;
-        UMask = "0077";
+            reverse_proxy http://127.0.0.1:3003 {
+                header_up Host {host}
+            }
+          '';
+        };
       };
     };
   };

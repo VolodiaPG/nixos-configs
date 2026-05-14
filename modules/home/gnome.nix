@@ -120,7 +120,7 @@ in
             "just-perfection-desktop@just-perfection"
             "instantworkspaceswitcher@amalantony.net"
             "transparent-top-bar@ftpix.com"
-            "martAutoMoveNG@lauinger-clan.de"
+            "SmartAutoMoveNG@lauinger-clan.de"
           ];
         };
 

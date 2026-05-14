@@ -17,8 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    services.my_virtualization.enable = true;
     virtualisation.oci-containers = {
-      backend = "docker";
       containers = {
         fizzy = {
           image = "ghcr.io/basecamp/fizzy:main";

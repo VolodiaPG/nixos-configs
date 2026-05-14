@@ -203,7 +203,7 @@ in
         ga = "git add .";
         c = "clear";
         n = "nvim";
-        oc = "opencode";
+        oc = "opencode --port";
         opencode-agents = "OPENCODE_CONFIG=$XDG_CONFIG_HOME/opencode/opencode-agents.json opencode";
       };
       plugins = [

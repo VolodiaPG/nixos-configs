@@ -188,6 +188,7 @@ in
           "/root"
           "/etc/ssh/"
           "/etc/NetworkManager/system-connections"
+          "/var/lib/flatpak"
           #"/run/secrets.d"
           #"/run/secrets"
           {
@@ -242,6 +243,8 @@ in
             ".hyperhdr"
             ".tmux"
             ".zotero"
+            ".cache/flatpak"
+            ".local/share/flatpak"
           ];
           files = [
             ".bash_history"

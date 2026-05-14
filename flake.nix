@@ -2,8 +2,8 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs-unstable.follows = "nixpkgs";
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -171,8 +171,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    import-tree.url = "github:vic/import-tree";
-
     bun2nix = {
       url = "github:nix-community/bun2nix";
       inputs = {
@@ -180,7 +178,6 @@
         systems.follows = "systems";
         treefmt-nix.follows = "treefmt-nix";
         flake-parts.follows = "flake-parts";
-        import-tree.follows = "import-tree";
       };
     };
 

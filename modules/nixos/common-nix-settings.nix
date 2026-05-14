@@ -114,12 +114,17 @@ in
     # settings get written into /etc/nix/nix.custom.conf
     nixpkgs.config = {
       allowUnfree = true;
-      allowUnsupportedSystem = true;
+      allowUnsupportedSystem = false;
     };
 
     nix = {
       enable = true;
       channel.enable = false;
+
+      extraOptions = ''
+        experimental-features = nix-command flakes
+        !include ${config.age.secrets.access-token.path}
+      '';
 
       # package = lib.mkDefault pkgs.lixPackageSets.git.lix;
       # package = lib.mkDefault pkgs.nix;

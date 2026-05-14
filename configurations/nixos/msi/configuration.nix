@@ -9,9 +9,8 @@ in
 {
   imports = lib.flatten [
     (with inputs.nixos-hardware.nixosModules; [
-      common-cpu-intel
-      common-gpu-nvidia
-      common-pc
+      # common-cpu-intel-haswell
+      # common-gpu-nvidia-ada-lovelace
       common-pc-ssd
     ])
     ./hardware-configuration.nix
@@ -53,18 +52,18 @@ in
     cpu.intel.updateMicrocode = true;
   };
 
-  environment = {
-    etc = {
-      "X11/Xwrapper.config".text = ''
-        allowed_users=anybody
-        needs_root_rights=yes
-      '';
-      "X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
-    };
-    sessionVariables = {
-      LIBVA_DRIVER_NAME = "nvidia";
-    };
-  };
+  # environment = {
+  #   # etc = {
+  #   #   "X11/Xwrapper.config".text = ''
+  #   #     allowed_users=anybody
+  #   #     needs_root_rights=yes
+  #   #   '';
+  #   #   "X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
+  #   # };
+  #   sessionVariables = {
+  #     LIBVA_DRIVER_NAME = "nvidia";
+  #   };
+  # };
 
   system.stateVersion = "22.05";
 }

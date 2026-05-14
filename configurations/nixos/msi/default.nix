@@ -1,4 +1,4 @@
-{ pkgs, flake, ... }:
+{ flake, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -35,7 +35,7 @@ in
     # Hardware and kernel
     kernel = {
       enable = true;
-      latestKernel = false;
+      latestKernel = true;
     };
 
     nvidia.enable = true;
@@ -62,8 +62,8 @@ in
     hifi.enable = true;
     betterSleep.enable = true;
     # ccache.enable = true;
-    caddy.enable = false;
-    homeLab.enable = true;
+    caddy.enable = true;
+    homeLab.enable = false;
 
     # Storage and networking
     impermanence = {
@@ -79,30 +79,30 @@ in
 
     immich-ml = {
       enable = true;
-      cuda.enable = true;
     };
+    my_virtualization.enable = true;
   };
 
   # Hardware
   hardware.cpu.intel.updateMicrocode = true;
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      libvdpau-va-gl
-      nvidia-vaapi-driver
-      libva-vdpau-driver
-    ];
-  };
+  # hardware.graphics = {
+  #   enable = true;
+  #   enable32Bit = true;
+  #   extraPackages = with pkgs; [
+  #     libvdpau-va-gl
+  #     nvidia-vaapi-driver
+  #     libva-vdpau-driver
+  #   ];
+  # };
 
-  environment.etc."X11/xorg.conf.d/10-nvidia.conf".text = ''
-    Section "OutputClass"
-      Identifier "nvidia"
-      MatchDriver "nvidia-drm"
-      Driver "nvidia"
-      Option "PrimaryGPU" "yes"
-    EndSection
-  '';
+  # environment.etc."X11/xorg.conf.d/10-nvidia.conf".text = ''
+  #   Section "OutputClass"
+  #     Identifier "nvidia"
+  #     MatchDriver "nvidia-drm"
+  #     Driver "nvidia"
+  #     Option "PrimaryGPU" "yes"
+  #   EndSection
+  # '';
 
   system.stateVersion = "22.05";
 }
