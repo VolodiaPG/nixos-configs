@@ -45,6 +45,7 @@ in
           "nngceckbapebfimnlniiiahkandclblb" # bitwarden
           "mnjggcdmjocbbbhaepdhchncahnbgone" # sponsorblock
           "phaodiidhofhdmfkjiacigibgikhfafn" # Qudelix
+          "enamippconapkdmgfgjchkhakpfinmaj" # dearrow
         ];
       };
     };
