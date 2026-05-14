@@ -83,15 +83,13 @@ in
       homeDirectory = flake.config.me.homeDirectory pkgs.stdenv;
       file = {
         ".ssh/config" = {
-          target = ".ssh/config_source";
-          onChange = "cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config";
-          source = pkgs.replaceVars (flake.inputs.self + "/static/config.ssh") {
-            g5k_login = "volparolguarino";
-            keychain = if pkgs.stdenv.isLinux then "" else "UseKeychain yes";
-          };
-
+          text = builtins.readFile (flake.self + "/static/config.ssh");
+          force = true;
         };
-        ".ssh/authorized_keys".text = lib.concatStringsSep "\n" flake.config.me.keys;
+        ".ssh/authorized_keys" = {
+          text = lib.concatStringsSep "\n" flake.config.me.keys;
+          force = true;
+        };
       };
 
       packages = with pkgs; [
