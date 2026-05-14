@@ -89,7 +89,7 @@ in
       prowlarr.enable = true; # Enable Prowlarr for indexers
       jellyfin.enable = false; # Enable Jellyfin for media
       recyclarr.enable = true;
-      autobrr.enable = true;
+      autobrr.enable = false;
     };
 
     services.transmission.settings = {
