@@ -53,6 +53,7 @@ in
           zathura
           kitty
           kitty-themes
+          filezilla
         ]
         ++ (lib.optionals pkgs.stdenv.isLinux [
           brave

@@ -1,4 +1,4 @@
-{ flake, ... }:
+{ flake, config, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -49,9 +49,18 @@ in
     samba.enable = true;
     homeLab.enable = true;
 
-    immich = {
+    immich.enable = true;
+    backup = {
       enable = true;
+      paths = [
+        "/data/syncthing"
+        "/home/${flake.config.me.username}/Documents/nixos-configs"
+      ];
+      user = flake.config.me.hetzner-user;
+      password = config.age.secrets.hetzner-token.path;
+      subuser = "sub1";
     };
+
   };
 
   system.stateVersion = "22.05";

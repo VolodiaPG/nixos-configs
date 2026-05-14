@@ -58,5 +58,15 @@ in
       file = ./access-token.age;
     }
     // userReadable;
+
+    hetzner-token = {
+      file = ./hetzner-token.age;
+    }
+    // rootReadable;
+
+    hetzner-data-encryption-key = {
+      file = ./hetzner-data-encryption-key.age;
+    }
+    // rootReadable;
   };
 }

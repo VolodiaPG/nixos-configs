@@ -13,4 +13,6 @@ in
   "cachix-token.age".publicKeys = [ publicKey ];
   "fizzy-env.age".publicKeys = [ publicKey ];
   "access-token.age".publicKeys = [ publicKey ];
+  "hetzner-token.age".publicKeys = [ publicKey ];
+  "hetzner-data-encryption-key.age".publicKeys = [ publicKey ];
 }

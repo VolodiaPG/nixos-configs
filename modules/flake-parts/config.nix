@@ -47,6 +47,9 @@ let
       chezmoiDirectory = lib.mkOption {
         type = lib.types.functionTo lib.types.path;
       };
+      hetzner-user = lib.mkOption {
+        type = lib.types.str;
+      };
     };
   };
 in
