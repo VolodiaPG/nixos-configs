@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 with lib;
@@ -26,7 +27,7 @@ in
         # gnomeExtensions.hide-activities-button
         gnomeExtensions.gnome-40-ui-improvements
         gnomeExtensions.gsconnect
-        gnomeExtensions.bing-wallpaper-changer
+        # gnomeExtensions.bing-wallpaper-changer
         # gnomeExtensions.blur-my-shell
         # gnomeExtensions.media-controls
         # gnomeExtensions.impatience
@@ -38,12 +39,14 @@ in
         gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
         gnomeExtensions.transparent-top-bar-adjustable-transparency
         gnomeExtensions.smart-auto-move-ng
+        gnomeExtensions.immich-wallpaper
 
         gnome-obfuscate
 
         # pkgs-unstable.tidal-hifi
         hyperhdr
         gnome-tweaks
+        orca-slicer
       ]
       ++ lib.optionals pkgs.stdenv.isx86_64 [
         discord
@@ -106,7 +109,7 @@ in
             "Hide_Activities@shay.shayel.org"
             "RemoveAppMenu@Dragon8oy.com"
             "gsconnect@andyholmes.github.io"
-            "BingWallpaper@ineffable-gmail.com"
+            # "BingWallpaper@ineffable-gmail.com"
             "blur-my-shell@aunetx"
             "rounded-window-corners@yilozt"
             "mediacontrols@cliffniff.github.com"
@@ -121,6 +124,7 @@ in
             "instantworkspaceswitcher@amalantony.net"
             "transparent-top-bar@ftpix.com"
             "SmartAutoMoveNG@lauinger-clan.de"
+            "immich-wallpaper@nokichan.github.io"
           ];
         };
 
@@ -299,12 +303,19 @@ in
         "org/gnome/desktop/remote-desktop/rdp" = {
           screen-share-mode = "extend";
         };
-        "org/gnome/shell/extensions/bingwallpaper" = {
-          lockscreen-blur-brightness = 60;
-          lockscreen-blur-strength = 2;
-          override-lockscreen-blur = true;
-          hide = true;
-          selected-image = "current";
+        # "org/gnome/shell/extensions/bingwallpaper" = {
+        #   lockscreen-blur-brightness = 60;
+        #   lockscreen-blur-strength = 2;
+        #   override-lockscreen-blur = true;
+        #   hide = true;
+        #   selected-image = "current";
+        # };
+        "org/gnome/shell/extensions/immich-wallpaper" = {
+          album-id = "eb583f99-df3d-439e-a8b4-f515647cffaf";
+          auth-type = "api-key";
+          server-url = "https://immich.${flake.config.me.tailname}";
+          show-location = true;
+          show-notifications = false;
         };
         "org/gnome/shell/extensions/blur-my-shell/panel" = {
           blur = false;
