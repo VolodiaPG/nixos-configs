@@ -54,7 +54,7 @@ in
       enable = true;
       paths = [
         "/data/syncthing"
-        "/home/${flake.config.me.username}/Documents/nixos-configs"
+        "/home/${flake.config.me.username}/Documents"
       ];
       user = flake.config.me.hetzner-user;
       password = config.age.secrets.hetzner-token.path;
