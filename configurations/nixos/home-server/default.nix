@@ -54,6 +54,7 @@ in
       enable = true;
       paths = [
         "/data/syncthing"
+        "/data/immich"
         "/home/${flake.config.me.username}/Documents"
       ];
       user = flake.config.me.hetzner-user;
