@@ -39,7 +39,7 @@ in
         initialize = true;
         inherit (cfg) paths;
 
-        repository = "sftp:${cfg.user}-${cfg.subuser}${cfg.user}.your-storagebox.de:/backup";
+        repository = "sftp:${cfg.user}-${cfg.subuser}@${cfg.user}.your-storagebox.de:/backup";
         # data encryption key
         passwordFile = config.age.secrets.hetzner-data-encryption-key.path;
 
