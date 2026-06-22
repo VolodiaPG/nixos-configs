@@ -2,12 +2,10 @@
   flake,
   config,
   lib,
-  pkgs,
   ...
 }:
 let
   inherit (flake.config) me;
-  inherit (flake.inputs) self;
   cfg = config.services.arr;
 in
 {
@@ -168,45 +166,6 @@ in
 
     services.caddy = {
       virtualHosts = {
-        "http://:80" = {
-          extraConfig = ''
-            # Route for the root request (and redirect if needed, like /index.htm -> /)
-            route / {
-                rewrite /index.htm /
-
-                file_server {
-                    index ${
-                      pkgs.replaceVars (self + "/static/services-page/index.html") {
-                        TAILNAME = me.tailname;
-                      }
-                    }
-                }
-            }
-
-            route * {
-                respond "Not Found" 404
-            }
-          '';
-        };
-
-        "https://hass.${me.tailname}" = {
-          extraConfig = ''
-            bind tailscale/hass
-
-            reverse_proxy http://127.0.0.1:8123 {
-                header_up Host {host}
-            }
-          '';
-        };
-        "https://rss.${me.tailname}" = {
-          extraConfig = ''
-            bind tailscale/rss
-
-            reverse_proxy http://127.0.0.1:8082 {
-                header_up Host {host}
-            }
-          '';
-        };
         "https://transmission.${me.tailname}" = {
           extraConfig = ''
             bind tailscale/transmission

@@ -44,7 +44,7 @@ in
     backlightOff.enable = true;
 
     # Media server stack
-    arr.enable = true;
+    arr.enable = false;
     caddy.enable = true;
     samba.enable = true;
     homeLab.enable = true;

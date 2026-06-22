@@ -123,8 +123,8 @@ in
 
     services.kdeconnect.enable = true;
 
-    programs.noctalia-shell = {
-      enable = true;
-    };
+    # programs.noctalia-shell = {
+    #   enable = true;
+    # };
   };
 }

@@ -2,17 +2,17 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     nixpkgs-unstable.follows = "nixpkgs";
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     home-manager = {
-      url = "https://flakehub.com/f/nix-community/home-manager/0.2511";
+      url = "https://flakehub.com/f/nix-community/home-manager/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

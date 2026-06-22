@@ -46,6 +46,24 @@ in
     services = {
       caddy = {
         virtualHosts = {
+          "https://hass.${me.tailname}" = {
+            extraConfig = ''
+              bind tailscale/hass
+
+              reverse_proxy http://127.0.0.1:8123 {
+                  header_up Host {host}
+              }
+            '';
+          };
+          "https://rss.${me.tailname}" = {
+            extraConfig = ''
+              bind tailscale/rss
+
+              reverse_proxy http://127.0.0.1:8082 {
+                  header_up Host {host}
+              }
+            '';
+          };
           "https://fizzy.${me.tailname}" = {
             extraConfig = ''
               bind tailscale/fizzy
