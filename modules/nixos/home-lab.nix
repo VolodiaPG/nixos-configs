@@ -32,13 +32,13 @@ in
             SMTP_ADDRESS = "smtp.gmail.com";
             SMTP_USERNAME = "bot.volodia@gmail.com";
             # Reduce memory fragmentation in Ruby
-            MALLOC_ARENA_MAX = "2";
-            # Single worker for single-user setup
-            WEB_CONCURRENCY = "1";
-            # Limit threads to reduce memory
-            RAILS_MAX_THREADS = "2";
+            # MALLOC_ARENA_MAX = "2";
+            # # Single worker for single-user setup
+            # WEB_CONCURRENCY = "1";
+            # # Limit threads to reduce memory
+            # RAILS_MAX_THREADS = "2";
           };
-          volumes = [ "/home/${me.username}/Documents/Sync/services/fizzy:/rails/storage" ];
+          volumes = [ "/home/${me.username}/Documents/services/fizzy:/rails/storage" ];
         };
       };
     };
