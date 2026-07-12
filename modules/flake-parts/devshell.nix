@@ -37,6 +37,8 @@
             nvfetcher
             git
             nh
+            nixd
+            nixfmt
           ];
           inherit (config.pre-commit) shellHook;
         };

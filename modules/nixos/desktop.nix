@@ -34,7 +34,7 @@ in
           concurrent-tap-hold yes
         '';
       };
-      helium.enable = true;
+      browser.enable = true;
       flatpak.enable = true;
     };
 

@@ -202,7 +202,7 @@ in
         gm = "git comit -m";
         ga = "git add .";
         c = "clear";
-        n = "nvim";
+        n = "vim";
         oc = "opencode --port";
         opencode-agents = "OPENCODE_CONFIG=$XDG_CONFIG_HOME/opencode/opencode-agents.json opencode";
       };

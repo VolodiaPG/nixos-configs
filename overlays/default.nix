@@ -37,7 +37,7 @@ _final: prev:
     opencode
     ;
 
-  inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
+  # inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
 
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
     theme-switcher

@@ -17,7 +17,7 @@ in
         };
         rebase.autostash = true;
         init.defaultBranch = "main";
-        core.editor = "nvim";
+        core.editor = "vim";
         alias.lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
         diff.external = "difft";
       };

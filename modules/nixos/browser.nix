@@ -1,30 +1,22 @@
 {
   config,
   lib,
-  flake,
   ...
 }:
 with lib;
 let
-  cfg = config.services.helium;
-  inherit (flake) inputs;
-
+  cfg = config.services.browser;
 in
 {
-  options.services.helium = {
-    enable = lib.mkEnableOption "Helium browser";
+  options.services.browser = {
+    enable = lib.mkEnableOption "My browser";
   };
 
-  imports = [
-    inputs.helium.nixosModules.default
-  ];
-
   config = mkIf cfg.enable {
-    programs.helium = {
+    programs.chromium = {
       enable = true;
 
-      # Optional: override the package
-      # package = pkgs.helium;
+      package = pkgs.brave;
 
       # 🚩 Flags - Command-line arguments always passed to Helium
       # flags = [
@@ -32,8 +24,6 @@ in
       #   "--ozone-platform-hint=auto"
       # ];
 
-      # 🎯 Policies - Written to /etc/chromium/policies/managed/helium-nixos.json
-      # Also written to /etc/helium/policies/managed/ for future compatibility
       policies = {
         "BrowserSignin" = 0;
         "PasswordManagerEnabled" = false;

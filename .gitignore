@@ -2,6 +2,7 @@
 .vscode
 *.qcow2
 .direnv/
+.cache/
 
 result*
 nohup.out

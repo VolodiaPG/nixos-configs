@@ -50,12 +50,12 @@ in
           qbittorrent
           #          zotero
           drawio
-          zathura
+          # zathura
           kitty
           kitty-themes
-          filezilla
         ]
         ++ (lib.optionals pkgs.stdenv.isLinux [
+          filezilla
           brave
           libnotify
           vlc

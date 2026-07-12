@@ -106,10 +106,6 @@ in
     enable = lib.mkEnableOption "common Nix settings (cachix, gc, experimental features)";
   };
 
-  imports = [
-    inputs.determinate.nixosModules.default
-  ];
-
   config = lib.mkIf cfg.enable {
     # settings get written into /etc/nix/nix.custom.conf
     nixpkgs.config = {

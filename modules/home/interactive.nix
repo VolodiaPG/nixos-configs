@@ -70,7 +70,8 @@ in
         python3
         difftastic
         cachix
-        nvim
+        # nvim$
+        vim
         devenv
       ];
 

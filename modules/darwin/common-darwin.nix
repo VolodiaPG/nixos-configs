@@ -69,6 +69,8 @@ in
       fswatch
       qbittorrent
       zotero
+      podman
+      podman-compose
 
       # yabai
       # skhd
