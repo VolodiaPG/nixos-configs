@@ -2,6 +2,12 @@
     "profiles": [
         {
             "complex_modifications": {
+                "parameters": {
+                    "basic.simultaneous_threshold_milliseconds": 20,
+                    "basic.to_delayed_action_delay_milliseconds": 20,
+                    "basic.to_if_alone_timeout_milliseconds": 20,
+                    "basic.to_if_held_down_threshold_milliseconds": 20
+                },
                 "rules": [
                     {
                         "description": "Home row mods (sd) - delete forward combo",

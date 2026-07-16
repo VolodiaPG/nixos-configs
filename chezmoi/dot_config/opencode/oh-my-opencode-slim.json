@@ -1,39 +1,82 @@
 {
-  "preset": "custom",
+  "$schema": "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json",
+  "preset": "quality",
   "presets": {
-    "custom": {
+    "simple": {
       "orchestrator": {
-        "model": "opencode/qwen3.6-plus",
+        "model": "opencode/minimax-2.7",
+        "variant": "medium",
         "skills": ["*"],
-        "mcps": ["*"]
+        "mcps": ["*", "!context7"]
       },
       "oracle": {
-        "model": "opencode/kimi-k2.6",
+        "model": "opencode/minimax-2.7",
         "variant": "high",
         "skills": ["simplify"],
         "mcps": []
       },
       "librarian": {
-        "model": "opencode/qwen3.6-plus",
+        "model": "opencode/minimax-2.7",
         "variant": "low",
         "skills": [],
-        "mcps": ["websearch", "context7", "grep_app"]
+        "mcps": ["websearch", "context7", "gh_grep"]
       },
       "explorer": {
-        "model": "opencode/qwen3.6-plus",
+        "model": "opencode/minimax-2.7",
         "variant": "low",
         "skills": [],
         "mcps": []
       },
       "designer": {
-        "model": "opencode/qwen3.6-plus",
+        "model": "opencode/minimax-2.7",
         "variant": "medium",
-        "skills": ["agent-browser"],
+        "skills": [],
         "mcps": []
       },
       "fixer": {
-        "model": "ollama/qwen-3.5",
+        "model": "opencode/minimax-2.7",
         "variant": "low",
+        "skills": [],
+        "mcps": []
+      }
+    },
+    "quality": {
+      "orchestrator": {
+        "model": "opencode/glm-5.2",
+        "skills": ["*"],
+        "mcps": ["*", "!context7"]
+      },
+      "oracle": {
+        "model": "opencode/deepseek-v4-pro",
+        "variant": "max",
+        "skills": ["simplify"],
+        "mcps": []
+      },
+      "council": {
+        "model": "opencode/deepseek-v4-pro",
+        "variant": "high",
+        "skills": [],
+        "mcps": []
+      },
+      "librarian": {
+        "model": "opencode/minimax-m2.7",
+        "skills": [],
+        "mcps": ["websearch", "context7", "gh_grep"]
+      },
+      "explorer": {
+        "model": "opencode/minimax-m2.7",
+        "skills": [],
+        "mcps": []
+      },
+      "designer": {
+        "model": "opencode/kimi-k2.6",
+        "variant": "medium",
+        "skills": [],
+        "mcps": []
+      },
+      "fixer": {
+        "model": "opencode/deepseek-v4-flash",
+        "variant": "high",
         "skills": [],
         "mcps": []
       }

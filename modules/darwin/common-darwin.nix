@@ -42,6 +42,7 @@ in
       brews = [
         "ollama"
         "mpv"
+        "vmnet-helper"
       ];
       casks = [
         "hiddenbar"
@@ -56,6 +57,9 @@ in
         "calibre"
         "steam"
         "betterdisplay"
+      ];
+      taps = [
+        "nirs/vmnet-helper"
       ];
     };
 
