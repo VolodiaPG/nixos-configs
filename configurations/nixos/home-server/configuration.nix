@@ -14,6 +14,11 @@
     ];
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   networking = {
     hostId = "30249676";
     hostName = "home-server";

@@ -42,6 +42,7 @@ in
     vpn.enable = true;
     laptopServer.enable = true;
     backlightOff.enable = true;
+    networking.enable = true;
 
     # Media server stack
     arr.enable = false;
