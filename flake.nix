@@ -218,9 +218,6 @@
 
     systems.url = "github:nix-systems/default";
 
-    nixos-unified.url = "github:srid/nixos-unified";
-    # nixos-unified.url = "path:/home/volodia/Documents/nixos-unified";
-
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -240,20 +237,11 @@
       };
     };
 
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
-
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:noctalia-dev/noctalia-shell/legacy-v4";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        noctalia-qs.follows = "noctalia-qs";
+        #   noctalia-qs.follows = "noctalia-qs";
       };
     };
 
@@ -310,9 +298,30 @@
     ];
   };
 
-  # Wired using https://nixos-unified.org/autowiring.html
+  # Wired using the dendritic pattern: every .nix file in modules/ and hosts/
+  # is auto-imported as a top-level flake-parts module.
   outputs =
     inputs@{ self, ... }:
+    let
+      autoImport =
+        dir:
+        let
+          entries = builtins.readDir dir;
+        in
+        builtins.concatMap (
+          fn:
+          let
+            p = dir + "/${fn}";
+          in
+          if entries.${fn} == "directory" then
+            autoImport p
+          else if lib.hasSuffix ".nix" fn && fn != "default.nix" then
+            [ p ]
+          else
+            [ ]
+        ) (builtins.attrNames entries);
+      lib = inputs.nixpkgs.lib;
+    in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -322,24 +331,93 @@
       imports = [
         inputs.flat-flake.flakeModules.flatFlake
       ]
-      ++ (
-        with builtins; map (fn: ./modules/flake-parts/${fn}) (attrNames (readDir ./modules/flake-parts))
-      );
+      ++ autoImport ./modules
+      ++ autoImport ./hosts;
 
-      flatFlake.config.allowed = [ ];
+      flatFlake.config.allowed = [
+        [
+          "determinate"
+          "determinate-nixd-aarch64-darwin"
+        ]
+        [
+          "determinate"
+          "determinate-nixd-aarch64-linux"
+        ]
+        [
+          "determinate"
+          "determinate-nixd-x86_64-linux"
+        ]
+        [
+          "determinate"
+          "nix"
+        ]
+        [
+          "determinate"
+          "nix"
+          "flake-parts"
+        ]
+        [
+          "determinate"
+          "nix"
+          "git-hooks-nix"
+        ]
+        [
+          "determinate"
+          "nix"
+          "git-hooks-nix"
+          "flake-compat"
+        ]
+        [
+          "determinate"
+          "nix"
+          "nixpkgs"
+        ]
+        [
+          "determinate"
+          "nix"
+          "nixpkgs-23-11"
+        ]
+        [
+          "determinate"
+          "nix"
+          "nixpkgs-regression"
+        ]
+        [
+          "determinate"
+          "nixpkgs"
+        ]
+        [
+          "nix-homebrew"
+          "brew-src"
+        ]
+        [
+          "nixarr"
+          "treefmt-nix"
+        ]
+        [
+          "noctalia"
+          "noctalia-qs"
+        ]
+        [
+          "noctalia"
+          "noctalia-qs"
+          "systems"
+        ]
+        [
+          "noctalia"
+          "noctalia-qs"
+          "treefmt-nix"
+        ]
+      ];
 
       perSystem =
         { lib, system, ... }:
         {
-          # Make our overlay available to the devShell
-          # "Flake parts does not yet come with an endorsed module that initializes the pkgs argument.""
-          # So we must do this manually; https://flake.parts/overlays#consuming-an-overlay
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             overlays = lib.attrValues self.overlays;
             config.allowUnfree = true;
           };
-
         };
     };
 }

@@ -47,7 +47,7 @@ _final: prev:
 
   noctalia-shell = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
-  nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
+  # nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
 
   mosh = prev.mosh.overrideAttrs (
     old:
