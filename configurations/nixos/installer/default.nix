@@ -7,6 +7,18 @@
 let
   inherit (flake) inputs;
   inherit (inputs) self;
+
+  # # ponytail: embed every config except installer so ISO can install offline
+  # targets = lib.filterAttrs (n: _: n == "msi") self.nixosConfigurations;
+  # perConfig = _: cfg: [
+  #   cfg.config.system.build.toplevel
+  #   cfg.config.system.build.diskoScript
+  #   cfg.config.system.build.diskoScript.drvPath
+  #   cfg.pkgs.stdenv.drvPath
+  #   cfg.pkgs.perlPackages.ConfigIniFiles
+  #   cfg.pkgs.perlPackages.FileSlurp
+  #   (cfg.pkgs.closureInfo { rootPaths = [ ]; }).drvPath
+  # ];
 in
 {
   imports = [
@@ -15,8 +27,11 @@ in
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
     inputs.disko.nixosModules.disko
-    "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/iso-image.nix"
+    "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
   ];
+
+  # environment.etc."install-closure".source =
+  #   "${pkgs.closureInfo { rootPaths = lib.concatLists (lib.mapAttrsToList perConfig targets); }}/store-paths";
 
   environment.systemPackages = [
     pkgs.gparted-full
@@ -47,7 +62,9 @@ in
       gum confirm --default=false "This will erase $DISK to install $TARGET, confirm:"
 
       echo selected "$FLAKE"#"$TARGET"
-      exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
+      # exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
+      sudo disko --mode disko --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
+      sudo nixos-install --no-channel-copy --no-root-password --flake "$FLAKE"#"$TARGET"
     '')
   ];
 
@@ -55,12 +72,29 @@ in
   services = {
     impermanence.enable = false;
     base.enable = true;
+
+    getty.autologinUser = "nixos";
+  };
+
+  users.users.nixos = {
+    initialPassword = lib.mkForce "";
+    password = lib.mkForce null;
+    hashedPassword = lib.mkForce null;
+    hashedPasswordFile = lib.mkForce null;
+    initialHashedPassword = lib.mkForce null;
+    extraGroups = [ "wheel" ];
+  };
+
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
   };
 
   isoImage = {
     volumeID = "NIXOS_INSTALLER";
     makeUsbBootable = true;
     makeEfiBootable = true;
+    includeSystemBuildDependencies = false;
   };
 
   boot = {
