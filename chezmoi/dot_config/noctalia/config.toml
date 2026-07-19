@@ -1,67 +1,104 @@
-# ponytail: v5 config migrated from v4 settings.json — only high-confidence mappings included.
-# NOT migrated (v5 schema differs / plugins unverified): bar plugins (mini-docker, tailscale,
-# catwalk, kde-connect), SystemMonitor widget, notification/OSD fine-tuning, session-menu keybinds,
-# noctaliaPerformance (removed in v5), hooks.performanceMode* (feature gone in v5).
-# Re-add those via the v5 Settings GUI. Old settings.json/plugins.json kept as v4 reference;
-# safe to delete once migration is confirmed.
+[accessibility]
+ui_scale = 1.0
 
-[shell]
-avatar_path = "/home/volodia/Pictures/.face"
-telemetry_enabled = false
+[bar.main]
+center = [ "workspaces" ]
+end = [ "media", "tray", "battery", "volume", "brightness", "clock", "notifications" ]
+margin_h = 4
+margin_v = 4
+position = "bottom"
+radius = 12
+scale = 1.0
+start = [ "control-center", "launcher" ]
+thickness = 20
+widget_spacing = 6
 
-[shell.animation]
-enabled = false
+[brightness]
+enable_ddcutil = true
 
-[shell.shadow]
-direction = "down_right"
-
-[theme]
-mode = "light"
-source = "builtin"
-builtin = "Catppuccin"
-
-[wallpaper]
+[idle.behavior.lock]
+action = "lock"
 enabled = true
-directory = "/home/volodia/Pictures/Wallpapers"
-fill_mode = "crop"
-fill_color = "#000000"
-transition = ["fade", "disc", "stripes", "wipe", "honeycomb"]
-transition_duration = 1500
+timeout = 200
+
+[idle.behavior.screen-off]
+action = "screen_off"
+enabled = true
+timeout = 120
 
 [location]
 address = "Nages-et-Solorgues"
 
-[weather]
-enabled = true
-effects = true
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [ "lockscreen-login-box@DP-3" ]
 
-[brightness]
-enable_ddcutil = true
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-3"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1720.0
+    cy = 1321.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-3".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
 
 [nightlight]
 temperature_day = 6500
 temperature_night = 4000
 
-[idle.behavior.lock]
-timeout = 200
-action = "lock"
-enabled = true
+[shell]
+avatar_path = "/home/volodia/Pictures/.face"
+polkit_agent = true
+telemetry_enabled = false
 
-[idle.behavior.screen-off]
-timeout = 120
-action = "screen_off"
-enabled = true
+    [shell.animation]
+    enabled = false
 
-[bar.main]
-position = "bottom"
-radius = 12
-margin_h = 4
-margin_v = 4
-widget_spacing = 6
-start = ["control-center", "launcher"]
-center = ["workspaces"]
-end = ["media", "tray", "battery", "volume", "brightness", "clock", "notifications"]
+    [shell.shadow]
+    direction = "center"
+
+[theme]
+builtin = "Catppuccin"
+mode = "light"
+source = "builtin"
+
+[wallpaper]
+directory = "/home/volodia/Pictures/Wallpapers"
+enabled = true
+fill_color = "#000000"
+fill_mode = "crop"
+transition = [ "fade", "disc", "stripes", "wipe", "honeycomb" ]
+transition_duration = 1500
+
+    [wallpaper.default]
+    path = "/nix/store/3iwy0a7cjaxbj93k8jln8mx73j2y3qq0-noctalia-5.0.0/share/noctalia/assets/noctalia-wallpaper.png"
+
+    [wallpaper.last]
+    path = "/nix/store/3iwy0a7cjaxbj93k8jln8mx73j2y3qq0-noctalia-5.0.0/share/noctalia/assets/noctalia-wallpaper.png"
+
+[weather]
+effects = true
+enabled = true
 
 [widget.clock]
-format = "{:%H\n%M}"
+format = """{:%H
+%M}"""
 tooltip_format = "{:%H:%M %a, %b %d}"

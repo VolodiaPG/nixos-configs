@@ -2,10 +2,12 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 let
   inherit (lib) mkIf mkOption;
+  inherit (flake) inputs;
   cfg = config.services.kernel;
 in
 {
@@ -31,7 +33,18 @@ in
     };
   };
 
+  imports = [ inputs.bbr_classic.nixosModules.default ];
+
   config = mkIf cfg.enable {
+    networking.bbr_classic = {
+      enable = true;
+
+      # Automatically sets the following sysctls:
+      # net.ipv4.tcp_congestion_control = "bbr_classic"
+      # net.core.default_qdisc = "fq"
+      setAsDefault = true;
+    };
+
     powerManagement = {
       enable = true;
       powertop.enable = true;
@@ -301,11 +314,11 @@ in
         #   # --------------------------------------------------------------------------
         #   # CAKE (Common Applications Kept Enhanced) - fair queueing with low latency
         #   # "net.core.default_qdisc" = "cake";
-        "net.core.default_qdisc" = "fq";
+        # "net.core.default_qdisc" = "fq";
         #
         #   # BBR (Bottleneck Bandwidth and RTT) - Google's congestion control algorithm
         #   # Provides higher throughput and lower latency than CUBIC
-        "net.ipv4.tcp_congestion_control" = "bbr";
+        # "net.ipv4.tcp_congestion_control" = "bbr";
         #
         #   # --------------------------------------------------------------------------
         #   # NETWORK - TCP CONNECTION HANDLING

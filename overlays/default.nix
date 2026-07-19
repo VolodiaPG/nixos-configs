@@ -35,6 +35,8 @@ _final: prev:
     xinstall
     ;
 
+  inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
+
   noctalia = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
   # ponytail: nix-cache-proxy input is commented out in flake.nix — removed dead overlay attr.

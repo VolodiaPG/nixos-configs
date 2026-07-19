@@ -22,7 +22,7 @@
           nixfmt.enable = true;
           statix.enable = true;
           deadnix.enable = true;
-          commitizen.enable = true;
+          commitizen.enable = false;
           actionlint.enable = true;
         };
       };

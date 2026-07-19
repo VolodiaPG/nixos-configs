@@ -44,63 +44,63 @@
       };
     };
 
-    # nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    nixCats.url = "github:BirdeeHub/nixCats-nvim";
 
-    # beam-flakes = {
-    #   url = "github:elixir-tools/nix-beam-flakes";
-    #   inputs = {
-    #     flake-parts.follows = "flake-parts";
-    #     nixpkgs.follows = "nixpkgs";
-    #   };
-    # };
+    beam-flakes = {
+      url = "github:elixir-tools/nix-beam-flakes";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
 
-    # elixir-expert = {
-    #   url = "github:elixir-lang/expert";
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     flake-parts.follows = "flake-parts";
-    #     beam-flakes.follows = "beam-flakes";
-    #   };
-    # };
+    elixir-expert = {
+      url = "github:elixir-lang/expert";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        beam-flakes.follows = "beam-flakes";
+      };
+    };
 
-    # plugins-treesitter-textobjects = {
-    #   url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
-    #   flake = false;
-    # };
+    plugins-treesitter-textobjects = {
+      url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
+      flake = false;
+    };
 
-    # plugins-inlay-hints = {
-    #   url = "github:MysticalDevil/inlay-hints.nvim";
-    #   flake = false;
-    # };
+    plugins-inlay-hints = {
+      url = "github:MysticalDevil/inlay-hints.nvim";
+      flake = false;
+    };
 
-    # plugins-catppuccin = {
-    #   url = "github:catppuccin/nvim";
-    #   flake = false;
-    # };
+    plugins-catppuccin = {
+      url = "github:catppuccin/nvim";
+      flake = false;
+    };
 
-    # plugins-vimtex = {
-    #   url = "github:lervag/vimtex";
-    #   flake = false;
-    # };
+    plugins-vimtex = {
+      url = "github:lervag/vimtex";
+      flake = false;
+    };
 
-    # plugins-opencode-nvim = {
-    #   url = "github:NickvanDyke/opencode.nvim";
-    #   flake = false;
-    # };
+    plugins-opencode-nvim = {
+      url = "github:NickvanDyke/opencode.nvim";
+      flake = false;
+    };
 
-    # vim = {
-    #   url = "github:volodiapg/vim";
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     nixCats.follows = "nixCats";
-    #     elixir-expert.follows = "elixir-expert";
-    #     plugins-catppuccin.follows = "plugins-catppuccin";
-    #     plugins-inlay-hints.follows = "plugins-inlay-hints";
-    #     plugins-opencode-nvim.follows = "plugins-opencode-nvim";
-    #     plugins-treesitter-textobjects.follows = "plugins-treesitter-textobjects";
-    #     plugins-vimtex.follows = "plugins-vimtex";
-    #   };
-    # };
+    vim = {
+      url = "github:volodiapg/vim";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixCats.follows = "nixCats";
+        elixir-expert.follows = "elixir-expert";
+        plugins-catppuccin.follows = "plugins-catppuccin";
+        plugins-inlay-hints.follows = "plugins-inlay-hints";
+        plugins-opencode-nvim.follows = "plugins-opencode-nvim";
+        plugins-treesitter-textobjects.follows = "plugins-treesitter-textobjects";
+        plugins-vimtex.follows = "plugins-vimtex";
+      };
+    };
 
     impermanence = {
       url = "https://flakehub.com/f/nix-community/impermanence/0";
@@ -274,7 +274,10 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
-
+    bbr_classic = {
+      url = "github:cmspam/bbr_classic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {

@@ -53,6 +53,12 @@ layout {
 
 }
 
+output "Iiyama North America PL3461WQ 1171803800833" {
+	mode "3440x1440@143.923"
+	variable-refresh-rate
+	scale 1.25
+}
+
 spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia msg session lock"
 spawn-at-startup "noctalia"
 
@@ -162,6 +168,10 @@ workspace "music"
 workspace "zotero"
 workspace "misc2"
 workspace "misc3"
+
+debug {
+	honor-xdg-activation-with-invalid-serial // allow notification from noctalia
+}
 
 window-rule {
     match app-id=r#"^kitty$"#

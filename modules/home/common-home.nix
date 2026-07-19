@@ -66,16 +66,19 @@ in
       };
     };
 
-    services.gpg-agent = {
-      enable = pkgs.stdenv.isLinux;
-      grabKeyboardAndMouse = false;
-      pinentry.package = pkgs.pinentry-tty;
-      extraConfig = ''
-        allow-loopback-pinentry
-      '';
-      enableSshSupport = true;
-      enableExtraSocket = true;
-      enableScDaemon = false;
+    services = {
+      # gpg-agent = {
+      #   enable = pkgs.stdenv.isLinux;
+      #   grabKeyboardAndMouse = false;
+      #   pinentry.package = pkgs.pinentry-tty;
+      #   extraConfig = ''
+      #     allow-loopback-pinentry
+      #   '';
+      #   enableSshSupport = true;
+      #   enableExtraSocket = true;
+      #   enableScDaemon = false;
+      # };
+      ssh-agent.enable = true;
     };
 
     home = {
