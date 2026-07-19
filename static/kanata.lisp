@@ -2,7 +2,7 @@
 ;; https://github.com/jtroo/kanata/blob/main/docs/locales.adoc
 
 
-;; (defcfg concurrent-tap-hold yes)
+(defcfg concurrent-tap-hold yes)
 
 
 (deflocalkeys-linux
@@ -13,7 +13,7 @@
 
 ;; define keys that will be modified (all keys still processed)
 (defsrc
-  '        1     2     3     4     5     6     7     8     9     0      par   eql      bspc
+  '        1     2     3     4     5     6     7     8     9     0      eql   par      bspc
   tab      a     z     e     r     t     y     u     i     o     p      ^     ;
   caps     q     s     d     f     g     h     j     k     l     m      `     bksl     ret
   lsft     nubs  w     x     c     v     b     n     comm  .     EXCL   rsft
@@ -26,15 +26,7 @@
       _    _ _ _ _ _ _ _ _ _ _    _    _
       lctl _ _ _ _ _ _ _ _ _ _    _   @stard  _
       _    _ _ _ _ _ _ _ _ _ _    @lsd
-      @capsd _ _ _ _ _
-)
-
-(deflayer programming
-      _ _ @two @three @four @five @six @seven @eight @nine @zero @brack _ _
-      _    _ _ _ _ _ _ _ _ _ _    _    _
-      lctl _ _ _ _ _ _ _ _ _ _    _    @stard _
-      @lsd _ _ _ _ _ _ _ _ _ eql  @lsd
-      @capsp @superd @laltd _ @raltd _
+      _ _ _ _ _ _
 )
 
 (deflayer super-layer
@@ -85,8 +77,6 @@
 
 
 (defalias
-  capsd (layer-switch programming)
-  capsp (layer-switch default)
   laltd (tap-hold $tap-timeout $hold-timeout lalt (layer-while-held alt-layer))
   lsd (tap-hold $tap-timeout $hold-timeout lsft (layer-while-held s-layer))
   raltd (tap-hold $tap-timeout $hold-timeout ralt (layer-while-held agr-layer))
