@@ -12,21 +12,21 @@ TARGET=$(
 )
 
 if [ "$(nix eval "$FLAKE#nixosConfigurations.$TARGET.config.services.impermanence.disko" --json)" != "true" ]; then
-    echo "disko-install is disabled because services.impermanence.disko is false for $TARGET." >&2
+    echo "disko installation and further installation is disabled because services.impermanence.disko is false for $TARGET." >&2
     exit 1
 fi
 
-BLOCKDEV=$(
-    lsblk --json 2>/dev/null |
-        jq -r '.["blockdevices"].[] | "\(.name) (\(.size))"' |
-        gum choose --header "Select disk to erase and install nixos on:" |
-        awk -F ' ' '{print $1}'
-)
-DISK="/dev/$BLOCKDEV"
+# BLOCKDEV=$(
+#     lsblk --json 2>/dev/null |
+#         jq -r '.["blockdevices"].[] | "\(.name) (\(.size))"' |
+#         gum choose --header "Select disk to erase and install nixos on:" |
+#         awk -F ' ' '{print $1}'
+# )
+# DISK="/dev/$BLOCKDEV"
 
-gum confirm --default=false "This will erase $DISK to install $TARGET, confirm:"
+gum confirm --default=false "This will wipe data to install $TARGET:"
 
 echo selected "$FLAKE"#"$TARGET"
 # exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
-sudo disko --mode destroy,format,mount --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
+sudo disko --mode destroy,format,mount --flake "$FLAKE"#"$TARGET"
 sudo nixos-install --no-channel-copy --no-root-passwd --flake "$FLAKE"#"$TARGET"

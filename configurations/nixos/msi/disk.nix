@@ -3,7 +3,7 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/disk/by-id/some-disk-id";
+        device = "/dev/disk/by-id/ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D";
         content = {
           type = "gpt";
           partitions = {
