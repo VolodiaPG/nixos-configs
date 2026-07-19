@@ -25,3 +25,6 @@ vm hostname="$(hostname)":
 
 iso:
     nix build .#nixosConfigurations.installer.config.system.build.isoImage
+
+burn dev: iso
+    sudo dd if=$(echo {{ justfile_directory() }}/result/iso/*) of={{ dev }} bs=4M status=progress oflag=sync

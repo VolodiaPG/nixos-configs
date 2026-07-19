@@ -1,9 +1,9 @@
 {
   disko.devices = {
     disk = {
-      sda = {
+      main = {
         type = "disk";
-        device = "/dev/sda";
+        device = "/dev/disk/by-id/some-disk-id";
         content = {
           type = "gpt";
           partitions = {

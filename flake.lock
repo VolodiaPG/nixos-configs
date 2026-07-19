@@ -550,16 +550,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1783744694,
-        "narHash": "sha256-2cp6N3rrwnGYLTx9l6N+NI+kwrCWxvJUbj5WJhvB29A=",
-        "rev": "c3e90c89649b07d1a96e4b9dd6cd0d6e44b91a74",
-        "revCount": 2372,
+        "lastModified": 1784362797,
+        "narHash": "sha256-EP9b9b+OXDxHBPefFwMYCIaLq0fn3UkmrbfzbLUT7kQ=",
+        "rev": "b4cccbd4bc299c1f71ae185b79c3cf99aa82805c",
+        "revCount": 2396,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/nix-darwin/nix-darwin/0.2605.2372%2Brev-c3e90c89649b07d1a96e4b9dd6cd0d6e44b91a74/019f4f99-5243-7ed3-8f4c-83bd80ed9885/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/nix-darwin/nix-darwin/0.1.2396%2Brev-b4cccbd4bc299c1f71ae185b79c3cf99aa82805c/019f7483-ef28-70e0-bd50-d920aa7ad59d/source.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://flakehub.com/f/nix-darwin/nix-darwin/0"
+        "url": "https://flakehub.com/f/nix-darwin/nix-darwin/0.1"
       }
     },
     "nix-homebrew": {

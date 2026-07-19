@@ -160,16 +160,16 @@ in
         '';
     };
     boot.supportedFilesystems = [ "btrfs" ];
-    virtualisation.vmVariantWithDisko = {
-      # https://github.com/Arcanyx-org/NiXium/blob/a9cba53da660d4c8c64697ef4b91425f8fdd9bae/src/nixos/machines/tupac/config/vm-build.nix#L10
-      virtualisation = {
-        fileSystems."/persistent".neededForBoot = true;
-        memorySize = 4096;
-        diskSize = 40000;
-      };
-      # For running VM on macos: https://www.tweag.io/blog/2023-02-09-nixos-vm-on-macos/
-      # virtualisation.host.pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
-    };
+    # virtualisation.vmVariantWithDisko = {
+    #   # https://github.com/Arcanyx-org/NiXium/blob/a9cba53da660d4c8c64697ef4b91425f8fdd9bae/src/nixos/machines/tupac/config/vm-build.nix#L10
+    #   virtualisation = {
+    #     fileSystems."/persistent".neededForBoot = true;
+    #     memorySize = 4096;
+    #     diskSize = 40000;
+    #   };
+    #   # For running VM on macos: https://www.tweag.io/blog/2023-02-09-nixos-vm-on-macos/
+    #   # virtualisation.host.pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
+    # };
     fileSystems = mkMerge [
       { "/persistent".neededForBoot = true; }
       (mkIf (!cfg.disko) {

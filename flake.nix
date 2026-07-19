@@ -5,7 +5,7 @@
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.follows = "nixpkgs";
     nix-darwin = {
-      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
+      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
