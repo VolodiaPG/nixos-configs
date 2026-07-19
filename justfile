@@ -22,3 +22,6 @@ vm hostname="$(hostname)":
    nix run .#nixosConfigurations.{{ hostname }}.config.system.build.vmWithDisko --  -device virtio-vga-gl \
      -display egl-headless,rendernode=/dev/dri/renderD128 \
      -display spice-app,gl=on
+
+iso:
+    nix build .#nixosConfigurations.installer.config.system.build.isoImage
