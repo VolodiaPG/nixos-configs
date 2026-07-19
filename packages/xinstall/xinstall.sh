@@ -28,5 +28,5 @@ gum confirm --default=false "This will erase $DISK to install $TARGET, confirm:"
 
 echo selected "$FLAKE"#"$TARGET"
 # exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
-sudo disko --mode disko --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
+sudo disko --mode destroy,format,mount --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
 sudo nixos-install --no-channel-copy --no-root-passwd --flake "$FLAKE"#"$TARGET"
