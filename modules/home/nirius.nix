@@ -5,25 +5,24 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.nirius;
+  inherit (lib) mkEnableOption mkOption mkIf;
 in
 {
   options.nirius = {
     enable = mkEnableOption "Nirius utility for niri";
 
     scratchpads = mkOption {
-      type = types.listOf (
-        types.submodule {
+      type = lib.types.listOf (
+        lib.types.submodule {
           options = {
             appId = mkOption {
-              type = types.str;
+              type = lib.types.str;
               description = "The app-id to match for this scratchpad";
             };
             spawn = mkOption {
-              type = types.nullOr types.str;
+              type = lib.types.nullOr lib.types.str;
               default = null;
               description = "Command to spawn if the app isn't running";
             };

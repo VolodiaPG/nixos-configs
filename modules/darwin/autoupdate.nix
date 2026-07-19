@@ -5,7 +5,6 @@
   flake,
   ...
 }:
-with lib;
 let
   inherit (flake.config) me;
   cfg = config.services.darwinAutoUpdate;
@@ -160,58 +159,58 @@ let
 in
 {
   options.services.darwinAutoUpdate = {
-    enable = mkEnableOption "Automatic nix-darwin and home-manager updates from GitHub";
+    enable = lib.mkEnableOption "Automatic nix-darwin and home-manager updates from GitHub";
 
-    flake = mkOption {
-      type = types.str;
+    flake = lib.mkOption {
+      type = lib.types.str;
       default = "github:volodiapg/nixos-configs";
       description = "Flake URL to pull updates from";
     };
 
-    hostName = mkOption {
-      type = types.str;
+    hostName = lib.mkOption {
+      type = lib.types.str;
       default = "Volodias-MacBook-Pro";
       description = "Darwin configuration name in the flake";
     };
 
-    interval = mkOption {
-      type = types.int;
+    interval = lib.mkOption {
+      type = lib.types.int;
       default = 86400;
       description = "Minimum interval between update attempts in seconds (default: 24 hours)";
     };
 
-    checkInterval = mkOption {
-      type = types.int;
+    checkInterval = lib.mkOption {
+      type = lib.types.int;
       default = 3600;
       description = "How often launchd runs the check script in seconds (default: 1 hour)";
     };
 
-    stateDir = mkOption {
-      type = types.str;
+    stateDir = lib.mkOption {
+      type = lib.types.str;
       default = "/var/lib/nix-darwin-autoupdate";
       description = "Directory to store state files (timestamps, revisions)";
     };
 
-    logFile = mkOption {
-      type = types.str;
+    logFile = lib.mkOption {
+      type = lib.types.str;
       default = "/var/log/nix-darwin-autoupdate.log";
       description = "Path to the log file";
     };
 
-    logMaxSize = mkOption {
-      type = types.int;
+    logMaxSize = lib.mkOption {
+      type = lib.types.int;
       default = 10485760; # 10 MB
       description = "Maximum log file size in bytes before rotation";
     };
 
-    logKeepCount = mkOption {
-      type = types.int;
+    logKeepCount = lib.mkOption {
+      type = lib.types.int;
       default = 3;
       description = "Number of rotated log files to keep";
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # Ensure state directory exists via activation script
     system.activationScripts.postActivation.text = ''
       echo "Setting up nix-darwin-autoupdate state directory..."

@@ -4,10 +4,10 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkOption;
   cfg = config.services.myScx;
-  scheds = types.enum [
+  scheds = lib.types.enum [
     "scx_bpfland"
     "scx_central"
     "scx_flash"
@@ -46,10 +46,10 @@ let
 in
 {
   options = {
-    services.myScx = with types; {
+    services.myScx = {
       enable = mkOption {
         description = "Enable the usage of scx";
-        type = types.bool;
+        type = lib.types.bool;
         default = false;
       };
 
@@ -62,7 +62,7 @@ in
 
         args = mkOption {
           description = "Command line arguments for the battery scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = lib.concatStrings [
             " --slice-us 3000"
             " --cpu-busy-thresh 80"
@@ -76,13 +76,13 @@ in
 
         extraArgs = mkOption {
           description = "Extra arguments for the battery scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = "--primary-domain powersave";
         };
 
         governor = mkOption {
           description = "CPU governor to use for the battery scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = "conservative";
         };
       };
@@ -96,7 +96,7 @@ in
 
         args = mkOption {
           description = "Command line arguments for the AC scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = lib.concatStrings [
             " --slice-us 1000"
             " --cpu-busy-thresh 50"
@@ -108,13 +108,13 @@ in
 
         extraArgs = mkOption {
           description = "Extra arguments for the AC scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = "--primary-domain performance";
         };
 
         governor = mkOption {
           description = "CPU governor to use for the AC scheduler";
-          type = types.str;
+          type = lib.types.str;
           default = "schedutil";
         };
       };

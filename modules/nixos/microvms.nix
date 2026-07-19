@@ -3,17 +3,17 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
   cfg = config.services.microvms;
 in
 {
   options = {
-    services.microvms = with types; {
+    services.microvms = {
       enable = mkEnableOption "microvms";
       interface = mkOption {
         description = "host interface to connect the bridge to";
-        type = types.str;
+        type = lib.types.str;
       };
     };
   };

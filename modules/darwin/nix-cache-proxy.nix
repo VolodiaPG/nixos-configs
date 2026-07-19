@@ -5,10 +5,9 @@
   flake,
   ...
 }:
-with lib;
-with types;
 let
   cfg = config.services.nixCacheProxyDarwin;
+  inherit (lib) mkEnableOption mkIf;
   inherit (flake.config) me;
   upstreamArgs = lib.concatMapStringsSep " " (u: "--upstream ${u}") me.trusted-substituters;
   port = "3687";

@@ -15,6 +15,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    documentation.enable = false;
+
     nix = {
       optimise = {
         persistent = true;
@@ -92,7 +94,7 @@ in
           "--prefer"
           "'^(zotero|signal|brave|nvim)$'"
           "--avoid"
-          "'^(niri|noctalia-shell|kanata)$'"
+          "'^(niri|noctalia|kanata)$'"
         ];
       };
 

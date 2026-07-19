@@ -4,8 +4,8 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
   # inherit (config.networking) hostName;
   # Only enable auto upgrade if current config came from a clean tree
   # This avoids accidental auto-upgrades when working locally.
@@ -17,11 +17,11 @@ in
       enable = mkEnableOption "autoUpgrade";
       flakeURL = mkOption {
         description = "Flake url to pull from";
-        type = types.str;
+        type = lib.types.str;
       };
       inputs = mkOption {
         description = "Flake inputs";
-        type = types.attrs;
+        type = lib.types.attrs;
       };
     };
   };

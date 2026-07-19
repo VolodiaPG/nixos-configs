@@ -5,10 +5,9 @@
   flake,
   ...
 }:
-with lib;
-with types;
 let
   cfg = config.services.commonDarwin;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
@@ -67,14 +66,14 @@ in
     #   zsh.enable = true;
     # };
 
-    environment.systemPackages = with pkgs; [
-      terminal-notifier
-      kitty
-      fswatch
-      qbittorrent
-      zotero
-      podman
-      podman-compose
+    environment.systemPackages = [
+      pkgs.terminal-notifier
+      pkgs.kitty
+      pkgs.fswatch
+      pkgs.qbittorrent
+      pkgs.zotero
+      pkgs.podman
+      pkgs.podman-compose
 
       # yabai
       # skhd

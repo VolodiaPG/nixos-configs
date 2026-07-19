@@ -228,27 +228,25 @@ apply_nvim_theme() {
   fi
 }
 
-# Apply theme to noctalia-shell (via IPC)
+# Apply theme to noctalia (via IPC)
 apply_noctalia_theme() {
   local theme="$1"
 
-  if ! command -v noctalia-shell &> /dev/null; then
-    error "noctalia-shell not found"
+  if ! command -v noctalia &> /dev/null; then
+    error "noctalia not found"
     return
   fi
 
-  info "Applying $theme theme to noctalia-shell..."
+  info "Applying $theme theme to noctalia..."
 
-  # Use --any-display to apply theme to all displays
-  # https://github.com/noctalia-dev/noctalia-shell/issues/2266
-
+  # ponytail: v5 IPC — old `noctalia-shell ipc --any-display call darkMode setLight` became `noctalia msg theme-mode-set light`
   if [ "$theme" == "light" ]; then
-    noctalia-shell ipc --any-display call darkMode setLight  || true
+    noctalia msg theme-mode-set light  || true
   else
-    noctalia-shell ipc --any-display call darkMode setDark  || true
+    noctalia msg theme-mode-set dark  || true
   fi
 
-  noctalia-shell ipc --any-display call colorScheme set Catppuccin  || true
+  noctalia msg color-scheme-set Catppuccin  || true
 
   log "Noctalia theme applied"
 }

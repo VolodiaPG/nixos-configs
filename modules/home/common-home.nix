@@ -5,13 +5,13 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.commonHome;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    commonHome = with types; {
+    commonHome = {
       enable = mkEnableOption "Common home configuration";
     };
   };
@@ -92,23 +92,23 @@ in
         };
       };
 
-      packages = with pkgs; [
-        mosh
-        ripgrep
-        findutils
-        parallel
-        zip
-        unzip
-        gdu
-        htop
-        nmap
-        wget
-        grc
-        bottom
-        libgtop
-        lsof
-        chezmoi
-        starship
+      packages = [
+        pkgs.mosh
+        pkgs.ripgrep
+        pkgs.findutils
+        pkgs.parallel
+        pkgs.zip
+        pkgs.unzip
+        pkgs.gdu
+        pkgs.htop
+        pkgs.nmap
+        pkgs.wget
+        pkgs.grc
+        pkgs.bottom
+        pkgs.libgtop
+        pkgs.lsof
+        pkgs.chezmoi
+        pkgs.starship
       ];
 
       sessionVariables = {

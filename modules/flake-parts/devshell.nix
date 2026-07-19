@@ -30,22 +30,22 @@
       # Development shell
       devShells = {
         default = pkgs.mkShell {
-          packages = with pkgs; [
-            just
+          packages = [
+            pkgs.just
             inputs.agenix.packages.${system}.default
-            deploy-rs
-            nvfetcher
-            git
-            nh
-            nixd
-            nixfmt
+            pkgs.deploy-rs
+            pkgs.nvfetcher
+            pkgs.git
+            pkgs.nh
+            pkgs.nixd
+            pkgs.nixfmt
           ];
           inherit (config.pre-commit) shellHook;
         };
         ci = pkgs.mkShell {
-          packages = with pkgs; [
-            deploy-rs
-            nvfetcher
+          packages = [
+            pkgs.deploy-rs
+            pkgs.nvfetcher
           ];
         };
       };

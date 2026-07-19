@@ -157,7 +157,7 @@ in
           type = "desktop";
         }
         {
-          name = "noctalia-shell";
+          name = "noctalia";
           type = "desktop";
         }
         {

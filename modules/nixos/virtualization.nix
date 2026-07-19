@@ -8,7 +8,7 @@ let
 in
 {
 
-  options = with lib; {
+  options = {
     services.my_virtualization = {
       enable = lib.mkEnableOption "Virtulization settings";
     };

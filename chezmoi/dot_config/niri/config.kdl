@@ -53,11 +53,6 @@ layout {
 
 }
 
-
-
-
-
-
 spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia-shell ipc call lockScreen lock"
 spawn-at-startup "noctalia-shell"
 
@@ -294,5 +289,3 @@ layer-rule {
 
     block-out-from "screen-capture"
 }
-
-

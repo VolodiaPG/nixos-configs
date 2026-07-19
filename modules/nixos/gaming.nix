@@ -4,13 +4,13 @@
   pkgs-unstable,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.gaming;
 in
 {
   options = {
-    services.gaming = with types; {
+    services.gaming = {
       enable = mkEnableOption "gaming";
     };
   };

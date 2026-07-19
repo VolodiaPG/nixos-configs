@@ -3,8 +3,8 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf;
   cfg = config.nixarr.recyclarr;
 in
 {

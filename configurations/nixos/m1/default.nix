@@ -26,12 +26,10 @@ in
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
     inputs.nixos-apple-silicon.nixosModules.default
-  ]
-  ++ (with inputs.nixos-hardware.nixosModules; [
-    common-pc
-    common-pc-laptop
-    common-pc-laptop-ssd
-  ]);
+    inputs.nixos-hardware.nixosModules.common-pc
+    inputs.nixos-hardware.nixosModules.common-pc-laptop
+    inputs.nixos-hardware.nixosModules.common-pc-laptop-ssd
+  ];
   #hardware.asahi.pkgs = lib.mkForce inputs.nixos-apple-silicon.packages.aarch64-linux;
   #boot.kernelPackages = lib.mkForce (inputs.nixos-apple-silicon.inputs.nixpkgs.legacyPackages.aarch64-linux.linuxPackagesFor inputs.nixos-apple-silicon.packages.aarch64-linux.linux-asahi);
 

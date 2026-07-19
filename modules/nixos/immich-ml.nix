@@ -11,12 +11,12 @@ let
 in
 {
 
-  options = with lib; {
+  options = {
     services.immich-ml = {
       enable = lib.mkEnableOption "immich machine learning remote service";
 
-      port = mkOption {
-        type = types.port;
+      port = lib.mkOption {
+        type = lib.types.port;
         default = 3003;
       };
     };

@@ -5,28 +5,26 @@
   pkgs-unstable,
   ...
 }:
-with lib;
 let
   cfg = config.services.mpv;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    services.mpv = with types; {
+    services.mpv = {
       enable = mkEnableOption "MPV configuration";
     };
   };
 
   config = mkIf cfg.enable {
     home = {
-      packages =
-        with pkgs;
-        [
-          #mpv
-          play-with-mpv
-        ]
-        ++ [
-          pkgs-unstable.mpv
-        ];
+      packages = [
+        #mpv
+        pkgs.play-with-mpv
+      ]
+      ++ [
+        pkgs-unstable.mpv
+      ];
       file = {
         ".config/mpv" = {
           source = ./mpv;

@@ -5,15 +5,15 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.interactive;
   inherit (flake) inputs;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
 
   options = {
-    interactive = with types; {
+    interactive = {
       enable = mkEnableOption "Interactive configuration for users";
     };
   };
@@ -64,15 +64,15 @@ in
     home = {
       inherit (flake.config.me) username;
       homeDirectory = flake.config.me.homeDirectory pkgs.stdenv;
-      packages = with pkgs; [
-        direnv
-        git-crypt
-        python3
-        difftastic
-        cachix
+      packages = [
+        pkgs.direnv
+        pkgs.git-crypt
+        pkgs.python3
+        pkgs.difftastic
+        pkgs.cachix
         # nvim$
-        vim
-        devenv
+        pkgs.vim
+        pkgs.devenv
       ];
 
       stateVersion = "22.05";

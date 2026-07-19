@@ -9,7 +9,11 @@ let
   inherit (flake.config) me;
   cfg = config.services.commonNixSettings;
   inherit (flake) inputs;
-  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+  # ponytail: was lib.filterAttrs (_: lib.isType "flake") inputs — registered ALL ~25 inputs,
+  # forcing flake.outPath eval for each. Whitelist only the ones actually referenced as flake:ID.
+  registryInputs = {
+    inherit (inputs) nixpkgs home-manager;
+  };
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
     exec >>/var/log/nix-push-hook.log 2>&1
@@ -163,8 +167,8 @@ in
       #
       # # set the path for channels compat
       # nixPath = lib.mapAttrsToList (n: _: "${n}=${n}") flakeInputs;
-      registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
-      nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+      registry = lib.mapAttrs (_: flake: { inherit flake; }) registryInputs;
+      nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") registryInputs;
       # nixPath = [ "nixpkgs=${pkgs.path}" ];
     };
 

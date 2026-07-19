@@ -4,8 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkEnableOption
+    mkOption
+    literalExpression
+    ;
   cfg = config.services.foldingathome-scheduled;
 in
 {
@@ -13,26 +18,26 @@ in
     enable = mkEnableOption "Scheduled Folding@home client";
 
     package = mkOption {
-      type = types.package;
+      type = lib.types.package;
       default = pkgs.fahclient;
       defaultText = literalExpression "pkgs.fahclient";
       description = "The Folding@home package to use.";
     };
 
     user = mkOption {
-      type = types.str;
+      type = lib.types.str;
       default = "foldingathome";
       description = "User account under which Folding@home runs.";
     };
 
     group = mkOption {
-      type = types.str;
+      type = lib.types.str;
       default = "foldingathome";
       description = "Group account under which Folding@home runs.";
     };
 
     team = mkOption {
-      type = types.str;
+      type = lib.types.str;
       default = "123456";
       description = "Team number to join.";
     };

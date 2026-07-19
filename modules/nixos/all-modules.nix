@@ -3,11 +3,11 @@
 # flake inputs as specialArgs so modules can self-import their dependencies
 { flake, ... }:
 {
-  imports =
-    with builtins;
-    map (fn: ./${fn}) (
-      filter (fn: fn != "default.nix" && fn != "all-modules.nix") (attrNames (readDir ./.))
-    );
+  imports = builtins.map (fn: ./${fn}) (
+    builtins.filter (fn: fn != "default.nix" && fn != "all-modules.nix") (
+      builtins.attrNames (builtins.readDir ./.)
+    )
+  );
 
   # Pass flake inputs as specialArgs to all imported modules
   # This allows each module to self-import its flake dependencies

@@ -5,8 +5,8 @@
   flake,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf;
   cfg = config.services.samba;
   inherit (flake.config) me;
 

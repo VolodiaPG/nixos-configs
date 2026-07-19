@@ -4,9 +4,9 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.programs.git;
+  inherit (lib) mkIf;
 in
 {
   config = mkIf cfg.enable {

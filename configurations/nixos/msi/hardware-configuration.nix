@@ -15,6 +15,14 @@
   nixpkgs.hostPlatform = "x86_64-linux";
 
   boot = {
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        device = "nodev";
+        efiSupport = true;
+      };
+    };
     initrd = {
       availableKernelModules = [
         "xhci_pci"
@@ -41,21 +49,21 @@
     extraModulePackages = [ ];
   };
 
-  fileSystems = {
-    "/boot" = {
-      device = "/dev/disk/by-label/BOOT";
-      fsType = "vfat";
-    };
-  };
+  # fileSystems = {
+  #   "/boot" = {
+  #     device = "/dev/disk/by-label/BOOT";
+  #     fsType = "vfat";
+  #   };
+  # };
 
-  swapDevices = [
-    {
-      device = "/dev/disk/by-label/swap";
-      options = [ "noatime" ];
-    }
-  ];
+  # swapDevices = [
+  #   {
+  #     device = "/dev/disk/by-label/swap";
+  #     options = [ "noatime" ];
+  #   }
+  # ];
 
-  boot.resumeDevice = "/dev/disk/by-label/swap";
+  # boot.resumeDevice = "/dev/disk/by-label/swap";
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

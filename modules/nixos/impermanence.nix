@@ -5,14 +5,29 @@
   flake,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkEnableOption
+    mkOption
+    mkMerge
+    foldl
+    recursiveUpdate
+    strings
+    lists
+    ;
+  inherit (lib.types)
+    str
+    bool
+    listOf
+    attrs
+    ;
   cfg = config.services.impermanence;
 in
 {
   imports = [ flake.inputs.impermanence.nixosModules.impermanence ];
 
-  options = with types; {
+  options = {
     services.impermanence = {
       enable = mkEnableOption "impermanence";
 
@@ -72,11 +87,11 @@ in
         ]
         ++ services;
       after = [ "systemd-fsck-root.service" ];
-      path = with pkgs; [
-        btrfs-progs
-        coreutils
-        findutils
-        util-linux
+      path = [
+        pkgs.btrfs-progs
+        pkgs.coreutils
+        pkgs.findutils
+        pkgs.util-linux
       ];
       serviceConfig = {
         Type = "oneshot";
@@ -145,10 +160,18 @@ in
         '';
     };
     boot.supportedFilesystems = [ "btrfs" ];
-
+    virtualisation.vmVariantWithDisko = {
+      # https://github.com/Arcanyx-org/NiXium/blob/a9cba53da660d4c8c64697ef4b91425f8fdd9bae/src/nixos/machines/tupac/config/vm-build.nix#L10
+      virtualisation = {
+        fileSystems."/persistent".neededForBoot = true;
+        memorySize = 4096;
+        diskSize = 40000;
+      };
+      # For running VM on macos: https://www.tweag.io/blog/2023-02-09-nixos-vm-on-macos/
+      # virtualisation.host.pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
+    };
     fileSystems = mkMerge [
-      (mkIf cfg.disko { "/persistent".neededForBoot = true; })
-
+      { "/persistent".neededForBoot = true; }
       (mkIf (!cfg.disko) {
         "/" = {
           device = "/dev/${cfg.rootVolume}";

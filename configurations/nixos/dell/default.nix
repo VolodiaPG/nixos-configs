@@ -11,14 +11,12 @@ in
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
-  ]
-  ++ (with inputs.nixos-hardware.nixosModules; [
-    common-cpu-intel-cpu-only
-    common-gpu-intel
-    common-pc
-    common-pc-laptop
-    common-pc-laptop-ssd
-  ]);
+    inputs.nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+    inputs.nixos-hardware.nixosModules.common-gpu-intel
+    inputs.nixos-hardware.nixosModules.common-pc
+    inputs.nixos-hardware.nixosModules.common-pc-laptop
+    inputs.nixos-hardware.nixosModules.common-pc-laptop-ssd
+  ];
 
   # Enable services via module options
   services = {

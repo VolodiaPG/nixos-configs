@@ -1,31 +1,18 @@
 {
   flake,
-  lib,
   ...
 }:
 let
   inherit (flake) inputs;
 in
 {
-  imports = lib.flatten [
-    (with inputs.nixos-hardware.nixosModules; [
-      # common-cpu-intel-haswell
-      # common-gpu-nvidia-ada-lovelace
-      common-pc-ssd
-    ])
+  imports = [
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
     ./hardware-configuration.nix
   ];
 
   # Host-specific configuration
   boot = {
-    loader = {
-      efi.canTouchEfiVariables = true;
-      grub = {
-        enable = true;
-        device = "nodev";
-        efiSupport = true;
-      };
-    };
     blacklistedKernelModules = [
       "nouveau"
       "iTCO_wdt"

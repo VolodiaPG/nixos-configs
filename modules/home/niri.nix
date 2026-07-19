@@ -4,17 +4,17 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.wm.niri;
+  inherit (lib) mkEnableOption mkOption mkIf;
 in
 {
   options = {
-    wm.niri = with types; {
+    wm.niri = {
       enable = mkEnableOption "niri Wayland compositor configuration";
 
       package = mkOption {
-        type = package;
+        type = lib.types.package;
         default = pkgs.niri;
         description = "The niri package to use";
       };
@@ -23,39 +23,39 @@ in
 
   config = mkIf cfg.enable {
     nirius.enable = true;
-    home.packages = with pkgs; [
+    home.packages = [
       cfg.package
 
       # Core niri utilities
-      fuzzel # Application launcher
+      pkgs.fuzzel # Application launcher
 
       # Screenshot tools
-      grim
-      slurp
-      satty # Screenshot annotation
+      pkgs.grim
+      pkgs.slurp
+      pkgs.satty # Screenshot annotation
 
       # Clipboard
-      wl-clipboard
-      cliphist
+      pkgs.wl-clipboard
+      pkgs.cliphist
 
       # Background and theming
-      swaybg
-      wpaperd
+      pkgs.swaybg
+      pkgs.wpaperd
 
       # Additional Wayland utilities
-      wlogout # Logout menu
-      wlr-randr # Display configuration
+      pkgs.wlogout # Logout menu
+      pkgs.wlr-randr # Display configuration
 
       # Polkit agent
-      polkit_gnome
+      pkgs.polkit_gnome
 
       # KDE Connect
-      kdePackages.qttools
+      pkgs.kdePackages.qttools
 
-      wl-mirror
+      pkgs.wl-mirror
 
       # Keyboard brightness
-      brightnessctl
+      pkgs.brightnessctl
     ];
     xdg = {
       portal = {
@@ -74,9 +74,9 @@ in
             ];
           };
         };
-        extraPortals = with pkgs; [
-          xdg-desktop-portal-gtk
-          xdg-desktop-portal-gnome
+        extraPortals = [
+          pkgs.xdg-desktop-portal-gtk
+          pkgs.xdg-desktop-portal-gnome
         ];
         xdgOpenUsePortal = true;
       };
@@ -123,8 +123,8 @@ in
 
     services.kdeconnect.enable = true;
 
-    # programs.noctalia-shell = {
-    #   enable = true;
-    # };
+    programs.noctalia-shell = {
+      enable = true;
+    };
   };
 }

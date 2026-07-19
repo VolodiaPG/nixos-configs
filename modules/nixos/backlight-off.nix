@@ -5,9 +5,8 @@
   ...
 }:
 
-with lib;
-
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
   cfg = config.services.backlightOff;
 
   # Script to turn off backlight
@@ -52,7 +51,7 @@ in
     enable = mkEnableOption "automatic screen dimming after idle period";
 
     idleTime = mkOption {
-      type = types.int;
+      type = lib.types.int;
       default = 15;
       description = ''
         Number of minutes of inactivity before turning off the screen.
@@ -60,7 +59,7 @@ in
     };
 
     brightnessPath = mkOption {
-      type = types.str;
+      type = lib.types.str;
       default = "/sys/class/backlight/intel_backlight";
       description = ''
         Path to the backlight brightness control file.
@@ -70,8 +69,8 @@ in
 
   config = mkIf cfg.enable {
     # Install required packages
-    environment.systemPackages = with pkgs; [
-      coreutils
+    environment.systemPackages = [
+      pkgs.coreutils
     ];
 
     # Create systemd service to turn off backlight

@@ -4,13 +4,14 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
+  inherit (lib.types) path str;
   cfg = config.services.changeMAC;
 in
 {
   options = {
-    services.changeMAC = with types; {
+    services.changeMAC = {
       enable = mkEnableOption "changeMAC";
       mac = mkOption {
         description = "MAC address to set";

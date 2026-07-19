@@ -4,13 +4,14 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
+  inherit (lib.types) package;
   cfg = config.services.wm.niri;
 in
 {
   options = {
-    services.wm.niri = with types; {
+    services.wm.niri = {
       enable = mkEnableOption "niri - scrollable-tiling Wayland compositor";
 
       package = mkOption {
@@ -62,24 +63,24 @@ in
     hardware.graphics.enable = true;
 
     # Basic system packages for niri functionality
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = [
       # Screenshot utilities
-      grim
-      slurp
-      wl-clipboard
+      pkgs.grim
+      pkgs.slurp
+      pkgs.wl-clipboard
 
       # Polkit agent for authentication dialogs
-      polkit_gnome
+      pkgs.polkit_gnome
 
       # File manager integration
-      xdg-utils
+      pkgs.xdg-utils
 
       # Idle management
-      swayidle
+      pkgs.swayidle
       # swaylock
 
       # Clipboard manager
-      cliphist
+      pkgs.cliphist
     ];
     # # Enable xdg portal for screen sharing and other integrations
     # xdg.portal = {

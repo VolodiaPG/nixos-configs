@@ -5,13 +5,13 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.gui;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    gui = with types; {
+    gui = {
       enable = mkEnableOption "GUI configuration for users";
     };
   };
@@ -43,32 +43,28 @@ in
     };
 
     home = {
-      packages =
-        with pkgs;
-        [
-          signal-desktop
-          qbittorrent
-          #          zotero
-          drawio
-          # zathura
-          kitty
-          kitty-themes
-        ]
-        ++ (lib.optionals pkgs.stdenv.isLinux [
-          filezilla
-          brave
-          libnotify
-          vlc
-          legcord
-          strawberry
-          notify-desktop
-          fontconfig
-          distrobox
-          distrobox-tui
-          easyeffects
-          libreoffice-qt-fresh
-          freerdp
-        ]);
+      packages = [
+        pkgs.signal-desktop
+        pkgs.qbittorrent
+        pkgs.drawio
+        pkgs.kitty
+        pkgs.kitty-themes
+      ]
+      ++ (lib.optionals pkgs.stdenv.isLinux [
+        pkgs.filezilla
+        pkgs.brave
+        pkgs.libnotify
+        pkgs.vlc
+        pkgs.legcord
+        pkgs.strawberry
+        pkgs.notify-desktop
+        pkgs.fontconfig
+        pkgs.distrobox
+        pkgs.distrobox-tui
+        pkgs.easyeffects
+        pkgs.libreoffice-qt-fresh
+        pkgs.freerdp
+      ]);
 
       file = {
         ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";

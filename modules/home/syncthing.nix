@@ -1,7 +1,7 @@
 { config, lib, ... }:
-with lib;
 let
   cfg = config.services.syncthing;
+  inherit (lib) mkIf;
 in
 {
   config = mkIf cfg.enable {

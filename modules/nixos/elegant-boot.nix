@@ -5,13 +5,13 @@
   flake,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.elegantBoot;
 in
 {
   options = {
-    services.elegantBoot = with types; {
+    services.elegantBoot = {
       enable = mkEnableOption "elegantBoot";
     };
   };
@@ -42,9 +42,9 @@ in
       plymouth = {
         enable = true;
         theme = "abstract_ring_alt";
-        themePackages = with pkgs; [
+        themePackages = [
           # By default we would install all themes
-          (adi1090x-plymouth-themes.override {
+          (pkgs.adi1090x-plymouth-themes.override {
             selected_themes = [ "abstract_ring_alt" ];
           })
         ];

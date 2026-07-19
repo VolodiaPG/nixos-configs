@@ -3,13 +3,13 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.networking;
 in
 {
   options = {
-    services.networking = with types; {
+    services.networking = {
       enable = mkEnableOption "networking configuration";
     };
   };

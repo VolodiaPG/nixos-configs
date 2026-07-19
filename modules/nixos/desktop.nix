@@ -5,14 +5,14 @@
   flake,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.wm;
   kanataConfigPath = flake.self + "/static/kanata.lisp";
 in
 {
   options = {
-    services.wm = with types; {
+    services.wm = {
       enable = mkEnableOption "wm";
     };
   };
@@ -29,12 +29,11 @@ in
       };
       kanata = {
         enable = true;
-        keyboards.all.config = readFile kanataConfigPath;
+        keyboards.all.config = builtins.readFile kanataConfigPath;
         keyboards.all.extraDefCfg = ''
           concurrent-tap-hold yes
         '';
       };
-      browser.enable = true;
       flatpak.enable = true;
     };
 
@@ -45,19 +44,19 @@ in
       RestartSec = "1s";
     };
 
-    environment.systemPackages = with pkgs; [
-      gnome-calculator
-      gnome-characters
-      gnome-clocks
-      gnome-font-viewer
-      gnome-system-monitor
-      loupe
-      gnome-obfuscate
-      snapshot
-      nautilus
+    environment.systemPackages = [
+      pkgs.gnome-calculator
+      pkgs.gnome-characters
+      pkgs.gnome-clocks
+      pkgs.gnome-font-viewer
+      pkgs.gnome-system-monitor
+      pkgs.loupe
+      pkgs.gnome-obfuscate
+      pkgs.snapshot
+      pkgs.nautilus
 
       #Enable ddc
-      ddcutil
+      pkgs.ddcutil
     ];
 
     environment.variables = {
@@ -85,14 +84,14 @@ in
     };
 
     fonts = {
-      packages = with pkgs; [
-        corefonts
-        roboto
-        roboto-serif
-        joypixels
-        nerd-fonts.iosevka-term
-        noto-fonts-cjk-sans
-        noto-fonts-cjk-serif
+      packages = [
+        pkgs.corefonts
+        pkgs.roboto
+        pkgs.roboto-serif
+        pkgs.joypixels
+        pkgs.nerd-fonts.iosevka-term
+        pkgs.noto-fonts-cjk-sans
+        pkgs.noto-fonts-cjk-serif
       ];
       fontconfig.defaultFonts = {
         monospace = [

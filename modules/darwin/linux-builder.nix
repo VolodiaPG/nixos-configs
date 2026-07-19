@@ -1,15 +1,13 @@
-{
-  config,
-  lib,
-  flake,
-  ...
-}:
-with lib;
-with types;
-let
-  inherit (flake) inputs;
-  cfg = config.darwinLinuxBuilder;
-in
+# {
+# # config,
+# # lib,
+# # flake,
+# # ...
+# }:
+# let
+#   inherit (flake) inputs;
+#   cfg = config.darwinLinuxBuilder;
+# in
 {
   # options = {
   #   darwinLinuxBuilder = {

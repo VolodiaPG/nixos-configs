@@ -5,52 +5,50 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.wm.gnome;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    wm.gnome = with types; {
+    wm.gnome = {
       enable = mkEnableOption "gnome";
     };
   };
 
   config = mkIf cfg.enable {
-    home.packages =
-      with pkgs;
-      [
-        # Gnome extensions
-        # gnomeExtensions.appindicator
-        gnomeExtensions.vitals
-        # gnomeExtensions.pop-shell
-        # gnomeExtensions.hide-activities-button
-        gnomeExtensions.gnome-40-ui-improvements
-        gnomeExtensions.gsconnect
-        # gnomeExtensions.bing-wallpaper-changer
-        # gnomeExtensions.blur-my-shell
-        # gnomeExtensions.media-controls
-        # gnomeExtensions.impatience
-        # gnomeExtensions.hibernate-status-button
-        gnomeExtensions.brightness-control-using-ddcutil
-        # gnomeExtensions.paperwm
-        gnomeExtensions.tailscale-status
-        gnomeExtensions.just-perfection
-        gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
-        gnomeExtensions.transparent-top-bar-adjustable-transparency
-        gnomeExtensions.smart-auto-move-ng
-        gnomeExtensions.immich-wallpaper
+    home.packages = [
+      # Gnome extensions
+      # gnomeExtensions.appindicator
+      pkgs.gnomeExtensions.vitals
+      # gnomeExtensions.pop-shell
+      # gnomeExtensions.hide-activities-button
+      pkgs.gnomeExtensions.gnome-40-ui-improvements
+      pkgs.gnomeExtensions.gsconnect
+      # gnomeExtensions.bing-wallpaper-changer
+      # gnomeExtensions.blur-my-shell
+      # gnomeExtensions.media-controls
+      # gnomeExtensions.impatience
+      # gnomeExtensions.hibernate-status-button
+      pkgs.gnomeExtensions.brightness-control-using-ddcutil
+      # gnomeExtensions.paperwm
+      pkgs.gnomeExtensions.tailscale-status
+      pkgs.gnomeExtensions.just-perfection
+      pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
+      pkgs.gnomeExtensions.transparent-top-bar-adjustable-transparency
+      pkgs.gnomeExtensions.smart-auto-move-ng
+      pkgs.gnomeExtensions.immich-wallpaper
 
-        gnome-obfuscate
+      pkgs.gnome-obfuscate
 
-        # pkgs-unstable.tidal-hifi
-        hyperhdr
-        gnome-tweaks
-        orca-slicer
-      ]
-      ++ lib.optionals pkgs.stdenv.isx86_64 [
-        discord
-      ];
+      # pkgs-unstable.tidal-hifi
+      pkgs.hyperhdr
+      pkgs.gnome-tweaks
+      pkgs.orca-slicer
+    ]
+    ++ lib.optionals pkgs.stdenv.isx86_64 [
+      pkgs.discord
+    ];
     xdg.desktopEntries = {
       OrcaSlicer = {
         name = "OrcaSlicer";

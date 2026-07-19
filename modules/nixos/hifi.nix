@@ -15,13 +15,13 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.hifi;
 in
 {
   options = {
-    services.hifi = with types; {
+    services.hifi = {
       enable = mkEnableOption "high-quality audio";
     };
   };
@@ -227,14 +227,14 @@ in
       };
 
     };
-    environment.systemPackages = with pkgs; [
-      pavucontrol
+    environment.systemPackages = [
+      pkgs.pavucontrol
       # helvum
-      qpwgraph
-      alsa-utils
-      pulseaudio
-      pipewire # for pw-top, pw-metadata, pw-config
-      easyeffects # optional: for room correction/EQ if needed
+      pkgs.qpwgraph
+      pkgs.alsa-utils
+      pkgs.pulseaudio
+      pkgs.pipewire # for pw-top, pw-metadata, pw-config
+      pkgs.easyeffects # optional: for room correction/EQ if needed
     ];
   };
 }

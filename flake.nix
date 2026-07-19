@@ -2,7 +2,7 @@
   description = "Volodia P.-G'.s system config";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.follows = "nixpkgs";
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
@@ -123,7 +123,8 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     disko = {
-      url = "https://flakehub.com/f/nix-community/disko/1";
+      # url = "https://flakeh  url = "https://github.com/NixOS/nixpkgs/pull/410328.diff";
+      url = "github:nix-community/disko?ref=pull/1277/merge";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -250,10 +251,9 @@
     };
 
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:noctalia-dev/noctalia-shell/legacy-v4";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        noctalia-qs.follows = "noctalia-qs";
       };
     };
 
@@ -297,6 +297,7 @@
       "https://nix-community.cachix.org"
       "https://attic.xuyh0120.win/lantian"
       "https://cache.nixos-cuda.org"
+      "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
@@ -307,6 +308,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
@@ -322,21 +324,21 @@
       imports = [
         inputs.flat-flake.flakeModules.flatFlake
       ]
-      ++ (
-        with builtins; map (fn: ./modules/flake-parts/${fn}) (attrNames (readDir ./modules/flake-parts))
-      );
+      ++ (builtins.map (fn: ./modules/flake-parts/${fn}) (
+        builtins.attrNames (builtins.readDir ./modules/flake-parts)
+      ));
 
       flatFlake.config.allowed = [ ];
 
       perSystem =
-        { lib, system, ... }:
+        { system, ... }:
         {
           # Make our overlay available to the devShell
           # "Flake parts does not yet come with an endorsed module that initializes the pkgs argument.""
           # So we must do this manually; https://flake.parts/overlays#consuming-an-overlay
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = lib.attrValues self.overlays;
+            overlays = [ self.overlays.default ]; # ponytail: was lib.attrValues self.overlays — explicit single overlay avoids forcing all keys
             config.allowUnfree = true;
           };
 

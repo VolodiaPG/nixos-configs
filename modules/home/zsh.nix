@@ -5,9 +5,9 @@
   flake,
   ...
 }:
-with lib;
 let
   cfg = config.programs.zsh;
+  inherit (lib) mkIf;
   inherit (flake) inputs;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
     # Function to print colored text

@@ -33,10 +33,10 @@
     cpu.intel.updateMicrocode = true;
     graphics = {
       enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        libva-vdpau-driver
-        libvdpau-va-gl
+      extraPackages = [
+        pkgs.intel-media-driver
+        pkgs.libva-vdpau-driver
+        pkgs.libvdpau-va-gl
       ];
     };
   };

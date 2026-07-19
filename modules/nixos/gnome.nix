@@ -4,13 +4,13 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.wm.gnome;
 in
 {
   options = {
-    services.wm.gnome = with types; {
+    services.wm.gnome = {
       enable = mkEnableOption "gnome";
     };
   };
@@ -20,7 +20,6 @@ in
       displayManager.gdm = {
         enable = true;
         autoSuspend = false;
-        wayland = true;
       };
 
       desktopManager.gnome = {

@@ -2,12 +2,11 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   ...
 }:
-with lib;
 let
   cfg = config.services.homePackages;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   imports = [
@@ -15,44 +14,41 @@ in
   ];
 
   options = {
-    services.homePackages = with types; {
+    services.homePackages = {
       enable = mkEnableOption "Home packages configuration";
     };
   };
 
   config = mkIf cfg.enable {
     # Common apps
-    home.packages =
-      (with pkgs; [
-        direnv # Load environment variables when cd'ing into a directory
-        findutils # GNU find/xargs commands
-        parallel # Much smarter xargs
-        zip # ZIP file manipulation
-        unzip
-        gdu # Manager files and see sizes quickly
-        zoxide # smart CD that remembers
-        git-crypt
-        cocogitto
-        python3
+    home.packages = [
+      pkgs.direnv # Load environment variables when cd'ing into a directory
+      pkgs.findutils # GNU find/xargs commands
+      pkgs.parallel # Much smarter xargs
+      pkgs.zip # ZIP file manipulation
+      pkgs.unzip
+      pkgs.gdu # Manager files and see sizes quickly
+      pkgs.zoxide # smart CD that remembers
+      pkgs.git-crypt
+      pkgs.cocogitto
+      pkgs.python3
 
-        # System monitoring
-        htop # Interactive TUI process viewer
-        nmap # Network scanning and more
+      # System monitoring
+      pkgs.htop # Interactive TUI process viewer
+      pkgs.nmap # Network scanning and more
 
-        # File transfer
-        wget # Retrieve files from the web
+      # File transfer
+      pkgs.wget # Retrieve files from the web
 
-        # Fish deps
-        fzf # Required by jethrokuan/fzf.
-        grc
-        libnotify
-        notify-desktop
-        tmux
+      # Fish deps
+      pkgs.fzf # Required by jethrokuan/fzf.
+      pkgs.grc
+      pkgs.libnotify
+      pkgs.notify-desktop
+      pkgs.tmux
 
-        bottom # call btm
-        libgtop
-      ])
-      ++ (with pkgs-unstable; [
-      ]);
+      pkgs.bottom # call btm
+      pkgs.libgtop
+    ];
   };
 }

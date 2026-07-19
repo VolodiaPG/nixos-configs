@@ -4,18 +4,19 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption mkOption;
+  inherit (lib.types) listOf;
   cfg = config.services.vpn;
 in
 {
   options = {
-    services.vpn = with types; {
+    services.vpn = {
       enable = mkEnableOption "vpn";
 
       nameservers = mkOption {
         description = "dns nameservers";
-        type = listOf types.str;
+        type = listOf lib.types.str;
         default = [
           "1.1.1.1"
           "1.0.0.1"

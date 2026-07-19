@@ -4,14 +4,14 @@
   flake,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.homeLab;
   inherit (flake.config) me;
 in
 {
   options = {
-    services.homeLab = with types; {
+    services.homeLab = {
       enable = mkEnableOption "home lab services";
     };
   };

@@ -7,16 +7,16 @@ in
   imports = [
     ./configuration.nix
     ./hardware-configuration.nix
+    ./disk.nix
     ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.all-modules
-  ]
-  ++ (with inputs.nixos-hardware.nixosModules; [
-    common-cpu-intel
-    common-gpu-nvidia
-    common-pc-ssd
-  ]);
+    inputs.disko.nixosModules.disko
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+  ];
 
   # Enable services via module options
   services = {
@@ -26,16 +26,16 @@ in
     # nixCacheProxy.enable = true;
     wm = {
       enable = true;
-      gnome.enable = true;
+      # gnome.enable = true;
       niri = {
-        enable = false;
+        enable = true;
       };
     };
 
     # Hardware and kernel
     kernel = {
       enable = true;
-      latestKernel = true;
+      latestKernel = false;
     };
 
     nvidia.enable = true;
@@ -68,7 +68,9 @@ in
     # Storage and networking
     impermanence = {
       enable = true;
-      rootVolume = "disk/by-label/root";
+      rootVolume = "sda";
+      # rootVolume = "vda";
+      disko = true;
     };
     networking.enable = false;
     vpn.enable = true;

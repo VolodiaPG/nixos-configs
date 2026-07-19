@@ -4,28 +4,28 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkOption;
   cfg = config.services.kernel;
 in
 {
   options = {
-    services.kernel = with types; {
+    services.kernel = {
       enable = mkOption {
         description = "Enable the configuration of the kernel";
-        type = types.bool;
+        type = lib.types.bool;
         default = false;
       };
 
       maxPower = mkOption {
         description = "Enable the usage maxium power";
-        type = types.bool;
+        type = lib.types.bool;
         default = false;
       };
 
       latestKernel = mkOption {
         description = "Use the latest kernel";
-        type = types.bool;
+        type = lib.types.bool;
         default = false;
       };
     };

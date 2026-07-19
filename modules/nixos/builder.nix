@@ -1,11 +1,11 @@
 { config, lib, ... }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.builder;
 in
 {
   options = {
-    services.builder = with types; {
+    services.builder = {
       enable = mkEnableOption "Nix distributed build service";
     };
   };

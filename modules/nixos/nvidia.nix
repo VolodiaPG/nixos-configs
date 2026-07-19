@@ -20,7 +20,10 @@ in
       allowUnsupportedSystem = false;
     };
 
-    services.xserver.videoDrivers = [ "nvidia" ];
+    services.xserver.videoDrivers = [
+      "nvidia"
+      "modesetting"
+    ];
     services.xserver.enable = lib.mkDefault false;
 
     virtualisation.docker = {
@@ -37,21 +40,21 @@ in
     # looks like this is still an experimental feature
     # also an interesting resource https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/cdi.html
     hardware = {
-      nvidia-container-toolkit.enable = true;
       graphics = {
         enable = true;
         # support32Bit = true;
-        extraPackages = with pkgs; [
-          intel-compute-runtime
-          intel-media-driver # LIBVA_DRIVER_NAME=iHD
-          intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-          libva-vdpau-driver
-          libvdpau-va-gl
-          mesa
-          nvidia-vaapi-driver
-          nv-codec-headers-12
+        extraPackages = [
+          pkgs.intel-compute-runtime
+          pkgs.intel-media-driver # LIBVA_DRIVER_NAME=iHD
+          pkgs.intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+          pkgs.libva-vdpau-driver
+          pkgs.libvdpau-va-gl
+          pkgs.mesa
+          pkgs.nvidia-vaapi-driver
+          pkgs.nv-codec-headers-12
         ];
       };
+      # nvidia-container-toolkit.enable = true;
       nvidia = {
         package = config.boot.kernelPackages.nvidiaPackages.production;
         open = true;
@@ -70,7 +73,7 @@ in
     };
     # systemd.services.nvidia-fabricmanager.enable = lib.mkForce false;
 
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = [
       # ollama-cuda # wasn't cached and took forever to build
       # nvtopPackages.nvidia
       # cudaPackages.cudatoolkit

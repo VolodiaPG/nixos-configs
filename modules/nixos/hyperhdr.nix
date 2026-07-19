@@ -4,20 +4,20 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.hyperhdr;
 in
 {
   options = {
-    services.hyperhdr = with types; {
+    services.hyperhdr = {
       enable = mkEnableOption "hyperhdr";
     };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      hyperhdr
+    environment.systemPackages = [
+      pkgs.hyperhdr
     ];
 
     systemd.user.services.hyperhdr = {

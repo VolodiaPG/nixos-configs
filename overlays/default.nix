@@ -19,25 +19,14 @@ _final: prev:
   #   nix-serve-ng
   #   ;
 
-  inherit (inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system})
-    devenv
-    difftastic
-    zotero
-    nvfetcher
-    kanata
-    yabai
-    ollama
-    tailscale
-    # orca-slicer
-    ;
+  # ponytail: nixpkgs-unstable follows nixpkgs, so those inherits were no-ops — removed.
+  # If you un-follow nixpkgs-unstable, re-add the packages you need from it here.
 
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;
 
   inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
     opencode
     ;
-
-  # inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
 
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
     theme-switcher
@@ -47,7 +36,7 @@ _final: prev:
 
   noctalia-shell = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
-  nix-cache-proxy = inputs.nix-cache-proxy.packages.${prev.stdenv.hostPlatform.system}.default;
+  # ponytail: nix-cache-proxy input is commented out in flake.nix — removed dead overlay attr.
 
   mosh = prev.mosh.overrideAttrs (
     old:

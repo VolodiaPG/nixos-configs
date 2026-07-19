@@ -4,9 +4,9 @@
   pkgs,
   ...
 }:
-with lib;
 let
   cfg = config.programs.tmux;
+  inherit (lib) mkIf;
 in
 {
   config = mkIf cfg.enable {
@@ -68,9 +68,9 @@ in
         bind-key -T copy-mode-vi 'C-\' select-pane -l
       '';
 
-      plugins = with pkgs.tmuxPlugins; [
+      plugins = [
         {
-          plugin = resurrect;
+          plugin = pkgs.tmuxPlugins.resurrect;
           extraConfig = ''
             resurrect_dir="$HOME/.tmux/resurrect"
             set -g @resurrect-dir $resurrect_dir
@@ -79,7 +79,7 @@ in
           '';
         }
         {
-          plugin = continuum;
+          plugin = pkgs.tmuxPlugins.continuum;
           extraConfig = ''
             set -g @continuum-restore 'on'
           '';

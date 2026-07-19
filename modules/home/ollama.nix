@@ -3,9 +3,9 @@
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.ollama;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {

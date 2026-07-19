@@ -3,13 +3,13 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.laptopServer;
 in
 {
   options = {
-    services.laptopServer = with types; {
+    services.laptopServer = {
       enable = mkEnableOption "laptopServer";
     };
   };

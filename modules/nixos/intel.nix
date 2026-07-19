@@ -4,13 +4,13 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf mkEnableOption;
   cfg = config.services.intel;
 in
 {
   options = {
-    services.intel = with types; {
+    services.intel = {
       enable = mkEnableOption "intel";
     };
   };
@@ -28,6 +28,6 @@ in
       ];
     };
 
-    environment.systemPackages = with pkgs; [ intel-gpu-tools ];
+    environment.systemPackages = [ pkgs.intel-gpu-tools ];
   };
 }
