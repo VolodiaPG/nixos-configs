@@ -32,6 +32,7 @@ _final: prev:
     theme-switcher
     tmux-session-color
     openrouter-credits
+    xinstall
     ;
 
   noctalia-shell = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
