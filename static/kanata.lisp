@@ -2,7 +2,7 @@
 ;; https://github.com/jtroo/kanata/blob/main/docs/locales.adoc
 
 
-(defcfg concurrent-tap-hold yes)
+;; (defcfg concurrent-tap-hold yes)
 
 
 (deflocalkeys-linux
