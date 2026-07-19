@@ -47,7 +47,7 @@ in
       gum confirm --default=false "This will erase $DISK to install $TARGET, confirm:"
 
       echo selected "$FLAKE"#"$TARGET"
-      exec disko-install --flake "$FLAKE"#"$TARGET" --device main "$DISK"
+      exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
     '')
   ];
 
