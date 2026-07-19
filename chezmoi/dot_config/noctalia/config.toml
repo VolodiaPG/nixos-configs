@@ -1,0 +1,67 @@
+# ponytail: v5 config migrated from v4 settings.json — only high-confidence mappings included.
+# NOT migrated (v5 schema differs / plugins unverified): bar plugins (mini-docker, tailscale,
+# catwalk, kde-connect), SystemMonitor widget, notification/OSD fine-tuning, session-menu keybinds,
+# noctaliaPerformance (removed in v5), hooks.performanceMode* (feature gone in v5).
+# Re-add those via the v5 Settings GUI. Old settings.json/plugins.json kept as v4 reference;
+# safe to delete once migration is confirmed.
+
+[shell]
+avatar_path = "/home/volodia/Pictures/.face"
+telemetry_enabled = false
+
+[shell.animation]
+enabled = false
+
+[shell.shadow]
+direction = "down_right"
+
+[theme]
+mode = "light"
+source = "builtin"
+builtin = "Catppuccin"
+
+[wallpaper]
+enabled = true
+directory = "/home/volodia/Pictures/Wallpapers"
+fill_mode = "crop"
+fill_color = "#000000"
+transition = ["fade", "disc", "stripes", "wipe", "honeycomb"]
+transition_duration = 1500
+
+[location]
+address = "Nages-et-Solorgues"
+
+[weather]
+enabled = true
+effects = true
+
+[brightness]
+enable_ddcutil = true
+
+[nightlight]
+temperature_day = 6500
+temperature_night = 4000
+
+[idle.behavior.lock]
+timeout = 200
+action = "lock"
+enabled = true
+
+[idle.behavior.screen-off]
+timeout = 120
+action = "screen_off"
+enabled = true
+
+[bar.main]
+position = "bottom"
+radius = 12
+margin_h = 4
+margin_v = 4
+widget_spacing = 6
+start = ["control-center", "launcher"]
+center = ["workspaces"]
+end = ["media", "tray", "battery", "volume", "brightness", "clock", "notifications"]
+
+[widget.clock]
+format = "{:%H\n%M}"
+tooltip_format = "{:%H:%M %a, %b %d}"

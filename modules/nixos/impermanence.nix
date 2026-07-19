@@ -272,7 +272,7 @@ in
           files = [
             ".bash_history"
             ".zsh_history"
-            ".cache/noctalia/wallpapers.json"
+            ".local/state/noctalia/settings.toml"
             # ".local/share/fish/fish_history"
             # ".local/share/nvim/harpoon.json"
           ];

@@ -241,20 +241,10 @@
       };
     };
 
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
-
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell/legacy-v4";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      # ponytail: v5 — repo renamed noctalia-shell→noctalia; pinned to `cachix` branch for binary cache hits.
+      # nixpkgs.follows removed: overriding inputs changes the derivation hash and defeats the cache.
+      url = "github:noctalia-dev/noctalia/cachix";
     };
 
     tidal-to-strawberry = {

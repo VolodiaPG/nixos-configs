@@ -35,7 +35,7 @@ _final: prev:
     xinstall
     ;
 
-  noctalia-shell = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
+  noctalia = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
   # ponytail: nix-cache-proxy input is commented out in flake.nix — removed dead overlay attr.
 
