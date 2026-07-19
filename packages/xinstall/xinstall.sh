@@ -11,7 +11,7 @@ TARGET=$(
         gum choose --header "Select which configuration to install:"
 )
 
-if [ "$(nix eval "$FLAKE#nixosConfigurations.$TARGET.config.preferences.impermanence.enable" --json)" != "true" ]; then
+if [ "$(nix eval "$FLAKE#nixosConfigurations.$TARGET.config.services.impermanence.disko" --json)" != "true" ]; then
     echo "disko-install is disabled because services.impermanence.disko is false for $TARGET." >&2
     exit 1
 fi
