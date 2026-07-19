@@ -22,7 +22,6 @@ in
 
     services.xserver.videoDrivers = [
       "nvidia"
-      "modesetting"
     ];
     services.xserver.enable = lib.mkDefault false;
 
@@ -54,7 +53,7 @@ in
           pkgs.nv-codec-headers-12
         ];
       };
-      # nvidia-container-toolkit.enable = true;
+      nvidia-container-toolkit.enable = true;
       nvidia = {
         package = config.boot.kernelPackages.nvidiaPackages.production;
         open = true;
