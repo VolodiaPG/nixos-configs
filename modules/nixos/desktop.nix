@@ -86,8 +86,10 @@ in
     fonts = {
       packages = [
         pkgs.corefonts
-        pkgs.roboto
-        pkgs.roboto-serif
+        # pkgs.roboto
+        # pkgs.roboto-serif
+        pkgs.inter
+        pkgs.ibm-plex
         pkgs.joypixels
         pkgs.nerd-fonts.iosevka-term
         pkgs.noto-fonts-cjk-sans
@@ -99,11 +101,11 @@ in
         ];
 
         sansSerif = [
-          "Roboto"
+          "Inter"
         ];
 
         serif = [
-          "Roboto Serif"
+          "IBM Plex Serif"
         ];
       };
     };
