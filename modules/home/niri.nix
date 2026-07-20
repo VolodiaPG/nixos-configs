@@ -94,7 +94,7 @@ in
       enable = true;
       settings = {
         main = {
-          font = "Noto Sans:size=11";
+          font = "Inter:size=11";
           prompt = "❯ ";
           width = 50;
           lines = 15;

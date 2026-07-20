@@ -3,14 +3,19 @@ ui_scale = 1.0
 
 [bar.main]
 center = [ "workspaces" ]
-end = [ "media", "tray", "battery", "volume", "brightness", "clock", "notifications" ]
+end = [ "media", "tray", "battery", "volume", "brightness", "clock" ]
+font_weight = 400
+margin_edge = 1
+margin_ends = 300
 margin_h = 4
 margin_v = 4
+padding = 25
 position = "bottom"
 radius = 12
-scale = 1.0
-start = [ "control-center", "launcher" ]
-thickness = 20
+scale = 1.1000000089406967
+shadow = false
+start = [ "control-center", "notifications", "cpu" ]
+thickness = 25
 widget_spacing = 6
 
 [brightness]
@@ -27,12 +32,17 @@ enabled = true
 timeout = 120
 
 [location]
-address = "Nages-et-Solorgues"
+address = "Rennes"
 
 [lockscreen_widgets]
-enabled = false
+enabled = true
 schema_version = 2
-widget_order = [ "lockscreen-login-box@DP-3" ]
+widget_order = [
+    "lockscreen-login-box@DP-3",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000002",
+    "lockscreen-widget-0000000000000003"
+]
 
     [lockscreen_widgets.grid]
     cell_size = 16
@@ -40,10 +50,10 @@ widget_order = [ "lockscreen-login-box@DP-3" ]
     visible = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@DP-3"]
-    box_height = 70.0
+    box_height = 64.0
     box_width = 400.0
-    cx = 1720.0
-    cy = 1321.0
+    cx = 1376.0
+    cy = 573.0
     output = "DP-3"
     rotation = 0.0
     type = "login_box"
@@ -52,7 +62,7 @@ widget_order = [ "lockscreen-login-box@DP-3" ]
         background_color = "surface_variant"
         background_opacity = 0.88
         background_radius = 12.0
-        center_password_text = false
+        center_password_text = true
         input_opacity = 1.0
         input_radius = 6.0
         show_caps_lock = true
@@ -60,24 +70,75 @@ widget_order = [ "lockscreen-login-box@DP-3" ]
         show_login_button = true
         show_password_hint = true
 
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 144.0
+    box_width = 256.0
+    cx = 1376.0
+    cy = 456.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = true
+        center_text = true
+        clock_style = "digital"
+        shadow = false
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
+    box_height = 0.0
+    box_width = 0.0
+    cx = 1376.0
+    cy = 688.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "media_player"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000002.settings]
+        hide_when_no_media = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 128.0
+    box_width = 208.0
+    cx = 1380.0
+    cy = 1084.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        background = true
+        display = "graph"
+        shadow = false
+        stat = "cpu_usage"
+        stat2 = "cpu_temp"
+
 [nightlight]
 temperature_day = 6500
 temperature_night = 4000
 
+[notification]
+position = "top_center"
+
 [shell]
 avatar_path = "/home/volodia/Pictures/.face"
+launch_apps_as_systemd_services = true
 polkit_agent = true
+screen_time_enabled = true
 telemetry_enabled = false
 
     [shell.animation]
-    enabled = false
+    enabled = true
+
+    [shell.panel]
+    open_near_click_control_center = true
 
     [shell.shadow]
     direction = "center"
 
 [theme]
 builtin = "Catppuccin"
-mode = "light"
+mode = "auto"
 source = "builtin"
 
 [wallpaper]
@@ -87,6 +148,7 @@ fill_color = "#000000"
 fill_mode = "crop"
 transition = [ "fade", "disc", "stripes", "wipe", "honeycomb" ]
 transition_duration = 1500
+transition_on_startup = true
 
     [wallpaper.default]
     path = "/nix/store/3iwy0a7cjaxbj93k8jln8mx73j2y3qq0-noctalia-5.0.0/share/noctalia/assets/noctalia-wallpaper.png"
@@ -99,6 +161,18 @@ effects = true
 enabled = true
 
 [widget.clock]
-format = """{:%H
-%M}"""
+format = "{:%H:%M %A %d %B } "
 tooltip_format = "{:%H:%M %a, %b %d}"
+
+[widget.control-center]
+glyph = "snowflake"
+
+[widget.cpu]
+stat = "cpu_temp"
+
+[widget.media]
+art_size = 20
+
+[widget.workspaces]
+anchor = true
+labels_only_when_occupied = true

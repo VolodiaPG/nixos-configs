@@ -48,7 +48,7 @@ input {
 
 
 layout {
-  gaps 8
+  gaps 12
 
 
 }
@@ -56,7 +56,7 @@ layout {
 output "Iiyama North America PL3461WQ 1171803800833" {
 	mode "3440x1440@143.923"
 	variable-refresh-rate
-	scale 1.25
+	scale 1.20
 }
 
 spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia msg session lock"
@@ -299,3 +299,58 @@ layer-rule {
 
     block-out-from "screen-capture"
 }
+
+// Enable blur behind the fuzzel launcher.
+layer-rule {
+    match namespace="^launcher$"
+
+    background-effect {
+        blur true
+        xray false
+    }
+}
+// window-rule {
+//     match app-id="^kitty$"
+//
+//     background-effect {
+//         blur true
+//     }
+// }
+// window-rule {
+//   background-effect {
+//     blur true
+//     xray true
+//   }
+// }
+
+/*
+  Noctalia
+  Disable xray on all our surfaces so it looks more realistic.
+  Noctalia publishes blur regions automatically when ext-background-effects is available.
+*/
+layer-rule {
+  match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+  background-effect {
+    xray false
+    blur true
+  }
+}
+
+/* Enable blur on noctalia's window switcher and disable xray. */
+layer-rule {
+    match namespace="noctalia-window-switcher"
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+/* You can also fine-tune the blur effect globally. */
+blur {
+  passes 2        // more passes = stronger blur (default: 3)
+  offset 3.0      // sample distance per pass (default: 3.0)
+  noise 0.07      // grain overlay (default: 0.02)
+  saturation 1.0  // color saturation boost (default: 1.5)
+}
+
+
