@@ -64,6 +64,7 @@ in
         pkgs.easyeffects
         pkgs.libreoffice-qt-fresh
         pkgs.freerdp
+        pkgs.orca-slicer
       ]);
 
       file = {
