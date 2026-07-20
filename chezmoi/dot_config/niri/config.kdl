@@ -1,4 +1,5 @@
 // Niri configuration
+prefer-no-csd
 
 input {
   keyboard {
@@ -55,7 +56,7 @@ layout {
 
 output "Iiyama North America PL3461WQ 1171803800833" {
 	mode "3440x1440@143.923"
-	variable-refresh-rate
+	// variable-refresh-rate
 	scale 1.20
 }
 
@@ -174,9 +175,18 @@ debug {
 }
 
 window-rule {
+    draw-border-with-background false
+}
+
+window-rule {
     match app-id=r#"^kitty$"#
     open-on-workspace "terminal"
     open-maximized true
+
+    background-effect {
+        blur true
+        xray true
+    }
 }
 
 window-rule {
@@ -236,16 +246,27 @@ window-rule {
     open-maximized true
 }
 
-// Open the Firefox picture-in-picture window as floating.
 window-rule {
     match title="Picture-in-Picture"
+    exclude is-active=true
 
     open-floating true
     default-column-width { fixed 480; }
     default-window-height { fixed 270; }
     default-floating-position x=0 y=0 relative-to="bottom-right"
-    opacity 0.5
+    opacity 0.8
 }
+
+// window-rule {
+//     match title="Picture-in-Picture"
+//     exclude is-active=false
+//
+//     open-floating true
+//     default-column-width { fixed 480; }
+//     default-window-height { fixed 270; }
+//     default-floating-position x=0 y=0 relative-to="bottom-right"
+//     opacity 0.01
+// }
 
 window-rule {
     geometry-corner-radius 12
@@ -357,10 +378,10 @@ layer-rule {
 
 /* You can also fine-tune the blur effect globally. */
 blur {
-  passes 2        // more passes = stronger blur (default: 3)
+  passes 5        // more passes = stronger blur (default: 3)
   offset 3.0      // sample distance per pass (default: 3.0)
   noise 0.07      // grain overlay (default: 0.02)
-  saturation 1.0  // color saturation boost (default: 1.5)
+  saturation 1.5  // color saturation boost (default: 1.5)
 }
 
 

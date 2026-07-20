@@ -2,6 +2,7 @@
 ui_scale = 1.0
 
 [bar.main]
+background_opacity = 0.69999998435378075
 capsule_thickness = 0.99999998137354851
 center = [ "workspaces" ]
 end = [ "media", "tray", "battery", "volume", "brightness", "clock" ]
@@ -23,6 +24,7 @@ widget_spacing = 12
 enable_ddcutil = true
 
 [dock]
+background_opacity = 0.79999998211860657
 item_spacing = 12
 
 [idle.behavior.lock]
@@ -45,19 +47,20 @@ widget_order = [
     "lockscreen-login-box@DP-3",
     "lockscreen-widget-0000000000000001",
     "lockscreen-widget-0000000000000002",
-    "lockscreen-widget-0000000000000003"
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004"
 ]
 
     [lockscreen_widgets.grid]
-    cell_size = 16
+    cell_size = 64
     major_interval = 4
     visible = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@DP-3"]
     box_height = 64.0
     box_width = 400.0
-    cx = 1376.0
-    cy = 573.0
+    cx = 1433.5
+    cy = 600.0
     output = "DP-3"
     rotation = 0.0
     type = "login_box"
@@ -75,47 +78,67 @@ widget_order = [
         show_password_hint = true
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
-    box_height = 144.0
-    box_width = 256.0
-    cx = 1376.0
-    cy = 456.0
+    box_height = 192.0
+    box_width = 576.0
+    cx = 1433.5
+    cy = 376.0
     output = "DP-3"
     rotation = 0.0
     type = "clock"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
-        background = true
+        background = false
         center_text = true
         clock_style = "digital"
+        format = "{:%H:%M}"
         shadow = false
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
     box_height = 0.0
     box_width = 0.0
-    cx = 1376.0
-    cy = 688.0
+    cx = 1433.5
+    cy = 796.0
     output = "DP-3"
     rotation = 0.0
     type = "media_player"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000002.settings]
+        background = false
         hide_when_no_media = true
+        shadow = false
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
     box_height = 128.0
     box_width = 208.0
-    cx = 1380.0
-    cy = 1084.0
+    cx = 1433.5
+    cy = 1048.0
     output = "DP-3"
     rotation = 0.0
     type = "sysmon"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
-        background = true
+        background = false
         display = "graph"
         shadow = false
+        show_label = true
         stat = "cpu_usage"
         stat2 = "cpu_temp"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 64.0
+    box_width = 384.0
+    cx = 1433.5
+    cy = 472.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        format = "{:%A %d %B } "
+        shadow = false
 
 [nightlight]
 temperature_day = 6500
@@ -152,13 +175,14 @@ telemetry_enabled = false
 
     [shell.panel]
     open_near_click_control_center = true
+    transparency_mode = "glass"
 
     [shell.shadow]
     direction = "center"
 
 [theme]
 builtin = "Catppuccin"
-mode = "light"
+mode = "dark"
 source = "builtin"
 
 [wallpaper]
