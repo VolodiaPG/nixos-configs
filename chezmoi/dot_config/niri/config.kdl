@@ -194,6 +194,14 @@ window-rule {
 }
 
 window-rule {
+    match title=r#".*Home Assistant$"#
+    open-on-workspace "fizzy"
+    open-maximized true
+    //scroll-factor 0.5
+}
+
+
+window-rule {
     match title=r#".*Proton Mail$"#
     open-on-workspace "social"
     open-maximized true
@@ -206,7 +214,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"^org.strawberrymusicplayer.strawberry$"#
+    match app-id=r#"^sone$"#
     open-on-workspace "music"
     open-maximized true
 }
