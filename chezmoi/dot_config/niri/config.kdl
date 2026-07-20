@@ -342,6 +342,7 @@ layer-rule {
     xray false
     blur true
   }
+  block-out-from "screen-capture"
 }
 
 /* Enable blur on noctalia's window switcher and disable xray. */
@@ -351,6 +352,7 @@ layer-rule {
         blur true
         xray false
     }
+    block-out-from "screen-capture"
 }
 
 /* You can also fine-tune the blur effect globally. */
