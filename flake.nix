@@ -31,7 +31,7 @@
     };
 
     srvos = {
-      url = "github:nix-community/srvos";
+      url = "github:volodiapg/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

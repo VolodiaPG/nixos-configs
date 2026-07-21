@@ -20,8 +20,6 @@ in
     inputs.disko.nixosModules.disko
   ];
 
-  srvos.detect-hostname-change.enable = false;
-
   # Enable services via module options
   services = {
     # Core system services
