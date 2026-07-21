@@ -384,4 +384,7 @@ blur {
   saturation 1.5  // color saturation boost (default: 1.5)
 }
 
+cursor {
+    xcursor-size 18
+}
 

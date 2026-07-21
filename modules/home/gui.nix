@@ -67,6 +67,11 @@ in
         pkgs.orca-slicer
       ]);
 
+      pointerCursor = {
+        package = pkgs.graphite-cursors;
+        name = "graphite-dark";
+      };
+
       file = {
         ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";
         ".config/discord/settings.json".text = ''
