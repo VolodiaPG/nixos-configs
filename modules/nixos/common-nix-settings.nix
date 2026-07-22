@@ -115,6 +115,7 @@ in
     nixpkgs.config = {
       allowUnfree = true;
       allowUnsupportedSystem = false;
+      allowInsecurePredicate = pkg: builtins.elem (lib.getName pkg) [ "tensorrt" ];
     };
 
     nix = {

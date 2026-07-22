@@ -2,65 +2,63 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   ...
 }:
 let
-  cfg = config.services.mpv;
-  inherit (lib) mkEnableOption mkIf;
+  cfg = config.mpv;
+  # inherit (lib) mkEnableOption mkIf;
+  #
+  # # mpv with vapoursynth support enabled (needed for vsrife to load).
+  # mpvVapoursynth = pkgs.mpv-unwrapped.override {
+  #   vapoursynth = true;
+  # };
+  # mpvWrapped = pkgs.symlinkJoin {
+  #   name = "mpv";
+  #   paths = [ mpvVapoursynth pkgs.vapoursynth ];
+  #   buildInputs = [ pkgs.makeWrapper ];
+  #   postBuild = ''
+  #     wrapProgram $out/bin/mpv \
+  #       --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.vapoursynth ]}" \
+  #       --prefix PYTHONPATH : "${pkgs.vsrife}/${pkgs.python3.sitePackages}"
+  #   '';
+  #   meta = mpvVapoursynth.meta // { outputsToInstall = [ "out" ]; }; # ponytail: symlinkJoin has no `man` output; inherited meta would crash buildenv
+  # };
 in
 {
   options = {
-    services.mpv = {
-      enable = mkEnableOption "MPV configuration";
+    mpv = {
+      enable = lib.mkEnableOption "MPV configuration";
     };
   };
 
-  config = mkIf cfg.enable {
-    home = {
-      packages = [
-        #mpv
-        pkgs.play-with-mpv
-      ]
-      ++ [
-        pkgs-unstable.mpv
-      ];
-      file = {
-        ".config/mpv" = {
-          source = ./mpv;
-          recursive = true;
-        };
-        #".config/mpv/svp.py".source = pkgs.substituteAll {
-        #  src = ./svp.py;
-        #  svpflow = "${pkgs.svpflow}/lib/";
-        #};
-        #".config/mpv/svp_max.py".source = pkgs.substituteAll {
-        #  src = ./svp_max.py;
-        #  svpflow = "${pkgs.svpflow}/lib/";
-        #};
-        #".config/mpv/svp_nvof.py".source = pkgs.substituteAll {
-        #  src = ./svp_nvof.py;
-        #  svpflow = "${pkgs.svpflow}/lib/";
-        #};
-      };
-    };
+  config = lib.mkIf cfg.enable {
+    # programs.mpv.enable = true;
+    home.packages = [
+      pkgs.mpv-rife
+      # pkgs.mpv-handler
+      # pkgs.vapoursynth
+      # # pkgs.vapoursynth-mvtools
+      # pkgs.python3Packages.vapoursynth
+      # # pkgs.python3Packages.guessit
+      # (pkgs.writeShellScriptBin "mpv-python" ''
+      #   exec ${
+      #     pkgs.python3.withPackages (
+      #       ps: with ps; [
+      #         guessit
+      #         requests
+      #         subliminal
+      #       ]
+      #     )
+      #   }/bin/python3 "$@"
+      # '')
+      # pkgs.socat
+    ];
 
-    #systemd.user.services = {
-    #  play-with-mpv = {
-    #    Service = {
-    #      ExecStart = let
-    #        script = pkgs.writeShellScript "play-with-mpv-script" ''
-    #          PATH=$PATH:${pkgs-unstable.mpv}/bin
-    #          ${pkgs.systemd}/share/factory/etc/X11/xinit/xinitrc.d/50-systemd-user.sh
-    #          ${pkgs.play-with-mpv}/bin/play-with-mpv
-    #        '';
-    #      in "${script}";
-    #    };
-    #    Unit = {
-    #      Requires = ["xdg-desktop-autostart.target"];
-    #      WantedBy = ["default.target"];
-    #    };
-    #  };
-    #};
+    #   # file = {
+    #   #   ".config/mpv" = {
+    #   #     source = ./mpv;
+    #   #     recursive = true;
+    #   #   };
+    #   # };
   };
 }

@@ -56,7 +56,7 @@ layout {
 
 output "Iiyama North America PL3461WQ 1171803800833" {
 	mode "3440x1440@143.923"
-	// variable-refresh-rate
+	variable-refresh-rate on-demand=true
 	scale 1.20
 }
 
@@ -382,6 +382,14 @@ layer-rule {
         xray false
     }
     block-out-from "screen-capture"
+}
+
+// VRR
+window-rule {
+    match app-id=r#"^(?-x:mpv|steam_app_\d+)$"#
+    match app-id=r#"\.exe$"#
+
+    variable-refresh-rate true
 }
 
 /* You can also fine-tune the blur effect globally. */

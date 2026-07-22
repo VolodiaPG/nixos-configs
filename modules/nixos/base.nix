@@ -38,7 +38,7 @@ in
 
     boot = {
       loader.grub = {
-        configurationLimit = 20;
+        configurationLimit = 10;
         useOSProber = true;
         copyKernels = true;
       };
