@@ -65,6 +65,7 @@ in
         pkgs.libreoffice-qt-fresh
         pkgs.freerdp
         pkgs.orca-slicer
+        pkgs.high-tide
       ]);
 
       pointerCursor = {

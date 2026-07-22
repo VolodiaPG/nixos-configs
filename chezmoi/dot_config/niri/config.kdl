@@ -121,6 +121,12 @@ binds {
   // Mirror screen
   Mod+Ctrl+Shift+P repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
 
+  // Enable VRR for a specific output (e.g., DP-1)
+  Mod+Tab { spawn "niri" "msg" "output" "Iiyama North America PL3461WQ 1171803800833" "vrr" "on"; }
+
+  // Or toggle/turn off VRR
+  Mod+Shift+Tab { spawn "niri" "msg" "output" "Iiyama North America PL3461WQ 1171803800833" "vrr" "off"; }
+
   Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
 
   // Volume control
@@ -224,7 +230,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"^sone$"#
+    match app-id=r#"^io.github.nokse22.high-tide$"#
     open-on-workspace "music"
     open-maximized true
 }
@@ -338,6 +344,8 @@ layer-rule {
         xray false
     }
 }
+
+
 // window-rule {
 //     match app-id="^kitty$"
 //
@@ -345,12 +353,12 @@ layer-rule {
 //         blur true
 //     }
 // }
-// window-rule {
-//   background-effect {
-//     blur true
-//     xray true
-//   }
-// }
+window-rule {
+  background-effect {
+    blur true
+    xray false
+  }
+}
 
 /*
   Noctalia
@@ -380,8 +388,8 @@ layer-rule {
 blur {
   passes 5        // more passes = stronger blur (default: 3)
   offset 3.0      // sample distance per pass (default: 3.0)
-  noise 0.07      // grain overlay (default: 0.02)
-  saturation 1.5  // color saturation boost (default: 1.5)
+  noise 0.05      // grain overlay (default: 0.02)
+  saturation 1.8  // color saturation boost (default: 1.5)
 }
 
 cursor {

@@ -2,12 +2,13 @@
 ui_scale = 1.0
 
 [bar.main]
-background_opacity = 0.69999998435378075
+background_opacity = 0.79999998211860657
 capsule_thickness = 0.99999998137354851
-center = [ "workspaces" ]
-end = [ "media", "tray", "battery", "volume", "brightness", "clock" ]
+center = [ "workspaces", "cpu" ]
+concave_edge_corners = false
+end = [ "tray", "notifications", "battery", "volume", "brightness", "clock" ]
 font_weight = 400
-margin_edge = 1
+margin_edge = 0
 margin_ends = 300
 margin_h = 4
 margin_v = 4
@@ -16,7 +17,7 @@ position = "bottom"
 radius = 12
 scale = 1.1000000089406967
 shadow = false
-start = [ "control-center", "notifications", "cpu" ]
+start = [ "media" ]
 thickness = 25
 widget_spacing = 12
 
@@ -145,11 +146,11 @@ temperature_day = 6500
 temperature_night = 4000
 
 [notification]
-background_opacity = 0.59999998658895493
+background_opacity = 0.79999998211860657
 position = "bottom_center"
 
 [osd]
-background_opacity = 0.59999998658895493
+background_opacity = 0.79999998211860657
 orientation = "vertical"
 position = "bottom_right"
 position_vertical = "center_right"
@@ -182,7 +183,7 @@ telemetry_enabled = false
 
 [theme]
 builtin = "Catppuccin"
-mode = "dark"
+mode = "light"
 source = "builtin"
 
 [wallpaper]
@@ -195,13 +196,13 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-20.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-22.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-20.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-22.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-20.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-22.jpg"
 
 [weather]
 effects = true
@@ -215,6 +216,7 @@ tooltip_format = "{:%H:%M %a, %b %d}"
 glyph = "snowflake"
 
 [widget.cpu]
+display = "text"
 stat = "cpu_temp"
 
 [widget.media]

@@ -25,6 +25,16 @@ in
     networkmanager.enable = true;
   };
 
+  services = {
+    undervolt = {
+      enable = true;
+      coreOffset = -55;
+      gpuOffset = -55;
+      uncoreOffset = -55;
+      analogioOffset = -55;
+    };
+  };
+
   # services = {
   #   undervolt = {
   #     enable = true;
@@ -39,18 +49,16 @@ in
     cpu.intel.updateMicrocode = true;
   };
 
-  # environment = {
-  #   # etc = {
-  #   #   "X11/Xwrapper.config".text = ''
-  #   #     allowed_users=anybody
-  #   #     needs_root_rights=yes
-  #   #   '';
-  #   #   "X11/xorg.conf".text = lib.mkForce (builtins.readFile ./xorg.conf);
-  #   # };
-  #   sessionVariables = {
-  #     LIBVA_DRIVER_NAME = "nvidia";
-  #   };
-  # };
+  # Nvidia gpu are slow to move up frequency, and cause stutter when scrolling, regularly
+  systemd.services.nvidia-frequency = {
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.Type = "oneshot";
+    serviceConfig.RemainAfterExit = true;
+    script = ''
+      /run/current-system/sw/bin/nvidia-smi -lmc 1620,2100
+      /run/current-system/sw/bin/nvidia-smi -lgc 210,3105
+    '';
+  };
 
   system.stateVersion = "22.05";
 }

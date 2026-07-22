@@ -28,6 +28,10 @@ _final: prev:
     opencode
     ;
 
+  inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
+    high-tide
+    ;
+
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
     theme-switcher
     tmux-session-color

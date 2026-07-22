@@ -87,7 +87,6 @@ in
         --ozone-platform=wayland
       '';
     };
-    gtk.enable = true;
 
     # Fuzzel launcher configuration
     programs.fuzzel = {
@@ -119,6 +118,28 @@ in
           radius = 12;
         };
       };
+    };
+
+    gtk = {
+      enable = true;
+
+      gtk4.extraCss = ''
+        window {
+          background-color: alpha(@window_bg_color, 0.8);
+        }
+
+        window > box,
+        window > grid,
+        window > overlay {
+          background-color: alpha(@card_bg_color, 0.8);
+        }
+
+        .sidebar,
+        .sidebar row,
+        .navigation-sidebar {
+          background-color: alpha(@view_bg_color, 0.9);
+        }
+      '';
     };
 
     services.kdeconnect.enable = true;

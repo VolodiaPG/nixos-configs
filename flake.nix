@@ -274,8 +274,14 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
+
     bbr_classic = {
       url = "github:cmspam/bbr_classic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    high-tide = {
+      url = "github:volodiapg/high-tide";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

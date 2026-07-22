@@ -3,9 +3,9 @@
   "plugin": [
     "@simonwjackson/opencode-direnv@latest",
     "@tarquinen/opencode-dcp@latest",
-    "oh-my-opencode-slim",
-    "@plannotator/opencode@latest",
-    "@dietrichgebert/ponytail"
+    "@dietrichgebert/ponytail",
+    "oh-my-opencode-slim@latest",
+    "@plannotator/opencode@latest"
   ],
   "provider": {
     "lmstudio": {

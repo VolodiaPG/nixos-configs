@@ -36,13 +36,20 @@ in
       };
       flatpak.enable = true;
     };
+    systemd = {
+      # Expose GTK config directory to Flatpak apps
+      user.services.flatpak-override-gtk = {
+        script = "${pkgs.flatpak}/bin/flatpak override --user --filesystem=xdg-config/gtk-4.0:ro";
+        wantedBy = [ "default.target" ];
+      };
+      services.kanata-all.serviceConfig = {
+        Restart = "always";
+        RestartSec = "1s";
+      };
+
+    };
 
     security.pam.services.gdm.enableGnomeKeyring = true;
-
-    systemd.services.kanata-all.serviceConfig = {
-      Restart = "always";
-      RestartSec = "1s";
-    };
 
     environment.systemPackages = [
       pkgs.gnome-calculator
