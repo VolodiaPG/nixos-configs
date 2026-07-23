@@ -6,6 +6,7 @@
   tensorrt,
   torch,
 }:
+# https://github.com/ConnorBaker/ContinuousSR/blob/bce62eee6355abaa4e735ffb1f1c41957ec3deec/torch-tensorrt.nix
 buildPythonPackage.override { inherit (torch) stdenv; } {
   pname = "torch-tensorrt";
   version = "2.10.0";
