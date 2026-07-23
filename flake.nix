@@ -338,7 +338,14 @@
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             overlays = [ self.overlays.default ]; # ponytail: was lib.attrValues self.overlays — explicit single overlay avoids forcing all keys
-            config.allowUnfree = true;
+            config = {
+              cudaSupport = true;
+              allowUnfree = true;
+              # ponytail: mirror of common-nix-settings.nix predicate — nixpkgs.config in the
+              # NixOS module only configures the system pkgs; the flake's perSystem pkgs is a
+              # separate instance and needs its own predicate or mpv-rife eval fails on tensorrt.
+              allowInsecurePredicate = pkg: builtins.elem (inputs.nixpkgs.lib.getName pkg) [ "tensorrt" ];
+            };
           };
 
         };

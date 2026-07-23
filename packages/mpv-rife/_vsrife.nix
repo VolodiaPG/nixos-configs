@@ -17,7 +17,7 @@ let
     name = "flownet_v4.25.pkl";
   };
 in
-buildPythonPackage (finalAttrs: {
+buildPythonPackage (_finalAttrs: {
   pname = "vs-rife";
   version = "3488617283db7c428a83ba4a19382285da698b6a";
   pyproject = true;
