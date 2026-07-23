@@ -4,6 +4,7 @@
   vapoursynth,
   mpv,
   mpv-unwrapped,
+  mpvScripts,
 }:
 let
   # ponytail: torch-tensorrt 2.10.0 wheel was compiled against torch 2.10.0;
@@ -52,4 +53,13 @@ mpv.override {
   ];
 
   youtubeSupport = true;
+
+  scripts = [
+    mpvScripts.mpris
+    mpvScripts.autosub
+    mpvScripts.modernz
+    # mpvScripts.dynamic-crop
+    mpvScripts.builtins.autocrop
+    mpvScripts.eisa01.smartskip
+  ];
 }
