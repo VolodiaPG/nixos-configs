@@ -5,8 +5,6 @@ input {
   keyboard {
     xkb {
       layout "fr"
-
-
     }
   }
 
@@ -50,8 +48,7 @@ input {
 
 layout {
   gaps 12
-
-
+  always-center-single-column
 }
 
 output "Iiyama North America PL3461WQ 1171803800833" {
@@ -205,14 +202,12 @@ window-rule {
 window-rule {
     match title=r#".*Fizzy$"#
     open-on-workspace "fizzy"
-    open-maximized true
     //scroll-factor 0.5
 }
 
 window-rule {
     match title=r#".*Home Assistant$"#
     open-on-workspace "fizzy"
-    open-maximized true
     //scroll-factor 0.5
 }
 
@@ -220,7 +215,6 @@ window-rule {
 window-rule {
     match title=r#".*Proton Mail$"#
     open-on-workspace "social"
-    open-maximized true
     //scroll-factor 0.5
 }
 
@@ -238,7 +232,6 @@ window-rule {
 window-rule {
     match app-id=r#"^signal$"#
     open-on-workspace "social"
-    open-maximized true
 }
 
 window-rule {
