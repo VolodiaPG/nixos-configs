@@ -18,6 +18,7 @@ _final: prev: {
     tmux-session-color
     openrouter-credits
     xinstall
+    xmount
     mpv-rife
     ;
 

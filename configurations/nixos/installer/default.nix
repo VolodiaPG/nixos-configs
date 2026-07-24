@@ -38,6 +38,7 @@ in
     pkgs.bash
     pkgs.git
     pkgs.xinstall
+    pkgs.xmount
   ];
 
   # ponytail: impermanence mounts /dev/root_vg at boot — won't exist in installer
