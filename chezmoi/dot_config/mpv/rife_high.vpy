@@ -21,7 +21,7 @@ clip = rife(
     model="4.25",
     trt=True,
     auto_download=False, # Shouldn't be enabled if using the nix package vsrife
-    factor_num=,
+    factor_num=3,
     sc=True,                 # Scene change detection
     trt_cache_dir=cache_dir,  # Nix store is read-only
 )
