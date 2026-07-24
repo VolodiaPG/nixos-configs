@@ -68,10 +68,10 @@ in
         pkgs.high-tide
       ]);
 
-      pointerCursor = {
-        package = pkgs.graphite-cursors;
-        name = "graphite-dark";
-      };
+      # pointerCursor = {
+      #   package = pkgs.graphite-cursors;
+      #   name = "graphite-dark";
+      # };
 
       file = {
         ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";
