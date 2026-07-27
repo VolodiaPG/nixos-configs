@@ -143,6 +143,7 @@ in
     };
 
     home.pointerCursor = {
+      enable = true;
       package = pkgs.graphite-cursors;
       name = "graphite-dark";
     };

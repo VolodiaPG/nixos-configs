@@ -84,8 +84,8 @@ let
 
     log-lines = 50;
     fallback = true;
-    # lazy-trees = true;
-    # eval-cores = 0;
+    lazy-trees = true;
+    eval-cores = 0;
     warn-dirty = false;
     accept-flake-config = false;
     builders-use-substitutes = true;
@@ -94,6 +94,9 @@ let
     # auto-optimise-store = true;
     narinfo-cache-negative-ttl = 600;
     narinfo-cache-positive-ttl = 600;
+    download-buffer-size = 1073741824; # 1 GiB
+    http-connections = 50;
+    connect-timeout = 10;
     # for direnv GC roots
     inherit (me) trusted-public-keys;
 
@@ -131,10 +134,10 @@ in
       # package = lib.mkDefault pkgs.nix;
 
       settings = common-nix-settings // {
-        experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
+        # experimental-features = [
+        #   "nix-command"
+        #   "flakes"
+        # ];
 
         allowed-users = [
           "root"

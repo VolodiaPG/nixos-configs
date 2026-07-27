@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
-    nixpkgs-unstable.follows = "nixpkgs";
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0.1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -21,7 +20,7 @@
     };
 
     srvos = {
-      url = "github:volodiapg/srvos";
+      url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -130,7 +129,6 @@
       url = "github:serokell/deploy-rs";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        utils.follows = "flake-utils";
       };
     };
 
@@ -150,7 +148,7 @@
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs = {
-        nixpkgs.follows = "nixpkgs-unstable";
+        nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
       };
     };
@@ -160,10 +158,6 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
-    };
-
-    flake-utils = {
-      url = "https://flakehub.com/f/numtide/flake-utils/0";
     };
 
     nixos-unified.url = "github:srid/nixos-unified";
@@ -249,7 +243,7 @@
             inherit system;
             overlays = [ self.overlays.default ]; # ponytail: was lib.attrValues self.overlays — explicit single overlay avoids forcing all keys
             config = {
-              cudaSupport = true;
+              cudaSupport = system == "x86_64-linux";
               allowUnfree = true;
               # ponytail: mirror of common-nix-settings.nix predicate — nixpkgs.config in the
               # NixOS module only configures the system pkgs; the flake's perSystem pkgs is a
