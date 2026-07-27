@@ -56,6 +56,7 @@ in
       };
     };
 
+    hyperhdr.enable = true;
     myAnanicy.enable = true;
     virt.enable = true;
     elegantBoot.enable = true;

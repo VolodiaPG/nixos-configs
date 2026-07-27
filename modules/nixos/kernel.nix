@@ -116,5 +116,40 @@ in
       # # 5. Immediate Packet Dispatch
       # "net.ipv4.tcp_autocorking" = 0;
     };
+
+    # ============================================================================
+    # POWER EFFICIENCY — sysfs tweaks not covered by power-profiles-daemon
+    # ============================================================================
+    # power-profiles-daemon handles platform profile + turbo boost + EPP.
+    # This service handles the rest: audio codec, SATA ALPM, PCI runtime PM,
+    # NVMe APST. All writes are best-effort (|| true) — missing sysfs nodes
+    # are expected on hardware that doesn't expose them.
+    systemd.services.power-efficiency = {
+      description = "Apply laptop power-saving sysfs settings";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "systemd-udev-settle.service" ];
+      serviceConfig.Type = "oneshot";
+      serviceConfig.RemainAfterExit = true;
+      script = ''
+        # HDA Intel codec: power down after 10s idle
+        echo 10 > /sys/module/snd_hda_intel/parameters/power_save 2>/dev/null || true
+        echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller 2>/dev/null || true
+
+        # SATA Aggressive Link Power Management
+        for host in /sys/class/scsi_host/host*/link_power_management_policy; do
+          echo med_power_with_dipm > "$host" 2>/dev/null || true
+        done
+
+        # PCI runtime PM — let unused devices sleep
+        for ctrl in /sys/bus/pci/devices/*/power/control; do
+          echo auto > "$ctrl" 2>/dev/null || true
+        done
+
+        # NVMe APST — tolerate up to 20ms latency for deeper power states
+        for nvme in /sys/class/nvme/nvme*/power/pm_qos_latency_tolerance_us; do
+          [ -f "$nvme" ] && echo 20000 > "$nvme" 2>/dev/null || true
+        done
+      '';
+    };
   };
 }

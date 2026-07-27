@@ -1,25 +1,28 @@
 [accessibility]
 ui_scale = 1.0
 
-[bar.main]
-background_opacity = 0.79999998211860657
-capsule_thickness = 0.99999998137354851
-center = [ "workspaces", "cpu" ]
-concave_edge_corners = false
-end = [ "tray", "notifications", "battery", "volume", "brightness", "clock" ]
-font_weight = 400
-margin_edge = 0
-margin_ends = 300
-margin_h = 4
-margin_v = 4
-padding = 25
-position = "bottom"
-radius = 12
-scale = 1.1000000089406967
-shadow = false
-start = [ "media" ]
-thickness = 25
-widget_spacing = 12
+[bar]
+order = [ "main" ]
+
+    [bar.main]
+    background_opacity = 0.79999998211860657
+    capsule_thickness = 0.99999998137354851
+    center = [ "sysmon", "workspaces", "cpu" ]
+    concave_edge_corners = false
+    end = [ "tray", "notifications", "battery", "volume", "brightness", "clock" ]
+    font_weight = 400
+    margin_edge = 0
+    margin_ends = 300
+    margin_h = 4
+    margin_v = 4
+    padding = 25
+    position = "bottom"
+    radius = 12
+    scale = 1.1000000089406967
+    shadow = true
+    start = [ "media" ]
+    thickness = 25
+    widget_spacing = 12
 
 [brightness]
 enable_ddcutil = true
@@ -48,6 +51,7 @@ blur_intensity = 0.99999997764825821
 enabled = true
 schema_version = 2
 widget_order = [
+    "lockscreen-login-box@HDMI-A-1",
     "lockscreen-login-box@DP-3",
     "lockscreen-widget-0000000000000001",
     "lockscreen-widget-0000000000000002",
@@ -74,6 +78,27 @@ widget_order = [
         background_opacity = 0.88
         background_radius = 12.0
         center_password_text = true
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 960.0
+    cy = 961.0
+    output = "HDMI-A-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
         input_opacity = 1.0
         input_radius = 6.0
         show_caps_lock = true
@@ -187,7 +212,7 @@ telemetry_enabled = false
 
 [theme]
 builtin = "Catppuccin"
-mode = "light"
+mode = "dark"
 source = "builtin"
 
 [wallpaper]
@@ -200,13 +225,16 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-26.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-26.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-26.jpg"
+
+    [wallpaper.monitors.HDMI-A-1]
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-26.jpg"
 
 [weather]
 effects = true
@@ -225,6 +253,10 @@ stat = "cpu_temp"
 
 [widget.media]
 art_size = 20
+
+[widget.sysmon]
+display = "text"
+stat = "disk_free"
 
 [widget.workspaces]
 anchor = true

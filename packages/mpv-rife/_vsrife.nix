@@ -18,8 +18,8 @@ let
   };
 in
 buildPythonPackage (_finalAttrs: {
-  pname = "vs-rife";
-  version = "3488617283db7c428a83ba4a19382285da698b6a";
+  pname = "vsrife";
+  version = "5.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {

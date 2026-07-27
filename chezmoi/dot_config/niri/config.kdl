@@ -53,8 +53,13 @@ layout {
 
 output "Iiyama North America PL3461WQ 1171803800833" {
 	mode "3440x1440@143.923"
-	variable-refresh-rate on-demand=true
+        variable-refresh-rate on-demand=true
 	scale 1.20
+}
+
+// Capture card for hyperhdr
+output "Cloudium Systems Ltd. CSL421 0x00004210" {
+	mode "640x480@59.940"
 }
 
 spawn-at-startup "swayidle" "-w" "before-sleep" "noctalia msg session lock"

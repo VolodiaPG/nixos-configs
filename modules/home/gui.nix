@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  flake,
   ...
 }:
 let
@@ -16,20 +15,12 @@ in
     };
   };
 
-  imports = [
-    flake.inputs.tidal-to-strawberry.homeManagerModules.default
-  ];
-
   config = mkIf cfg.enable {
     fonts.fontconfig.enable = pkgs.stdenv.isLinux;
 
     # Enable the theme daemon for automatic switching
     services = {
       theme-daemon.enable = true;
-      tidal-to-strawberry = {
-        enable = pkgs.stdenv.isLinux;
-        workingDirectory = "/home/${flake.config.me.username}/Music";
-      };
     };
     programs = {
       nix-index.enable = true;
@@ -56,7 +47,6 @@ in
         pkgs.libnotify
         pkgs.vlc
         pkgs.legcord
-        pkgs.strawberry
         pkgs.notify-desktop
         pkgs.fontconfig
         pkgs.distrobox
@@ -67,11 +57,6 @@ in
         pkgs.orca-slicer
         pkgs.high-tide
       ]);
-
-      # pointerCursor = {
-      #   package = pkgs.graphite-cursors;
-      #   name = "graphite-dark";
-      # };
 
       file = {
         ".config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes";

@@ -142,6 +142,11 @@ in
       '';
     };
 
+    home.pointerCursor = {
+      package = pkgs.graphite-cursors;
+      name = "graphite-dark";
+    };
+
     services.kdeconnect.enable = true;
 
     programs.noctalia = {

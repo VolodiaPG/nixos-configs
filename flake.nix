@@ -12,17 +12,7 @@
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     home-manager = {
-      url = "https://flakehub.com/f/nix-community/home-manager/0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    flake-compat = {
-      url = "https://flakehub.com/f/edolstra/flake-compat/1";
-      flake = false;
-    };
-
-    gitignore = {
-      url = "github:hercules-ci/gitignore.nix";
+      url = "https://flakehub.com/f/nix-community/home-manager/0.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -39,8 +29,6 @@
       url = "https://flakehub.com/f/cachix/git-hooks.nix/0";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        gitignore.follows = "gitignore";
       };
     };
 
@@ -116,7 +104,6 @@
         nixpkgs.follows = "nixpkgs";
         darwin.follows = "nix-darwin";
         home-manager.follows = "home-manager";
-        systems.follows = "flake-utils/systems";
       };
     };
 
@@ -144,7 +131,6 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         utils.follows = "flake-utils";
-        flake-compat.follows = "flake-compat";
       };
     };
 
@@ -161,66 +147,26 @@
     #   };
     # };
 
-    blueprint = {
-      url = "github:numtide/blueprint";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.systems.follows = "systems";
-    };
-
-    treefmt-nix = {
-      url = "https://flakehub.com/f/numtide/treefmt-nix/0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    bun2nix = {
-      url = "github:nix-community/bun2nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
-        flake-parts.follows = "flake-parts";
-      };
-    };
-
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
-        blueprint.follows = "blueprint";
-        bun2nix.follows = "bun2nix";
         flake-parts.follows = "flake-parts";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
       };
-    };
-
-    vpnconfinement = {
-      url = "github:Maroka-chan/VPN-Confinement";
-    };
-
-    website-builder = {
-      url = "github:rasmus-kirk/website-builder";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixarr = {
       url = "github:rasmus-kirk/nixarr";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        vpnconfinement.follows = "vpnconfinement";
-        website-builder.follows = "website-builder";
       };
     };
 
     flake-utils = {
       url = "https://flakehub.com/f/numtide/flake-utils/0";
-      inputs.systems.follows = "systems";
     };
 
-    systems.url = "github:nix-systems/default";
-
     nixos-unified.url = "github:srid/nixos-unified";
-    # nixos-unified.url = "path:/home/volodia/Documents/nixos-unified";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -237,42 +183,11 @@
       url = "github:nix-community/nixos-apple-silicon";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
       };
     };
 
     noctalia = {
-      # ponytail: v5 — repo renamed noctalia-shell→noctalia; pinned to `cachix` branch for binary cache hits.
-      # nixpkgs.follows removed: overriding inputs changes the derivation hash and defeats the cache.
       url = "github:noctalia-dev/noctalia/cachix";
-    };
-
-    tidal-to-strawberry = {
-      url = "github:volodiapg/tidal-to-strawberry";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
-
-    crane.url = "github:ipetkov/crane";
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    flat-flake = {
-      url = "github:linyinfeng/flat-flake";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        flake-parts.follows = "flake-parts";
-        systems.follows = "systems";
-        treefmt-nix.follows = "treefmt-nix";
-        crane.follows = "crane";
-        rust-overlay.follows = "rust-overlay";
-      };
     };
 
     bbr_classic = {
@@ -320,14 +235,9 @@
         "aarch64-linux"
         "aarch64-darwin"
       ];
-      imports = [
-        inputs.flat-flake.flakeModules.flatFlake
-      ]
-      ++ (builtins.map (fn: ./modules/flake-parts/${fn}) (
+      imports = builtins.map (fn: ./modules/flake-parts/${fn}) (
         builtins.attrNames (builtins.readDir ./modules/flake-parts)
-      ));
-
-      flatFlake.config.allowed = [ ];
+      );
 
       perSystem =
         { system, ... }:
