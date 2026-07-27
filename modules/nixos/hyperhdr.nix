@@ -20,11 +20,11 @@ in
       pkgs.hyperhdr
     ];
 
-    systemd.user.services.hyperhdr = {
+    systemd.services.hyperhdr = {
       description = "HyperHDR Ambient Lighting";
-      wantedBy = [ "graphical-session.target" ];
+      wantedBy = [ "graphical.target" ];
       after = [
-        "graphical-session.target"
+        "graphical.target"
         "pipewire.service"
       ];
       wants = [ "pipewire.service" ];
@@ -34,6 +34,7 @@ in
         ExecStart = "${pkgs.hyperhdr}/bin/hyperhdr --pipewire --service";
         Restart = "on-failure";
         RestartSec = "5s";
+        User = "volodia";
       };
     };
 
