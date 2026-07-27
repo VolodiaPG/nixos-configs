@@ -28,7 +28,7 @@ in
       interactive.enable = true;
       gui.enable = true;
       wm.gnome.enable = false;
-      wm.niri.enable = true;
+      wm.hyprland.enable = true;
       chezmoi.enable = true;
 
       programs.kitty.font.size = 12;

@@ -144,7 +144,7 @@ in
         #─────────────────────────────
         # Compositor smoothness is mostly CPU scheduling; don't over-tune IO here.
         {
-          name = "niri";
+          name = "Hyprland";
           type = "compositor";
         }
 

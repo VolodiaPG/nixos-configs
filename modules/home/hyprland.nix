@@ -5,28 +5,32 @@
   ...
 }:
 let
-  cfg = config.wm.niri;
+  cfg = config.wm.hyprland;
   inherit (lib) mkEnableOption mkOption mkIf;
 in
 {
   options = {
-    wm.niri = {
-      enable = mkEnableOption "niri Wayland compositor configuration";
+    wm.hyprland = {
+      enable = mkEnableOption "hyprland Wayland compositor configuration";
 
       package = mkOption {
         type = lib.types.package;
-        default = pkgs.niri;
-        description = "The niri package to use";
+        default = pkgs.hyprland;
+        description = "The hyprland package to use";
       };
     };
   };
 
   config = mkIf cfg.enable {
-    nirius.enable = true;
+    # wayland.windowManager.hyprland = {
+    #   enable = true;
+    #   inherit (cfg) package;
+    # };
+
     home.packages = [
       cfg.package
 
-      # Core niri utilities
+      # Core hyprland utilities
       pkgs.fuzzel # Application launcher
 
       # Screenshot tools
@@ -44,7 +48,6 @@ in
 
       # Additional Wayland utilities
       pkgs.wlogout # Logout menu
-      pkgs.wlr-randr # Display configuration
 
       # Polkit agent
       pkgs.polkit_gnome
@@ -52,11 +55,10 @@ in
       # KDE Connect
       pkgs.kdePackages.qttools
 
-      pkgs.wl-mirror
-
       # Keyboard brightness
       pkgs.brightnessctl
     ];
+
     xdg = {
       portal = {
         enable = true;
@@ -67,7 +69,7 @@ in
               "gnome"
             ];
           };
-          niri = {
+          hyprland = {
             default = [
               "gtk"
               "gnome"
@@ -80,13 +82,13 @@ in
         ];
         xdgOpenUsePortal = true;
       };
-
-      # e.g. for slack, etc
-      configFile."electron-flags.conf".text = ''
-        --enable-features=UseOzonePlatform
-        --ozone-platform=wayland
-      '';
     };
+
+    # e.g. for slack, etc
+    xdg.configFile."electron-flags.conf".text = ''
+      --enable-features=UseOzonePlatform
+      --ozone-platform=wayland
+    '';
 
     # Fuzzel launcher configuration
     programs.fuzzel = {

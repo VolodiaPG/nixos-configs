@@ -44,17 +44,17 @@ in
     wm = {
       enable = true;
       gnome.enable = false;
-      niri = {
+      hyprland = {
         enable = true;
       };
     };
 
-    # Display manager for niri (since GNOME/GDM is disabled)
+    # Display manager for hyprland (since GNOME/GDM is disabled)
     greetd = {
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
           user = "greeter";
         };
       };

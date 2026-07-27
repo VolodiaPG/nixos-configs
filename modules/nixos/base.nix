@@ -94,7 +94,7 @@ in
           "--prefer"
           "'^(zotero|signal|brave|nvim)$'"
           "--avoid"
-          "'^(niri|noctalia|kanata)$'"
+          "'^(Hyprland|noctalia|kanata)$'"
         ];
       };
 

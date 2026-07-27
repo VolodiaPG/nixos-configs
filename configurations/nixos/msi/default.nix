@@ -27,7 +27,7 @@ in
     wm = {
       enable = true;
       # gnome.enable = true;
-      niri = {
+      hyprland = {
         enable = true;
       };
     };
