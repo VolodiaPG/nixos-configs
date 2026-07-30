@@ -84,8 +84,8 @@ let
 
     log-lines = 50;
     fallback = true;
-    lazy-trees = true;
-    eval-cores = 0;
+    # lazy-trees = true;
+    # eval-cores = 0;
     warn-dirty = false;
     accept-flake-config = false;
     builders-use-substitutes = true;

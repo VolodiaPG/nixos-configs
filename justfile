@@ -1,30 +1,27 @@
 _default: boot
 
-boot drv="$(hostname)":
-    nh os boot . -H {{drv}}
+build drv="$(hostname)":
+    nom-build . -A nixosConfigurations.{{drv}}.config.system.build.toplevel
 
-switch drv="$(hostname)":
-    nh os switch . -H {{drv}}
+boot drv="$(hostname)": (build drv)
+    sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
+    sudo /nix/var/nix/profiles/system/bin/switch-to-configuration boot
+
+switch drv="$(hostname)": (build drv)
+    sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
+    sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
+
+installer:
+    nom-build . -A nixosConfigurations.installer.config.system.build.isoImage
 
 dry drv="$(hostname)":
-    nh os build . -H {{drv}}
+    nom-build . -A nixosConfigurations.{{drv}}.config.system.build.toplevel --dry-run
 
-mount hostname:
-    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode mount {{justfile_directory()}}/machines/{{hostname}}/disk.nix
+mac-build:
+    nom-build . -A darwinConfigurations.Volodias-MacBook-Pro.system
 
-dry-darwin:
-    nh darwin build . -H Volodias-MacBook-Pro
+mac-switch: mac-build
+    ./result/sw/bin/darwin-rebuild switch
 
-darwin:
-    nh darwin switch . -H Volodias-MacBook-Pro
-
-vm hostname="$(hostname)":
-   nix run .#nixosConfigurations.{{ hostname }}.config.system.build.vmWithDisko --  -device virtio-vga-gl \
-     -display egl-headless,rendernode=/dev/dri/renderD128 \
-     -display spice-app,gl=on
-
-iso:
-    nix build .#nixosConfigurations.installer.config.system.build.isoImage
-
-burn dev: iso
-    sudo dd if=$(echo {{ justfile_directory() }}/result/iso/*) of={{ dev }} bs=4M status=progress oflag=sync
+update:
+    npins update

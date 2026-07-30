@@ -4,8 +4,8 @@
   "presets": {
     "default": {
       "orchestrator": {
-        "model": "opencode/minimax-m3",
-        "variant": "max",
+        "model": "opencode/glm-5.2",
+        "variant": "medium",
         "skills": ["*"],
         "mcps": ["*", "!context7"]
       },

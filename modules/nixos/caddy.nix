@@ -2,14 +2,11 @@
   config,
   lib,
   pkgs,
-  flake,
   ...
 }:
 let
   inherit (lib) mkIf;
   cfg = config.services.caddy;
-  inherit (flake.inputs) self;
-  inherit (flake.config) me;
 in
 {
 
@@ -33,28 +30,28 @@ in
           }
         '';
 
-        virtualHosts = {
-          "http://:80" = {
-            extraConfig = ''
-              # Route for the root request (and redirect if needed, like /index.htm -> /)
-              route / {
-                  rewrite /index.htm /
-
-                  file_server {
-                      index ${
-                        pkgs.replaceVars (self + "/static/services-page/index.html") {
-                          TAILNAME = me.tailname;
-                        }
-                      }
-                  }
-              }
-
-              route * {
-                  respond "Not Found" 404
-              }
-            '';
-          };
-        };
+        # virtualHosts = {
+        #   "http://:80" = {
+        #     extraConfig = ''
+        #       # Route for the root request (and redirect if needed, like /index.htm -> /)
+        #       route / {
+        #           rewrite /index.htm /
+        #
+        #           file_server {
+        #               index ${
+        #                 pkgs.replaceVars (self + "/static/services-page/index.html") {
+        #                   TAILNAME = me.tailname;
+        #                 }
+        #               }
+        #           }
+        #       }
+        #
+        #       route * {
+        #           respond "Not Found" 404
+        #       }
+        #     '';
+        #   };
+        # };
       };
     };
   };

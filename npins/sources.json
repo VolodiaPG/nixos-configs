@@ -1,0 +1,252 @@
+{
+  "pins": {
+    "agenix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "ryantm",
+        "repo": "agenix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "b027ee29d959fda4b60b57566d64c98a202e0feb",
+      "url": "https://github.com/ryantm/agenix/archive/b027ee29d959fda4b60b57566d64c98a202e0feb.tar.gz",
+      "hash": "sha256-9VnK6Oqai65puVJ4WYtCTvlJeXxMzAp/69HhQuTdl/I="
+    },
+    "bbr_classic": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "cmspam",
+        "repo": "bbr_classic"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "8cdc0571631569c5803cc119d4512b7632682807",
+      "url": "https://github.com/cmspam/bbr_classic/archive/8cdc0571631569c5803cc119d4512b7632682807.tar.gz",
+      "hash": "sha256-AKknyiQLjEC8nXWCmqJy1HUt/fTzk8N2gihwYYFFVu4="
+    },
+    "brew": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "Homebrew",
+        "repo": "brew"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b48c7994b5f0eed7bef532efa63cb4e4f763887a",
+      "url": "https://github.com/Homebrew/brew/archive/b48c7994b5f0eed7bef532efa63cb4e4f763887a.tar.gz",
+      "hash": "sha256-woXJ1ATKpSYRWCy46TQJjmm9XzAeZVEZw9xDfVG9NYI="
+    },
+    "catppuccin": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "catppuccin",
+        "repo": "nix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "673f730d0fc8db3468c51575f1d3d777cc55e51f",
+      "url": "https://github.com/catppuccin/nix/archive/673f730d0fc8db3468c51575f1d3d777cc55e51f.tar.gz",
+      "hash": "sha256-VKatYOZwLQ+MuNkWH6/gZYxrNeSK1Mqb7mC0H1WSu+M="
+    },
+    "disko": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "disko"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4793f27c1755f042f1be5ff1a2d24863d4a0a8f6",
+      "url": "https://github.com/nix-community/disko/archive/4793f27c1755f042f1be5ff1a2d24863d4a0a8f6.tar.gz",
+      "hash": "sha256-d0ZLm5yZtJewZI6kU/j4wWtoqEIKgDIG8Gd/qhZkOa4="
+    },
+    "git-hooks": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "cachix",
+        "repo": "git-hooks.nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "43b3c1ab9d40fb1dbb008f451988a91e375825e9",
+      "url": "https://github.com/cachix/git-hooks.nix/archive/43b3c1ab9d40fb1dbb008f451988a91e375825e9.tar.gz",
+      "hash": "sha256-ReRHaLgr/uVqdD8afFSn+myXIfpHeOhP0yYe0TJqAA8="
+    },
+    "high-tide": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "volodiapg",
+        "repo": "high-tide"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2ba920e51bdb85e0e7f2819d47d7f3a41617f420",
+      "url": "https://github.com/volodiapg/high-tide/archive/2ba920e51bdb85e0e7f2819d47d7f3a41617f420.tar.gz",
+      "hash": "sha256-kTnmgUtAyM3a/OitTDN6BO1ANN3kd41VdXdlmwRVAB0="
+    },
+    "home-manager": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "home-manager"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e705714e918c3b11affcdd15db2cbe3a070420a0",
+      "url": "https://github.com/nix-community/home-manager/archive/e705714e918c3b11affcdd15db2cbe3a070420a0.tar.gz",
+      "hash": "sha256-DScBkW0fOgpGPK2trNoX3ryLTlaC14+gglFo/BhGJ4g="
+    },
+    "impermanence": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "impermanence"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7b1d382faf603b6d264f58627330f9faa5cba149",
+      "url": "https://github.com/nix-community/impermanence/archive/7b1d382faf603b6d264f58627330f9faa5cba149.tar.gz",
+      "hash": "sha256-03+JxvzmfwRu+5JafM0DLbxgHttOQZkUtDWBmeUkN8Y="
+    },
+    "mosh": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "jdrouhard",
+        "repo": "mosh"
+      },
+      "branch": "patched",
+      "submodules": false,
+      "revision": "3d613c845cae0b8966a5d5dbadf2639a9e2f6fd8",
+      "url": "https://github.com/jdrouhard/mosh/archive/3d613c845cae0b8966a5d5dbadf2639a9e2f6fd8.tar.gz",
+      "hash": "sha256-I0YlND+B7MigFKQg+nnTFQb/li+D5oe/CFwoAc9eODg="
+    },
+    "nix-darwin": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-darwin",
+        "repo": "nix-darwin"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "57a3171f94705599a2499248ca5758d5eb47c0e0",
+      "url": "https://github.com/nix-darwin/nix-darwin/archive/57a3171f94705599a2499248ca5758d5eb47c0e0.tar.gz",
+      "hash": "sha256-UvORnAxTRHax7RG74W8Z2t4GvIkX6AjJ5kk0QlwZomo="
+    },
+    "nix-homebrew": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "zhaofengli",
+        "repo": "nix-homebrew"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "60623ec512406261f553d24033c8a0c53fd0b7f2",
+      "url": "https://github.com/zhaofengli/nix-homebrew/archive/60623ec512406261f553d24033c8a0c53fd0b7f2.tar.gz",
+      "hash": "sha256-2v0H8+Ert+xbm0oliHblXTPPczuKiibBUBvRax59kxg="
+    },
+    "nix-index-database": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "Mic92",
+        "repo": "nix-index-database"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "11665045df8b9938ef811a3bfdc65cffb02b4b70",
+      "url": "https://github.com/Mic92/nix-index-database/archive/11665045df8b9938ef811a3bfdc65cffb02b4b70.tar.gz",
+      "hash": "sha256-UiK+mmZJuLWQVhJ5b2wDzogIYWAesyRm6LA3h3Ulh3Y="
+    },
+    "nixarr": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "rasmus-kirk",
+        "repo": "nixarr"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "282ce99b31d52d72cca281e3d26d3dd267946800",
+      "url": "https://github.com/rasmus-kirk/nixarr/archive/282ce99b31d52d72cca281e3d26d3dd267946800.tar.gz",
+      "hash": "sha256-oTMag4I9MW3bstuOKqzc0F1OqxO49lLa9jkSkRe3EqA="
+    },
+    "nixos-hardware": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nixos",
+        "repo": "nixos-hardware"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e07b1618c3009195ffbd4749e9b5618511260557",
+      "url": "https://github.com/nixos/nixos-hardware/archive/e07b1618c3009195ffbd4749e9b5618511260557.tar.gz",
+      "hash": "sha256-cH0vVt83ZBafqJzwOl7IHTXo6KA1c1J+8qvMjfARMqI="
+    },
+    "nixpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "NixOS",
+        "repo": "nixpkgs"
+      },
+      "branch": "nixos-unstable",
+      "submodules": false,
+      "revision": "0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5",
+      "url": "https://github.com/NixOS/nixpkgs/archive/0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5.tar.gz",
+      "hash": "sha256-dN6Ou5x/+23FZLEpYP3IffO+NyJFzUlGumt1uu3MMaY="
+    },
+    "noctalia": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "noctalia-dev",
+        "repo": "noctalia"
+      },
+      "branch": "cachix",
+      "submodules": false,
+      "revision": "de908ec6db190d94de77a50f3a9224999f971b9b",
+      "url": "https://github.com/noctalia-dev/noctalia/archive/de908ec6db190d94de77a50f3a9224999f971b9b.tar.gz",
+      "hash": "sha256-1XQHnohSuVOlH17+eYKYdXm6hAvMuFKFtltGsrGVWdo="
+    },
+    "srvos": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "srvos"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "5a653c795aa9b34e12768e3010e97fc2988b5e46",
+      "url": "https://github.com/nix-community/srvos/archive/5a653c795aa9b34e12768e3010e97fc2988b5e46.tar.gz",
+      "hash": "sha256-lAHFgqyeARFuHgvQG7MOFgwITbfdTUjwKlJ663a8dKo="
+    },
+    "vpnconfinement": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "Maroka-chan",
+        "repo": "VPN-Confinement"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a6b2da727853886876fd1081d6bb2880752937f3",
+      "url": "https://github.com/Maroka-chan/VPN-Confinement/archive/a6b2da727853886876fd1081d6bb2880752937f3.tar.gz",
+      "hash": "sha256-FddhMxnc99KYOZ/S3YNqtDSoxisIhVtJ7L4s8XD2u0A="
+    }
+  },
+  "version": 8
+}
