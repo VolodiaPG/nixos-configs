@@ -268,6 +268,7 @@ in
             ".zotero"
             ".cache/flatpak"
             ".local/share/flatpak"
+            ".cache/nvim"
           ];
           files = [
             ".bash_history"

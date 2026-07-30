@@ -26,6 +26,7 @@ let
   self = {
     outPath = ./.;
     inherit self;
+    inherit sources;
     inputs = inputs // {
       inherit self;
     };
@@ -132,11 +133,6 @@ let
     llm-agents.packages = {
       x86_64-linux.opencode = (pkgsFor "x86_64-linux").opencode;
       aarch64-darwin.opencode = (pkgsFor "aarch64-darwin").opencode;
-    };
-    # ponytail: nvim placeholder — user will wire real nixCats config later.
-    vim.packages = {
-      x86_64-linux.nvim = (pkgsFor "x86_64-linux").neovim;
-      aarch64-darwin.nvim = (pkgsFor "aarch64-darwin").neovim;
     };
     # ponytail: darwin-only — vendored 5-line nix-homebrew wrapper (avoids evaluating its flake.nix).
     nix-homebrew.darwinModules.nix-homebrew =

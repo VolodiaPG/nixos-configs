@@ -28,6 +28,7 @@ in
       wm.hyprland.enable = true;
       chezmoi.enable = true;
       browser.enable = true;
+      myneovim.enable = true;
 
       home.stateVersion = "22.05";
     };

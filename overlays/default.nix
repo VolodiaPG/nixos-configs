@@ -22,8 +22,6 @@ _final: prev: {
     mpv-rife
     ;
 
-  inherit (inputs.vim.packages.${prev.stdenv.hostPlatform.system}) nvim;
-
   noctalia = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
   mosh = prev.mosh.overrideAttrs (

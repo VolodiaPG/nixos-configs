@@ -70,7 +70,6 @@ in
         pkgs.python3
         pkgs.difftastic
         pkgs.cachix
-        pkgs.nvim
         pkgs.vim
         pkgs.devenv
       ];
