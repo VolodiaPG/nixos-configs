@@ -1,4 +1,4 @@
-{
+{ lib, ... }: {
   # Host-specific configuration
   boot = {
     loader = {
@@ -22,6 +22,7 @@
   networking = {
     hostId = "30249676";
     hostName = "home-server";
+    wireless.enable = lib.mkForce false;
     networkmanager.enable = true;
   };
 

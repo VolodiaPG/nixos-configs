@@ -72,6 +72,6 @@
   #networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "schedutil";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "conservative";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

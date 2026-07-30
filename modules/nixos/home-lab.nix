@@ -32,14 +32,21 @@ in
             SMTP_ADDRESS = "smtp.gmail.com";
             SMTP_USERNAME = "bot.volodia@gmail.com";
             # Reduce memory fragmentation in Ruby
-            # MALLOC_ARENA_MAX = "2";
-            # # Single worker for single-user setup
-            # WEB_CONCURRENCY = "1";
-            # # Limit threads to reduce memory
-            # RAILS_MAX_THREADS = "2";
+            MALLOC_ARENA_MAX = "2";
+            WEB_CONCURRENCY = "2";
+            JOB_CONCURRENCY = "2";
           };
           volumes = [ "/home/${me.username}/Documents/services/fizzy:/rails/storage" ];
         };
+      };
+    };
+
+    systemd.services."docker-fizzy" = {
+      serviceConfig = {
+        # CPUQuota = "100%";
+
+        # Relative CPU weight (cgroups v2 replacement for cpu-shares, 1-10000)
+        CPUWeight = 25;
       };
     };
 

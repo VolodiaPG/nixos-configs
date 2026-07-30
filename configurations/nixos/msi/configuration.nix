@@ -28,10 +28,10 @@ in
   services = {
     undervolt = {
       enable = true;
-      coreOffset = -75;
-      gpuOffset = -75;
-      uncoreOffset = -75;
-      analogioOffset = -75;
+      coreOffset = -65;
+      gpuOffset = -65;
+      uncoreOffset = -65;
+      analogioOffset = -65;
     };
   };
 
