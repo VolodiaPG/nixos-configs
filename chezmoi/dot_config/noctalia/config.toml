@@ -85,7 +85,6 @@ widget_order = [
         show_keyboard_layout = true
         show_login_button = true
         show_media = false
-        show_password_hint = false
         show_session_buttons = false
         show_weather = true
 
@@ -110,7 +109,6 @@ widget_order = [
         show_keyboard_layout = true
         show_login_button = true
         show_media = true
-        show_password_hint = true
         show_session_buttons = true
         show_weather = true
 

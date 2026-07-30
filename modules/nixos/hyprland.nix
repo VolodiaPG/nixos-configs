@@ -27,6 +27,7 @@ in
       # Enable hyprland session
       hyprland = {
         enable = true;
+        withUWSM = true;
         inherit (cfg) package;
       };
       # Make sure GTK applications work properly
