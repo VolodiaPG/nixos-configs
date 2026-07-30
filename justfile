@@ -25,3 +25,6 @@ mac-switch: mac-build
 
 update:
     npins update
+
+deploy node="home-server":
+    deploy -f . {{node}} --skip-checks

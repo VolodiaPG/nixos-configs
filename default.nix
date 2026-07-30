@@ -224,8 +224,53 @@ let
         flake = self;
       };
     };
+
+  # ponytail: inline replica of deploy-rs's lib.activate.nixos. Reuses the nixpkgs
+  # deploy-rs package's `activate` binary (already in shell.nix) for magic-rollback,
+  # so no deploy-rs npins pin / flake.nix import (the repo's usual anti-flake-eval
+  # stance). Contract is stable: profile `path` must expose /deploy-rs-activate
+  # (activation script) and /activate-rs (rollback watcher shim -> activate binary).
+  activateNixos =
+    nixosConfig:
+    let
+      pkgs = pkgsFor "x86_64-linux";
+      toplevel = nixosConfig.config.system.build.toplevel;
+    in
+    pkgs.buildEnv {
+      name = "activatable-${toplevel.name}";
+      paths = [
+        toplevel
+        (pkgs.writeTextFile {
+          name = "${toplevel.name}-deploy-rs-activate";
+          text = ''
+            #!${pkgs.runtimeShell}
+            set -euo pipefail
+            if ''${DRY_ACTIVATE:-0} == 1; then
+              $PROFILE/bin/switch-to-configuration dry-activate
+            elif ''${BOOT:-0} == 1; then
+              $PROFILE/bin/switch-to-configuration boot
+            else
+              cd /tmp
+              $PROFILE/bin/switch-to-configuration switch
+              ${pkgs.lib.optionalString nixosConfig.config.boot.loader.systemd-boot.enable "sed -i '/^default /d' ${nixosConfig.config.boot.loader.efi.efiSysMountPoint}/loader/loader.conf"}
+            fi
+          '';
+          executable = true;
+          destination = "/deploy-rs-activate";
+        })
+        (pkgs.writeTextFile {
+          name = "${toplevel.name}-activate-rs";
+          text = ''
+            #!${pkgs.runtimeShell}
+            exec ${pkgs.deploy-rs}/bin/activate "$@"
+          '';
+          executable = true;
+          destination = "/activate-rs";
+        })
+      ];
+    };
 in
-{
+rec {
   nixosConfigurations = {
     msi = mkNixos "msi" [
       {
@@ -249,4 +294,16 @@ in
   # ponytail: expose self.packages so standalone `nix-build . -A packages.<system>.<name>` works.
   inherit (self) packages;
   shell = import ./shell.nix;
+  # ponytail: deploy-rs file-mode target. `deploy -f . home-server --skip-checks`
+  # evaluates (import ./.).deploy — no flake needed. --skip-checks mirrors the old
+  # workflow (no `checks` attr defined); deploy-rs's own pre-build check is kept.
+  deploy.nodes.home-server = {
+    hostname = "home-server";
+    profiles.system = {
+      user = "root";
+      sshUser = "volodia";
+      path = activateNixos nixosConfigurations.home-server;
+      fastConnection = true;
+    };
+  };
 }
