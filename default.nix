@@ -250,5 +250,7 @@ in
   darwinConfigurations = {
     "Volodias-MacBook-Pro" = mkDarwin "Volodias-MacBook-Pro" [ ];
   };
+  # ponytail: expose self.packages so standalone `nix-build . -A packages.<system>.<name>` works.
+  inherit (self) packages;
   shell = import ./shell.nix;
 }

@@ -5,7 +5,6 @@
   bash,
   coreutils,
   gum,
-  disko,
   jq,
   git,
 }:
@@ -18,7 +17,6 @@ let
     bash
     coreutils
     gum
-    disko
     git
     jq
   ];

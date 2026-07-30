@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FLAKE="github:volodiapg/nixos-configs"
+REPO_URL="https://github.com/volodiapg/nixos-configs"
+# ponytail: XOS_REPO points at a local checkout to skip the clone (testing / reinstall from an existing repo)
+REPO="${XOS_REPO:-}"
 
-echo Getting "$FLAKE"...
-
-TARGET=$(
-    nix flake show "$FLAKE" --json 2>/dev/null |
-        jq -r '.["inventory"]["nixosConfigurations"]["output"]["children"] | keys[] | select(. != "installer")' |
-        gum choose --header "Select which configuration to install:"
-)
-
-if [ "$(nix eval "$FLAKE#nixosConfigurations.$TARGET.config.services.impermanence.disko" --json)" != "true" ]; then
-    echo "disko installation and further installation is disabled because services.impermanence.disko is false for $TARGET." >&2
-    exit 1
+if [ -z "$REPO" ]; then
+  REPO=$(mktemp -d)
+  trap 'rm -rf "$REPO"' EXIT
+  echo Cloning "$REPO_URL"...
+  git clone --depth=1 "$REPO_URL" "$REPO"
 fi
 
-# BLOCKDEV=$(
-#     lsblk --json 2>/dev/null |
-#         jq -r '.["blockdevices"].[] | "\(.name) (\(.size))"' |
-#         gum choose --header "Select disk to erase and install nixos on:" |
-#         awk -F ' ' '{print $1}'
-# )
-# DISK="/dev/$BLOCKDEV"
+TARGET=$(
+  nix eval --json --file "$REPO/default.nix" --apply 'cfg: builtins.attrNames cfg.nixosConfigurations' 2>/dev/null |
+    jq -r '.[] | select(. != "installer")' |
+    gum choose --header "Select which configuration to install:"
+)
+
+if [ "$(nix eval --json --file "$REPO/default.nix" --apply "cfg: cfg.nixosConfigurations.\"$TARGET\".config.services.impermanence.disko")" != "true" ]; then
+  echo "disko installation is disabled because services.impermanence.disko is false for $TARGET." >&2
+  exit 1
+fi
 
 gum confirm --default=false "This will wipe data to install $TARGET:"
 
-echo selected "$FLAKE"#"$TARGET"
-# exec disko-install --flake "$FLAKE"#"$TARGET" --disk main "$DISK"
-sudo disko --mode destroy,format,mount --flake "$FLAKE"#"$TARGET"
-sudo nixos-install --no-channel-copy --no-root-passwd --flake "$FLAKE"#"$TARGET"
+echo building disko script for "$TARGET"...
+DISKO=$(nix-build "$REPO" -A nixosConfigurations."$TARGET".config.system.build.destroyFormatMount --no-out-link)
+echo building system for "$TARGET"...
+SYSTEM=$(nix-build "$REPO" -A nixosConfigurations."$TARGET".config.system.build.toplevel --no-out-link)
+
+sudo "$(echo "$DISKO"/bin/*)" --yes-wipe-all-disks
+sudo nixos-install --no-channel-copy --no-root-passwd --system "$SYSTEM"

@@ -11,7 +11,7 @@
   };
   tmux-session-color = pkgs.callPackage ./tmux-session-color/default.nix { };
   openrouter-credits = pkgs.callPackage ./openrouter-credits/default.nix { };
-  xinstall = pkgs.callPackage ./xinstall/default.nix { inherit (pkgs) disko; };
-  xmount = pkgs.callPackage ./xmount/default.nix { inherit (pkgs) disko; };
+  xinstall = pkgs.callPackage ./xinstall/default.nix { };
+  xmount = pkgs.callPackage ./xmount/default.nix { };
   mpv-rife = pkgs.callPackage ./mpv-rife/default.nix { };
 }
