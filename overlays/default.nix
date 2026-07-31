@@ -5,10 +5,6 @@ in
 _final: prev: {
   nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;
 
-  inherit (inputs.llm-agents.packages.${prev.stdenv.hostPlatform.system})
-    opencode
-    ;
-
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
     high-tide
     ;
@@ -21,8 +17,6 @@ _final: prev: {
     xmount
     mpv-rife
     ;
-
-  noctalia = inputs.noctalia.packages.${prev.stdenv.hostPlatform.system}.default;
 
   mosh = prev.mosh.overrideAttrs (
     old:
@@ -41,25 +35,4 @@ _final: prev: {
       '';
     }
   );
-  signal-desktop = prev.symlinkJoin {
-    name = "signal-desktop";
-    paths = [ prev.signal-desktop ];
-    buildInputs = [ prev.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/signal-desktop\
-         --add-flags '--password-store=gnome-libsecret'\
-         --add-flags '--enable-features=UseOzonePlatform'\
-         --add-flags '--ozone-platform=wayland'
-    '';
-  };
-  brave = prev.symlinkJoin {
-    name = "brave";
-    paths = [ prev.brave ];
-    buildInputs = [ prev.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/brave \
-         --add-flags '--enable-features=UseOzonePlatform'\
-         --add-flags '--ozone-platform=wayland'
-    '';
-  };
 }

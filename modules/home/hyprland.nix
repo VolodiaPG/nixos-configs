@@ -158,10 +158,6 @@ in
       indicator = true;
     };
 
-    programs.noctalia = {
-      enable = true;
-    };
-
     # Polkit agent — Noctalia power actions (sleep/reboot/shutdown) call logind via D-Bus and need this
     services.hyprpolkitagent.enable = true;
   };

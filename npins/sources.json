@@ -35,9 +35,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "b48c7994b5f0eed7bef532efa63cb4e4f763887a",
-      "url": "https://github.com/Homebrew/brew/archive/b48c7994b5f0eed7bef532efa63cb4e4f763887a.tar.gz",
-      "hash": "sha256-woXJ1ATKpSYRWCy46TQJjmm9XzAeZVEZw9xDfVG9NYI="
+      "revision": "9e9f316db6990631c097d48a792caf8645a4129e",
+      "url": "https://github.com/Homebrew/brew/archive/9e9f316db6990631c097d48a792caf8645a4129e.tar.gz",
+      "hash": "sha256-FiBBDgiVDdOYmXRgl7zB/18jWtk3qlMe1fKoEKiFcVQ="
     },
     "catppuccin": {
       "type": "Git",
@@ -48,9 +48,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "673f730d0fc8db3468c51575f1d3d777cc55e51f",
-      "url": "https://github.com/catppuccin/nix/archive/673f730d0fc8db3468c51575f1d3d777cc55e51f.tar.gz",
-      "hash": "sha256-VKatYOZwLQ+MuNkWH6/gZYxrNeSK1Mqb7mC0H1WSu+M="
+      "revision": "41c4ebf8cb3e4052001947a457b4ac093e5dc119",
+      "url": "https://github.com/catppuccin/nix/archive/41c4ebf8cb3e4052001947a457b4ac093e5dc119.tar.gz",
+      "hash": "sha256-JgUmb34d3Zv1W5fYukqEUEDHSaWhw7WV9HVUXOmOCaA="
     },
     "disko": {
       "type": "Git",
@@ -61,9 +61,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "4793f27c1755f042f1be5ff1a2d24863d4a0a8f6",
-      "url": "https://github.com/nix-community/disko/archive/4793f27c1755f042f1be5ff1a2d24863d4a0a8f6.tar.gz",
-      "hash": "sha256-d0ZLm5yZtJewZI6kU/j4wWtoqEIKgDIG8Gd/qhZkOa4="
+      "revision": "ff8702b4de27f72b4c78573dfb89ec74e36abdf1",
+      "url": "https://github.com/nix-community/disko/archive/ff8702b4de27f72b4c78573dfb89ec74e36abdf1.tar.gz",
+      "hash": "sha256-RxWs5ND31KzTG7wvMM+PMfUjyNpmIEr999lqNARaM5o="
     },
     "git-hooks": {
       "type": "Git",
@@ -100,9 +100,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "e705714e918c3b11affcdd15db2cbe3a070420a0",
-      "url": "https://github.com/nix-community/home-manager/archive/e705714e918c3b11affcdd15db2cbe3a070420a0.tar.gz",
-      "hash": "sha256-DScBkW0fOgpGPK2trNoX3ryLTlaC14+gglFo/BhGJ4g="
+      "revision": "2e6715977106c498355a70bcefd2c78a33c94558",
+      "url": "https://github.com/nix-community/home-manager/archive/2e6715977106c498355a70bcefd2c78a33c94558.tar.gz",
+      "hash": "sha256-xU44Kgp7RPedzBjyRf+z7j97BgZ2R1J4fiqWUl/JNxI="
     },
     "impermanence": {
       "type": "Git",
@@ -139,9 +139,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "57a3171f94705599a2499248ca5758d5eb47c0e0",
-      "url": "https://github.com/nix-darwin/nix-darwin/archive/57a3171f94705599a2499248ca5758d5eb47c0e0.tar.gz",
-      "hash": "sha256-UvORnAxTRHax7RG74W8Z2t4GvIkX6AjJ5kk0QlwZomo="
+      "revision": "15abb8c98f336cd8bd840d71059adebabe60bf04",
+      "url": "https://github.com/nix-darwin/nix-darwin/archive/15abb8c98f336cd8bd840d71059adebabe60bf04.tar.gz",
+      "hash": "sha256-0tLW8Ff5yt8AH97jw4ZpFJ0OCJ122zIlgWGDmOfU/VU="
     },
     "nix-homebrew": {
       "type": "Git",
@@ -191,9 +191,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "e07b1618c3009195ffbd4749e9b5618511260557",
-      "url": "https://github.com/nixos/nixos-hardware/archive/e07b1618c3009195ffbd4749e9b5618511260557.tar.gz",
-      "hash": "sha256-cH0vVt83ZBafqJzwOl7IHTXo6KA1c1J+8qvMjfARMqI="
+      "revision": "2e790b0a6be8ec2b76174ac0931b8ff11919ec98",
+      "url": "https://github.com/nixos/nixos-hardware/archive/2e790b0a6be8ec2b76174ac0931b8ff11919ec98.tar.gz",
+      "hash": "sha256-65EQYIRRpTdpH8lUiB6Mvo5uBkG60aBIzAJuALfx+O0="
     },
     "nixpkgs": {
       "type": "Git",
@@ -207,19 +207,6 @@
       "revision": "0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5",
       "url": "https://github.com/NixOS/nixpkgs/archive/0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5.tar.gz",
       "hash": "sha256-dN6Ou5x/+23FZLEpYP3IffO+NyJFzUlGumt1uu3MMaY="
-    },
-    "noctalia": {
-      "type": "Git",
-      "repository": {
-        "type": "GitHub",
-        "owner": "noctalia-dev",
-        "repo": "noctalia"
-      },
-      "branch": "cachix",
-      "submodules": false,
-      "revision": "de908ec6db190d94de77a50f3a9224999f971b9b",
-      "url": "https://github.com/noctalia-dev/noctalia/archive/de908ec6db190d94de77a50f3a9224999f971b9b.tar.gz",
-      "hash": "sha256-1XQHnohSuVOlH17+eYKYdXm6hAvMuFKFtltGsrGVWdo="
     },
     "srvos": {
       "type": "Git",
@@ -243,9 +230,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "a6b2da727853886876fd1081d6bb2880752937f3",
-      "url": "https://github.com/Maroka-chan/VPN-Confinement/archive/a6b2da727853886876fd1081d6bb2880752937f3.tar.gz",
-      "hash": "sha256-FddhMxnc99KYOZ/S3YNqtDSoxisIhVtJ7L4s8XD2u0A="
+      "revision": "b3aa71a7edfe6af748c23729d1bdec3b499741ff",
+      "url": "https://github.com/Maroka-chan/VPN-Confinement/archive/b3aa71a7edfe6af748c23729d1bdec3b499741ff.tar.gz",
+      "hash": "sha256-WEPxDMiKt3uGVVu/aorHnIgYYW62mEq2Q+rlN3qH6bg="
     }
   },
   "version": 8

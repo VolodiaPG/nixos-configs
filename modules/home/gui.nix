@@ -42,6 +42,7 @@ in
         pkgs.kitty-themes
       ]
       ++ (lib.optionals pkgs.stdenv.isLinux [
+        pkgs.gparted
         pkgs.filezilla
         pkgs.brave
         pkgs.libnotify

@@ -30,6 +30,12 @@ in
         withUWSM = true;
         inherit (cfg) package;
       };
+
+      noctalia = {
+        enable = true;
+        systemd.enable = true;
+      };
+
       # Make sure GTK applications work properly
       xwayland.enable = true;
       # Enable dconf for settings management

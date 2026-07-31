@@ -106,34 +106,10 @@ let
       darwinModules.default = { };
     };
     inherit (sources) mosh; # flake=false, used as src by overlay mosh override
-    noctalia = {
-      outPath = sources.noctalia;
-      # Replicate noctalia's wrapper homeModule (injects package via mkDefault).
-      homeModules.default =
-        { pkgs, lib, ... }:
-        {
-          imports = [ (sources.noctalia + "/nix/home-module.nix") ];
-          programs.noctalia.package =
-            lib.mkDefault
-              inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        };
-      packages = {
-        x86_64-linux.default = (pkgsFor "x86_64-linux").callPackage (
-          sources.noctalia + "/nix/package.nix"
-        ) { };
-        # ponytail: aarch64-darwin.default intentionally absent — noctalia is disabled on
-        # darwin (hyprland linux-only), so the mkDefault thunk above is never forced.
-      };
-    };
     # ponytail: high-tide fork — upstream buildPythonApplication, only src swapped to the npins pin.
     high-tide.packages.x86_64-linux.high-tide =
       (pkgsFor "x86_64-linux").callPackage ./packages/high-tide/default.nix
         { };
-    # ponytail: opencode via nixpkgs (llm-agents package.nix needs llm-agents-internal helpers).
-    llm-agents.packages = {
-      x86_64-linux.opencode = (pkgsFor "x86_64-linux").opencode;
-      aarch64-darwin.opencode = (pkgsFor "aarch64-darwin").opencode;
-    };
     # ponytail: darwin-only — vendored 5-line nix-homebrew wrapper (avoids evaluating its flake.nix).
     nix-homebrew.darwinModules.nix-homebrew =
       { lib, ... }:
