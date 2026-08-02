@@ -36,6 +36,7 @@ pkgs.mkShell {
       nh
       nix-output-monitor
       prek
+      nvd
     ]
     ++ pre-commit-check.enabledPackages;
   inherit (pre-commit-check) shellHook;

@@ -8,6 +8,7 @@ boot drv="$(hostname)": (build drv)
     sudo /nix/var/nix/profiles/system/bin/switch-to-configuration boot
 
 switch drv="$(hostname)": (build drv)
+    nvd diff /run/current-system ./result
     sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
     sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
 
