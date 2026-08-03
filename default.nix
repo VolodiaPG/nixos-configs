@@ -22,6 +22,22 @@ let
       };
     };
 
+  # ponytail: unstable nixpkgs for fast-moving tools (opencode, nvim, lsps). Same config as stable.
+  pkgsUnstableFor =
+    system:
+    import sources.nixpkgs-unstable {
+      inherit system;
+      config = {
+        allowUnfree = true;
+        cudaSupport = system == "x86_64-linux";
+        allowInsecurePredicate = pkg: lib.getName pkg == "tensorrt";
+      };
+    };
+
+  # x86_64-linux unstable pkgs — exposed as a module arg so nixos/home modules can pull
+  # arbitrary unstable packages (e.g. gaming.nix steam). darwin gets its own in mkDarwin.
+  pkgs-unstable = pkgsUnstableFor "x86_64-linux";
+
   # Recursive self so self.inputs.self = self (matches flake semantics).
   self = {
     outPath = ./.;
@@ -59,6 +75,15 @@ let
       legacyPackages = {
         x86_64-linux = pkgsFor "x86_64-linux";
         aarch64-darwin = pkgsFor "aarch64-darwin";
+      };
+    };
+    # ponytail: unstable nixpkgs input — overlay pulls fast-moving tools from here.
+    nixpkgs-unstable = {
+      outPath = sources.nixpkgs-unstable;
+      inherit (import sources.nixpkgs-unstable { }) lib;
+      legacyPackages = {
+        x86_64-linux = pkgsUnstableFor "x86_64-linux";
+        aarch64-darwin = pkgsUnstableFor "aarch64-darwin";
       };
     };
     home-manager = {
@@ -107,8 +132,9 @@ let
     };
     inherit (sources) mosh; # flake=false, used as src by overlay mosh override
     # ponytail: high-tide fork — upstream buildPythonApplication, only src swapped to the npins pin.
+    # Built from unstable: its Python deps (python-mpd2, tidalapi) aren't in stable 26.05.
     high-tide.packages.x86_64-linux.high-tide =
-      (pkgsFor "x86_64-linux").callPackage ./packages/high-tide/default.nix
+      (pkgsUnstableFor "x86_64-linux").callPackage ./packages/high-tide/default.nix
         { };
     # ponytail: darwin-only — vendored 5-line nix-homebrew wrapper (avoids evaluating its flake.nix).
     nix-homebrew.darwinModules.nix-homebrew =
@@ -161,6 +187,7 @@ let
       ++ extraModules;
       specialArgs = {
         flake = self;
+        inherit pkgs-unstable;
       };
       # ponytail: NO pkgs arg — passing it sets nixpkgs.pkgs and the assertion
       # `opt.pkgs.isDefined -> cfg.config == {}` fails (repo sets nixpkgs.config).
@@ -183,6 +210,7 @@ let
           allowUnfree = true;
         };
       };
+      pkgs-unstable = pkgsUnstableFor "aarch64-darwin";
     in
     darwin.lib.darwinSystem {
       system = "aarch64-darwin";
@@ -192,12 +220,14 @@ let
         {
           home-manager.extraSpecialArgs = {
             flake = self;
+            inherit pkgs-unstable;
           };
         }
       ]
       ++ extraModules;
       specialArgs = {
         flake = self;
+        inherit pkgs-unstable;
       };
     };
 
@@ -252,6 +282,7 @@ rec {
       {
         home-manager.extraSpecialArgs = {
           flake = self;
+          inherit pkgs-unstable;
         };
       }
     ];
@@ -259,6 +290,7 @@ rec {
       {
         home-manager.extraSpecialArgs = {
           flake = self;
+          inherit pkgs-unstable;
         };
       }
     ];

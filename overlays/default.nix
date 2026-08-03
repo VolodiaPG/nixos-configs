@@ -2,8 +2,37 @@
 let
   inherit (flake) inputs;
 in
-_final: prev: {
-  nix = inputs.nixpkgs.legacyPackages.${prev.stdenv.system}.nixVersions.latest;
+_final: prev:
+let
+  # ponytail: fast-moving tools from unstable; everything else stays on stable nixpkgs.
+  # Add packages to this list as needed — they override the stable defaults.
+  unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system};
+in
+{
+  nix = unstable.nixVersions.latest;
+
+  inherit (unstable)
+    neovim
+    opencode
+    noctalia
+    hyprland
+    # --- LSP servers (vim.lsp.config targets in lua config) ---
+    lua-language-server
+    gopls
+    nixd
+    bash-language-server
+    texlab
+    tinymist
+    # --- formatters (conform.nvim) ---
+    stylua
+    ruff
+    shfmt
+    shellcheck
+    shellharden
+    rustfmt
+    nixfmt
+    typstyle
+    ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
     high-tide

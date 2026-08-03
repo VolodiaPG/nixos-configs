@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 let
@@ -10,6 +11,12 @@ let
   cfg = config.services.wm.hyprland;
 in
 {
+  # ponytail: noctalia module only exists in unstable nixpkgs — import it from there
+  # while the system stays on stable. Package is provided via the unstable overlay.
+  imports = [
+    (flake.inputs.nixpkgs-unstable.outPath + "/nixos/modules/programs/wayland/noctalia.nix")
+  ];
+
   options = {
     services.wm.hyprland = {
       enable = mkEnableOption "hyprland - scrollable-tiling Wayland compositor";

@@ -98,11 +98,11 @@
         "owner": "nix-community",
         "repo": "home-manager"
       },
-      "branch": "master",
+      "branch": "release-26.05",
       "submodules": false,
-      "revision": "2e6715977106c498355a70bcefd2c78a33c94558",
-      "url": "https://github.com/nix-community/home-manager/archive/2e6715977106c498355a70bcefd2c78a33c94558.tar.gz",
-      "hash": "sha256-xU44Kgp7RPedzBjyRf+z7j97BgZ2R1J4fiqWUl/JNxI="
+      "revision": "d4fd24667c8cbef124bb70a20380cab75ec8474d",
+      "url": "https://github.com/nix-community/home-manager/archive/d4fd24667c8cbef124bb70a20380cab75ec8474d.tar.gz",
+      "hash": "sha256-Rgs2xKnGLFWQscxUaXX07oyZeuMDOHEbqDOsgliLFGM="
     },
     "impermanence": {
       "type": "Git",
@@ -137,11 +137,11 @@
         "owner": "nix-darwin",
         "repo": "nix-darwin"
       },
-      "branch": "master",
+      "branch": "nix-darwin-26.05",
       "submodules": false,
-      "revision": "15abb8c98f336cd8bd840d71059adebabe60bf04",
-      "url": "https://github.com/nix-darwin/nix-darwin/archive/15abb8c98f336cd8bd840d71059adebabe60bf04.tar.gz",
-      "hash": "sha256-0tLW8Ff5yt8AH97jw4ZpFJ0OCJ122zIlgWGDmOfU/VU="
+      "revision": "c3e90c89649b07d1a96e4b9dd6cd0d6e44b91a74",
+      "url": "https://github.com/nix-darwin/nix-darwin/archive/c3e90c89649b07d1a96e4b9dd6cd0d6e44b91a74.tar.gz",
+      "hash": "sha256-2cp6N3rrwnGYLTx9l6N+NI+kwrCWxvJUbj5WJhvB29A="
     },
     "nix-homebrew": {
       "type": "Git",
@@ -202,11 +202,24 @@
         "owner": "NixOS",
         "repo": "nixpkgs"
       },
+      "branch": "nixos-26.05",
+      "submodules": false,
+      "revision": "6d65bfc1bcef2ef39a239d38e577e92a89fb0f07",
+      "url": "https://github.com/NixOS/nixpkgs/archive/6d65bfc1bcef2ef39a239d38e577e92a89fb0f07.tar.gz",
+      "hash": "sha256-dg4RTtDxnXY13UkJNdhmgTUTl0n/IJBlCigfO7nutZw="
+    },
+    "nixpkgs-unstable": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "NixOS",
+        "repo": "nixpkgs"
+      },
       "branch": "nixos-unstable",
       "submodules": false,
-      "revision": "0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5",
-      "url": "https://github.com/NixOS/nixpkgs/archive/0954f7ee2f6bb3dc7d4e3d0d8bcb8fd4bde4cfc5.tar.gz",
-      "hash": "sha256-dN6Ou5x/+23FZLEpYP3IffO+NyJFzUlGumt1uu3MMaY="
+      "revision": "643809054d65fdd466a63e3155b8c498cb483c04",
+      "url": "https://github.com/NixOS/nixpkgs/archive/643809054d65fdd466a63e3155b8c498cb483c04.tar.gz",
+      "hash": "sha256-vUfIeBEfpbAfZ5zjgIkYk7eHBeVfCYVjLbWnMkseYnk="
     },
     "srvos": {
       "type": "Git",

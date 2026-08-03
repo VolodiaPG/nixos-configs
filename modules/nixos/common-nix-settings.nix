@@ -12,7 +12,7 @@ let
   # ponytail: was lib.filterAttrs (_: lib.isType "flake") inputs — registered ALL ~25 inputs,
   # forcing flake.outPath eval for each. Whitelist only the ones actually referenced as flake:ID.
   registryInputs = {
-    inherit (inputs) nixpkgs home-manager;
+    inherit (inputs) nixpkgs nixpkgs-unstable home-manager;
   };
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
   asyncScript = pkgs.writeScript "cachix-push-hook" ''
