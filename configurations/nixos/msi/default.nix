@@ -63,7 +63,7 @@ in
     hifi.enable = true;
     betterSleep.enable = true;
     # ccache.enable = true;
-    caddy.enable = true;
+    caddy.enable = false;
     homeLab.enable = false;
 
     # Storage and networking
