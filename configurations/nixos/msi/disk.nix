@@ -55,23 +55,23 @@
                     ];
                     mountpoint = "/persistent";
                   };
-                  swap = {
-                    mountpoint = "/.swapvol";
-                    swap.swapfile.size = "8G";
-                  };
+                  # swap = {
+                  #   mountpoint = "/.swapvol";
+                  #   swap.swapfile.size = "8G";
+                  # };
                 };
               };
             };
 
-            # swap = {
-            #   priority = 2;
-            #   size = "16G";
-            #   content = {
-            #     resumeDevice = false;
-            #     type = "swap";
-            #     extraArgs = [ "--label SWAP"];
-            #   };
-            # };
+            swap = {
+              priority = 2;
+              size = "16G";
+              content = {
+                resumeDevice = false;
+                type = "swap";
+                extraArgs = [ "--label SWAP" ];
+              };
+            };
           };
         };
       };
