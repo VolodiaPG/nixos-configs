@@ -54,8 +54,8 @@ in
         pkgs.distrobox-tui
         pkgs.easyeffects
         pkgs.libreoffice-qt-fresh
-        pkgs.freerdp
-        pkgs.orca-slicer
+        # pkgs.freerdp
+        # pkgs.orca-slicer
         pkgs.high-tide
       ]);
 
