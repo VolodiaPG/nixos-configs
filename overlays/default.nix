@@ -11,28 +11,28 @@ in
 {
   nix = unstable.nixVersions.latest;
 
-  inherit (unstable)
-    neovim
-    opencode
-    noctalia
-    hyprland
-    # --- LSP servers (vim.lsp.config targets in lua config) ---
-    lua-language-server
-    gopls
-    nixd
-    bash-language-server
-    texlab
-    tinymist
-    # --- formatters (conform.nvim) ---
-    stylua
-    ruff
-    shfmt
-    shellcheck
-    shellharden
-    rustfmt
-    nixfmt
-    typstyle
-    ;
+  # inherit (unstable)
+  #   neovim
+  #   opencode
+  #   noctalia
+  #   hyprland
+  #   # --- LSP servers (vim.lsp.config targets in lua config) ---
+  #   lua-language-server
+  #   gopls
+  #   nixd
+  #   bash-language-server
+  #   texlab
+  #   tinymist
+  #   # --- formatters (conform.nvim) ---
+  #   stylua
+  #   ruff
+  #   shfmt
+  #   shellcheck
+  #   shellharden
+  #   rustfmt
+  #   nixfmt
+  #   typstyle
+  #   ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
     high-tide
