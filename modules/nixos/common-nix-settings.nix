@@ -98,7 +98,8 @@ let
     http-connections = 50;
     connect-timeout = 10;
     # for direnv GC roots
-    inherit (me) trusted-public-keys;
+    inherit (me) trusted-substituters trusted-public-keys;
+    # inherit (me) trusted-public-keys;
 
     # https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
 

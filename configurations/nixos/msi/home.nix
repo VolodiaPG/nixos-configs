@@ -19,7 +19,7 @@ in
         theme-daemon.enable = true;
         syncthing.enable = true;
       };
-      mpv.enable = true;
+      mpv.enable = false;
       # Enable home modules
       commonHome.enable = true;
       interactive.enable = true;
