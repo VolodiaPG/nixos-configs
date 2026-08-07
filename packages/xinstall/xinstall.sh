@@ -33,4 +33,5 @@ echo building system for "$TARGET", and saving path to system.var.log...
 SYSTEM=$(nix-build --store /mnt "$REPO" -A nixosConfigurations."$TARGET".config.system.build.toplevel --no-out-link)
 echo "$SYSTEM" > system.var.log
 echo installing system for "$TARGET"...
-sudo nixos-install --root /mnt --no-channel-copy --no-root-passwd --system "/mnt/$SYSTEM"
+# No need to specify /mnt before SYSTEM
+sudo nixos-install --root /mnt --no-channel-copy --no-root-passwd --system "$SYSTEM"
