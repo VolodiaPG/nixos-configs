@@ -54,9 +54,22 @@ in
         pkgs.distrobox-tui
         pkgs.easyeffects
         pkgs.libreoffice-qt-fresh
-        # pkgs.freerdp
-        # pkgs.orca-slicer
+        pkgs.freerdp
         pkgs.high-tide
+        (pkgs.symlinkJoin {
+          #  Wrap for nvidia drivers, don't use the default override not to rebuild the whole package
+          name = "orca-slicer";
+          paths = [ pkgs.orca-slicer ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/orca-slicer \
+              --set __GLX_VENDOR_LIBRARY_NAME "mesa" \
+              --set __EGL_VENDOR_LIBRARY_FILENAMES "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json" \
+              --set MESA_LOADER_DRIVER_OVERRIDE "zink" \
+              --set GALLIUM_DRIVER "zink" \
+              --set WEBKIT_DISABLE_DMABUF_RENDERER "1"
+          '';
+        })
       ]);
 
       file = {

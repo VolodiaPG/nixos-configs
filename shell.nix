@@ -7,7 +7,8 @@ let
   system = builtins.currentSystem;
   pkgs = import (sources.git-hooks + "/nix") {
     inherit system;
-    inherit (sources) nixpkgs;
+    # inherit (sources) nixpkgs;
+    nixpkgs = sources.nixpkgs-unstable;
     isFlakes = true;
   };
   pre-commit-check = pkgs.run {
@@ -31,6 +32,7 @@ pkgs.mkShell {
       git
       nixfmt
       nixd
+      nil
       agenix-cli
       deploy-rs
       nh

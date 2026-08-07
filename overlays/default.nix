@@ -15,23 +15,7 @@ in
     neovim
     opencode
     noctalia
-    #   hyprland
-    #   # --- LSP servers (vim.lsp.config targets in lua config) ---
-    #   lua-language-server
-    #   gopls
-    #   nixd
-    #   bash-language-server
-    #   texlab
-    #   tinymist
-    #   # --- formatters (conform.nvim) ---
-    #   stylua
-    #   ruff
-    #   shfmt
-    #   shellcheck
-    #   shellharden
-    #   rustfmt
-    #   nixfmt
-    #   typstyle
+    hyprland
     ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
