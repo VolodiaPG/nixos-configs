@@ -9,7 +9,15 @@ let
   unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system};
 in
 {
-  nix = unstable.nixVersions.latest;
+  inherit (prev.lixPackageSets.latest)
+    nixpkgs-review
+    nix-eval-jobs
+    nix-fast-build
+    colmena
+    ;
+
+  #nix = unstable.nixVersions.latest;
+  nix = prev.lixPackageSets.latest.lix;
 
   inherit (unstable)
     neovim

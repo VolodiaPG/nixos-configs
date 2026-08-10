@@ -105,7 +105,7 @@ let
     # auto-optimise-store = true;
     narinfo-cache-negative-ttl = 600;
     narinfo-cache-positive-ttl = 600;
-    download-buffer-size = 1073741824; # 1 GiB
+    #download-buffer-size = 1073741824; # 1 GiB
     http-connections = 50;
     connect-timeout = 10;
     # for direnv GC roots
