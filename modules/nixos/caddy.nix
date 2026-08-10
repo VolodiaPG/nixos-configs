@@ -18,7 +18,7 @@ in
           plugins = [
             "github.com/tailscale/caddy-tailscale@v0.0.0-20260106222316-bb080c4414ac"
           ];
-          hash = "sha256-vC/nyCKMD2jKgbGVA5NIJP6dGXiP9z0yEA8WINgFcVc=";
+          hash = "sha256-tP/ZQjZvfb+e3322dzd3I89Y9QwujcyqV1fbNWyw08g=";
         };
         globalConfig = ''
           servers {

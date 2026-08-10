@@ -56,6 +56,7 @@ in
         pkgs.libreoffice-qt-fresh
         pkgs.freerdp
         pkgs.high-tide
+        pkgs.calibre
         (pkgs.symlinkJoin {
           #  Wrap for nvidia drivers, don't use the default override not to rebuild the whole package
           name = "orca-slicer";
