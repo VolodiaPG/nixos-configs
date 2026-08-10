@@ -31,8 +31,11 @@ let
         ++ [ me.username ]
       )
     }"
+    # ponytail: closure-size via nix path-info — one daemon round-trip per output,
+    # but gates on total upload size (path + all deps) which is what cachix actually uploads.
+    MAX_SIZE=$((500 * 1024 * 1024)) # 500 MB
 
-    # Filter out ignored patterns
+    # Filter out ignored patterns and oversized paths
     FILTERED_PATHS=""
     for path in $OUT_PATHS; do
       # Check if path should be ignored
@@ -45,6 +48,14 @@ let
             break
           fi
         done
+      fi
+
+      if [[ "$should_ignore" == "false" ]]; then
+        size=$(nix path-info --closure-size "$path" 2>/dev/null | cut -f2)
+        if [[ -n "$size" && "$size" -gt "$MAX_SIZE" ]]; then
+          echo "Skipping $path: $size bytes exceeds ''${MAX_SIZE} bytes (500 MB)"
+          should_ignore=true
+        fi
       fi
 
       if [[ "$should_ignore" == "false" ]]; then
