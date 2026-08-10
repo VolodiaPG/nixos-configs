@@ -25,6 +25,7 @@ in
       bash-language-server # bashls
       texlab
       tinymist
+      cargo
 
       # --- formatters (conform.nvim in lua/myLuaConf/format.lua) ---
       stylua

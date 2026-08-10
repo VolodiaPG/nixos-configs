@@ -57,6 +57,7 @@ in
         pkgs.freerdp
         pkgs.high-tide
         pkgs.calibre
+        pkgs.inkscape
         (pkgs.symlinkJoin {
           #  Wrap for nvidia drivers, don't use the default override not to rebuild the whole package
           name = "orca-slicer";
