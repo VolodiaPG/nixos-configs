@@ -19,6 +19,8 @@ let
       deadnix.enable = true;
       actionlint.enable = true;
       shellcheck.enable = true;
+      luacheck.enable = true;
+      stylua.enable = true;
     };
   };
 in
@@ -30,9 +32,6 @@ pkgs.mkShell {
       nvfetcher
       just
       git
-      nixfmt
-      nixd
-      nil
       agenix-cli
       deploy-rs
       nh
