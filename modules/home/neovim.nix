@@ -16,7 +16,51 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      neovim
+      (pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
+        wrapRc = false;
+        plugins = with pkgs.vimPlugins; [
+          lze
+          lzextras
+          nvim-treesitter.withAllGrammars
+          nvim-treesitter-textobjects
+          nvim-treesitter-context
+          nvim-lint
+          conform-nvim
+          colorizer
+          nvim-web-devicons
+          nui-nvim
+          noice-nvim
+          trouble-nvim
+          which-key-nvim
+          nvim-notify
+          plenary-nvim
+          telescope-nvim
+          telescope-fzf-native-nvim
+          telescope-ui-select-nvim
+          catppuccin-nvim
+          harpoon2
+          staline-nvim
+          inlay-hints-nvim
+          nvim-surround
+          luasnip
+          blink-cmp
+          blink-compat
+          indent-blankline-nvim
+          gitsigns-nvim
+          supermaven-nvim
+          vimtex
+          vim-sleuth
+          lazygit-nvim
+          vim-tmux-navigator
+          opencode-nvim
+          comment-nvim
+          nvim-ts-context-commentstring
+          treesj
+          lazydev-nvim
+          telescope-live-grep-args-nvim
+          colorful-menu-nvim
+        ];
+      })
 
       # --- LSP servers (vim.lsp.config/enable targets in lua/myLuaConf/LSPs/init.lua) ---
       lua-language-server
