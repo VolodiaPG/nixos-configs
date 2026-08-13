@@ -26,8 +26,7 @@ in
           zlib
         ];
       }).run
-      popcorntime
-      qbittorrent
+      faugus-launcher
       # obs-studio
       # obs-studio-plugins.wlrobs
       # obs-studio-plugins.obs-pipewire-audio-capture

@@ -65,6 +65,7 @@ in
     # ccache.enable = true;
     caddy.enable = true;
     homeLab.enable = false;
+    gaming.enable = true;
 
     # Storage and networking
     impermanence = {

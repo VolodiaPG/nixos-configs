@@ -49,12 +49,12 @@
     extraModulePackages = [ ];
   };
 
-  # fileSystems = {
-  #   "/boot" = {
-  #     device = "/dev/disk/by-label/BOOT";
-  #     fsType = "vfat";
-  #   };
-  # };
+  fileSystems = {
+    "/Games" = {
+      device = "/dev/disk/by-label/Games";
+      fsType = "ext4";
+    };
+  };
 
   # swapDevices = [
   #   {
