@@ -281,6 +281,7 @@ update_available_color = "error"
 [widget.sysmon]
 show_glyph = true
 show_value = true
+stat = "disk_free"
 visualization = "none"
 
 [widget.workspaces]
