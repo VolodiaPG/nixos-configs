@@ -13,8 +13,6 @@ order = [ "main" ]
     font_weight = 400
     margin_edge = 0
     margin_ends = 300
-    margin_h = 4
-    margin_v = 4
     padding = 25
     position = "bottom"
     radius = 12
@@ -194,6 +192,9 @@ position_vertical = "center_right"
     [osd.kinds]
     media = false
 
+[plugin_settings."avivbintangaringga/nix-monitor"]
+branch = "nixos-26.05"
+
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
@@ -220,7 +221,7 @@ telemetry_enabled = false
 
 [theme]
 builtin = "Catppuccin"
-mode = "dark"
+mode = "light"
 source = "builtin"
 
 [wallpaper]
@@ -233,16 +234,16 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-28.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-13.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-28.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-13.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-28.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-13.jpg"
 
     [wallpaper.monitors.HDMI-A-1]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-07-28.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-12.jpg"
 
 [weather]
 effects = true
@@ -264,8 +265,8 @@ tooltip_format = "{:%H:%M %a, %b %d}"
 glyph = "snowflake"
 
 [widget.cpu]
-display = "text"
 stat = "cpu_temp"
+visualization = "none"
 
 [widget.media]
 album_art_only = true
@@ -278,8 +279,9 @@ up_to_date_color = "tertiary"
 update_available_color = "error"
 
 [widget.sysmon]
-display = "text"
-stat = "disk_free"
+show_glyph = true
+show_value = true
+visualization = "none"
 
 [widget.workspaces]
 anchor = true
