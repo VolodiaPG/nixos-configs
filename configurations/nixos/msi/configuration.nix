@@ -35,6 +35,10 @@ in
     };
   };
 
+  systemd.sleep.settings.Sleep = {
+    HibernateDelaySec = "30m"; # Time before waking to hibernate
+  };
+
   # services = {
   #   undervolt = {
   #     enable = true;

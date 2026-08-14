@@ -67,7 +67,7 @@
               priority = 2;
               size = "16G";
               content = {
-                resumeDevice = false;
+                resumeDevice = true;
                 type = "swap";
                 extraArgs = [ "--label SWAP" ];
               };
