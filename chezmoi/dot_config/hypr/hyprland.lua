@@ -169,6 +169,8 @@ hl.config({
 		layout = "scrolling",
 		allow_tearing = false,
 		border_size = 2,
+		resize_on_border = true,
+		hover_icon_on_border = true,
 		col = {
 			active_border = { colors = { "rgba(8839efff)", "rgba(dc8a78ff)" }, angle = 45 },
 		},
