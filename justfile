@@ -29,3 +29,9 @@ update:
 
 deploy node="home-server":
     deploy -f . {{node}} --skip-checks
+
+secret-edit:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/secrets
+    chosen=$(ls *.age | gum choose --header "Select which secret to edit:")
+    ragenix -e "$chosen"

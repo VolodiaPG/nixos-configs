@@ -32,12 +32,13 @@ pkgs.mkShell {
       nvfetcher
       just
       git
-      agenix-cli
+      ragenix
       deploy-rs
       nh
       nix-output-monitor
       prek
       nvd
+      gum
     ]
     ++ pre-commit-check.enabledPackages;
   inherit (pre-commit-check) shellHook;
