@@ -12,9 +12,9 @@
 }:
 let
   modelFile = fetchurl {
-    url = "https://github.com/HolyWu/vs-rife/releases/download/model/flownet_v4.25.pkl";
-    hash = "sha256-ZhV5Dv1id3KRcgXbKR9RzTklKKFX7Lsuyu7Dv/jrbeI=";
-    name = "flownet_v4.25.pkl";
+    url = "https://github.com/HolyWu/vs-rife/releases/download/model/flownet_v4.26.heavy.pkl";
+    hash = "sha256-TMUY4XIVatYge5x6QzZPUYgy2DpDJdSEJASTqeKYBTc=";
+    name = "flownet_v4.26.heavy.pkl";
   };
 in
 buildPythonPackage (_finalAttrs: {
