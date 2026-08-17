@@ -24,6 +24,7 @@ in
     opencode
     noctalia
     hyprland
+    tailscale
     ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
