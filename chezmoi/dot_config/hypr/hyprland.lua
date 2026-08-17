@@ -11,7 +11,7 @@ local mainMod = "SUPER"
 -- Monitors
 --─────────────────────────────
 local iiyama_desc = "Iiyama North America PL3461WQ 1171803800833"
-local cloudium_desc = "Cloudium Systems Ltd. CSL421 0x00004210"
+-- local cloudium_desc = "Cloudium Systems Ltd. CSL421 0x00004210"
 
 local known_config = {
 	[iiyama_desc] = {
@@ -19,25 +19,13 @@ local known_config = {
 		position = "0x0",
 		scale = 1.25,
 	},
-	[cloudium_desc] = {
-		mode = "1280x720@59.95",
-		position = "auto",
-		scale = 1,
-		mirror = "desc:" .. iiyama_desc,
-	},
+	-- [cloudium_desc] = {
+	-- 	mode = "1280x720@59.95",
+	-- 	position = "auto",
+	-- 	scale = 1,
+	-- 	mirror = "desc:" .. iiyama_desc,
+	-- },
 }
-
--- Apply a known monitor's config, optionally overriding fields (e.g. mirror).
-local function apply_known(desc, override)
-	local opts = { output = "desc:" .. desc }
-	for k, v in pairs(known_config[desc]) do
-		opts[k] = v
-	end
-	for k, v in pairs(override or {}) do
-		opts[k] = v
-	end
-	hl.monitor(opts)
-end
 
 --─────────────────────────────
 -- Dynamic monitor mirroring
@@ -52,6 +40,43 @@ local function norm_desc(s)
 	return ((s or ""):gsub("^desc:", ""))
 end
 
+-- Apply a known monitor's config only if connected; skip mirror if target absent.
+local function apply_known(desc, override, connected)
+	if not connected[desc] then
+		return
+	end
+	local opts = { output = "desc:" .. desc }
+	for k, v in pairs(known_config[desc]) do
+		if k == "mirror" then
+			local mirror_target = norm_desc(v)
+			if connected[mirror_target] then
+				opts[k] = v
+			end
+		else
+			opts[k] = v
+		end
+	end
+	for k, v in pairs(override or {}) do
+		opts[k] = v
+	end
+	hl.monitor(opts)
+end
+
+-- Headless output holds workspaces when all real monitors disconnect,
+-- preventing FALLBACK from being created and workspaces from being lost.
+local function is_headless(mon)
+	return mon.name:match("^HEADLESS") ~= nil
+end
+
+local function ensure_headless()
+	for _, mon in ipairs(hl.get_monitors()) do
+		if is_headless(mon) then
+			return
+		end
+	end
+	hl.exec_cmd("hyprctl output create headless")
+end
+
 -- local function log(message)
 --   local file = io.open("/tmp/logs.log", "a")
 --   if file then
@@ -62,53 +87,53 @@ end
 -- end
 
 local elect_master_or_restore_known = function()
+	-- Build set of currently connected real (non-headless) monitor descriptions.
+	local connected = {}
+	local real_mons = {}
+	for _, mon in ipairs(hl.get_monitors()) do
+		if not is_headless(mon) then
+			connected[norm_desc(mon.description)] = true
+			table.insert(real_mons, mon)
+		end
+	end
+
 	local has_unknown = false
-	local connected_descs = {}
 	local first_known_desc = nil
 	local unknown_master = nil
 
-	-- Get if any monitors are unknown
-	for _, mon in ipairs(hl.get_monitors()) do
-		table.insert(connected_descs, norm_desc(mon.description))
-		if not known_config[norm_desc(mon.description)] then
+	for _, mon in ipairs(real_mons) do
+		local desc = norm_desc(mon.description)
+		if not known_config[desc] then
 			has_unknown = true
-			unknown_master = norm_desc(mon.description)
+			unknown_master = desc
 		elseif not first_known_desc then
-			first_known_desc = norm_desc(mon.description)
+			first_known_desc = desc
 		end
 	end
 
 	local target
-	-- log("Electing master: " .. (unknown_master or "none") .. " (" .. (has_unknown and "unknown" or "known") .. ")")
 	if not has_unknown then
-		-- all connected monitors are known, restore them
-		target = first_known_desc
-
-		-- hl.timer(function()
+		-- Prefer Iiyama as reclaim target when connected (primary desktop).
+		target = connected[iiyama_desc] and iiyama_desc or first_known_desc
 		for desc, _ in pairs(known_config) do
-			apply_known(desc)
+			apply_known(desc, nil, connected)
 		end
-	-- log("Applied known config")
 	else
 		target = unknown_master
 		hl.monitor({ output = "desc:" .. unknown_master, mode = "preferred", position = "0x0", scale = 1 })
-
 		for desc, _ in pairs(known_config) do
-			apply_known(desc, { mirror = "desc:" .. unknown_master })
+			apply_known(desc, { mirror = "desc:" .. unknown_master }, connected)
 		end
-
-		-- log("Applied unknown config to " .. unknown_master)
 	end
 
-	-- log("Target: " .. (target or "none"))
-
-	-- Reclaim workspaces orphaned onto the FALLBACK monitor when the master
-	-- was removed (mirrors can't hold workspaces, so Hyprland parks them there).
+	-- Reclaim workspaces: move any workspace not on the target onto the target.
+	-- Covers FALLBACK (master removed), stranded-on-mirror, and headless cases.
 	if target then
-		-- Revert window gaps back after 200ms
 		hl.timer(function()
 			for _, ws in ipairs(hl.get_workspaces()) do
-				if ws.monitor == nil or ws.monitor.id == -1 or ws.monitor.name == "FALLBACK" then
+				local ws_desc = ws.monitor and norm_desc(ws.monitor.description) or "FALLBACK"
+				local ws_is_headless = ws.monitor and is_headless(ws.monitor)
+				if ws_desc ~= target or ws_is_headless then
 					hl.dispatch(hl.dsp.workspace.move({ workspace = ws.id, monitor = "desc:" .. target }))
 				end
 			end
@@ -116,15 +141,22 @@ local elect_master_or_restore_known = function()
 	end
 end
 
+-- Ensure a persistent headless output exists to hold workspaces when all
+-- real monitors disconnect (prevents FALLBACK from destroying them).
+ensure_headless()
+
 -- Apply monitors at first and subsequent loads of config
 elect_master_or_restore_known()
 
+-- Call directly instead of `hyprctl reload` to avoid crashing hyprlock
+-- and to skip re-running the entire config (binds, env, autostart, etc.).
 hl.on("monitor.added", function(_)
-	hl.dispatch(hl.dsp.exec_cmd("hyprctl reload"))
+	elect_master_or_restore_known()
 end)
 
 hl.on("monitor.removed", function(_)
-	hl.dispatch(hl.dsp.exec_cmd("hyprctl reload"))
+	elect_master_or_restore_known()
+	ensure_headless()
 end)
 
 --─────────────────────────────
