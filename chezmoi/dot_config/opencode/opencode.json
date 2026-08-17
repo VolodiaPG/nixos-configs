@@ -3,25 +3,10 @@
   "plugin": [
     "@simonwjackson/opencode-direnv@latest",
     "@tarquinen/opencode-dcp@latest",
-    "@dietrichgebert/ponytail",
     "oh-my-opencode-slim@latest",
     "@plannotator/opencode@latest"
   ],
-  "provider": {
-    "lmstudio": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "LM Studio (local)",
-      "options": {
-        "baseURL": "http://127.0.0.1:1234/v1"
-      },
-      "models": {
-        "qwen/qwen3.5-9b": {
-          "name": "Qwen 3.5-9b (local)"
-        }
-      }
-    }
-  },
-  "agent": {
+ "agent": {
     "explore": {
       "disable": true
     },
@@ -29,5 +14,17 @@
       "disable": true
     }
   },
-  "lsp": true
+  "lsp": true,
+  "instructions": [
+    "/home/volodia/.config/opencode/AGENTS.caveman.md"
+  ],
+  "permission": {
+    "skill": {
+      "caveman": "allow",
+      "caveman-commit": "allow",
+      "caveman-review": "allow",
+      "caveman-help": "allow",
+      "caveman-compress": "allow"
+    }
+  }
 }
