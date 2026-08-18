@@ -92,6 +92,14 @@ in
         };
 
         extraConfig.pipewire = {
+          "50-raop-discover" = {
+            "context.modules" = [
+              {
+                name = "libpipewire-module-raop-discover";
+                args = { };
+              }
+            ];
+          };
           "10-clock-rate" = {
             context.properties = {
               "default.clock.rate" = 48000;
@@ -226,6 +234,20 @@ in
         };
       };
 
+      # Enable Avahi (mdns) for network device discovery
+      avahi = {
+        enable = true;
+        nssmdns4 = true; # Resolves .local domains
+      };
+    };
+
+    # Open required local firewall ports for AirPlay discovery/streaming
+    networking.firewall = {
+      allowedUDPPorts = [
+        5353
+        6001
+        6002
+      ]; # mDNS and AirPlay RTP streams
     };
     environment.systemPackages = [
       pkgs.pavucontrol
