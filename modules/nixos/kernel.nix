@@ -101,7 +101,7 @@ in
 
     boot.kernel.sysctl = {
       # # 2. Transmit Buffer Queue Cap (Most Important for Latency)
-      # "net.ipv4.tcp_notsent_lowat" = 16384;
+      "net.ipv4.tcp_notsent_lowat" = 16384;
 
       # 3. Connection Setup & Idle Latency Reduction
       "net.ipv4.tcp_fastopen" = 3;
