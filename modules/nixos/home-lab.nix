@@ -41,14 +41,14 @@ in
       };
     };
 
-    systemd.services."docker-fizzy" = {
-      serviceConfig = {
-        # CPUQuota = "100%";
-
-        # Relative CPU weight (cgroups v2 replacement for cpu-shares, 1-10000)
-        CPUWeight = 25;
-      };
-    };
+    # systemd.services."docker-fizzy" = {
+    #   serviceConfig = {
+    #     # CPUQuota = "100%";
+    #
+    #     # Relative CPU weight (cgroups v2 replacement for cpu-shares, 1-10000)
+    #     CPUWeight = 50;
+    #   };
+    # };
 
     services = {
       caddy = {
@@ -74,6 +74,7 @@ in
           "https://fizzy.${me.tailname}" = {
             extraConfig = ''
               bind tailscale/fizzy
+
               reverse_proxy http://127.0.0.1:8888 {
                   header_up Host {host}
               }
