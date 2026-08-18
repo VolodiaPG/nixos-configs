@@ -78,12 +78,12 @@ local function ensure_headless()
 end
 
 -- local function log(message)
---   local file = io.open("/tmp/logs.log", "a")
---   if file then
---     local timestamp = os.date("%Y-%m-%d %H:%M:%S")
---     file:write(string.format("[%s] %s\n", timestamp, tostring(message)))
---     file:close()
---   end
+-- 	local file = io.open("/tmp/logs.log", "a")
+-- 	if file then
+-- 		local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+-- 		file:write(string.format("[%s] %s\n", timestamp, tostring(message)))
+-- 		file:close()
+-- 	end
 -- end
 
 local elect_master_or_restore_known = function()
@@ -403,9 +403,6 @@ hl.window_rule({ match = { class = "^(signal|legcord)$" }, workspace = "3" })
 hl.window_rule({ match = { title = "^_crx_.*$" }, float = true })
 hl.window_rule({ match = { class = "^feh$" }, float = true })
 
--- Picture-in-Picture (floating, 480x270, 80% opacity)
-hl.window_rule({ match = { title = "^(Picture-in-Picture)$" }, float = true, size = { 480, 270 }, opacity = "0.8 0.8" })
-
 -- Global blur (matches niri's global background-effect rule)
 hl.window_rule({ match = { class = "^(.*)$" }, no_blur = false })
 
@@ -422,6 +419,55 @@ hl.window_rule({
 -- VRR for games
 hl.window_rule({ match = { class = "^(mpv|steam_app_.*)$" }, no_vrr = false })
 hl.window_rule({ match = { class = "(.*\\.exe)$" }, no_vrr = false })
+
+-- ----- helpers --------------------------------------------------------
+-- place() drives the `place` submap: float the active window, then size +
+-- position it as fractions of the focused monitor. Monitor width/height are
+-- PHYSICAL px, but exact move/resize work in LOGICAL space, so divide by
+-- scale (x/y are already logical).
+local function place(win, fw, fh, move)
+	local m = hl.get_active_monitor()
+	local w = m.width / m.scale
+	local h = m.height / m.scale
+	local x = math.floor(w * fw)
+	local y = math.floor(h * fh)
+	local dx = w - 10 - x
+
+	if move then
+		dx = 10
+	end
+
+	hl.dispatch(hl.dsp.window.resize({ x = x, y = y, exact = true, window = win }))
+
+	hl.dispatch(hl.dsp.window.move({
+		x = math.floor(m.x + dx),
+		y = math.floor(m.y + h - y - 40),
+		exact = true,
+		window = w,
+	}))
+end
+
+local function pip(w)
+	-- Mind the special character between Mode and PIP
+	if w and w.title == "Mode PIP (Picture-in-Picture)" then
+		hl.dispatch(hl.dsp.window.float({ action = "set", window = w }))
+		place(w, 0.2, 0.3, false)
+		hl.dispatch(hl.dsp.window.pin({ action = "set", window = w }))
+	end
+end
+
+hl.on("window.title", pip)
+hl.on("window.open", pip)
+
+-- Move the window right or left when the mouse focus it, so it gets out of the way
+local is_moved = false
+hl.on("window.active", function(w, _)
+	-- Mind the special character between Mode and PIP
+	if w and w.title == "Mode PIP (Picture-in-Picture)" then
+		is_moved = not is_moved
+		place(w, 0.2, 0.3, is_moved)
+	end
+end)
 
 --─────────────────────────────
 -- Layer rules
