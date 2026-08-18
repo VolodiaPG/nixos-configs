@@ -44,7 +44,6 @@ in
       ++ (lib.optionals pkgs.stdenv.isLinux [
         pkgs.gparted
         pkgs.filezilla
-        pkgs.brave
         pkgs.libnotify
         pkgs.vlc
         pkgs.legcord
