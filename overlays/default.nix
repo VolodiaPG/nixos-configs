@@ -25,6 +25,8 @@ in
     noctalia
     hyprland
     tailscale
+    immich
+    immich-machine-learning
     ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
