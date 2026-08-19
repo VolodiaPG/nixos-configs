@@ -37,7 +37,7 @@ in
       packages = [
         pkgs.signal-desktop
         pkgs.qbittorrent
-        pkgs.drawio
+        # pkgs.drawio
         pkgs.kitty
         pkgs.kitty-themes
       ]
@@ -45,7 +45,7 @@ in
         pkgs.gparted
         pkgs.filezilla
         pkgs.libnotify
-        pkgs.vlc
+        # pkgs.vlc
         pkgs.legcord
         pkgs.notify-desktop
         pkgs.fontconfig
@@ -53,7 +53,7 @@ in
         pkgs.distrobox-tui
         pkgs.easyeffects
         pkgs.libreoffice-qt-fresh
-        pkgs.freerdp
+        # pkgs.freerdp
         pkgs.high-tide
         # pkgs.calibre
         pkgs.inkscape
