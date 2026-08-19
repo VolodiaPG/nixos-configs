@@ -27,6 +27,7 @@ in
     tailscale
     immich
     immich-machine-learning
+    brave-origin
     ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})

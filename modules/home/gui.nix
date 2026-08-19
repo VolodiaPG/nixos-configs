@@ -55,7 +55,7 @@ in
         pkgs.libreoffice-qt-fresh
         pkgs.freerdp
         pkgs.high-tide
-        pkgs.calibre
+        # pkgs.calibre
         pkgs.inkscape
         pkgs.gimp
         (pkgs.symlinkJoin {

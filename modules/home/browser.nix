@@ -17,14 +17,8 @@ in
     programs.chromium = {
       enable = true;
 
-      package = pkgs.brave;
+      package = pkgs.brave-origin;
 
-      # 🚩 Flags - Command-line arguments always passed to Helium
-      # flags = [
-      #   "--disable-gpu"
-      #   "--ozone-platform-hint=auto"
-      # ];
-      #
       extensions = [
         {
           id = "nngceckbapebfimnlniiiahkandclblb"; # bitwarden
@@ -37,9 +31,9 @@ in
         {
           id = "phaodiidhofhdmfkjiacigibgikhfafn"; # Quedelix
         }
-        {
-          id = "enamippconapkdmgfgjchkhakpfinmaj"; # dearrow
-        }
+        # {
+        #   id = "enamippconapkdmgfgjchkhakpfinmaj"; # dearrow
+        # }
       ];
     };
   };

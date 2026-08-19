@@ -19,8 +19,8 @@
       "https://nix-community.cachix.org?priority=15"
       "https://volodiapg.cachix.org?priority=30"
       "https://cache.numtide.com?priority=20"
-      "https://cache.flakehub.com?priority=20"
-      "https://install.determinate.systems?priority=20"
+      # "https://cache.flakehub.com?priority=20"
+      # "https://install.determinate.systems?priority=20"
       "https://cache.nixos-cuda.org?priority=10"
     ];
     trusted-public-keys = [
