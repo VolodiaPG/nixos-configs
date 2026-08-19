@@ -11,11 +11,19 @@ os.makedirs(cache_dir, exist_ok=True)
 # 1. Setup the clip (standard mpv-vapoursynth boilerplate)
 clip = video_in
 
-# 2. Convert to RGBH (Half-precision FP16)
+# 2. Detect true input FPS. mpv-vapoursynth's video_in often lacks fps_num/fps_den
+# but exposes _FPSNum/_FPSDen frame props from the container.
+fps_num = int(container_fps * 1e8)
+fps_den = int(1e8)
+
+# Stamp the detected rate onto the clip so rife() can compute the multiplier.
+clip = core.std.AssumeFPS(clip, fpsnum=fps_num, fpsden=fps_den)
+
+# 3. Convert to RGBH (Half-precision FP16)
 # This is vital for performance on RTX cards and uses less VRAM
 clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
 
-# 3. Apply RIFE with Real-Time optimizations
+# 4. Apply RIFE with Real-Time optimizations
 clip = rife(
     clip,
     model="4.25",
