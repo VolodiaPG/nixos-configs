@@ -11,10 +11,11 @@
   requests,
 }:
 let
+  model_name = "flownet_v4.26.heavy.pkl";
   modelFile = fetchurl {
     url = "https://github.com/HolyWu/vs-rife/releases/download/model/flownet_v4.26.heavy.pkl";
     hash = "sha256-TMUY4XIVatYge5x6QzZPUYgy2DpDJdSEJASTqeKYBTc=";
-    name = "flownet_v4.26.heavy.pkl";
+    name = model_name;
   };
 in
 buildPythonPackage (_finalAttrs: {
@@ -41,7 +42,7 @@ buildPythonPackage (_finalAttrs: {
 
   preBuild = ''
     mkdir -p vsrife/models
-    cp ${modelFile} vsrife/models/flownet_v4.25.pkl
+    cp ${modelFile} vsrife/models/${model_name}
   '';
 
   # pythonImportsCheck = [ "vsrife" ];
