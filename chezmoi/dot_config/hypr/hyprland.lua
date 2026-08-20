@@ -447,11 +447,12 @@ local function place(win, fw, fh, move)
 	}))
 end
 
+local is_moved = false
 local function pip(w)
 	-- Mind the special character between Mode and PIP
 	if w and w.title == "Mode PIP (Picture-in-Picture)" then
 		hl.dispatch(hl.dsp.window.float({ action = "set", window = w }))
-		place(w, 0.2, 0.3, false)
+		place(w, 0.2, 0.3, is_moved)
 		hl.dispatch(hl.dsp.window.pin({ action = "set", window = w }))
 	end
 end
@@ -460,7 +461,6 @@ hl.on("window.title", pip)
 hl.on("window.open", pip)
 
 -- Move the window right or left when the mouse focus it, so it gets out of the way
-local is_moved = false
 hl.on("window.active", function(w, _)
 	-- Mind the special character between Mode and PIP
 	if w and w.title == "Mode PIP (Picture-in-Picture)" then
