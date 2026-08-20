@@ -11,12 +11,12 @@ let
   # nixpkgs torch is 2.12.0 and the Library::def ABI changed, so libtorchtrt.so
   # fails to dlopen. Pin torch to 2.10.0+cu129 (matches the trt wheel) for both
   # vsrife and torchtensorrt so they share one torch in the env.
-  torch210 = python313Packages.callPackage ./_torch.nix { };
+  torch = python313Packages.callPackage ./_torch.nix { };
   vsrife = python313Packages.callPackage ./_vsrife.nix {
-    torch = torch210;
+    inherit torch;
   };
   torchtensorrt = python313Packages.callPackage ./_torchtensorrt.nix {
-    torch = torch210;
+    inherit torch;
   };
   vsrifePythonEnv = python313.withPackages (ps: [
     ps.vapoursynth
@@ -52,7 +52,7 @@ mpv.override {
     # "/run/opengl-driver/lib:/run/opengl-driver-32/lib"
   ];
 
-  youtubeSupport = true;
+  youtubeSupport = false;
 
   scripts = [
     mpvScripts.mpris

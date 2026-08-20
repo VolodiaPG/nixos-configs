@@ -11,10 +11,10 @@
   requests,
 }:
 let
-  model_name = "flownet_v4.26.heavy.pkl";
+  model_name = "flownet_v4.6.pkl";
   modelFile = fetchurl {
-    url = "https://github.com/HolyWu/vs-rife/releases/download/model/flownet_v4.26.heavy.pkl";
-    hash = "sha256-TMUY4XIVatYge5x6QzZPUYgy2DpDJdSEJASTqeKYBTc=";
+    url = "https://github.com/HolyWu/vs-rife/releases/download/model/${model_name}";
+    hash = "sha256-AIZG52Hw5ny3fwxsRM/jw+WgXZ2UZTEbloHKZQzgMNs=";
     name = model_name;
   };
 in
