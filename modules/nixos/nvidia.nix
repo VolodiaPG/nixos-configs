@@ -43,8 +43,8 @@ in
         enable = true;
         # support32Bit = true;
         extraPackages = [
-          pkgs.intel-compute-runtime
-          pkgs.intel-media-driver # LIBVA_DRIVER_NAME=iHD
+          # pkgs.intel-compute-runtime
+          # pkgs.intel-media-driver # LIBVA_DRIVER_NAME=iHD
           pkgs.intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
           pkgs.libva-vdpau-driver
           pkgs.libvdpau-va-gl
