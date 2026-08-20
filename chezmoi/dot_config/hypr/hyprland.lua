@@ -357,14 +357,14 @@ hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("noctalia msg session lock"))
 hl.bind(mainMod .. " + P", hl.dsp.workspace.toggle_special("scratch"))
 
 -- VRR toggle (per-monitor)
-hl.bind(
-	mainMod .. " + Tab",
-	hl.dsp.exec_cmd('hyprctl keyword monitor "Iiyama North America PL3461WQ 1171803800833",preferred,auto,1,vrr,1')
-)
-hl.bind(
-	mainMod .. " + SHIFT + Tab",
-	hl.dsp.exec_cmd('hyprctl keyword monitor "Iiyama North America PL3461WQ 1171803800833",preferred,auto,1,vrr,0')
-)
+-- hl.bind(
+-- 	mainMod .. " + Tab",
+-- 	hl.dsp.exec_cmd('hyprctl keyword monitor "Iiyama North America PL3461WQ 1171803800833",preferred,auto,1,vrr,1')
+-- )
+-- hl.bind(
+-- 	mainMod .. " + SHIFT + Tab",
+-- 	hl.dsp.exec_cmd('hyprctl keyword monitor "Iiyama North America PL3461WQ 1171803800833",preferred,auto,1,vrr,0')
+-- )
 
 -- Volume control
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("noctalia msg volume-up"), { locked = true })
