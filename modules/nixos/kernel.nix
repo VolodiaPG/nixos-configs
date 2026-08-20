@@ -108,13 +108,28 @@ in
       "net.ipv4.tcp_slow_start_after_idle" = 0;
 
       # # 4. Socket Buffer Limits (Prevents Bufferbloat)
-      # "net.core.rmem_max" = 8388608;
-      # "net.core.wmem_max" = 8388608;
-      # "net.ipv4.tcp_rmem" = "4096 87380 8388608";
-      # "net.ipv4.tcp_wmem" = "4096 65536 8388608";
-      #
+      "net.core.rmem_max" = 16777216;
+      "net.core.wmem_max" = 16777216;
+      "net.ipv4.tcp_rmem" = "4096 87380 16777216";
+      "net.ipv4.tcp_wmem" = "4096 65536 16777216";
+
       # # 5. Immediate Packet Dispatch
       # "net.ipv4.tcp_autocorking" = 0;
+      # Reuse connections, fast
+      "net.ipv4.tcp_tw_reuse" = 1;
+
+      # Free connection faster
+      "net.ipv4.tcp_fin_timeout" = 15;
+
+      # During spikes, prevent dropping connections by expanding queue capacity
+      "net.core.somaxconn" = 8192;
+      "net.core.netdev_max_backlog" = 16384;
+      "net.ipv4.tcp_max_syn_backlog" = 8192;
+
+      # Reduce keepalive time
+      "net.ipv4.tcp_keepalive_time" = 300;
+      "net.ipv4.tcp_keepalive_intvl" = 15;
+      "net.ipv4.tcp_keepalive_probes" = 5;
     };
 
     # ============================================================================
