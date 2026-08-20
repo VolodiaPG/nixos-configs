@@ -28,6 +28,7 @@ in
     immich
     immich-machine-learning
     brave-origin
+    orca-slicer
     ;
 
   inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
