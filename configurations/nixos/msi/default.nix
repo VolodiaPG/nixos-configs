@@ -35,7 +35,7 @@ in
     # Hardware and kernel
     kernel = {
       enable = true;
-      latestKernel = false;
+      lowLatencyNetworking = true;
     };
 
     nvidia.enable = true;

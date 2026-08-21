@@ -111,25 +111,9 @@ let
         (sources.vpnconfinement + "/modules/vpn-netns.nix")
       ];
     };
-    # bbr_classic module is inline in its flake.nix; extract without vendoring.
-    # ponytail: parens around `outputs {…}` — `.` binds tighter than application,
-    # so `outputs {…}.nixosModules` would otherwise select `.nixosModules` from the argument.
-    bbr_classic.nixosModules.default =
-      ((import (sources.bbr_classic + "/flake.nix")).outputs {
-        self = null;
-        nixpkgs = null;
-      }).nixosModules.default;
     srvos.nixosModules.server = sources.srvos + "/nixos/server";
     catppuccin.homeModules.catppuccin = sources.catppuccin + "/modules/home-manager";
     nix-index-database.homeModules.nix-index = sources.nix-index-database + "/home-manager-module.nix";
-    # ponytail: determinate DROPPED. Its module is curried on Determinate's custom nix fork
-    # (flakehub → flake-compat → defeats the speed goal). Empty stub so nix.nix's import
-    # resolves; nix.nix has no top-level config access. Darwin's common-nix-settings.nix is
-    # edited to drop determinate too. System uses nixpkgs nix.
-    determinate = {
-      nixosModules.default = { };
-      darwinModules.default = { };
-    };
     inherit (sources) mosh; # flake=false, used as src by overlay mosh override
     # ponytail: high-tide fork — upstream buildPythonApplication, only src swapped to the npins pin.
     # Built from unstable: its Python deps (python-mpd2, tidalapi) aren't in stable 26.05.

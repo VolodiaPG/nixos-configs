@@ -27,7 +27,10 @@ in
     commonNixSettings.enable = true;
 
     # Hardware and kernel
-    kernel.enable = true;
+    kernel = {
+      enable = true;
+      serverNetworking = true;
+    };
 
     # Storage and networking
     impermanence = {
