@@ -31,7 +31,7 @@ in
       cfg.package
 
       # Core hyprland utilities
-      pkgs.fuzzel # Application launcher
+      # pkgs.fuzzel # Application launcher
 
       # Screenshot tools
       pkgs.grim
@@ -57,6 +57,8 @@ in
 
       # Keyboard brightness
       pkgs.brightnessctl
+
+      pkgs.xdg-terminal-exec
     ];
 
     xdg = {
@@ -98,15 +100,29 @@ in
       enable = true;
       settings = {
         main = {
-          font = "Inter:size=11";
-          prompt = "❯ ";
-          width = 50;
+          placeholder = "Type to search...";
+          prompt = "'❯ '";
+          launch-prefix = "uwsm app --";
+          match-counter = true;
+          terminal = "xdg-terminal-exec";
+          horizontal-pad = 40;
           lines = 15;
-          horizontal-pad = 20;
+          line-height = 24;
           vertical-pad = 10;
           inner-pad = 8;
-          line-height = 24;
+          image-size-ratio = 0.3;
+          font = "Inter:size=12";
+          width = 50;
         };
+        #   prompt = "❯";
+        #   width = 50;
+        #   lines = 15;
+        #   horizontal-pad = 20;
+        #   vertical-pad = 10;
+        #   inner-pad = 8;
+        #   line-height = 24;
+        #   image-size-ratio = 0.5;
+        # };
 
         colors = {
           background = "1e1e2eff";
