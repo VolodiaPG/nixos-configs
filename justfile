@@ -24,9 +24,6 @@ mac-build:
 mac-switch: mac-build
     ./result/sw/bin/darwin-rebuild switch
 
-update:
-    npins update
-
 deploy node="home-server":
     deploy -f . {{node}} --skip-checks
 
@@ -35,3 +32,10 @@ secret-edit:
     cd {{justfile_directory()}}/secrets
     chosen=$(ls *.age | gum choose --header "Select which secret to edit:")
     ragenix -e "$chosen"
+
+update:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    npins update
+    just switch
+    just deploy
