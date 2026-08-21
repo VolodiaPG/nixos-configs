@@ -13,19 +13,6 @@
       "url": "https://github.com/ryantm/agenix/archive/b027ee29d959fda4b60b57566d64c98a202e0feb.tar.gz",
       "hash": "sha256-9VnK6Oqai65puVJ4WYtCTvlJeXxMzAp/69HhQuTdl/I="
     },
-    "bbr_classic": {
-      "type": "Git",
-      "repository": {
-        "type": "GitHub",
-        "owner": "cmspam",
-        "repo": "bbr_classic"
-      },
-      "branch": "main",
-      "submodules": false,
-      "revision": "8cdc0571631569c5803cc119d4512b7632682807",
-      "url": "https://github.com/cmspam/bbr_classic/archive/8cdc0571631569c5803cc119d4512b7632682807.tar.gz",
-      "hash": "sha256-AKknyiQLjEC8nXWCmqJy1HUt/fTzk8N2gihwYYFFVu4="
-    },
     "brew": {
       "type": "Git",
       "repository": {
@@ -35,9 +22,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "2bb73e1e3cc7e20e71beb5c217bcb1627ebe482e",
-      "url": "https://github.com/Homebrew/brew/archive/2bb73e1e3cc7e20e71beb5c217bcb1627ebe482e.tar.gz",
-      "hash": "sha256-zA39SKyGyAMW8sp4X44UC0gSBk3nPGaUvNqOwXyxRhw="
+      "revision": "ecbeb2ef4060122ecf89b7a0bcb76f8795ab5ef2",
+      "url": "https://github.com/Homebrew/brew/archive/ecbeb2ef4060122ecf89b7a0bcb76f8795ab5ef2.tar.gz",
+      "hash": "sha256-JFAGpOgjHQBYAB5Ci7Tb1+wGsMwqSXGeyV5P47JP9Ng="
     },
     "catppuccin": {
       "type": "Git",
@@ -82,14 +69,14 @@
       "type": "Git",
       "repository": {
         "type": "GitHub",
-        "owner": "volodiapg",
+        "owner": "Nokse22",
         "repo": "high-tide"
       },
       "branch": "master",
       "submodules": false,
-      "revision": "2ba920e51bdb85e0e7f2819d47d7f3a41617f420",
-      "url": "https://github.com/volodiapg/high-tide/archive/2ba920e51bdb85e0e7f2819d47d7f3a41617f420.tar.gz",
-      "hash": "sha256-kTnmgUtAyM3a/OitTDN6BO1ANN3kd41VdXdlmwRVAB0="
+      "revision": "49f24724c38b937f3ff6c73fc58def994c940a9c",
+      "url": "https://github.com/Nokse22/high-tide/archive/49f24724c38b937f3ff6c73fc58def994c940a9c.tar.gz",
+      "hash": "sha256-Cpg4JB04P3M49Zar5pjv0vEJNtc6JRi9d6zStthUtYc="
     },
     "home-manager": {
       "type": "Git",
@@ -204,9 +191,9 @@
       },
       "branch": "nixos-26.05",
       "submodules": false,
-      "revision": "b18a4b905f8d028dc4476412e6d6891728695379",
-      "url": "https://github.com/NixOS/nixpkgs/archive/b18a4b905f8d028dc4476412e6d6891728695379.tar.gz",
-      "hash": "sha256-gwrPcFf/rDjHPaVflbDZ040ZDmBTRj/7+s8ZmE2SaIM="
+      "revision": "5880666fd9eb563038431edb35c2d0aa595884e6",
+      "url": "https://github.com/NixOS/nixpkgs/archive/5880666fd9eb563038431edb35c2d0aa595884e6.tar.gz",
+      "hash": "sha256-OURZPknrTjQrlNyxPdqzyqmU/81Wes1CUP/Ft1Rv/YI="
     },
     "nixpkgs-unstable": {
       "type": "Git",
