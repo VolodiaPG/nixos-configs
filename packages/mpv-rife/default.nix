@@ -52,7 +52,7 @@ mpv.override {
     # "/run/opengl-driver/lib:/run/opengl-driver-32/lib"
   ];
 
-  youtubeSupport = false;
+  youtubeSupport = true;
 
   scripts = [
     mpvScripts.mpris
