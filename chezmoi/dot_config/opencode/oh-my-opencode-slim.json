@@ -4,47 +4,51 @@
   "presets": {
     "default": {
       "orchestrator": {
-        "model": "opencode/minimax-m3",
-        "variant": "thinking",
+        "model": "opencode/glm-5.2",
+        "variant": "high",
         "skills": ["*"],
-        "mcps": ["*", "!context7"]
+        "mcps": []
       },
       "oracle": {
-        "model": "opencode/qwen3.7-max",
-        "variant": "max",
+        "model": "opencode/deepseek-v4-pro",
+        "variant": "high",
         "skills": ["simplify"],
         "mcps": []
       },
       "librarian": {
         "model": "opencode/deepseek-v4-flash",
-        "variant": "high",
-        "skills": [],
-        "mcps": ["websearch", "context7", "gh_grep"]
+        "variant": "low",
+        "skills": ["caveman"],
+        "mcps": ["context7", "gh_grep"]
       },
       "explorer": {
         "model": "opencode/deepseek-v4-flash",
-        "variant": "max",
-        "skills": [],
+        "variant": "low",
+        "skills": ["caveman"],
         "mcps": []
       },
       "designer": {
         "model": "opencode/kimi-k2.7-code",
         "variant": "medium",
-        "skills": [],
+        "skills": ["caveman"],
         "mcps": []
       },
       "fixer": {
-        "model": "opencode/deepseek-v4-flash",
+        "model": "opencode/gpt-5.6-luna",
         "variant": "high",
-        "skills": [],
+        "skills": ["caveman"],
         "mcps": []
       },
       "observer": {
-        "model": "opencode/mimo-v2.5",
-        "variant": "max",
-        "skills": [],
+        "model": "opencode/mimo-v2.5-free",
+        "variant": "low",
+        "skills": ["caveman"],
         "mcps": []
       }
     }
+  },
+  "backgroundJobs": {
+    "strategy": "checkpoint-compatible",
+    "maxRetainedSnapshots": 10
   }
 }

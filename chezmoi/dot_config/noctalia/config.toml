@@ -222,6 +222,7 @@ position_vertical = "center_right"
 
 [plugin_settings."avivbintangaringga/nix-monitor"]
 branch = "nixos-26.05"
+update_command = "cd  ~/Documents/nixos-configs && nix-shell . --run \"just update\""
 
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
@@ -310,19 +311,19 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-18.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-18.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-18.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
 
     [wallpaper.monitors.HDMI-A-1]
     path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-12.jpg"
 
     [wallpaper.monitors.HEADLESS-1]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-18.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
 
 [weather]
 effects = true
