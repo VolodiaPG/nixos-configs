@@ -70,3 +70,8 @@ lze.load({
 
 local socket_path = "/tmp/nvim_" .. vim.loop.os_getpid()
 vim.fn.serverstart(socket_path)
+
+-- Fire and forget: non-blocking, ignores output and return codes
+vim.uv.spawn("theme-switcher", {
+	detached = true,
+})
