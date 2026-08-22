@@ -420,6 +420,11 @@ hl.window_rule({
 hl.window_rule({ match = { class = "^(mpv|steam_app_.*)$" }, no_vrr = false })
 hl.window_rule({ match = { class = "(.*\\.exe)$" }, no_vrr = false })
 
+-- Steam games: stop click-to-focus warping cursor to window center.
+-- Fixes "mouse resets to ground" in fullscreen XWayland games (e.g. Vermintide 2).
+hl.window_rule({ match = { class = "^steam_app_.*$" }, no_focus = true })
+hl.window_rule({ match = { class = "^steam_app_.*$" }, no_initial_focus = true })
+
 -- ----- helpers --------------------------------------------------------
 -- place() drives the `place` submap: float the active window, then size +
 -- position it as fractions of the focused monitor. Monitor width/height are
