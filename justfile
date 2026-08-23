@@ -24,8 +24,8 @@ mac-build:
 mac-switch: mac-build
     ./result/sw/bin/darwin-rebuild switch
 
-deploy node="home-server":
-    deploy -f . {{node}} --skip-checks
+deploy node="home-server" *flags:
+    deploy -f . {{node}} --skip-checks {{flags}}
 
 secret-edit:
     #!/usr/bin/env bash
