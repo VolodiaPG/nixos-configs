@@ -36,6 +36,7 @@ in
     kernel = {
       enable = true;
       lowLatencyNetworking = true;
+      cachyDesktop = true;
     };
 
     nvidia.enable = true;
@@ -82,7 +83,7 @@ in
     blocky.enable = false;
 
     immich-ml = {
-      enable = true;
+      enable = false;
     };
     my_virtualization.enable = true;
   };

@@ -16,7 +16,8 @@ in
     services.kernel = {
       enable = mkEnableOption "kernel configuration";
 
-      cachy = mkEnableOption "Cachy kernel";
+      cachyDesktop = mkEnableOption "Cachy kernel";
+      cachyServer = mkEnableOption "Cachy kernel";
 
       lowLatencyNetworking = mkEnableOption "low-latency client networking";
 
@@ -30,9 +31,16 @@ in
         assertion = !(cfg.lowLatencyNetworking && cfg.serverNetworking);
         message = "services.kernel.lowLatencyNetworking and services.kernel.serverNetworking are mutually exclusive";
       }
+      {
+        assertion = !(cfg.cachyDesktop && cfg.cachyServer);
+        message = "services.kernel.cachyDesktop and services.kernel.cachyServer are mutually exclusive";
+      }
     ];
 
-    boot.kernelPackages = cachyos-kernel.linuxPackages-cachyos-latest-lto;
+    boot.kernelPackages = mkMerge [
+      (mkIf cfg.cachyDesktop cachyos-kernel.linuxPackages-cachyos-latest-lto-x86_64-v3)
+      (mkIf cfg.cachyServer cachyos-kernel.linuxPackages-cachyos-server)
+    ];
 
     powerManagement = {
       enable = true;

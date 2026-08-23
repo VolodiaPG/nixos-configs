@@ -30,6 +30,7 @@ in
     kernel = {
       enable = true;
       serverNetworking = true;
+      cachyServer = true;
     };
 
     # Storage and networking
