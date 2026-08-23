@@ -9,7 +9,7 @@ order = [ "main" ]
     capsule_thickness = 0.99999998137354851
     center = [ "media", "workspaces", "cat" ]
     concave_edge_corners = false
-    end = [ "tray", "notifications", "battery", "volume", "brightness", "clock" ]
+    end = [ "tray", "status", "notifications", "battery", "volume", "brightness", "clock" ]
     font_weight = 400
     margin_edge = 0
     margin_ends = 300
@@ -224,11 +224,15 @@ position_vertical = "center_right"
 branch = "nixos-26.05"
 update_command = "cd  ~/Documents/nixos-configs && nix-shell . --run \"just update\""
 
+[plugin_settings."davemhammer/tailscale"]
+manager_placement = "attached"
+notify_on_peer_change = false
+
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor" ]
+enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor", "davemhammer/tailscale" ]
 
 [shell]
 avatar_path = "/home/volodia/Pictures/.face"
@@ -298,7 +302,7 @@ telemetry_enabled = false
 
 [theme]
 builtin = "Catppuccin"
-mode = "dark"
+mode = "light"
 source = "builtin"
 
 [wallpaper]
@@ -311,19 +315,19 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
 
     [wallpaper.monitors.HDMI-A-1]
     path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-12.jpg"
 
     [wallpaper.monitors.HEADLESS-1]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-21.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
 
 [weather]
 effects = true
@@ -357,6 +361,9 @@ checking_color = "secondary"
 type = "avivbintangaringga/nix-monitor:nix-monitor"
 up_to_date_color = "tertiary"
 update_available_color = "error"
+
+[widget.status]
+type = "davemhammer/tailscale:status"
 
 [widget.sysmon]
 show_glyph = true
