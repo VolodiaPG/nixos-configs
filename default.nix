@@ -133,6 +133,8 @@ let
           }
         );
       };
+
+    nix-cachyos-kernel.packages = (import sources.nix-cachyos-kernel).outputs.legacyPackages;
   };
 
   # nix-darwin ships no default.nix; evaluate its flake.nix outputs for lib.darwinSystem.

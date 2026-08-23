@@ -1,12 +1,22 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  flake,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf mkMerge;
   cfg = config.services.kernel;
+  inherit (flake.inputs) nix-cachyos-kernel;
+  cachyos-kernel = nix-cachyos-kernel.packages.${pkgs.system};
 in
 {
   options = {
     services.kernel = {
       enable = mkEnableOption "kernel configuration";
+
+      cachy = mkEnableOption "Cachy kernel";
 
       lowLatencyNetworking = mkEnableOption "low-latency client networking";
 
@@ -21,6 +31,8 @@ in
         message = "services.kernel.lowLatencyNetworking and services.kernel.serverNetworking are mutually exclusive";
       }
     ];
+
+    boot.kernelPackages = cachyos-kernel.linuxPackages-cachyos-latest-lto;
 
     powerManagement = {
       enable = true;
