@@ -232,7 +232,7 @@ notify_on_peer_change = false
 locale = "fr-FR"
 
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor", "davemhammer/tailscale" ]
+enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor" ]
 
 [shell]
 avatar_path = "/home/volodia/Pictures/.face"
