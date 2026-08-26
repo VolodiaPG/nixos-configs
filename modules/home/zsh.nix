@@ -205,6 +205,7 @@ in
         n = "vim";
         oc = "opencode --port";
         opencode-agents = "OPENCODE_CONFIG=$XDG_CONFIG_HOME/opencode/opencode-agents.json opencode";
+        journalctl-10min = "journalctl --user -xe -b --since '10 min ago'";
       };
       plugins = [
         {
