@@ -64,35 +64,38 @@ in
     xdg = {
       portal = {
         enable = true;
-        config = {
-          common = {
-            default = [
-              "gtk"
-              "gnome"
-            ];
-          };
-          hyprland = {
-            default = [
-              "hyprland"
-              "gtk"
-              "gnome"
-            ];
-          };
-        };
+        xdgOpenUsePortal = true;
+        configPackages = [ pkgs.gnome-session ];
         extraPortals = [
           # pkgs.xdg-desktop-portal-hyprland
           pkgs.xdg-desktop-portal-gtk
-          pkgs.xdg-desktop-portal-gnome
-          pkgs.xdg-desktop-portal-wlr
+          pkgs.gnome-keyring
         ];
-        xdgOpenUsePortal = true;
+        config.hyprland = {
+          default = "hyprland;gtk;";
+          "org.freedesktop.impl.portal.OpenURI" = [ "gtk" ];
+          "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
+          "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+        };
       };
     };
 
     # e.g. for slack, etc
     xdg.configFile."electron-flags.conf".text = ''
-      --enable-features=UseOzonePlatform
+      --enable-features=UseOzonePlatform,WebRTCPipeWireCapturer
       --ozone-platform=wayland
+    '';
+
+    # xdg-desktop-portal-hyprland screencopy config.
+    # force_shm works around NVIDIA / multi-GPU DMA-BUF allocation failures
+    # that break whole-monitor capture while window capture still works.
+    # cursor_mode = 2 embeds the cursor (needed for browser-based shares).
+    xdg.configFile."hypr/xdph.conf".text = ''
+      screencopy {
+        force_shm = true
+        max_fps = 60
+        cursor_mode = 2
+      }
     '';
 
     # Fuzzel launcher configuration
