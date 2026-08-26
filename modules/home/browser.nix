@@ -17,11 +17,16 @@ in
     programs.chromium = {
       enable = true;
 
-      package = pkgs.brave-origin;
+      #package = pkgs.brave-origin;
+      package = pkgs.chromium;
 
       extensions = [
         {
           id = "nngceckbapebfimnlniiiahkandclblb"; # bitwarden
+        }
+
+        {
+          id = "ddkjiahejlhfcafbddmgiahcphecmpfh"; # ublock origin lite
         }
 
         {
@@ -31,6 +36,7 @@ in
         {
           id = "phaodiidhofhdmfkjiacigibgikhfafn"; # Quedelix
         }
+
         # {
         #   id = "enamippconapkdmgfgjchkhakpfinmaj"; # dearrow
         # }
