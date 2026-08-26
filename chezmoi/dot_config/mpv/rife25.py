@@ -19,11 +19,12 @@ clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
 # 4. Apply RIFE with Real-Time optimizations
 clip = rife(
     clip,
-    model="4.6",
+    model="4.25",
     trt=True,
+    scale = 1.0,
     auto_download=False, # Shouldn't be enabled if using the nix package vsrife
     factor_num=2,
-    scale = 1.0,
+    # factor_den=1,
     sc=True,                 # Scene change detection
     trt_cache_dir=cache_dir,  # Nix store is read-only
 )

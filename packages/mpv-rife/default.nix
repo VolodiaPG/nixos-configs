@@ -26,6 +26,15 @@ let
     ps.packaging
     ps.psutil
   ]);
+  # ponytail: autosub defaults to English; swap first language to French so
+  # subliminal downloads fr subs automatically (key 'n' still grabs 2nd lang).
+  autosub = mpvScripts.autosub.overrideAttrs (prev: {
+    preInstall = (prev.preInstall or "") + ''
+      substituteInPlace autosub.lua --replace-fail \
+        "{ 'English', 'en', 'eng' }," \
+        "{ 'French', 'fr', 'fre' },"
+    '';
+  });
 in
 mpv.override {
   mpv-unwrapped = mpv-unwrapped.override {
@@ -56,8 +65,9 @@ mpv.override {
 
   scripts = [
     mpvScripts.mpris
-    mpvScripts.autosub
+    autosub
     mpvScripts.modernz
+    mpvScripts.autosubsync-mpv
     # mpvScripts.dynamic-crop
     mpvScripts.builtins.autocrop
     mpvScripts.eisa01.smartskip
