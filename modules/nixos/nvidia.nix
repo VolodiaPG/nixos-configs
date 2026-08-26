@@ -55,8 +55,8 @@ in
       };
       nvidia-container-toolkit.enable = true;
       nvidia = {
-        package = config.boot.kernelPackages.nvidiaPackages.production;
-        open = true;
+        # package = config.boot.kernelPackages.nvidiaPackages.stable;
+        open = false;
         modesetting.enable = true; # For wayland
         prime.offload.enable = false;
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
