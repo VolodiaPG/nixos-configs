@@ -179,7 +179,8 @@ hl.env("XCURSOR_SIZE", "18")
 hl.config({
 	input = {
 		kb_layout = "fr",
-		follow_mouse = 1,
+		follow_mouse = 0,
+		mouse_refocus = false,
 		scroll_method = "2fg",
 		accel_profile = "flat",
 		touchpad = {
@@ -256,7 +257,7 @@ end
 hl.config({
 	cursor = {
 		sync_gsettings_theme = true,
-		-- no_hardware_cursors = 2,
+		no_hardware_cursors = 2,
 	},
 })
 
@@ -280,16 +281,16 @@ hl.config({
 		active_opacity = 1.0,
 		inactive_opacity = 1.0,
 		blur = {
+			size = 60,
 			enabled = true,
-			passes = 5,
+			passes = 2,
 			noise = 0.05,
 			vibrancy = 1.5,
-			xray = false,
+			xray = true,
 			new_optimizations = true,
-			ignore_opacity = false,
 		},
 		shadow = {
-			enabled = true,
+			enabled = false,
 			range = 4,
 			render_power = 3,
 			color = "rgba(1a1a1aee)",
@@ -297,6 +298,13 @@ hl.config({
 	},
 })
 
+hl.window_rule({
+	match = {
+		class = "steam_app_.*",
+		fullscreen = true,
+	},
+	confine_pointer = true,
+})
 --─────────────────────────────
 -- Binds
 --─────────────────────────────
@@ -391,7 +399,7 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 -- Window rules
 --─────────────────────────────
 -- Workspace assignments
-hl.window_rule({ match = { class = "^(brave-browser)$" }, workspace = "1" })
+hl.window_rule({ match = { class = "^(brave-browser|zen-beta)$" }, workspace = "1" })
 hl.window_rule({ match = { class = "^(kitty)$" }, workspace = "2", scrolling_width = 1.0 })
 hl.window_rule({ match = { title = "^(.*Proton Mail.*)$" }, workspace = "3" })
 hl.window_rule({ match = { title = "^(.*Fizzy.*|.*Home Assistant.*)$" }, workspace = "4" })
@@ -403,16 +411,13 @@ hl.window_rule({ match = { class = "^(signal|legcord)$" }, workspace = "3" })
 hl.window_rule({ match = { title = "^_crx_.*$" }, float = true })
 hl.window_rule({ match = { class = "^feh$" }, float = true })
 
--- Global blur (matches niri's global background-effect rule)
-hl.window_rule({ match = { class = "^(.*)$" }, no_blur = false })
-
 -- Block out from screen capture
 hl.window_rule({
 	match = { class = "^(org.keepassxc.KeePassXC|org.gnome.World.Secrets|signal|legcord)$" },
 	no_screen_share = true,
 })
 hl.window_rule({
-	match = { title = "^(Mail|mail|Bitwarden|Fizzy)$" },
+	match = { title = "(Mail|mail|Bitwarden|Fizzy)" },
 	no_screen_share = true,
 })
 
@@ -478,12 +483,16 @@ hl.layer_rule({
 	no_screen_share = true,
 })
 
+-- Global blur (matches niri's global background-effect rule)
+-- hl.window_rule({ match = { class = "^(.*)$" }, no_blur = false })
+-- hl.window_rule({ match = { class = "^(.*)$" }, no_blur = false })
+
 -- Blur for launcher
 hl.layer_rule({ match = { namespace = "^(launcher)$" }, blur = true })
--- hl.layer_rule({ match = { namespace = "^(launcher)$" }, xray = 0 })
+hl.layer_rule({ match = { namespace = "^(launcher)$" }, xray = 0 })
 
 -- Noctalia surfaces — blur, no xray, block from capture
 local noctalia_ns = '^(noctalia-(bar-[^"]+|notification|dock|panel|attached-panel|osd|window-switcher))$'
-hl.layer_rule({ match = { namespace = noctalia_ns }, blur = true })
+-- hl.layer_rule({ match = { namespace = noctalia_ns }, blur = true })
 hl.layer_rule({ match = { namespace = noctalia_ns }, xray = false })
 hl.layer_rule({ match = { namespace = noctalia_ns }, no_screen_share = true })
