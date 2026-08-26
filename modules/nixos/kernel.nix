@@ -60,6 +60,7 @@ in
         (mkIf cfg.lowLatencyNetworking {
           "net.core.default_qdisc" = "fq_codel";
           "net.ipv4.tcp_congestion_control" = "cubic";
+          "vm.swappiness" = 10;
         })
         (mkIf cfg.serverNetworking {
           "net.core.default_qdisc" = "fq";
