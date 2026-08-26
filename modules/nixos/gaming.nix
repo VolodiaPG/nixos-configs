@@ -27,6 +27,7 @@ in
         ];
       }).run
       faugus-launcher
+      gamemode
       # obs-studio
       # obs-studio-plugins.wlrobs
       # obs-studio-plugins.obs-pipewire-audio-capture
