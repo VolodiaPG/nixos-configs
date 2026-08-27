@@ -18,12 +18,18 @@ order = [ "main" ]
     radius = 12
     scale = 1.1000000089406967
     shadow = true
-    start = [ "nix-monitor", "sysmon", "cpu" ]
+    start = [ "nix-monitor", "sysmon", "cpu", "status_2" ]
     thickness = 25
     widget_spacing = 12
 
 [brightness]
 enable_ddcutil = true
+
+[calendar]
+enabled = true
+
+    [calendar.account.asssassynv]
+    type = "google"
 
 [dock]
 background_opacity = 0.79999998211860657
@@ -69,6 +75,8 @@ widget_order = [
     cx = 1433.5
     cy = 600.0
     output = "DP-3"
+    placement_height = 1152.0
+    placement_width = 2752.0
     rotation = 0.0
     type = "login_box"
 
@@ -91,9 +99,11 @@ widget_order = [
     [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
     box_height = 196.0
     box_width = 720.0
-    cx = 960.0
-    cy = 961.0
+    cx = 640.0
+    cy = 640.66668701171875
     output = "HDMI-A-1"
+    placement_height = 720.0
+    placement_width = 1280.0
     rotation = 0.0
     type = "login_box"
 
@@ -119,6 +129,8 @@ widget_order = [
     cx = 480.0
     cy = 358.0
     output = "HEADLESS-1"
+    placement_height = 540.0
+    placement_width = 960.0
     rotation = 0.0
     type = "login_box"
 
@@ -144,6 +156,8 @@ widget_order = [
     cx = 1433.5
     cy = 376.0
     output = "DP-3"
+    placement_height = 1152.0
+    placement_width = 2752.0
     rotation = 0.0
     type = "clock"
 
@@ -161,6 +175,8 @@ widget_order = [
     cx = 1433.5
     cy = 796.0
     output = "DP-3"
+    placement_height = 1152.0
+    placement_width = 2752.0
     rotation = 0.0
     type = "media_player"
 
@@ -175,6 +191,8 @@ widget_order = [
     cx = 1433.5
     cy = 1048.0
     output = "DP-3"
+    placement_height = 1152.0
+    placement_width = 2752.0
     rotation = 0.0
     type = "sysmon"
 
@@ -192,6 +210,8 @@ widget_order = [
     cx = 1433.5
     cy = 472.0
     output = "DP-3"
+    placement_height = 1152.0
+    placement_width = 2752.0
     rotation = 0.0
     type = "clock"
 
@@ -231,8 +251,15 @@ notify_on_peer_change = false
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
+[plugin_settings."pozzoo/hassio"]
+entity_manager_open_near_click = true
+entity_manager_placement = "attached"
+ha_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIwOWU1MDc5ZTI1NDI0ZTllODA3YTdmNWE0NjJiNzg2NyIsImlhdCI6MTc4NzgzMzQ2NSwiZXhwIjoyMTAzMTkzNDY1fQ.OfCSnqs_aZbOGFFFbtcoESDmZzqNLbxV4RWSo9Rqea0"
+ha_url = "http://192.168.1.65:8123"
+shortcut_entity_1 = "sensor.a1_03919c470201160_etape_actuelle"
+
 [plugins]
-enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor" ]
+enabled = [ "nzlov/daily-wallpaper", "dotnetrob/cat", "avivbintangaringga/nix-monitor", "pozzoo/hassio" ]
 
 [shell]
 avatar_path = "/home/volodia/Pictures/.face"
@@ -302,8 +329,10 @@ telemetry_enabled = false
 
 [theme]
 builtin = "Catppuccin"
+community_palette = "Oxocarbon"
 mode = "light"
 source = "builtin"
+wallpaper_scheme = "m3-content"
 
 [wallpaper]
 directory = "/home/volodia/Pictures/Wallpapers"
@@ -315,19 +344,19 @@ transition_duration = 1500
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-27.jpg"
 
     [wallpaper.last]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-27.jpg"
 
     [wallpaper.monitors.DP-3]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-27.jpg"
 
     [wallpaper.monitors.HDMI-A-1]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-12.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-24.jpg"
 
     [wallpaper.monitors.HEADLESS-1]
-    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-23.jpg"
+    path = "/home/volodia/Pictures/Wallpapers/daily-wallpaper/bing-fr-fr-2026-08-26.jpg"
 
 [weather]
 effects = true
@@ -364,6 +393,9 @@ update_available_color = "error"
 
 [widget.status]
 type = "davemhammer/tailscale:status"
+
+[widget.status_2]
+type = "pozzoo/hassio:status"
 
 [widget.sysmon]
 show_glyph = true

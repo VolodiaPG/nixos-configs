@@ -281,9 +281,9 @@ hl.config({
 		active_opacity = 1.0,
 		inactive_opacity = 1.0,
 		blur = {
-			size = 60,
+			size = 30,
 			enabled = true,
-			passes = 2,
+			passes = 3,
 			noise = 0.05,
 			vibrancy = 1.5,
 			xray = true,
