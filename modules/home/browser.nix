@@ -17,17 +17,17 @@ in
     programs.chromium = {
       enable = true;
 
-      #package = pkgs.brave-origin;
-      package = pkgs.chromium;
+      package = pkgs.brave-origin;
+      # package = pkgs.chromium;
 
       extensions = [
         {
           id = "nngceckbapebfimnlniiiahkandclblb"; # bitwarden
         }
 
-        {
-          id = "ddkjiahejlhfcafbddmgiahcphecmpfh"; # ublock origin lite
-        }
+        # {
+        #   id = "ddkjiahejlhfcafbddmgiahcphecmpfh"; # ublock origin lite
+        # }
 
         {
           id = "mnjggcdmjocbbbhaepdhchncahnbgone"; # sponsorblock
