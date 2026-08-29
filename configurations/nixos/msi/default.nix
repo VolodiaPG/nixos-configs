@@ -59,7 +59,8 @@ in
     # Storage and networking
     impermanence = {
       enable = true;
-      rootVolume = "/dev/sda";
+      fsType = "ext4";
+      rootVolume = "/dev/disk/by-label/root";
       disko = true;
     };
     networking.enable = false;

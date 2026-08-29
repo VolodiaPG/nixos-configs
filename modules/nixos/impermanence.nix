@@ -22,6 +22,7 @@ let
     int
     listOf
     attrs
+    enum
     ;
   cfg = config.services.impermanence;
 in
@@ -32,8 +33,23 @@ in
     services.impermanence = {
       enable = mkEnableOption "impermanence";
 
+      fsType = mkOption {
+        description = ''
+          Filesystem type of the root volume.
+          - btrfs: rotates the root via subvolumes (moves the old `root` subvolume into `old_roots/`).
+          - ext4/xfs: no subvolumes; the old root contents are moved into an `old_roots/` directory at the volume root.
+          ext4/xfs require separate partitions for /nix and /persistent (e.g. via disko LVM), since only the root volume is rotated.
+        '';
+        type = enum [
+          "btrfs"
+          "ext4"
+          "xfs"
+        ];
+        default = "btrfs";
+      };
+
       rootVolume = mkOption {
-        description = "Full stable device path of the btrfs root volume (e.g. /dev/disk/by-id/...)";
+        description = "Full stable device path of the root volume (e.g. /dev/disk/by-id/... or /dev/disk/by-label/...)";
         type = str;
         default = "/dev/root_vg";
       };
@@ -96,11 +112,11 @@ in
         ++ services;
       after = [ "systemd-fsck-root.service" ];
       path = [
-        pkgs.btrfs-progs
         pkgs.coreutils
         pkgs.findutils
         pkgs.util-linux
-      ];
+      ]
+      ++ lib.optional (cfg.fsType == "btrfs") pkgs.btrfs-progs;
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -128,46 +144,77 @@ in
 
           directoriesToBind = directories ++ files;
         in
-        ''
-          mkdir -p /btrfs_tmp
-          mount ${cfg.rootVolume} /btrfs_tmp
-          if [[ -e /btrfs_tmp/root ]]; then
-              mkdir -p /btrfs_tmp/old_roots
-              timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-              mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-          fi
+        if cfg.fsType == "btrfs" then
+          ''
+            mkdir -p /btrfs_tmp
+            mount ${cfg.rootVolume} /btrfs_tmp
+            if [[ -e /btrfs_tmp/root ]]; then
+                mkdir -p /btrfs_tmp/old_roots
+                timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+                mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+            fi
 
-          delete_subvolume_recursively() {
-              IFS=$'\n'
-              for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-                  delete_subvolume_recursively "/btrfs_tmp/$i"
-              done
-              btrfs subvolume delete "$1"
-          }
+            delete_subvolume_recursively() {
+                IFS=$'\n'
+                for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+                    delete_subvolume_recursively "/btrfs_tmp/$i"
+                done
+                btrfs subvolume delete "$1"
+            }
 
-          for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${toString cfg.deleteAfterDays}); do
-              delete_subvolume_recursively "$i"
-          done
+            for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${toString cfg.deleteAfterDays}); do
+                delete_subvolume_recursively "$i"
+            done
 
-          btrfs subvolume create /btrfs_tmp/root
+            btrfs subvolume create /btrfs_tmp/root
 
-          mkdir -p /btrfs_tmp/root/boot
-          mkdir -p /btrfs_tmp/root/nix
-          mkdir -p /btrfs_tmp/root/persistent
-          ${builtins.concatStringsSep "\n" (
-            builtins.map (dir: "mkdir -p /btrfs_tmp/root" + dir) directoriesToBind
-          )}
-          ${builtins.concatStringsSep "\n" (
-            builtins.map (dir: "mkdir -p /btrfs_tmp/persistent" + dir) directoriesToBind
-          )}
-          ${builtins.concatStringsSep "\n" (
-            builtins.map (dir: "touch /btrfs_tmp/persistent" + dir) filesList
-          )}
+            mkdir -p /btrfs_tmp/root/boot
+            mkdir -p /btrfs_tmp/root/nix
+            mkdir -p /btrfs_tmp/root/persistent
+            ${builtins.concatStringsSep "\n" (
+              builtins.map (dir: "mkdir -p /btrfs_tmp/root" + dir) directoriesToBind
+            )}
+            ${builtins.concatStringsSep "\n" (
+              builtins.map (dir: "mkdir -p /btrfs_tmp/persistent" + dir) directoriesToBind
+            )}
+            ${builtins.concatStringsSep "\n" (
+              builtins.map (dir: "touch /btrfs_tmp/persistent" + dir) filesList
+            )}
 
-          umount /btrfs_tmp
-        '';
+            umount /btrfs_tmp
+          ''
+        else
+          ''
+            mkdir -p /fs_tmp
+            mount ${cfg.rootVolume} /fs_tmp
+
+            # Move the previous root contents into old_roots/<timestamp>.
+            # old_roots itself and lost+found are kept at the volume root.
+            mkdir -p /fs_tmp/old_roots
+            timestamp=$(date "+%Y-%m-%-d_%H:%M:%S")
+            mkdir -p "/fs_tmp/old_roots/$timestamp"
+            shopt -s dotglob nullglob
+            for item in /fs_tmp/*; do
+                case "$item" in
+                    /fs_tmp/old_roots|/fs_tmp/lost+found) continue ;;
+                esac
+                mv "$item" "/fs_tmp/old_roots/$timestamp/"
+            done
+            shopt -u dotglob nullglob
+
+            find /fs_tmp/old_roots/ -mindepth 1 -maxdepth 1 -mtime +${toString cfg.deleteAfterDays} -exec rm -rf {} +
+
+            # Recreate mountpoints for the separate /nix and /persistent
+            # partitions and for the impermanence bind targets on the root.
+            mkdir -p /fs_tmp/boot
+            mkdir -p /fs_tmp/nix
+            mkdir -p /fs_tmp/persistent
+            ${builtins.concatStringsSep "\n" (map (dir: "mkdir -p /fs_tmp" + dir) directoriesToBind)}
+
+            umount /fs_tmp
+          '';
     };
-    boot.supportedFilesystems = [ "btrfs" ];
+    boot.supportedFilesystems = [ cfg.fsType ];
     # virtualisation.vmVariantWithDisko = {
     #   # https://github.com/Arcanyx-org/NiXium/blob/a9cba53da660d4c8c64697ef4b91425f8fdd9bae/src/nixos/machines/tupac/config/vm-build.nix#L10
     #   virtualisation = {
@@ -180,7 +227,10 @@ in
     # };
     fileSystems = mkMerge [
       { "/persistent".neededForBoot = true; }
-      (mkIf (!cfg.disko) {
+      # The non-disko block assumes a single btrfs volume with subvolumes for
+      # /, /nix and /persistent. For ext4/xfs (separate partitions) provide
+      # fileSystems via disko or manually.
+      (mkIf (!cfg.disko && cfg.fsType == "btrfs") {
         "/" = {
           device = cfg.rootVolume;
           fsType = "btrfs";
