@@ -60,7 +60,7 @@ in
             # Bypassing it (plain start-hyprland) left the target dead, so hyprpolkitagent and
             # the noctalia systemd service never started and power buttons no-op'd (no polkit
             # agent + caller outside session scope → auth_admin_keep with no agent to satisfy).
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start -e -D Hyprland hyprland.desktop'";
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start hyprland.desktop'";
             user = "greeter";
           };
         };
