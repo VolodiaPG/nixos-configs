@@ -37,46 +37,49 @@
       };
     };
 
-    lvm_vg.root_vg.lvs = {
-      root = {
-        size = "16G";
-        content = {
-          type = "filesystem";
-          format = "ext4";
-          mountpoint = "/";
-          mountOptions = [ "noatime" ];
-          extraArgs = [
-            "-L"
-            "root"
-          ];
+    lvm_vg.root_vg = {
+      type = "lvm_vg";
+      lvs = {
+        root = {
+          size = "16G";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/";
+            mountOptions = [ "noatime" ];
+            extraArgs = [
+              "-L"
+              "root"
+            ];
+          };
         };
-      };
 
-      nix = {
-        size = "64G";
-        content = {
-          type = "filesystem";
-          format = "ext4";
-          mountpoint = "/nix";
-          mountOptions = [ "noatime" ];
-          extraArgs = [
-            "-L"
-            "nix"
-          ];
+        nix = {
+          size = "64G";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/nix";
+            mountOptions = [ "noatime" ];
+            extraArgs = [
+              "-L"
+              "nix"
+            ];
+          };
         };
-      };
 
-      persistent = {
-        size = "100%FREE";
-        content = {
-          type = "filesystem";
-          format = "ext4";
-          mountpoint = "/persistent";
-          mountOptions = [ "noatime" ];
-          extraArgs = [
-            "-L"
-            "persistent"
-          ];
+        persistent = {
+          size = "100%FREE";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/persistent";
+            mountOptions = [ "noatime" ];
+            extraArgs = [
+              "-L"
+              "persistent"
+            ];
+          };
         };
       };
     };
