@@ -70,12 +70,13 @@ in
           pkgs.xdg-desktop-portal-hyprland
           pkgs.xdg-desktop-portal-gtk
         ];
-        config.hyprland = {
-          default = "hyprland;gtk;";
-          "org.freedesktop.impl.portal.OpenURI" = [ "gtk" ];
-          "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
-          "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-        };
+        # Ensure screencast/screenshot requests are handled by the Hyprland portal.
+        # Without this, the session may pick the GTK portal first, which doesn't
+        # provide the screen-share picker under Hyprland.
+        config.common.default = [
+          "hyprland"
+          "gtk"
+        ];
       };
     };
 

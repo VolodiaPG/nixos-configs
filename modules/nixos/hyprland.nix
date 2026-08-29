@@ -60,7 +60,8 @@ in
             # Bypassing it (plain start-hyprland) left the target dead, so hyprpolkitagent and
             # the noctalia systemd service never started and power buttons no-op'd (no polkit
             # agent + caller outside session scope → auth_admin_keep with no agent to satisfy).
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop'";
+            # command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-user-session --cmd '${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop'";
+            command = "${lib.getExe pkgs.tuigreet} --cmd '${lib.getExe pkgs.uwsm} start hyprland-uwsm.desktop'";
             user = "greeter";
           };
         };
@@ -94,12 +95,16 @@ in
     ];
 
     # Polkit for privilege escalation
-    security.polkit.enable = true;
+    security = {
+      polkit.enable = true;
+      pam.services.greetd.enableGnomeKeyring = true;
+    };
 
     # Basic services for Wayland compositor
     services = {
       # GNOME keyring for secrets
       gnome.gnome-keyring.enable = true;
+      # ── Secrets & auth ─────────────────────────────────────────────────
 
       # Power management (required for Noctalia battery widget)
       upower.enable = true;
