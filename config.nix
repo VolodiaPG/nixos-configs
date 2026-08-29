@@ -18,8 +18,7 @@
       "https://nix-community.cachix.org?priority=15"
       "https://volodiapg.cachix.org?priority=30"
       "https://cache.numtide.com?priority=20"
-      # "https://cache.flakehub.com?priority=20"
-      # "https://install.determinate.systems?priority=20"
+      "https://cache.flakehub.com?priority=20"
       "https://cache.nixos-cuda.org?priority=10"
       "https://attic.xuyh0120.win/lantian"
     ];
@@ -28,7 +27,7 @@
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       #"niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
       #"nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      #"cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
     ];

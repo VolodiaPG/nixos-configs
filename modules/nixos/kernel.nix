@@ -9,7 +9,7 @@ let
   inherit (lib) mkEnableOption mkIf mkMerge;
   cfg = config.services.kernel;
   inherit (flake.inputs) nix-cachyos-kernel;
-  cachyos-kernel = nix-cachyos-kernel.packages.${pkgs.system};
+  cachyos-kernel = nix-cachyos-kernel.legacyPackages.${pkgs.system};
 in
 {
   options = {

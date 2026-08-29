@@ -4,11 +4,10 @@
 }:
 
 let
-  inherit (flake) sources;
-  nixpkgsPin = sources.nixpkgs;
+  inherit (flake) inputs;
+  nixpkgsRev = inputs.nixpkgs.sourceInfo.rev;
 in
 {
-  # npins exposes .revision
-  system.nixos.versionSuffix = ".${builtins.substring 0 7 nixpkgsPin.revision}";
-  system.nixos.revision = nixpkgsPin.revision;
+  system.nixos.versionSuffix = ".${builtins.substring 0 7 nixpkgsRev}";
+  system.nixos.revision = nixpkgsRev;
 }

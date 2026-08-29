@@ -38,6 +38,7 @@ in
       interactive.enable = true;
       chezmoi.enable = true;
       gui.enable = true;
+      myneovim.enable = true;
 
       home.stateVersion = "22.05";
     };

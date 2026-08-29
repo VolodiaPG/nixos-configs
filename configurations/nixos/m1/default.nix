@@ -14,6 +14,7 @@ in
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
     self.nixosModules.default
+    inputs.determinate.nixosModules.default
     inputs.nixos-apple-silicon.nixosModules.default
   ];
 

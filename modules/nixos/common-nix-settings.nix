@@ -124,7 +124,8 @@ in
   options.services.commonNixSettings = {
     enable = lib.mkEnableOption "common Nix settings (cachix, gc, experimental features)";
   };
-
+  imports = [
+  ];
   config = lib.mkIf cfg.enable {
     # settings get written into /etc/nix/nix.custom.conf
     nixpkgs.config = {
@@ -141,9 +142,6 @@ in
         experimental-features = nix-command flakes
         !include ${config.age.secrets.access-token.path}
       '';
-
-      # package = lib.mkDefault pkgs.lixPackageSets.git.lix;
-      # package = lib.mkDefault pkgs.nix;
 
       settings = common-nix-settings // {
         # experimental-features = [

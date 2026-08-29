@@ -1,50 +1,48 @@
 _default: boot
 
 build drv="$(hostname)":
-    nom-build . -A nixosConfigurations.{{drv}}.config.system.build.toplevel
+    nom build .#nixosConfigurations.{{ drv }}.config.system.build.toplevel
 
 boot drv="$(hostname)": (build drv)
     sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
     sudo /nix/var/nix/profiles/system/bin/switch-to-configuration boot
 
-switch drv="$(hostname)": (build drv)
-    nvd diff /run/current-system ./result
-    sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
-    sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
+switch drv="$(hostname)":
+    nh os switch . -H {{ drv }}
 
 installer:
-    nom-build . -A nixosConfigurations.installer.config.system.build.isoImage
+    nom build .#nixosConfigurations.installer.config.system.build.isoImage
 
 dry drv="$(hostname)":
-    nom-build . -A nixosConfigurations.{{drv}}.config.system.build.toplevel --dry-run
+    nom build .#nixosConfigurations.{{ drv }}.config.system.build.toplevel --dry-run
 
 dry-build drv="$(hostname)": (build drv)
     nvd diff /run/current-system ./result
 
 mac-build:
-    nom-build . -A darwinConfigurations.Volodias-MacBook-Pro.system
+    nom build .#darwinConfigurations.Volodias-MacBook-Pro.system
+    nvd diff /run/current-system ./result
 
-mac-switch: mac-build
-    ./result/sw/bin/darwin-rebuild switch
+mac-switch:
+    nh darwin switch . -H Volodias-MacBook-Pro
 
 deploy node="home-server" *flags:
-    deploy -f . {{node}} --skip-checks {{flags}}
+    deploy -f . {{ node }} --skip-checks {{ flags }}
 
 secret-edit:
     #!/usr/bin/env bash
-    cd {{justfile_directory()}}/secrets
+    cd {{ justfile_directory() }}/secrets
     chosen=$(ls *.age | gum choose --header "Select which secret to edit:")
     ragenix -e "$chosen"
 
 secret-new filename:
     #!/usr/bin/env bash
-    cd {{justfile_directory()}}/secrets
-    ragenix -e "{{filename}}"
-
+    cd {{ justfile_directory() }}/secrets
+    ragenix -e "{{ filename }}"
 
 update:
     #!/usr/bin/env bash
     set -euo pipefail
-    npins update
+    nix flake update
     just boot
     just deploy

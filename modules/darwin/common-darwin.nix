@@ -37,7 +37,7 @@ in
     };
 
     homebrew = {
-      enable = true;
+      enable = false;
       brews = [
         "mpv"
         "vmnet-helper"

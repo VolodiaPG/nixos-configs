@@ -18,6 +18,7 @@ in
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     inputs.srvos.nixosModules.server
     inputs.disko.nixosModules.disko
+    inputs.determinate.nixosModules.default
   ];
 
   # Enable services via module options

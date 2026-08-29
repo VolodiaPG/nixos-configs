@@ -87,7 +87,7 @@ in
       lazygit # lazygit.nvim (also in interactive.nix)
       tmux # vim-tmux-navigator (also in common-home.nix)
       git # vim.pack cloning + find_git_root (also in common-home.nix)
-      zathura # vimtex viewer on Linux (plugins/init.lua:437)
+      #zathura # vimtex viewer on Linux (plugins/init.lua:437)
 
       # --- build toolchain so vim.pack can compile native plugins at first launch ---
       # ponytail: toolchain-in-PATH is the ceiling; upgrade path = package telescope-fzf-native /

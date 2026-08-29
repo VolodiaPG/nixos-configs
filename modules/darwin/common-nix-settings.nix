@@ -1,14 +1,24 @@
-# ponytail: determinate DROPPED — its darwin module pulls Determinate's custom nix fork
-# (flakehub → flake-compat → defeats the npins speed goal). Use nixpkgs nix instead.
+# ponytail: Determinate nix via nix-src overlay (applied in flake.nix mkDarwin + common-overlays.nix).
+# Overlay-only swap — no determinate darwin module, so nix.enable stays true and nix-darwin
+# keeps managing the daemon. The Determinate installer's /etc/nix/nix.conf coexists with
+# nix-darwin's nix.settings via nix.custom.conf include.
 {
   lib,
+  flake,
   ...
 }:
-
+let
+  inherit (flake) inputs;
+in
 {
-  imports = [ ../nixos/common-nix-settings.nix ];
+  imports = [
+    ../nixos/common-nix-settings.nix
+    inputs.determinate.darwinModules.default
+  ];
+  # For nix determinate
+  nix.enable = lib.mkForce false;
 
-  nix.enable = lib.mkForce true;
+  determinateNix.enable = true;
 
   # ponytail: the old flake used determinate with nix.enable=false, which kept nix-darwin's
   # nixpkgs-flake.nix auto registry/nixPath inert (they're gated on nix.enable). Now that we

@@ -16,9 +16,9 @@
   libportal,
   alsa-utils,
   pipewire,
+  src,
 }:
 let
-  sources = import ../../npins;
   nativeBuildInputs = [
     wrapGAppsHook4
     meson
@@ -54,7 +54,7 @@ in
 python313Packages.buildPythonApplication {
   name = "high-tide";
   pyproject = false;
-  src = sources.high-tide;
+  inherit src;
   inherit nativeBuildInputs buildInputs dependencies;
 
   dontWrapGApps = true;

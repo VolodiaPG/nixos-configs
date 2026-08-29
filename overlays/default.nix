@@ -9,16 +9,6 @@ let
   unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system};
 in
 {
-  inherit (prev.lixPackageSets.latest)
-    nixpkgs-review
-    nix-eval-jobs
-    nix-fast-build
-    colmena
-    ;
-
-  #nix = unstable.nixVersions.latest;
-  nix = prev.lixPackageSets.latest.lix;
-
   inherit (unstable)
     neovim
     neovim-unwrapped
@@ -32,11 +22,8 @@ in
     orca-slicer
     ;
 
-  inherit (inputs.high-tide.packages.${prev.stdenv.hostPlatform.system})
-    high-tide
-    ;
-
   inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
+    high-tide
     theme-switcher
     tmux-session-color
     openrouter-credits
