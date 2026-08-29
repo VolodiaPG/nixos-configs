@@ -23,12 +23,19 @@ if [ "$(nix eval --json "$REPO"#nixosConfigurations.\""$TARGET"\".config.service
   exit 1
 fi
 
-gum confirm --default=false "This will wipe data to install $TARGET:"
-
-echo building disko script for "$TARGET"...
-DISKO=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.destroyFormatMount --no-link --print-out-paths)
-echo executing disko script for "$TARGET"...
-sudo "$(echo "$DISKO"/bin/*)" --yes-wipe-all-disks
+if gum confirm --default=false "This will wipe data to install $TARGET:"; then
+  echo building disko script for "$TARGET"...
+  DISKO=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.destroyFormatMount --no-link --print-out-paths)
+  echo executing disko script for "$TARGET"...
+  sudo "$(echo "$DISKO"/bin/*)" --yes-wipe-all-disks
+elif gum confirm --default=false "Install $TARGET without wiping (mount existing system only)?"; then
+  echo building disko mount script for "$TARGET"...
+  MOUNT=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.mount --no-link --print-out-paths)
+  echo mounting system for "$TARGET"...
+  sudo "$(echo "$MOUNT"/bin/*)"
+else
+  exit 1
+fi
 echo building system for "$TARGET", and saving path to system.var.log...
 SYSTEM=$(nix build --store /mnt "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.toplevel --no-link --print-out-paths)
 echo "$SYSTEM" > system.var.log
