@@ -13,12 +13,12 @@ if [ -z "$REPO" ]; then
 fi
 
 TARGET=$(
-  nix eval --json --file "$REPO/default.nix" --apply 'cfg: builtins.attrNames cfg.nixosConfigurations' 2>/dev/null |
+  nix eval --json "$REPO"#nixosConfigurations --apply 'cfg: builtins.attrNames cfg' 2>/dev/null |
     jq -r '.[] | select(. != "installer")' |
     gum choose --header "Select which configuration to install:"
 )
 
-if [ "$(nix eval --json --file "$REPO/default.nix" --apply "cfg: cfg.nixosConfigurations.\"$TARGET\".config.services.impermanence.disko")" != "true" ]; then
+if [ "$(nix eval --json "$REPO"#nixosConfigurations.\""$TARGET"\".config.services.impermanence.disko)" != "true" ]; then
   echo "disko installation is disabled because services.impermanence.disko is false for $TARGET." >&2
   exit 1
 fi
@@ -26,11 +26,11 @@ fi
 gum confirm --default=false "This will wipe data to install $TARGET:"
 
 echo building disko script for "$TARGET"...
-DISKO=$(nix-build "$REPO" -A nixosConfigurations."$TARGET".config.system.build.destroyFormatMount --no-out-link)
+DISKO=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.destroyFormatMount --no-link --print-out-paths)
 echo executing disko script for "$TARGET"...
 sudo "$(echo "$DISKO"/bin/*)" --yes-wipe-all-disks
 echo building system for "$TARGET", and saving path to system.var.log...
-SYSTEM=$(nix-build --store /mnt "$REPO" -A nixosConfigurations."$TARGET".config.system.build.toplevel --no-out-link)
+SYSTEM=$(nix build --store /mnt "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.toplevel --no-link --print-out-paths)
 echo "$SYSTEM" > system.var.log
 echo installing system for "$TARGET"...
 # No need to specify /mnt before SYSTEM

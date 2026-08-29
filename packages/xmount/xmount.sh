@@ -13,12 +13,12 @@ if [ -z "$REPO" ]; then
 fi
 
 TARGET=$(
-  nix eval --json --file "$REPO/default.nix" --apply 'cfg: builtins.attrNames cfg.nixosConfigurations' 2>/dev/null |
+  nix eval --json "$REPO"#nixosConfigurations --apply 'cfg: builtins.attrNames cfg' 2>/dev/null |
     jq -r '.[] | select(. != "installer")' |
     gum choose --header "Select which configuration to mount:"
 )
 
-if [ "$(nix eval --json --file "$REPO/default.nix" --apply "cfg: cfg.nixosConfigurations.\"$TARGET\".config.services.impermanence.disko")" != "true" ]; then
+if [ "$(nix eval --json "$REPO"#nixosConfigurations.\""$TARGET"\".config.services.impermanence.disko)" != "true" ]; then
   echo "disko mount is disabled because services.impermanence.disko is false for $TARGET." >&2
   exit 1
 fi
@@ -26,6 +26,6 @@ fi
 gum confirm --default=false "This will mount the $TARGET system to /mnt:"
 
 echo building disko mount script for "$TARGET"...
-MOUNT=$(nix-build "$REPO" -A nixosConfigurations."$TARGET".config.system.build.mount --no-out-link)
+MOUNT=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.mount --no-link --print-out-paths)
 
 exec sudo "$(echo "$MOUNT"/bin/*)"
