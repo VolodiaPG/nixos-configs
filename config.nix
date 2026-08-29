@@ -13,7 +13,6 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCpqTjWHv8bko3N+ypMJXcSBDPKtun7Ec7RHvtlC60V bitwarden"
     ];
-    hashedPassword = "$6$bK0PDtsca0mKnwX9$uZ2p6ovO9qyTI9vuutKS.X93zHYK.yp2Iw658CkWsBCBHqG4Eq9AUZlVQ4GG1d02D9Sw7i0VdqGxJDFWUS82O1";
     extra-substituters = [
       "https://cache.nixos.org?priority=10"
       "https://nix-community.cachix.org?priority=15"
@@ -34,6 +33,8 @@
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
     ];
     hetzner-user = "u593939";
+    bot_email = "bot.volodia@gmail.com";
+    bot_smtp_address = "smtp.gmail.com";
   };
 
 }

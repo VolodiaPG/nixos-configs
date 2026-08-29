@@ -1,5 +1,5 @@
 let
-  publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.mey";
+  publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT volodia.parol-guarino@proton.me";
 in
 {
   "pythong5k.age".publicKeys = [ publicKey ];
@@ -15,4 +15,5 @@ in
   "access-token.age".publicKeys = [ publicKey ];
   "hetzner-token.age".publicKeys = [ publicKey ];
   "hetzner-data-encryption-key.age".publicKeys = [ publicKey ];
+  "hashed-password.age".publicKeys = [ publicKey ];
 }

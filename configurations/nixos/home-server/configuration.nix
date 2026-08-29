@@ -27,7 +27,6 @@
   };
 
   hardware = {
-    cpu.intel.updateMicrocode = true;
     graphics.enable = false;
   };
 

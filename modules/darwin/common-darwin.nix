@@ -39,7 +39,6 @@ in
     homebrew = {
       enable = true;
       brews = [
-        "ollama"
         "mpv"
         "vmnet-helper"
       ];
@@ -206,7 +205,6 @@ in
       activationScripts.extraActivation.text = ''
         /usr/bin/pgrep -q oahd || softwareupdate --install-rosetta --agree-to-license
       '';
-      stateVersion = 5;
     };
   };
 }

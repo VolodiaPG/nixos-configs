@@ -12,7 +12,7 @@ in
   home-manager = {
     users."${me.username}" = {
       imports = [
-        self.homeModules.all-modules
+        self.homeModules.default
       ];
 
       # Enable home modules
@@ -21,6 +21,9 @@ in
       };
       commonHome.enable = true;
       catppuccin.enable = false;
+      catppuccin.autoEnable = false;
+
+      home.stateVersion = "22.05";
     };
     useGlobalPkgs = true;
     useUserPackages = true;

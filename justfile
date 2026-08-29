@@ -18,6 +18,9 @@ installer:
 dry drv="$(hostname)":
     nom-build . -A nixosConfigurations.{{drv}}.config.system.build.toplevel --dry-run
 
+dry-build drv="$(hostname)": (build drv)
+    nvd diff /run/current-system ./result
+
 mac-build:
     nom-build . -A darwinConfigurations.Volodias-MacBook-Pro.system
 
@@ -33,9 +36,15 @@ secret-edit:
     chosen=$(ls *.age | gum choose --header "Select which secret to edit:")
     ragenix -e "$chosen"
 
+secret-new filename:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/secrets
+    ragenix -e "{{filename}}"
+
+
 update:
     #!/usr/bin/env bash
     set -euo pipefail
     npins update
-    just switch
+    just boot
     just deploy

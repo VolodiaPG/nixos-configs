@@ -20,11 +20,6 @@ in
       allowUnsupportedSystem = false;
     };
 
-    services.xserver.videoDrivers = [
-      "nvidia"
-    ];
-    services.xserver.enable = lib.mkDefault false;
-
     virtualisation.docker = {
       # enable = true;
       # https://docs.docker.com/reference/cli/dockerd/#enable-cdi-devices

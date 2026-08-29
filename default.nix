@@ -3,7 +3,9 @@
 # import + lib.nixosSystem / darwin.lib.darwinSystem over npins-fetched tarballs.
 let
   sources = import ./npins;
-  inherit (import sources.nixpkgs { }) lib;
+  # ponytail: import only nixpkgs/lib, not the full package set — far cheaper.
+  lib = import (sources.nixpkgs + "/lib");
+  libUnstable = import (sources.nixpkgs-unstable + "/lib");
 
   # Unoverlaid nixpkgs per system. Repo nixpkgs.config/overlays are applied by the NixOS
   # module system (defaultPkgs), NOT here — avoids the `nixpkgs.pkgs -> cfg.config == {}`
@@ -34,9 +36,27 @@ let
       };
     };
 
+  # ponytail: bind each package set once — Nix's import cache is keyed by argument
+  # pointer identity, not structural equality, so repeated pkgsFor/pkgsUnstableFor
+  # calls with identical args each build a fresh full nixpkgs evaluation.
+  pkgs-x86_64-linux = pkgsFor "x86_64-linux";
+  pkgs-aarch64-linux = pkgsFor "aarch64-linux";
+  pkgs-aarch64-darwin = pkgsFor "aarch64-darwin";
+  pkgs-unstable-x86_64-linux = pkgsUnstableFor "x86_64-linux";
+  pkgs-unstable-aarch64-linux = pkgsUnstableFor "aarch64-linux";
+  pkgs-unstable-aarch64-darwin = pkgsUnstableFor "aarch64-darwin";
+
+  pkgsUnstableBySystem = {
+    x86_64-linux = pkgs-unstable-x86_64-linux;
+    aarch64-linux = pkgs-unstable-aarch64-linux;
+    aarch64-darwin = pkgs-unstable-aarch64-darwin;
+  };
+
   # x86_64-linux unstable pkgs — exposed as a module arg so nixos/home modules can pull
   # arbitrary unstable packages (e.g. gaming.nix steam). darwin gets its own in mkDarwin.
-  pkgs-unstable = pkgsUnstableFor "x86_64-linux";
+  pkgs-unstable = pkgs-unstable-x86_64-linux;
+  # aarch64-linux unstable pkgs for M1
+  pkgs-unstable-aarch64 = pkgs-unstable-aarch64-linux;
 
   # Recursive self so self.inputs.self = self (matches flake semantics).
   self = {
@@ -49,19 +69,24 @@ let
     config = {
       inherit (import ./config.nix) me;
     };
-    nixosModules.all-modules = ./modules/nixos/all-modules.nix;
-    homeModules.all-modules = ./modules/home/all-modules.nix;
-    darwinModules.all-modules = ./modules/darwin/all-modules.nix;
+    nixosModules.default = ./modules/nixos/default.nix;
+    homeModules.default = ./modules/home/default.nix;
+    darwinModules.default = ./modules/darwin/default.nix;
     # overlay is curried {flake,...}: _final: prev: …; apply flake=self
     overlays.default = (import ./overlays/default.nix) { flake = self; };
     packages = {
       x86_64-linux = import ./packages/default.nix {
-        pkgs = pkgsFor "x86_64-linux";
+        pkgs = pkgs-x86_64-linux;
         inherit inputs;
         system = "x86_64-linux";
       };
+      aarch64-linux = import ./packages/default.nix {
+        pkgs = pkgs-aarch64-linux;
+        inherit inputs;
+        system = "aarch64-linux";
+      };
       aarch64-darwin = import ./packages/default.nix {
-        pkgs = pkgsFor "aarch64-darwin";
+        pkgs = pkgs-aarch64-darwin;
         inherit inputs;
         system = "aarch64-darwin";
       };
@@ -71,19 +96,21 @@ let
   inputs = {
     nixpkgs = {
       outPath = sources.nixpkgs;
-      inherit (import sources.nixpkgs { }) lib;
+      inherit lib;
       legacyPackages = {
-        x86_64-linux = pkgsFor "x86_64-linux";
-        aarch64-darwin = pkgsFor "aarch64-darwin";
+        x86_64-linux = pkgs-x86_64-linux;
+        aarch64-linux = pkgs-aarch64-linux;
+        aarch64-darwin = pkgs-aarch64-darwin;
       };
     };
     # ponytail: unstable nixpkgs input — overlay pulls fast-moving tools from here.
     nixpkgs-unstable = {
       outPath = sources.nixpkgs-unstable;
-      inherit (import sources.nixpkgs-unstable { }) lib;
+      lib = libUnstable;
       legacyPackages = {
-        x86_64-linux = pkgsUnstableFor "x86_64-linux";
-        aarch64-darwin = pkgsUnstableFor "aarch64-darwin";
+        x86_64-linux = pkgs-unstable-x86_64-linux;
+        aarch64-linux = pkgs-unstable-aarch64-linux;
+        aarch64-darwin = pkgs-unstable-aarch64-darwin;
       };
     };
     home-manager = {
@@ -117,9 +144,14 @@ let
     inherit (sources) mosh; # flake=false, used as src by overlay mosh override
     # ponytail: high-tide fork — upstream buildPythonApplication, only src swapped to the npins pin.
     # Built from unstable: its Python deps (python-mpd2, tidalapi) aren't in stable 26.05.
-    high-tide.packages.x86_64-linux.high-tide =
-      (pkgsUnstableFor "x86_64-linux").callPackage ./packages/high-tide/default.nix
-        { };
+    high-tide.packages = {
+      x86_64-linux.high-tide =
+        pkgs-unstable-x86_64-linux.callPackage ./packages/high-tide/default.nix
+          { };
+      aarch64-linux.high-tide =
+        pkgs-unstable-aarch64-linux.callPackage ./packages/high-tide/default.nix
+          { };
+    };
     # ponytail: darwin-only — vendored 5-line nix-homebrew wrapper (avoids evaluating its flake.nix).
     nix-homebrew.darwinModules.nix-homebrew =
       { lib, ... }:
@@ -134,32 +166,93 @@ let
         );
       };
 
-    nix-cachyos-kernel.packages = (import sources.nix-cachyos-kernel).outputs.legacyPackages;
+    nixos-apple-silicon.nixosModules.default = sources.nixos-apple-silicon + "/apple-silicon-support";
+
+    # ponytail: direct loadPackages.nix import — bypasses flake.nix + flake-compat.
+    # Reads cachy's flake.lock to fetch the exact nixpkgs rev (nixos-unstable-small)
+    # the flake uses, so drv hashes match the lantian binary cache (no kernel recompiles).
+    # The flake's perSystem overrides pkgs with allowUnfree + allowInsecurePredicate = _: true;
+    # replicated here so loadPackages.nix sees identical pkgs.
+    nix-cachyos-kernel.packages.x86_64-linux =
+      let
+        cachySrc = sources.nix-cachyos-kernel;
+        cachyLock = builtins.fromJSON (builtins.readFile (cachySrc + "/flake.lock"));
+        cachyNixpkgsLock = cachyLock.nodes.nixpkgs.locked;
+        cachyNixpkgs = fetchTarball {
+          url = "https://github.com/${cachyNixpkgsLock.owner}/${cachyNixpkgsLock.repo}/archive/${cachyNixpkgsLock.rev}.tar.gz";
+          sha256 = cachyNixpkgsLock.narHash;
+        };
+        cachyPkgs = import cachyNixpkgs {
+          system = "x86_64-linux";
+          config = {
+            allowUnfree = true;
+            allowInsecurePredicate = _: true;
+          };
+        };
+      in
+      import (cachySrc + "/loadPackages.nix") { nixpkgs.outPath = cachyNixpkgs; } cachyPkgs;
   };
 
-  # nix-darwin ships no default.nix; evaluate its flake.nix outputs for lib.darwinSystem.
-  # outputs = { self, nixpkgs }: … uses self.{shortRev,rev,…} via `or` fallbacks and
-  # nixpkgs.{lib,outPath} — both satisfied. `lib` doesn't force `jobs`, so this is cheap.
-  # ponytail: parens around `outputs {…}` then `.lib` — darwinSystem is at outputs.lib, not outputs top-level.
-  darwin = {
-    outPath = sources.nix-darwin;
-    inherit
-      ((import (sources.nix-darwin + "/flake.nix")).outputs {
-        self = darwin;
-        inherit (inputs) nixpkgs;
-      })
-      lib
-      ;
-  };
+  # ponytail: direct eval-config.nix import — bypasses nix-darwin's flake.nix.
+  # Replicates flake.lib.darwinSystem: wraps eval-config.nix with pkgs-override,
+  # system, and nixpkgs.source/darwinVersionSuffix modules. Identical behavior
+  # (self has no shortRev/rev → suffix resolves to "dirty", same as before).
+  darwinEvalConfig = import (sources.nix-darwin + "/eval-config.nix");
+
+  darwinSystem =
+    args@{
+      modules,
+      ...
+    }:
+    darwinEvalConfig (
+      {
+        inherit lib;
+      }
+      // lib.optionalAttrs (args ? pkgs) { inherit (args.pkgs) lib; }
+      // builtins.removeAttrs args [
+        "system"
+        "pkgs"
+        "inputs"
+      ]
+      // {
+        modules =
+          modules
+          ++ lib.optional (args ? pkgs) (
+            { lib, ... }:
+            {
+              _module.args.pkgs = lib.mkForce args.pkgs;
+            }
+          )
+          ++ lib.optional (args ? system) (
+            { lib, ... }:
+            {
+              nixpkgs.system = lib.mkDefault args.system;
+            }
+          )
+          ++ lib.optional (args ? inputs) {
+            _module.args.inputs = args.inputs;
+          }
+          ++ [
+            (
+              { lib, ... }:
+              {
+                nixpkgs.source = lib.mkDefault sources.nixpkgs;
+                nixpkgs.flake.source = lib.mkDefault sources.nixpkgs;
+                system.checks.verifyNixPath = lib.mkDefault false;
+                system.darwinVersionSuffix = ".dirty";
+              }
+            )
+          ];
+      }
+    );
 
   mkNixos =
-    name: extraModules:
+    name: system: extraModules:
     let
-      inherit (pkgsFor "x86_64-linux") lib;
-      # ponytail: nixosSystem lives only in nixpkgs' flake-extended lib, not in
-      # `import nixpkgs {}.lib` (pure lib). Call eval-config.nix directly — that's
-      # exactly what nixosSystem wraps, minus a flake.source injection we re-add below.
+      # ponytail: use top-level lib (import nixpkgs/lib) — avoids re-importing the full
+      # package set just for lib. Same pure lib as pkgsFor system .lib.
       evalConfig = import (sources.nixpkgs + "/nixos/lib/eval-config.nix");
+      pkgs-unstable = pkgsUnstableBySystem.${system};
     in
     evalConfig {
       inherit lib;
@@ -167,7 +260,7 @@ let
       modules = [
         ./configurations/nixos/${name}/default.nix
         {
-          nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+          nixpkgs.hostPlatform = lib.mkDefault system;
         }
       ]
       ++ extraModules;
@@ -196,9 +289,9 @@ let
           allowUnfree = true;
         };
       };
-      pkgs-unstable = pkgsUnstableFor "aarch64-darwin";
+      pkgs-unstable = pkgs-unstable-aarch64-darwin;
     in
-    darwin.lib.darwinSystem {
+    darwinSystem {
       system = "aarch64-darwin";
       pkgs = darwinPkgs;
       modules = [
@@ -225,7 +318,7 @@ let
   activateNixos =
     nixosConfig:
     let
-      pkgs = pkgsFor "x86_64-linux";
+      pkgs = pkgs-x86_64-linux;
       toplevel = nixosConfig.config.system.build.toplevel;
     in
     pkgs.buildEnv {
@@ -264,7 +357,7 @@ let
 in
 rec {
   nixosConfigurations = {
-    msi = mkNixos "msi" [
+    msi = mkNixos "msi" "x86_64-linux" [
       {
         home-manager.extraSpecialArgs = {
           flake = self;
@@ -272,7 +365,7 @@ rec {
         };
       }
     ];
-    home-server = mkNixos "home-server" [
+    home-server = mkNixos "home-server" "x86_64-linux" [
       {
         home-manager.extraSpecialArgs = {
           flake = self;
@@ -280,7 +373,15 @@ rec {
         };
       }
     ];
-    installer = mkNixos "installer" [ ];
+    installer = mkNixos "installer" "x86_64-linux" [ ];
+    m1 = mkNixos "m1" "aarch64-linux" [
+      {
+        home-manager.extraSpecialArgs = {
+          flake = self;
+          pkgs-unstable = pkgs-unstable-aarch64;
+        };
+      }
+    ];
   };
   darwinConfigurations = {
     "Volodias-MacBook-Pro" = mkDarwin "Volodias-MacBook-Pro" [ ];

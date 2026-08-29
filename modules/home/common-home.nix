@@ -23,6 +23,7 @@ in
       home-manager.enable = true;
       git.enable = true;
       zsh.enable = true;
+      zsh.dotDir = config.home.homeDirectory;
       zoxide = {
         enable = true;
         enableZshIntegration = true;
@@ -30,7 +31,23 @@ in
           "--cmd cd"
         ];
       };
-      ssh.enable = true;
+      ssh = {
+        enable = true;
+        # Lock current SSH defaults explicitly (HM will remove enableDefaultConfig)
+        enableDefaultConfig = false;
+        settings."*" = {
+          ForwardAgent = false;
+          AddKeysToAgent = "no";
+          Compression = false;
+          ServerAliveInterval = 0;
+          ServerAliveCountMax = 3;
+          HashKnownHosts = false;
+          UserKnownHostsFile = "~/.ssh/known_hosts";
+          ControlMaster = "no";
+          ControlPath = "~/.ssh/master-%r@%n:%p";
+          ControlPersist = "no";
+        };
+      };
       tmux.enable = true;
       # starship = {
       #   enable = true;
@@ -121,6 +138,5 @@ in
         ELECTRON_OZONE_PLATFORM_HINT = "auto";
       };
     };
-    home.stateVersion = "22.05";
   };
 }

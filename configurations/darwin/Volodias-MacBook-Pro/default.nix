@@ -6,7 +6,7 @@ let
 in
 {
   imports = [
-    self.darwinModules.all-modules
+    self.darwinModules.default
     inputs.home-manager.darwinModules.home-manager
     flake.inputs.agenix.darwinModules.age
     (flake.self + "/secrets/nixos.nix")
@@ -24,7 +24,7 @@ in
   home-manager = {
     users.${me.username} = {
       imports = [
-        self.homeModules.all-modules
+        self.homeModules.default
       ];
 
       # Enable home modules
@@ -38,7 +38,8 @@ in
       interactive.enable = true;
       chezmoi.enable = true;
       gui.enable = true;
-      ollama.enable = true;
+
+      home.stateVersion = "22.05";
     };
     sharedModules = [
       (self + "/secrets/home-manager.nix")

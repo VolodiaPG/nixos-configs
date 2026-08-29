@@ -11,7 +11,7 @@ let
 
   # Script to turn off backlight
   backlightOffScript = pkgs.writeShellScript "backlight-off" ''
-    BACKLIGHT_PATH="/sys/class/backlight/intel_backlight"
+    BACKLIGHT_PATH="${cfg.brightnessPath}"
 
     if [ ! -d "$BACKLIGHT_PATH" ]; then
       echo "Backlight path not found: $BACKLIGHT_PATH" >&2
@@ -30,7 +30,7 @@ let
 
   # Script to restore backlight
   backlightOnScript = pkgs.writeShellScript "backlight-on" ''
-    BACKLIGHT_PATH="/sys/class/backlight/intel_backlight"
+    BACKLIGHT_PATH="${cfg.brightnessPath}"
 
     if [ ! -d "$BACKLIGHT_PATH" ]; then
       exit 0

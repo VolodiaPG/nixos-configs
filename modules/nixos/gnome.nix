@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    security.pam.services.gdm.enableGnomeKeyring = true;
+
     services = {
       displayManager.gdm = {
         enable = true;

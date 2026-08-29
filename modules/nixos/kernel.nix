@@ -51,7 +51,7 @@ in
       enable = true;
       algorithm = "zstd"; # Fast compression with good ratio
       priority = 100; # Highest priority over disk swap
-      memoryPercent = 100;
+      memoryPercent = 50;
     };
 
     boot = {

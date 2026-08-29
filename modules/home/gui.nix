@@ -18,21 +18,6 @@ in
   config = mkIf cfg.enable {
     fonts.fontconfig.enable = pkgs.stdenv.isLinux;
 
-    # Enable the theme daemon for automatic switching
-    services = {
-      theme-daemon.enable = true;
-    };
-    programs = {
-      nix-index.enable = true;
-      nix-index-database.comma.enable = true;
-      direnv = {
-        enable = true;
-        silent = true;
-        nix-direnv.enable = true;
-        enableZshIntegration = true;
-      };
-    };
-
     home = {
       packages = [
         pkgs.signal-desktop
@@ -51,10 +36,22 @@ in
         pkgs.fontconfig
         pkgs.distrobox
         pkgs.distrobox-tui
-        pkgs.easyeffects
-        pkgs.libreoffice-qt-fresh
+        # pkgs.easyeffects
+        # pkgs.libreoffice-qt-fresh
         # pkgs.freerdp
         pkgs.high-tide
+        # (pkgs.symlinkJoin {
+        #   name = "sone";
+        #   paths = [
+        #     pkgs.sone
+        #   ];
+        #   nativeBuildInputs = [ pkgs.makeWrapper ];
+        #   postBuild = ''
+        #     wrapProgram $out/bin/sone \
+        #       --set WEBKIT_DISABLE_DMABUF_RENDERER "0" \
+        #       --set WEBKIT_DISABLE_COMPOSITING_MODE "0"
+        #   '';
+        # })
         # pkgs.calibre
         pkgs.inkscape
         pkgs.gimp
@@ -92,8 +89,6 @@ in
           }
         '';
       };
-
-      stateVersion = "22.05";
     };
   };
 }

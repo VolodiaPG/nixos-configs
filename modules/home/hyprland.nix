@@ -65,11 +65,10 @@ in
       portal = {
         enable = true;
         xdgOpenUsePortal = true;
-        configPackages = [ pkgs.gnome-session ];
+        # configPackages = [ pkgs.gnome-session ];
         extraPortals = [
-          # pkgs.xdg-desktop-portal-hyprland
+          pkgs.xdg-desktop-portal-hyprland
           pkgs.xdg-desktop-portal-gtk
-          pkgs.gnome-keyring
         ];
         config.hyprland = {
           default = "hyprland;gtk;";

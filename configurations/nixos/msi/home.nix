@@ -12,7 +12,7 @@ in
   home-manager = {
     users."${me.username}" = {
       imports = [
-        self.homeModules.all-modules
+        self.homeModules.default
       ];
       # Enable home modules
       services = {

@@ -2,13 +2,11 @@
   config,
   lib,
   pkgs,
-  flake,
   ...
 }:
 let
   cfg = config.programs.zsh;
   inherit (lib) mkIf;
-  inherit (flake) inputs;
   date_script = pkgs.writeShellScriptBin "date_since_last_nixpkgs" ''
     # Function to print colored text
     # $1: Color code
@@ -62,8 +60,6 @@ let
             ;;
     esac
   '';
-  isClean = inputs.self ? rev;
-  status = if isClean then "" else ''"dirty" '';
 in
 {
   config = mkIf cfg.enable {
@@ -95,14 +91,14 @@ in
         HISTORY_IGNORE="(ls|ll|ls -alh|pwd|clear|c|history|htop)"
 
         SHELL=${lib.getExe pkgs.zsh}
-        TERM=screen-256color
+        #TERM=screen-256color
 
         source ${pkgs.just}/share/zsh/site-functions/_just
 
         if (which nixos-version > /dev/null); then
-         echo $"Running ${status}Nixos $(nixos-version) $(${lib.getExe date_script})"
+         echo $"Running Nixos $(nixos-version) $(${lib.getExe date_script})"
         else
-          echo "Running ${status}Nix"
+          echo "Running Nix"
         fi
 
         if [ -f ${config.age.secrets.envvars.path} ]; then
@@ -192,14 +188,14 @@ in
           eval "$(starship init zsh)"
         fi
 
-        export PATH="/opt/homebrew/bin:$PATH"
+        ${lib.optionalString pkgs.stdenv.isDarwin ''export PATH="/opt/homebrew/bin:$PATH"''}
       '';
       shellAliases = {
         ll = "ls -l";
         j = "just";
         jl = "just --list";
         g = "git";
-        gm = "git comit -m";
+        gm = "git commit -m";
         ga = "git add .";
         c = "clear";
         n = "vim";

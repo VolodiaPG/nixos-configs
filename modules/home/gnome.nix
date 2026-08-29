@@ -163,7 +163,7 @@ in
         };
         "org/gnome/desktop/wm/keybindings" = {
           # hide window: disable <super>h
-          minimizere = [ ];
+          minimize = [ ];
           # switch to workspace left: disable <super>left
           switch-to-workspace-left = [ ];
           # switch to workspace right: disable <super>right
@@ -325,7 +325,7 @@ in
           settings-version = 5;
         };
         "org/gnome/desktop/interface" = {
-          monospace-font-name = "Comic Code Ligatures";
+          monospace-font-name = "IosevkaTerm Nerd Font 11";
           font-name = "Roboto 11";
           document-font-name = "Roboto 12";
         };
@@ -372,7 +372,7 @@ in
           ];
           "resize-h-dec" = [ ];
           "resize-h-inc" = [ ];
-          "cyle-width" = [
+          "cycle-width" = [
             "<Super>r"
           ];
           "switch-down" = [
@@ -414,28 +414,11 @@ in
     gtk = {
       enable = true;
 
-      # iconTheme = {
-      #   name = "WhiteSur";
-      #   package = pkgs.whitesur-icon-theme.override {
-      #     alternativeIcons = true;
-      #     boldPanelIcons = true;
-      #   };
-      # };
       cursorTheme = {
         name = "phinger-cursors-light";
         package = pkgs.phinger-cursors;
         size = 24;
       };
-      # theme = {
-      #   name = "Jasper";
-      #   package = pkgs.jasper-gtk-theme;
-      # };
     };
-
-    # qt = {
-    #   #enable = true;
-    #   platformTheme = "kvantum";
-    #   style.name = "kvantum";
-    # };
   };
 }

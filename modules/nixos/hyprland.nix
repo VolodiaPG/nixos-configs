@@ -66,10 +66,6 @@ in
         };
       };
 
-      displayManager = {
-        sessionPackages = [ cfg.package ];
-      };
-
       # Fix nautilus network share
       gvfs.enable = true;
     };

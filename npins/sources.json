@@ -22,9 +22,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "3e3da86e4eaccd23f4ce43df9b0a31b16c707347",
-      "url": "https://github.com/Homebrew/brew/archive/3e3da86e4eaccd23f4ce43df9b0a31b16c707347.tar.gz",
-      "hash": "sha256-5s+MJAFyemD6lvrtL2c0jQ7P/XChdx1MPXzoCaQY+ic="
+      "revision": "fbf04c90baa755cdd9ff521ba39c21ba17f6c898",
+      "url": "https://github.com/Homebrew/brew/archive/fbf04c90baa755cdd9ff521ba39c21ba17f6c898.tar.gz",
+      "hash": "sha256-Lhq3PlVPtyMn9sev3dvIyuXc22RqCUjrU683q25DYgw="
     },
     "catppuccin": {
       "type": "Git",
@@ -126,9 +126,9 @@
       },
       "branch": "master",
       "submodules": false,
-      "revision": "d0a00e687a10b401281759cf618214d59f2039cd",
-      "url": "https://github.com/xddxdd/nix-cachyos-kernel/archive/d0a00e687a10b401281759cf618214d59f2039cd.tar.gz",
-      "hash": "sha256-IFRNvu3RMlQwUQ1NTfTy03/mXXX0kTpy9Mkewpri5LA="
+      "revision": "290b62ec266d15827ab79852483e434eeba912e0",
+      "url": "https://github.com/xddxdd/nix-cachyos-kernel/archive/290b62ec266d15827ab79852483e434eeba912e0.tar.gz",
+      "hash": "sha256-6MMlOsBhfWn+KJOlZyyRNR0G/PVMjEfNyQoW0KnKBYI="
     },
     "nix-darwin": {
       "type": "Git",
@@ -182,6 +182,19 @@
       "url": "https://github.com/rasmus-kirk/nixarr/archive/282ce99b31d52d72cca281e3d26d3dd267946800.tar.gz",
       "hash": "sha256-oTMag4I9MW3bstuOKqzc0F1OqxO49lLa9jkSkRe3EqA="
     },
+    "nixos-apple-silicon": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "nixos-apple-silicon"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "cae818c72b2138510334850a3ff435831703bd23",
+      "url": "https://github.com/nix-community/nixos-apple-silicon/archive/cae818c72b2138510334850a3ff435831703bd23.tar.gz",
+      "hash": "sha256-kJx0zNcW00CSRWHm0w1dhHBF+bNP89eW8ekdfN6pwqs="
+    },
     "nixos-hardware": {
       "type": "Git",
       "repository": {
@@ -204,9 +217,9 @@
       },
       "branch": "nixos-26.05",
       "submodules": false,
-      "revision": "062346a6d85bc4b49dfaa61c986e9c5be21217d1",
-      "url": "https://github.com/NixOS/nixpkgs/archive/062346a6d85bc4b49dfaa61c986e9c5be21217d1.tar.gz",
-      "hash": "sha256-BZWCi9ZRJiARTuKTbbtvFTj7t1TK4G3UEckT3HyNfRg="
+      "revision": "d57af924f160a5084293c71c2043f058bd1cdb60",
+      "url": "https://github.com/NixOS/nixpkgs/archive/d57af924f160a5084293c71c2043f058bd1cdb60.tar.gz",
+      "hash": "sha256-7gDpu5hpq0rOYnYMcOWqSzquK4HA/xU8Xf3CjUBOOJA="
     },
     "nixpkgs-unstable": {
       "type": "Git",
@@ -217,9 +230,9 @@
       },
       "branch": "nixos-unstable",
       "submodules": false,
-      "revision": "56c02bc00adcf003215cc4bd996d6efaf4cff188",
-      "url": "https://github.com/NixOS/nixpkgs/archive/56c02bc00adcf003215cc4bd996d6efaf4cff188.tar.gz",
-      "hash": "sha256-9i/VTdusq/+NM/tz+J1Re+ojkMB8MBf0QshnYfzHz30="
+      "revision": "9fbb54b33e91ee4ca368e35a78e0613c720600b3",
+      "url": "https://github.com/NixOS/nixpkgs/archive/9fbb54b33e91ee4ca368e35a78e0613c720600b3.tar.gz",
+      "hash": "sha256-cV5xEJJK3BvhU8rEd4mC9UsmDi5qscv/kzGPhBRC5WA="
     },
     "srvos": {
       "type": "Git",

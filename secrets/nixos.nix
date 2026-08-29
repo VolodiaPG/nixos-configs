@@ -68,5 +68,11 @@ in
       file = ./hetzner-data-encryption-key.age;
     }
     // rootReadable;
+
+    hashed-password = {
+      file = ./hashed-password.age;
+    }
+    // rootReadable;
+
   };
 }

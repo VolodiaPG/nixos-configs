@@ -44,14 +44,8 @@ in
       };
       kernel.sysctl = {
         "kernel.threads-max" = lib.mkDefault 2000000;
-        # "kernel.pid-max" = lib.mkDefault 2000000;
         "fs.file-max" = lib.mkDefault 2097152;
-        "vm.max_map_count" = lib.mkOverride 990 6000000;
-        # "net.core.default_qdisc" = lib.mkForce "cake";
-        # "net.ipv4.tcp_ecn" = 1;
-        # "net.ipv4.tcp_sack" = 1;
-        # "net.ipv4.tcp_dsack" = 1;
-        # "net.ipv4.tcp_congestion_control" = lib.mkForce "bbr";
+        "vm.max_map_count" = lib.mkForce 6000000;
       };
       initrd.systemd.network.wait-online.enable = false;
     };
@@ -92,9 +86,9 @@ in
         extraArgs = [
           "-g" # send SIGTERM first
           "--prefer"
-          "'^(zotero|signal|brave|nvim)$'"
+          "^(zotero|high-tide|legcord|signal|brave|nvim)$"
           "--avoid"
-          "'^(Hyprland|noctalia|kanata)$'"
+          "^(Hyprland|noctalia|kanata)$"
         ];
       };
 
@@ -148,17 +142,17 @@ in
     ];
 
     security = {
-      sudo.extraRules = [
-        {
-          users = [ me.username ];
-          commands = [
-            {
-              command = "ALL";
-              options = [ "NOPASSWD" ];
-            }
-          ];
-        }
-      ];
+      # sudo.extraRules = [
+      #   {
+      #     users = [ me.username ];
+      #     commands = [
+      #       {
+      #         command = "ALL";
+      #         options = [ "NOPASSWD" ];
+      #       }
+      #     ];
+      #   }
+      # ];
       sudo.execWheelOnly = lib.mkForce false;
     };
 
@@ -186,7 +180,7 @@ in
             "plugdev"
           ];
           openssh.authorizedKeys.keys = me.keys;
-          inherit (me) hashedPassword;
+          hashedPasswordFile = config.age.secrets.hashed-password.path;
           shell = pkgs.zsh;
         };
         root = {

@@ -67,7 +67,7 @@ mpv.override {
     mpvScripts.mpris
     autosub
     mpvScripts.modernz
-    mpvScripts.autosubsync-mpv
+    # mpvScripts.autosubsync-mpv
     # mpvScripts.dynamic-crop
     mpvScripts.builtins.autocrop
     mpvScripts.eisa01.smartskip

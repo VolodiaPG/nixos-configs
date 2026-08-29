@@ -13,3 +13,4 @@ nohup.out
 .DS_Store
 .aider*
 .env
+.slim/deepwork/

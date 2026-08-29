@@ -2,10 +2,12 @@
   pkgs,
   config,
   lib,
+  flake,
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption;
+  inherit (flake.config) me;
   cfg = config.services.hyperhdr;
 in
 {
@@ -34,7 +36,7 @@ in
         ExecStart = "${pkgs.hyperhdr}/bin/hyperhdr --pipewire --service";
         Restart = "on-failure";
         RestartSec = "5s";
-        User = "volodia";
+        User = me.username;
       };
     };
 
@@ -44,7 +46,7 @@ in
     #   pulse.enable = true;
     # };
 
-    users.users.volodia.extraGroups = [
+    users.users.${me.username}.extraGroups = [
       "audio"
       "video"
     ];

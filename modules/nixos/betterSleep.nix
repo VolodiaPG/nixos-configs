@@ -25,7 +25,7 @@ in
     '';
 
     # Restore the previous state on wake
-    powerManagement.powerUpCommands = ''
+    powerManagement.resumeCommands = ''
       # Restore CPU governor
       if [ -f /run/cpu-governor-before-sleep ]; then
         GOVERNOR=$(cat /run/cpu-governor-before-sleep)

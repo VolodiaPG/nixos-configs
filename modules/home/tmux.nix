@@ -10,6 +10,10 @@ let
 in
 {
   config = mkIf cfg.enable {
+    home.packages = [
+      pkgs.moreutils # sponge
+      pkgs.bc
+    ];
     programs.tmux = {
       baseIndex = 1;
       historyLimit = 10000;

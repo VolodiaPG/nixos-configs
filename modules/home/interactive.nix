@@ -27,6 +27,8 @@ in
     # Configure Catppuccin theme switching, extending the default catppuccin module
     catppuccin = {
       enable = true;
+      # Lock autoEnable explicitly to silence future-behavior warning
+      autoEnable = true;
       autoThemeSwitch = true;
       darkFlavor = "mocha"; # Your preferred dark theme
       lightFlavor = "latte"; # Your preferred light theme
@@ -54,6 +56,8 @@ in
       nix-index-database.comma.enable = true;
       direnv = {
         enable = true;
+        silent = true;
+        enableZshIntegration = true;
         nix-direnv.enable = true;
         stdlib = ''
           export DIRENV_LOG_FORMAT=""
@@ -62,8 +66,6 @@ in
     };
 
     home = {
-      inherit (flake.config.me) username;
-      homeDirectory = flake.config.me.homeDirectory pkgs.stdenv;
       packages = [
         pkgs.direnv
         pkgs.git-crypt
@@ -73,8 +75,6 @@ in
         pkgs.vim
         pkgs.devenv
       ];
-
-      stateVersion = "22.05";
     };
   };
 }

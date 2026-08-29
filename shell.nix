@@ -29,7 +29,6 @@ pkgs.mkShell {
     with pkgs;
     [
       npins
-      nvfetcher
       just
       git
       ragenix

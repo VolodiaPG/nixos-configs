@@ -4,18 +4,26 @@
   ...
 }:
 let
-  cfg = config.services.my_virtualization;
+  cfg = config.services.virtualization;
 in
 {
-
   options = {
-    services.my_virtualization = {
-      enable = lib.mkEnableOption "Virtulization settings";
+    services.virtualization = {
+      enable = lib.mkEnableOption "virtualization";
+      libvirt.enable = lib.mkEnableOption "libvirt";
+      containers.enable = lib.mkEnableOption "Docker containers";
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    virtualisation.docker.enable = true;
-    virtualisation.oci-containers.backend = "docker";
-  };
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      (lib.mkIf cfg.libvirt.enable {
+        virtualisation.libvirtd.enable = true;
+      })
+      (lib.mkIf cfg.containers.enable {
+        virtualisation.docker.enable = true;
+        virtualisation.oci-containers.backend = "docker";
+      })
+    ]
+  );
 }

@@ -17,7 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.my_virtualization.enable = true;
+    services.virtualization = {
+      enable = true;
+      containers.enable = true;
+    };
     virtualisation.oci-containers = {
       containers = {
         fizzy = {
@@ -26,11 +29,11 @@ in
           ports = [ "8888:80" ];
           environmentFiles = [ config.age.secrets.fizzy-env.path ];
           environment = {
-            BASE_URL = "https://fizzy.goblin-alewife.ts.net";
+            BASE_URL = "https://${me.tailname}";
             MAILER_FROM_ADDRESS = "bot.volodia@gmail.com";
             DISABLE_SSL = "true";
-            SMTP_ADDRESS = "smtp.gmail.com";
-            SMTP_USERNAME = "bot.volodia@gmail.com";
+            SMTP_ADDRESS = me.bot_smtp_address;
+            SMTP_USERNAME = me.bot_email;
             # Reduce memory fragmentation in Ruby
             MALLOC_ARENA_MAX = "2";
             WEB_CONCURRENCY = "2";

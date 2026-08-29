@@ -1,12 +1,11 @@
 {
   boot = {
     loader = {
-      efi.canTouchEfiVariables = true;
+      efi.canTouchEfiVariables = false;
       grub = {
         enable = true;
         device = "nodev";
         efiSupport = true;
-        #    enableCryptodisk = true;
       };
     };
     blacklistedKernelModules = [
@@ -24,7 +23,6 @@
   hardware = {
     asahi = {
       enable = true;
-      setupAsahiSound = true;
       peripheralFirmwareDirectory = ./firmware;
     };
     apple.touchBar = {

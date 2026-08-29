@@ -19,6 +19,7 @@ let
   inherit (lib.types)
     str
     bool
+    int
     listOf
     attrs
     ;
@@ -32,9 +33,9 @@ in
       enable = mkEnableOption "impermanence";
 
       rootVolume = mkOption {
-        description = "root volume name as in /dev";
+        description = "Full stable device path of the btrfs root volume (e.g. /dev/disk/by-id/...)";
         type = str;
-        default = "root_vg";
+        default = "/dev/root_vg";
       };
 
       disko = mkOption {
@@ -45,8 +46,8 @@ in
 
       deleteAfterDays = mkOption {
         description = "delete older roots after number of days";
-        type = str;
-        default = "7";
+        type = int;
+        default = 7;
       };
 
       btrfsOptions = mkOption {
@@ -71,6 +72,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/dev/" cfg.rootVolume;
+        message = "services.impermanence.rootVolume must be a full device path starting with /dev/ (got: ${cfg.rootVolume})";
+      }
+    ];
+
     systemd.services.impermanence-setup = {
       description = "Set up impermanent root";
       wantedBy = [ "local-fs-pre.target" ];
@@ -122,7 +130,7 @@ in
         in
         ''
           mkdir -p /btrfs_tmp
-          mount /dev/${cfg.rootVolume} /btrfs_tmp
+          mount ${cfg.rootVolume} /btrfs_tmp
           if [[ -e /btrfs_tmp/root ]]; then
               mkdir -p /btrfs_tmp/old_roots
               timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
@@ -137,7 +145,7 @@ in
               btrfs subvolume delete "$1"
           }
 
-          for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${cfg.deleteAfterDays}); do
+          for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +${toString cfg.deleteAfterDays}); do
               delete_subvolume_recursively "$i"
           done
 
@@ -174,20 +182,20 @@ in
       { "/persistent".neededForBoot = true; }
       (mkIf (!cfg.disko) {
         "/" = {
-          device = "/dev/${cfg.rootVolume}";
+          device = cfg.rootVolume;
           fsType = "btrfs";
           options = [ "subvol=root" ] ++ cfg.btrfsOptions;
         };
 
         "/persistent" = {
-          device = "/dev/${cfg.rootVolume}";
+          device = cfg.rootVolume;
           neededForBoot = true;
           fsType = "btrfs";
           options = [ "subvol=persistent" ] ++ cfg.btrfsOptions;
         };
 
         "/nix" = {
-          device = "/dev/${cfg.rootVolume}";
+          device = cfg.rootVolume;
           fsType = "btrfs";
           options = [ "subvol=nix" ] ++ cfg.btrfsOptions;
         };
@@ -224,7 +232,7 @@ in
         files = [
           "/etc/machine-id"
         ];
-        users.volodia = {
+        users.${flake.config.me.username} = {
           directories = [
             "Downloads"
             "Music"

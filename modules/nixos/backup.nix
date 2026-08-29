@@ -1,12 +1,10 @@
 {
   pkgs,
-  flake,
   config,
   lib,
   ...
 }:
 let
-  inherit (flake.config.me) hetzner-storagebox;
   cfg = config.services.backup;
 in
 {
@@ -21,14 +19,17 @@ in
       };
 
       user = lib.mkOption {
+        description = "Username for the backup server";
         type = lib.types.str;
       };
 
-      password = lib.mkOption {
+      passwordFile = lib.mkOption {
+        description = "Path to the file containing the backup server password (token)";
         type = lib.types.path;
       };
 
       subuser = lib.mkOption {
+        description = "Subuser for the backup server";
         type = lib.types.str;
       };
     };

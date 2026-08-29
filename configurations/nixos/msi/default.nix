@@ -11,7 +11,7 @@ in
     ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
-    self.nixosModules.all-modules
+    self.nixosModules.default
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-nvidia
@@ -41,29 +41,16 @@ in
 
     nvidia.enable = true;
 
-    myScx = {
-      enable = false;
-      ac = {
-        governor = "schedutil";
-        scheduler = "scx_lavd";
-        args = "--performance";
-        extraArgs = "";
-      };
-      battery = {
-        governor = "schedutil";
-        scheduler = "scx_lavd";
-        args = "--powersave";
-        extraArgs = "";
-      };
-    };
-
     hyperhdr.enable = true;
     myAnanicy.enable = true;
-    virt.enable = true;
+    virtualization = {
+      enable = true;
+      libvirt.enable = false;
+      containers.enable = true;
+    };
     elegantBoot.enable = true;
     hifi.enable = true;
     betterSleep.enable = true;
-    # ccache.enable = true;
     caddy.enable = true;
     homeLab.enable = false;
     gaming.enable = true;
@@ -71,8 +58,7 @@ in
     # Storage and networking
     impermanence = {
       enable = true;
-      rootVolume = "sda";
-      # rootVolume = "vda";
+      rootVolume = "/dev/sda";
       disko = true;
     };
     networking.enable = false;
@@ -85,29 +71,5 @@ in
     immich-ml = {
       enable = false;
     };
-    my_virtualization.enable = true;
   };
-
-  # Hardware
-  hardware.cpu.intel.updateMicrocode = true;
-  # hardware.graphics = {
-  #   enable = true;
-  #   enable32Bit = true;
-  #   extraPackages = with pkgs; [
-  #     libvdpau-va-gl
-  #     nvidia-vaapi-driver
-  #     libva-vdpau-driver
-  #   ];
-  # };
-
-  # environment.etc."X11/xorg.conf.d/10-nvidia.conf".text = ''
-  #   Section "OutputClass"
-  #     Identifier "nvidia"
-  #     MatchDriver "nvidia-drm"
-  #     Driver "nvidia"
-  #     Option "PrimaryGPU" "yes"
-  #   EndSection
-  # '';
-
-  system.stateVersion = "22.05";
 }

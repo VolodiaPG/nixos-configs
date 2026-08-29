@@ -21,6 +21,7 @@ in
 
   inherit (unstable)
     neovim
+    neovim-unwrapped
     opencode
     noctalia
     hyprland

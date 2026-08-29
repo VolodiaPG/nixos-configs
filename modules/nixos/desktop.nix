@@ -20,7 +20,7 @@ in
   config = mkIf cfg.enable {
     services = {
       xserver = {
-        enable = lib.mkForce true;
+        #   enable = lib.mkForce true;
         xkb = {
           variant = "oss";
           options = "eurosign:e,ctrl:swapcaps";
@@ -48,8 +48,6 @@ in
       };
 
     };
-
-    security.pam.services.gdm.enableGnomeKeyring = true;
 
     environment.systemPackages = [
       pkgs.gnome-calculator
@@ -80,7 +78,7 @@ in
 
     users.groups.i2c = { };
 
-    users.users.volodia.extraGroups = [ "i2c" ];
+    users.users.${flake.config.me.username}.extraGroups = [ "i2c" ];
     # Enable sound.
     programs = {
       gnupg.agent = {
@@ -93,8 +91,8 @@ in
     fonts = {
       packages = [
         pkgs.corefonts
-        # pkgs.roboto
-        # pkgs.roboto-serif
+        pkgs.roboto
+        pkgs.roboto-serif
         pkgs.inter
         pkgs.ibm-plex
         pkgs.joypixels
@@ -104,7 +102,7 @@ in
       ];
       fontconfig.defaultFonts = {
         monospace = [
-          "Comic Code Ligatures"
+          "IosevkaTerm Nerd Font"
         ];
 
         sansSerif = [

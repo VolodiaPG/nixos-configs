@@ -11,7 +11,7 @@ in
     ./home.nix
     (self + "/secrets/nixos.nix")
     inputs.agenix.nixosModules.default
-    self.nixosModules.all-modules
+    self.nixosModules.default
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-cpu-intel-cpu-only
     inputs.nixos-hardware.nixosModules.common-pc
@@ -36,7 +36,7 @@ in
     # Storage and networking
     impermanence = {
       enable = true;
-      rootVolume = "sda";
+      rootVolume = "/dev/sda";
       disko = true;
     };
     vpn.enable = true;
@@ -59,11 +59,9 @@ in
         "/home/${flake.config.me.username}/Documents"
       ];
       user = flake.config.me.hetzner-user;
-      password = config.age.secrets.hetzner-token.path;
+      passwordFile = config.age.secrets.hetzner-token.path;
       subuser = "sub1";
     };
 
   };
-
-  system.stateVersion = "22.05";
 }

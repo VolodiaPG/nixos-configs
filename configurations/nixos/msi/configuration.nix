@@ -25,32 +25,8 @@ in
     networkmanager.enable = true;
   };
 
-  services = {
-    undervolt = {
-      enable = false;
-      coreOffset = -55;
-      gpuOffset = -55;
-      uncoreOffset = -55;
-      analogioOffset = -55;
-    };
-  };
-
   systemd.sleep.settings.Sleep = {
     HibernateDelaySec = "30m"; # Time before waking to hibernate
-  };
-
-  # services = {
-  #   undervolt = {
-  #     enable = true;
-  #     coreOffset = -95;
-  #     gpuOffset = -95;
-  #     uncoreOffset = -95;
-  #     analogioOffset = -95;
-  #   };
-  # };
-
-  hardware = {
-    cpu.intel.updateMicrocode = true;
   };
 
   # Nvidia gpu are slow to move up frequency, and cause stutter when scrolling, regularly
