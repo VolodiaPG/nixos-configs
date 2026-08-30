@@ -126,10 +126,6 @@ in
 
     # Basic services for Wayland compositor
     services = {
-      # GNOME keyring for secrets
-      gnome.gnome-keyring.enable = true;
-      # ── Secrets & auth ─────────────────────────────────────────────────
-
       # Power management (required for Noctalia battery widget)
       upower.enable = true;
 
