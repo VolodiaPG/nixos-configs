@@ -64,3 +64,8 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 # Minimizes the delay before a key starts repeating
 
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
+
+# Patch transcrypt for warnings spills
+
+curl https://github.com/elasticdog/transcrypt/compare/suppress-openssl-pbkdf2-warnings.patch | patch -p1 .git/crypt/transcrypt
+

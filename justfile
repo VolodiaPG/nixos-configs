@@ -45,6 +45,7 @@ persistent-encrypted-install:
     #!/usr/bin/env bash
     cd {{ justfile_directory() }}/encrypted
     transcrypt -d
+    mv -v encrypted/* /persistent
 
 update:
     #!/usr/bin/env bash
