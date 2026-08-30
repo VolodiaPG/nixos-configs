@@ -37,7 +37,6 @@
 
     nixos-hardware = {
       url = "https://flakehub.com/f/nixos/nixos-hardware/*";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixos-apple-silicon = {
@@ -47,7 +46,6 @@
 
     catppuccin = {
       url = "https://flakehub.com/f/catppuccin/nix/*";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-index-database = {
