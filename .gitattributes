@@ -1,4 +1,9 @@
 secrets/secrets.yaml diff=sopsdiffer
 nix linguist-generated=true
-persistent  filter=crypt diff=crypt merge=crypt
-toto/  filter=crypt diff=crypt merge=crypt
+id_ed25519  filter=crypt diff=crypt merge=crypt
+id_ed25519.pub  filter=crypt diff=crypt merge=crypt
+ComicCodeLigatures-Bold.otf  filter=crypt diff=crypt merge=crypt
+ComicCodeLigatures-BoldItalic.otf  filter=crypt diff=crypt merge=crypt
+ComicCodeLigatures-Medium.otf  filter=crypt diff=crypt merge=crypt
+ComicCodeLigatures-MediumItalic.otf  filter=crypt diff=crypt merge=crypt
+ComicCodeLigatures-Regular.otf  filter=crypt diff=crypt merge=crypt
