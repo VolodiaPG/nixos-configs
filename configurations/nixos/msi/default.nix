@@ -49,7 +49,7 @@ in
       libvirt.enable = false;
       containers.enable = true;
     };
-    elegantBoot.enable = true;
+    elegantBoot.enable = false;
     hifi.enable = true;
     betterSleep.enable = true;
     caddy.enable = true;
