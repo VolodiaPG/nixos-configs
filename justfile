@@ -41,7 +41,7 @@ secret-new filename:
     ragenix -e "{{ filename }}"
 
 # Install encrypted secrets to /persistent
-install-encrypted:
+persistent-encrypted-install:
     #!/usr/bin/env bash
     cd {{ justfile_directory() }}/encrypted
     transcrypt -d

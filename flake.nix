@@ -306,7 +306,7 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = pkgsFor system;
+          pkgs = pkgsUnstableFor system;
           check = pre-commit-check.${system};
         in
         {
