@@ -65,6 +65,8 @@ in
     };
 
     services = {
+      # resolve /bin/sh, /bin/bash, etc. dynamically
+      envfs.enable = true;
       upower.enable = lib.mkDefault true;
       power-profiles-daemon.enable = true;
       fail2ban = {
