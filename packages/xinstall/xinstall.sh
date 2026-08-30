@@ -43,3 +43,45 @@ echo "$SYSTEM" > system.var.log
 echo installing system for "$TARGET"...
 # No need to specify /mnt before SYSTEM
 sudo nixos-install --root /mnt --no-channel-copy --no-root-passwd --system "$SYSTEM"
+
+# --- Populate /persistent with decrypted persistent data ---
+# The persistent/ tree in the repo is transcrypt-encrypted. In a fresh clone the
+# crypt filter is not initialized, so the working tree holds encrypted blobs and
+# must be decrypted (transcrypt init forces a checkout -> smudge-decrypts) before
+# copying onto the installed system's /persistent.
+PERSISTENT_SRC="$REPO/persistent"
+if [ -d "$PERSISTENT_SRC" ]; then
+  is_encrypted() {
+    # transcrypt stores OpenSSL "Salted__" output, base64 encoded -> starts with U2FsdGVkX1
+    head -c 13 "$1" 2>/dev/null | grep -q '^U2FsdGVkX1'
+  }
+
+  NEEDS_DECRYPT=0
+  while IFS= read -r -d '' f; do
+    if is_encrypted "$f"; then NEEDS_DECRYPT=1; break; fi
+  done < <(find "$PERSISTENT_SRC" -type f -not -path '*/.git/*' -print0)
+
+  if [ "$NEEDS_DECRYPT" = 1 ]; then
+    echo "Persistent files are encrypted; configuring transcrypt to decrypt them..."
+    CIPHER=$(gum input --header "transcrypt cipher" --value "aes-256-cbc" --placeholder "aes-256-cbc")
+    PASSWORD=$(gum input --password --header "transcrypt password" --placeholder "password")
+    # Init transcrypt in the cloned repo; this re-checkouts encrypted files, decrypting them.
+    # Use the flake's devShell so the transcrypt version matches the repo (avoids
+    # unstable-vs-stable breaking changes from nixpkgs#transcrypt on the installer).
+    ( cd "$REPO" && nix develop "$REPO"#devShell -c transcrypt -c "$CIPHER" -p "$PASSWORD" -y )
+
+    # Verify decryption actually happened (wrong password leaves files encrypted).
+    STILL_ENCRYPTED=0
+    while IFS= read -r -d '' f; do
+      if is_encrypted "$f"; then STILL_ENCRYPTED=1; break; fi
+    done < <(find "$PERSISTENT_SRC" -type f -not -path '*/.git/*' -print0)
+    if [ "$STILL_ENCRYPTED" = 1 ]; then
+      echo "transcrypt decryption failed (wrong cipher/password?); aborting persistent copy." >&2
+      exit 1
+    fi
+  fi
+
+  echo "Copying persistent data to /mnt/persistent..."
+  sudo mkdir -p /mnt/persistent
+  sudo rsync -a --exclude='.git' --exclude='.DS_Store' "$PERSISTENT_SRC"/ /mnt/persistent/
+fi

@@ -324,6 +324,7 @@
                 nvd
                 gum
                 transcrypt
+                rsync
               ]
               ++ check.enabledPackages;
             inherit (check) shellHook;

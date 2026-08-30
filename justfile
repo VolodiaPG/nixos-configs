@@ -40,13 +40,6 @@ secret-new filename:
     cd {{ justfile_directory() }}/secrets
     ragenix -e "{{ filename }}"
 
-# Install encrypted secrets to /persistent
-persistent-encrypted-install:
-    #!/usr/bin/env bash
-    cd {{ justfile_directory() }}/encrypted
-    transcrypt -d
-    mv -v encrypted/* /persistent
-
 update:
     #!/usr/bin/env bash
     set -euo pipefail
