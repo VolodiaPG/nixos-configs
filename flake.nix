@@ -274,6 +274,10 @@
             shellcheck.enable = true;
             luacheck.enable = true;
             stylua.enable = true;
+            transcrypt = {
+              enable = true;
+              entry = "./transcrypt-hook.sh";
+            };
           };
         }
       );
