@@ -83,5 +83,5 @@ if [ -d "$PERSISTENT_SRC" ]; then
 
   echo "Copying persistent data to /mnt/persistent..."
   sudo mkdir -p /mnt/persistent
-  sudo rsync -a --exclude='.git' --exclude='.DS_Store' "$PERSISTENT_SRC"/ /mnt/persistent/
+  sudo rsync -a -p --exclude='.git' --exclude='.DS_Store' "$PERSISTENT_SRC"/ /mnt/persistent/
 fi
