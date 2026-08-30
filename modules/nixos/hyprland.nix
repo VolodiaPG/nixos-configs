@@ -89,8 +89,12 @@ in
       #
       # Fix nautilus network share
       gvfs.enable = true;
+
+      # ── Secrets & auth ─────────────────────────────────────────────────
+      gnome.gnome-keyring.enable = true;
     };
 
+    security.pam.services.greetd.enableGnomeKeyring = true;
     # Required for Wayland compositors
     hardware.graphics.enable = true;
 
