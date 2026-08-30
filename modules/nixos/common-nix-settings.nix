@@ -98,7 +98,7 @@ let
     # lazy-trees = true;
     # eval-cores = 0;
     warn-dirty = false;
-    accept-flake-config = false;
+    accept-flake-config = true;
     builders-use-substitutes = true;
     max-jobs = "auto";
     post-build-hook = "${cachixHook}";
