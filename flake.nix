@@ -11,22 +11,22 @@
     };
 
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+      url = "https://flakehub.com/f/nix-darwin/nix-darwin/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     agenix = {
-      url = "github:ryantm/agenix/main";
+      url = "https://flakehub.com/f/ryantm/agenix/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     disko = {
-      url = "github:nix-community/disko/master";
+      url = "https://flakehub.com/f/nix-community/disko/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     impermanence = {
-      url = "github:nix-community/impermanence/master";
+      url = "https://flakehub.com/f/nix-community/impermanence/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -36,7 +36,7 @@
     };
 
     nixos-hardware = {
-      url = "github:nixos/nixos-hardware/master";
+      url = "https://flakehub.com/f/nixos/nixos-hardware/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -46,7 +46,7 @@
     };
 
     catppuccin = {
-      url = "github:catppuccin/nix/main";
+      url = "https://flakehub.com/f/catppuccin/nix/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -321,6 +321,7 @@
                 prek
                 nvd
                 gum
+                transcrypt
               ]
               ++ check.enabledPackages;
             inherit (check) shellHook;
