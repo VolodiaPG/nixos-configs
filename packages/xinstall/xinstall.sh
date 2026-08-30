@@ -68,7 +68,7 @@ if [ -d "$PERSISTENT_SRC" ]; then
     # Init transcrypt in the cloned repo; this re-checkouts encrypted files, decrypting them.
     # Use the flake's devShell so the transcrypt version matches the repo (avoids
     # unstable-vs-stable breaking changes from nixpkgs#transcrypt on the installer).
-    ( cd "$REPO" && nix develop "$REPO"#devShell -c transcrypt -c "$CIPHER" -p "$PASSWORD" -y )
+    ( cd "$REPO" && nix develop "$REPO" -c transcrypt -c "$CIPHER" -p "$PASSWORD" -y )
 
     # Verify decryption actually happened (wrong password leaves files encrypted).
     STILL_ENCRYPTED=0
