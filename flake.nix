@@ -2,8 +2,8 @@
   description = "NixOS, nix-darwin, and Home Manager configurations";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
