@@ -45,7 +45,7 @@
     };
 
     catppuccin = {
-      url = "https://flakehub.com/f/catppuccin/nix/*";
+      url = "github:catppuccin/nix/main";
     };
 
     nix-index-database = {
