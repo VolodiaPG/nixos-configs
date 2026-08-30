@@ -23,11 +23,17 @@ in
   };
 
   environment.systemPackages = [
-    pkgs.gparted-full
     pkgs.bash
     pkgs.git
-    pkgs.xinstall
-    pkgs.xmount
+    pkgs.nix
+    # ponytail: thin wrappers — the real scripts come from the flake via nix run,
+    # so the ISO stays small and always runs the latest version.
+    (pkgs.writeShellScriptBin "xinstall" ''
+      exec nix run github:volodiapg/nixos-configs#xinstall -- "$@"
+    '')
+    (pkgs.writeShellScriptBin "xmount" ''
+      exec nix run github:volodiapg/nixos-configs#xmount -- "$@"
+    '')
   ];
 
   # ponytail: impermanence mounts rootVolume at boot — won't exist in installer
