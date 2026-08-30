@@ -117,7 +117,7 @@ in
     # Polkit for privilege escalation
     security = {
       polkit.enable = true;
-      pam.services.greetd.enableGnomeKeyring = true;
+      # pam.services.greetd.enableGnomeKeyring = true;
     };
 
     # Basic services for Wayland compositor
