@@ -1,2 +1,3 @@
 secrets/secrets.yaml diff=sopsdiffer
 nix linguist-generated=true
+toto  filter=crypt diff=crypt merge=crypt
