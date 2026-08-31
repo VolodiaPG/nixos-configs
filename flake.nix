@@ -325,6 +325,7 @@
                 gum
                 transcrypt
                 rsync
+                openssl
               ]
               ++ check.enabledPackages;
             inherit (check) shellHook;
