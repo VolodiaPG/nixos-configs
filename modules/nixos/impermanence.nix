@@ -306,6 +306,7 @@ in
             ".cursor-tutor"
             ".config"
             ".local"
+            ".var/app"
             {
               directory = ".gnupg";
               mode = "0700";
