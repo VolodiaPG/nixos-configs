@@ -27,7 +27,7 @@ mac-switch:
     nh darwin switch . -H Volodias-MacBook-Pro
 
 deploy node="home-server" *flags:
-    deploy -f . {{ node }} --skip-checks {{ flags }}
+    deploy .#{{ node }} --skip-checks {{ flags }}
 
 secret-edit:
     #!/usr/bin/env bash
@@ -46,3 +46,8 @@ update:
     nix flake update
     just boot
     just deploy
+
+installer-burn devpath:
+    #!/usr/bin/env bash
+    dd if=$(ls {{justfile_directory()}}/result/iso/nixos*) of={{ devpath }} bs=8M status=progress
+

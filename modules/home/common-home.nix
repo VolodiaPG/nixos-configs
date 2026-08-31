@@ -127,7 +127,6 @@ in
         pkgs.bottom
         pkgs.libgtop
         pkgs.lsof
-        pkgs.chezmoi
         pkgs.starship
       ];
 

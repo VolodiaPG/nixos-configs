@@ -69,3 +69,7 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 curl https://github.com/elasticdog/transcrypt/compare/suppress-openssl-pbkdf2-warnings.patch | patch -p1 .git/crypt/transcrypt
 
+# Bambustudio
+
+Use flatpak
+Then use https://github.com/Rdiger-36/StudioBridge with appimage-run to configure the printer in the slicer

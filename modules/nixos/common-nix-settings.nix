@@ -130,7 +130,6 @@ in
     # settings get written into /etc/nix/nix.custom.conf
     nixpkgs.config = {
       allowUnfree = true;
-      allowUnsupportedSystem = false;
       allowInsecurePredicate = pkg: builtins.elem (lib.getName pkg) [ "tensorrt" ];
     };
 

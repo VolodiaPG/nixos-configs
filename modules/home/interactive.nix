@@ -74,6 +74,7 @@ in
         pkgs.cachix
         pkgs.vim
         pkgs.devenv
+        pkgs.just
       ];
     };
   };

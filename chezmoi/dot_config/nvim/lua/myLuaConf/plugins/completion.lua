@@ -19,10 +19,6 @@ return {
 		on_plugin = { "blink.cmp" },
 	},
 	{
-		"blink.lib",
-		on_plugin = { "blink.cmp" },
-	},
-	{
 		"blink.cmp",
 		-- event = "DeferredUIEnter",
 		keys = {

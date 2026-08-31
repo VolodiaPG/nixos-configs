@@ -1,0 +1,25 @@
+{
+	"deretraction_speed": [
+		"28"
+	],
+	"from": "User",
+	"inherits": "Bambu Lab A1 0.4 nozzle",
+	"name": "Bambu Lab A1 0.4 HQ-",
+	"printer_extruder_id": [
+		"1"
+	],
+	"printer_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"printer_settings_id": "Bambu Lab A1 0.4 HQ-",
+	"retraction_length": [
+		"0.7"
+	],
+	"retraction_speed": [
+		"28"
+	],
+	"version": "2.6.0.2",
+	"wipe_distance": [
+		"2.2"
+	]
+}

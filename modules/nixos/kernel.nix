@@ -49,7 +49,8 @@ in
 
     zramSwap = {
       enable = true;
-      algorithm = "zstd"; # Fast compression with good ratio
+      # algorithm = "zstd"; # Fast compression with good ratio
+      algorithm = "lz4"; # Very Fast compression with bad ratio
       priority = 100; # Highest priority over disk swap
       memoryPercent = 50;
     };

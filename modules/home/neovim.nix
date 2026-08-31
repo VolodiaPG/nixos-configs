@@ -21,12 +21,18 @@ in
         plugins = with pkgs.vimPlugins; [
           lze
           lzextras
+          # ponytail: packadd names must match the lze spec names in
+          # chezmoi/dot_config/nvim (upstream repo names, not nixpkgs pnames),
+          # else lze load hooks fail with E919. Rename via pname where needed.
+          nvim-lspconfig # LSPs/init.lua spec (keys/on_require keep it dormant until used)
           nvim-treesitter.withAllGrammars
           nvim-treesitter-textobjects
           nvim-treesitter-context
           nvim-lint
           conform-nvim
-          colorizer
+          (colorizer.overrideAttrs (_: {
+            pname = "nvim-colorizer.lua";
+          }))
           nvim-web-devicons
           nui-nvim
           noice-nvim
@@ -37,8 +43,12 @@ in
           telescope-nvim
           telescope-fzf-native-nvim
           telescope-ui-select-nvim
-          catppuccin-nvim
-          harpoon2
+          (catppuccin-nvim.overrideAttrs (_: {
+            pname = "catppuccin";
+          }))
+          (harpoon2.overrideAttrs (_: {
+            pname = "harpoon";
+          }))
           staline-nvim
           inlay-hints-nvim
           nvim-surround
@@ -53,7 +63,9 @@ in
           lazygit-nvim
           vim-tmux-navigator
           opencode-nvim
-          comment-nvim
+          (comment-nvim.overrideAttrs (_: {
+            pname = "Comment.nvim";
+          }))
           nvim-ts-context-commentstring
           treesj
           lazydev-nvim
@@ -74,6 +86,7 @@ in
       # --- formatters (conform.nvim in lua/myLuaConf/format.lua) ---
       stylua
       ruff
+      prettierd # conform.nvim formatters_by_ft (format.lua) for js/ts/json/html/css
       shfmt
       shellcheck
       shellharden

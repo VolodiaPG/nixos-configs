@@ -1,15 +1,9 @@
-{ flake, ... }:
+{ flake, pkgs-unstable, ... }:
 let
   inherit (flake) inputs;
 in
-_final: prev:
-let
-  # ponytail: fast-moving tools from unstable; everything else stays on stable nixpkgs.
-  # Add packages to this list as needed — they override the stable defaults.
-  unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.system};
-in
-{
-  inherit (unstable)
+_final: prev: {
+  inherit (pkgs-unstable)
     neovim
     neovim-unwrapped
     opencode
@@ -19,6 +13,7 @@ in
     immich
     immich-machine-learning
     brave-origin
+    bambu-studio
     orca-slicer
     ;
 

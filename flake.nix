@@ -171,7 +171,7 @@
         config = import ./config.nix;
       };
 
-      overlays-default = (import ./overlays/default.nix) { inherit flake; };
+      overlays-default = (import ./overlays/default.nix) { inherit flake pkgs-unstable; };
 
       packagesFor =
         system:

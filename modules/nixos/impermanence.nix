@@ -196,7 +196,7 @@ in
             shopt -s dotglob nullglob
             for item in /fs_tmp/*; do
                 case "$item" in
-                    /fs_tmp/old_roots|/fs_tmp/lost+found) continue ;;
+                    /fs_tmp/old_roots|/fs_tmp/lost+found|dev|boot|nix|persistent|proc) continue ;;
                 esac
                 mv "$item" "/fs_tmp/old_roots/$timestamp/"
             done
@@ -267,7 +267,9 @@ in
           "/var/lib/docker"
           "/var/lib/tailscale"
           "/root"
-          "/etc/ssh/"
+          # NOTE: do NOT persist /etc/ssh as a directory: it would shadow the
+          # NixOS-managed /etc/ssh symlink farm (sshd_config, ssh_config,
+          # moduli) and break sshd. Only the host keys need to survive reboots.
           "/etc/NetworkManager/system-connections"
           "/var/lib/flatpak"
           #"/run/secrets.d"
@@ -281,6 +283,13 @@ in
         ];
         files = [
           "/etc/machine-id"
+          # Host keys are persisted as files so /etc/ssh itself stays
+          # NixOS-managed; sshd-keygen.service (ConditionFileNotEmpty)
+          # regenerates empty ones, e.g. on fresh installs.
+          "/etc/ssh/ssh_host_ed25519_key"
+          "/etc/ssh/ssh_host_ed25519_key.pub"
+          "/etc/ssh/ssh_host_rsa_key"
+          "/etc/ssh/ssh_host_rsa_key.pub"
         ];
         users.${flake.config.me.username} = {
           directories = [
