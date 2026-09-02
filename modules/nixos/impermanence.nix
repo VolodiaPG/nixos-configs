@@ -196,7 +196,7 @@ in
             shopt -s dotglob nullglob
             for item in /fs_tmp/*; do
                 case "$item" in
-                    /fs_tmp/old_roots|/fs_tmp/lost+found|dev|boot|nix|persistent|proc) continue ;;
+                    /fs_tmp/old_roots|/fs_tmp/lost+found|/dev|/boot|/nix|/persistent|/proc) continue ;;
                 esac
                 mv "$item" "/fs_tmp/old_roots/$timestamp/"
             done
