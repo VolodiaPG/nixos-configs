@@ -2,6 +2,7 @@
   flake,
   pkgs,
   lib,
+  modulesPath,
   ...
 }:
 let
@@ -15,6 +16,9 @@ in
     self.nixosModules.default
     inputs.disko.nixosModules.disko
     "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel.nix"
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+    inputs.determinate.nixosModules.default
+    (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   networking = {
