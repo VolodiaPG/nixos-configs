@@ -1,0 +1,59 @@
+name: Build Installer ISO
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name to attach the ISO to (e.g. v25.11). Leave empty to build without uploading."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: installer-iso-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build installer ISO
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GH_PRIVATE_REPO_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v17
+        with:
+          name: volodiapg
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build installer ISO
+        run: |
+          set -euxo pipefail
+          iso=$(nix build --print-out-paths --no-link \
+            .#nixosConfigurations.installer.config.system.build.isoImage)
+          echo "iso-store-path=$iso" >> "$GITHUB_OUTPUT"
+          mkdir -p artifact
+          cp "$iso"/iso/*.iso artifact/
+          ls -la artifact/
+        id: build
+
+      - name: Upload ISO to release
+        if: github.event_name == 'release' || inputs.tag_name != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag_name || github.event.release.tag_name }}
+          files: artifact/*.iso
+          fail_on_unmatched_files: true

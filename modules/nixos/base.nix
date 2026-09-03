@@ -15,7 +15,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Minimal docs
     documentation.enable = false;
+    documentation.nixos.enable = false;
 
     nix = {
       optimise = {

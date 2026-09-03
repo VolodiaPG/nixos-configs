@@ -14,10 +14,11 @@ in
     inputs.agenix.nixosModules.default
     self.nixosModules.default
     inputs.disko.nixosModules.disko
-    "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+    "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel.nix"
   ];
 
   networking = {
+    # hostId = "30239671";
     hostName = "installer";
     networkmanager.enable = true;
   };
@@ -40,6 +41,7 @@ in
   services = {
     impermanence.enable = false;
     base.enable = true;
+    commonNixSettings.enable = true;
 
     getty.autologinUser = "nixos";
   };
@@ -75,8 +77,6 @@ in
       };
     };
   };
-
-  networking.wireless.enable = lib.mkForce true;
 
   # ponytail: installer needs the filesystems disko will lay down
   boot.supportedFilesystems = [
