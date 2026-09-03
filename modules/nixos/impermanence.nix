@@ -23,14 +23,14 @@ let
     enum
     ;
   cfg = config.services.impermanence;
-
-  persistServiceNames =
-    let
-      ensureValidServiceName = name: if lib.hasSuffix ".service" name then name else name + ".service";
-    in
-    map ensureValidServiceName (
-      lib.attrNames (lib.filterAttrs (name: _: lib.hasPrefix "persist-" name) config.systemd.services)
-    );
+  #
+  # persistServiceNames =
+  #   let
+  #     ensureValidServiceName = name: if lib.hasSuffix ".service" name then name else name + ".service";
+  #   in
+  #   map ensureValidServiceName (
+  #     lib.attrNames (lib.filterAttrs (name: _: lib.hasPrefix "persist-" name) config.systemd.services)
+  #   );
 in
 {
   imports = [ flake.inputs.impermanence.nixosModules.impermanence ];
@@ -62,18 +62,6 @@ in
 
       disko = mkOption {
         description = "Is disko enabled";
-        type = bool;
-        default = false;
-      };
-
-      cleanReset = mkOption {
-        description = ''
-          For ext4/xfs: instead of archiving the previous root contents into an
-          `old_roots/` directory, wipe and reformat the root partition on every
-          boot in the initrd. This is a destructive reset: `/` will be empty
-          after the initrd step. Only valid for fsType `ext4` or `xfs` (btrfs
-          already rotates via subvolumes).
-        '';
         type = bool;
         default = false;
       };
@@ -111,17 +99,13 @@ in
         assertion = lib.hasPrefix "/dev/" cfg.rootVolume;
         message = "services.impermanence.rootVolume must be a full device path starting with /dev/ (got: ${cfg.rootVolume})";
       }
-      {
-        assertion = !(cfg.cleanReset && cfg.fsType == "btrfs");
-        message = "services.impermanence.cleanReset has no effect with fsType = \"btrfs\" (the rotating subvolume is wiped each boot anyway). Set fsType to \"ext4\" or \"xfs\" or unset cleanReset.";
-      }
     ];
 
     boot = {
       supportedFilesystems = [ cfg.fsType ];
 
       initrd.systemd = {
-        enable = mkIf (cfg.fsType == "btrfs" || cfg.cleanReset) true;
+        enable = true;
 
         services.impermanence-btrfs-rolling-root = mkIf (cfg.fsType == "btrfs") {
           description = "Archiving existing BTRFS root subvolume and creating a fresh one";
@@ -174,15 +158,15 @@ in
             "find" = "${pkgs.findutils}/bin/find";
             "btrfs" = "${pkgs.btrfs-progs}/bin/btrfs";
           })
-          (mkIf (cfg.cleanReset && cfg.fsType == "ext4") {
+          (mkIf (cfg.fsType == "ext4") {
             "mkfs.ext4" = "${pkgs.e2fsprogs}/bin/mkfs.ext4";
           })
-          (mkIf (cfg.cleanReset && cfg.fsType == "xfs") {
+          (mkIf (cfg.fsType == "xfs") {
             "mkfs.xfs" = "${pkgs.xfsprogs}/bin/mkfs.xfs";
           })
         ];
 
-        services.impermanence-clean-reset = mkIf (cfg.cleanReset && cfg.fsType != "btrfs") {
+        services.impermanence-clean-reset = mkIf (cfg.fsType != "btrfs") {
           description = "Wiping and reformatting the root partition before sysroot mount";
           unitConfig.DefaultDependencies = false;
           serviceConfig = {
@@ -213,54 +197,54 @@ in
       };
     };
 
-    systemd.services.impermanence-setup = mkIf (cfg.fsType != "btrfs" && !cfg.cleanReset) {
-      description = "Set up impermanent root";
-      wantedBy = [ "local-fs-pre.target" ];
-      before = [
-        "local-fs-pre.target"
-        "local-fs.target"
-      ]
-      ++ persistServiceNames;
-      after = [ "systemd-fsck-root.service" ];
-      path = [
-        pkgs.coreutils
-        pkgs.findutils
-        pkgs.util-linux
-      ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      unitConfig = {
-        DefaultDependencies = false;
-        Conflicts = "shutdown.target";
-      };
-      restartIfChanged = false;
-      script = ''
-        mkdir -p /fs_tmp
-        mount ${cfg.rootVolume} /fs_tmp
-
-        mkdir -p /fs_tmp/old_roots
-        timestamp=$(date "+%Y-%m-%-d_%H:%M:%S")
-        mkdir -p "/fs_tmp/old_roots/$timestamp"
-        shopt -s dotglob nullglob
-        for item in /fs_tmp/*; do
-            case "$item" in
-                /fs_tmp/old_roots|/fs_tmp/lost+found|/dev|/boot|/nix|/persistent|/proc) continue ;;
-            esac
-            mv "$item" "/fs_tmp/old_roots/$timestamp/"
-        done
-        shopt -u dotglob nullglob
-
-        find /fs_tmp/old_roots/ -mindepth 1 -maxdepth 1 -mtime +${toString cfg.deleteAfterDays} -exec rm -rf {} +
-
-        mkdir -p /fs_tmp/boot
-        mkdir -p /fs_tmp/nix
-        mkdir -p /fs_tmp/persistent
-
-        umount /fs_tmp
-      '';
-    };
+    # systemd.services.impermanence-setup = mkIf (cfg.fsType != "btrfs" && !cfg.cleanReset) {
+    #   description = "Set up impermanent root";
+    #   wantedBy = [ "local-fs-pre.target" ];
+    #   before = [
+    #     "local-fs-pre.target"
+    #     "local-fs.target"
+    #   ]
+    #   ++ persistServiceNames;
+    #   after = [ "systemd-fsck-root.service" ];
+    #   path = [
+    #     pkgs.coreutils
+    #     pkgs.findutils
+    #     pkgs.util-linux
+    #   ];
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     RemainAfterExit = true;
+    #   };
+    #   unitConfig = {
+    #     DefaultDependencies = false;
+    #     Conflicts = "shutdown.target";
+    #   };
+    #   restartIfChanged = false;
+    #   script = ''
+    #     mkdir -p /fs_tmp
+    #     mount ${cfg.rootVolume} /fs_tmp
+    #
+    #     mkdir -p /fs_tmp/old_roots
+    #     timestamp=$(date "+%Y-%m-%-d_%H:%M:%S")
+    #     mkdir -p "/fs_tmp/old_roots/$timestamp"
+    #     shopt -s dotglob nullglob
+    #     for item in /fs_tmp/*; do
+    #         case "$item" in
+    #             /fs_tmp/old_roots|/fs_tmp/lost+found|/dev|/boot|/nix|/persistent|/proc) continue ;;
+    #         esac
+    #         mv "$item" "/fs_tmp/old_roots/$timestamp/"
+    #     done
+    #     shopt -u dotglob nullglob
+    #
+    #     find /fs_tmp/old_roots/ -mindepth 1 -maxdepth 1 -mtime +${toString cfg.deleteAfterDays} -exec rm -rf {} +
+    #
+    #     mkdir -p /fs_tmp/boot
+    #     mkdir -p /fs_tmp/nix
+    #     mkdir -p /fs_tmp/persistent
+    #
+    #     umount /fs_tmp
+    #   '';
+    # };
 
     fileSystems = mkMerge [
       { "/persistent".neededForBoot = true; }
