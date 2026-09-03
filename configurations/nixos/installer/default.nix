@@ -24,6 +24,10 @@ in
   networking = {
     # hostId = "30239671";
     hostName = "installer";
+    nameservers = [
+      "1.1.1.1"
+      "1.0.0.1"
+    ];
     networkmanager.enable = true;
   };
 
