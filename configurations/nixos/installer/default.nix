@@ -31,7 +31,10 @@ in
     networkmanager.enable = true;
   };
 
+  services.envfs.enable = true;
+
   environment.systemPackages = [
+    pkgs.coreutils
     pkgs.bash
     pkgs.git
     pkgs.nix
