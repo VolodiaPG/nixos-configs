@@ -201,11 +201,11 @@ in
           script =
             if cfg.fsType == "ext4" then
               ''
-                mkfs.ext4 -F -L nixos ${cfg.rootVolume}
+                mkfs.ext4 -F -L root ${cfg.rootVolume}
               ''
             else if cfg.fsType == "xfs" then
               ''
-                mkfs.xfs -f -L nixos ${cfg.rootVolume}
+                mkfs.xfs -f -L root ${cfg.rootVolume}
               ''
             else
               "";
