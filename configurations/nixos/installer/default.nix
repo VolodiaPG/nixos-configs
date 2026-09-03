@@ -31,8 +31,6 @@ in
     networkmanager.enable = true;
   };
 
-  services.envfs.enable = true;
-
   environment.systemPackages = [
     pkgs.coreutils
     pkgs.bash
@@ -54,6 +52,7 @@ in
     base.enable = true;
     commonNixSettings.enable = true;
 
+    envfs.enable = true;
     getty.autologinUser = "nixos";
   };
 
