@@ -50,10 +50,20 @@ jobs:
           ls -la artifact/
         id: build
 
-      - name: Upload ISO to release
+      - name: Upload ISO to release (release or named tag)
         if: github.event_name == 'release' || inputs.tag_name != ''
         uses: softprops/action-gh-release@v2
         with:
+          target_commitish: ${{ github.sha }}
           tag_name: ${{ inputs.tag_name || github.event.release.tag_name }}
+          files: artifact/*.iso
+          fail_on_unmatched_files: true
+
+      - name: Upload ISO to release (no tags nor releases)
+        if: github.event_name != 'release' && inputs.tag_name == ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: installer-${{ github.run_id }}
+          target_commitish: ${{ github.sha }}
           files: artifact/*.iso
           fail_on_unmatched_files: true
