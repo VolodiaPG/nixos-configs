@@ -37,7 +37,7 @@ in
     # Storage and networking
     impermanence = {
       enable = true;
-      rootVolume = "/dev/sda";
+      rootVolume = "/dev/sda3";
       disko = true;
     };
     vpn.enable = true;
