@@ -275,21 +275,24 @@ in
       {
         hideMounts = true;
         directories = [
+          "/run/k3s/containerd" # K3S caches
           "/var/log"
           "/var/lib/bluetooth"
           "/var/lib/nixos"
           "/var/lib/systemd"
           "/var/lib/containers" # podman caches
-          "/run/k3s/containerd" # K3S caches
           "/var/lib/rancher/k3s/agent/containerd"
           "/var/lib/docker"
           "/var/lib/tailscale"
+          "/var/lib/postgresql"
+          "/var/lib/redis-immich"
+          "/var/lib/fail2ban"
+          "/var/lib/flatpak"
           "/root"
           # NOTE: do NOT persist /etc/ssh as a directory: it would shadow the
           # NixOS-managed /etc/ssh symlink farm (sshd_config, ssh_config,
           # moduli) and break sshd. Only the host keys need to survive reboots.
           "/etc/NetworkManager/system-connections"
-          "/var/lib/flatpak"
           #"/run/secrets.d"
           #"/run/secrets"
           {
