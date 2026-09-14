@@ -45,6 +45,7 @@ update:
     set -euo pipefail
     nix flake update
     just boot
+    flatpak update
     just deploy
 
 installer-burn devpath:
