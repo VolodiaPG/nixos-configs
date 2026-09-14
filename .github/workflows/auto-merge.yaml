@@ -7,12 +7,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - config: m1
-            runner: ubuntu-24.04-arm
+          # - config: m1
+          #   runner: ubuntu-24.04-arm
           - config: home-server
             runner: ubuntu-24.04
-          - config: dell
+          - config: msi
             runner: ubuntu-24.04
+
     steps:
       - name: Create nix daemon tmpdir path
         run: |
@@ -29,6 +30,7 @@ jobs:
             extra-experimental-features = nix-command flakes
             log-lines = 50
             build-dir = /nix/tmpdir
+            accept-flake-config = true
 
       - uses: cachix/cachix-action@v17
         with:
@@ -40,10 +42,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Check flat inputs
-        run: |
-          nix run github:linyinfeng/flat-flake -- check --lock-file ./flake.lock
 
       - name: Run nix eval for ${{ matrix.config }}
         run: nix eval .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel

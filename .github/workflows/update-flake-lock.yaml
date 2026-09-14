@@ -28,6 +28,7 @@ jobs:
             extra-experimental-features = nix-command flakes
             log-lines = 50
             build-dir = /nix/tmpdir
+            accept-flake-config = true
 
       - uses: cachix/cachix-action@v17
         with:
@@ -46,7 +47,6 @@ jobs:
       - name: Build nix packages
         run: |
           nix flake update
-          nix develop .#ci --command nvfetcher
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8

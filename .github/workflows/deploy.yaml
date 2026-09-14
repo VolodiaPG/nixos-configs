@@ -52,7 +52,16 @@ jobs:
   #         nix run .#deploy-rs -- --skip-checks --targets .#home-server
   #
   cache:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          # - config: m1
+          #   runner: ubuntu-24.04-arm
+          - config: home-server
+            runner: ubuntu-24.04
+          - config: msi
+            runner: ubuntu-24.04
 
     steps:
       - uses: wimpysworld/nothing-but-nix@main
@@ -74,6 +83,7 @@ jobs:
             extra-experimental-features = nix-command flakes
             log-lines = 50
             build-dir = /nix/tmpdir
+            accept-flake-config = true
 
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -86,4 +96,6 @@ jobs:
       - name: Build to cache
         run: |
           set -euxo pipefail
-          nix build --accept-flake-config .#nixosConfigurations.m1.config.system.build.toplevel
+          nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.${{matrix.config}}.config.environment.systemPackages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
+          nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.${{matrix.config}}.config.home-manager.users.volodia.home.packages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
+          # nix build --accept-flake-config .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel

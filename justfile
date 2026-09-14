@@ -48,6 +48,11 @@ update:
     flatpak update
     just deploy
 
+ci:
+    #!/usr/bin/env bash
+    nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.msi.config.environment.systemPackages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
+    nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.msi.config.home-manager.users.volodia.home.packages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
+
 installer-burn devpath:
     #!/usr/bin/env bash
     dd if=$(ls {{justfile_directory()}}/result/iso/nixos*) of={{ devpath }} bs=8M status=progress
