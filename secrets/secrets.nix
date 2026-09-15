@@ -16,4 +16,5 @@ in
   "hetzner-token.age".publicKeys = [ publicKey ];
   "hetzner-data-encryption-key.age".publicKeys = [ publicKey ];
   "hashed-password.age".publicKeys = [ publicKey ];
+  "tailscale-k8s-operator.age".publicKeys = [ publicKey ];
 }

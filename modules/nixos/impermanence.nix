@@ -284,8 +284,18 @@ in
           "/var/lib/rancher/k3s/agent/containerd"
           "/var/lib/docker"
           "/var/lib/tailscale"
-          "/var/lib/postgresql"
-          "/var/lib/redis-immich"
+          {
+            directory = "/var/lib/postgresql";
+            user = "postgres";
+            group = "postgres";
+            mode = "u=rwx,g=rx,o=";
+          }
+          {
+            directory = "/var/lib/redis-immich";
+            user = "redis-immich";
+            group = "redis-immich";
+            mode = "u=rwx,g=rx,o=";
+          }
           "/var/lib/fail2ban"
           "/var/lib/flatpak"
           "/root"
@@ -311,6 +321,7 @@ in
           "/etc/ssh/ssh_host_ed25519_key.pub"
           "/etc/ssh/ssh_host_rsa_key"
           "/etc/ssh/ssh_host_rsa_key.pub"
+          "/etc/rancher/k3s/k3s.yaml"
         ];
         users.${flake.config.me.username} = {
           directories = [
@@ -321,10 +332,10 @@ in
             "Videos"
             # ".local/state/nix/profiles"
             # ".nix-profile"
-            ".vscode-server"
-            ".cursor-server"
-            ".cursor"
-            ".cursor-tutor"
+            # ".vscode-server"
+            # ".cursor-server"
+            # ".cursor"
+            # ".cursor-tutor"
             ".config"
             ".local"
             ".var/app"
@@ -349,14 +360,13 @@ in
             # ".local/share/nvim/harpoon"
             ".docker"
             ".tmux/resurrect"
-            ".mozilla"
-            ".zen"
+            # ".mozilla"
+            # ".zen"
             ".supermaven"
             ".hyperhdr"
             ".tmux"
             ".zotero"
             ".cache/flatpak"
-            ".local/share/flatpak"
             ".cache/nvim"
           ];
           files = [

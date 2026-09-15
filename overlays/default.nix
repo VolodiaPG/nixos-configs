@@ -1,10 +1,17 @@
 { flake, pkgs-unstable, ... }:
+final: prev:
 let
   inherit (flake) inputs;
+  inherit (inputs) self;
+  packages = import (self + "/packages/default.nix") { pkgs = final; };
+  high-tide = pkgs-unstable.callPackage (self + "/packages/high-tide/default.nix") {
+    src = inputs.high-tide;
+  };
 in
-_final: prev: {
+{
   inherit (pkgs-unstable)
     neovim
+    neovim-remote
     neovim-unwrapped
     opencode
     noctalia
@@ -17,8 +24,7 @@ _final: prev: {
     orca-slicer
     ;
 
-  inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system})
-    high-tide
+  inherit (packages)
     theme-switcher
     tmux-session-color
     openrouter-credits
@@ -26,6 +32,8 @@ _final: prev: {
     xmount
     mpv-rife
     ;
+
+  inherit high-tide;
 
   mosh = prev.mosh.overrideAttrs (
     old:

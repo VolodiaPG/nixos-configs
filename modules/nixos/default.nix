@@ -30,6 +30,7 @@
     ./version.nix
     ./virtualization.nix
     ./vpn.nix
+    ./kubernetes.nix
   ];
 
   _module.args = {

@@ -28,16 +28,33 @@ in
       }
     ];
 
-    services.caddy = {
-      virtualHosts = {
-        "https://immich.${me.tailname}" = {
-          extraConfig = ''
-            bind tailscale/immich
+    users.users.immich.extraGroups = [
+      "postgres"
+      "redis-immich"
+    ];
 
-            reverse_proxy http://127.0.0.1:2283 {
-                header_up Host {host}
-            }
-          '';
+    services = {
+      postgresql.ensureUsers = [
+        {
+          name = "immich";
+          ensureClauses = {
+            login = true;
+            superuser = true;
+          };
+        }
+      ];
+
+      caddy = {
+        virtualHosts = {
+          "https://immich.${me.tailname}" = {
+            extraConfig = ''
+              bind tailscale/immich
+
+              reverse_proxy http://127.0.0.1:2283 {
+                  header_up Host {host}
+              }
+            '';
+          };
         };
       };
     };

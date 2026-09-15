@@ -21,6 +21,15 @@ in
       enable = true;
       containers.enable = true;
     };
+
+    # services.tsidp = {
+    #   enable = true;
+    #   # settings = {
+    #   #   # debugAllRequests = true;
+    #   #   # useLocalTailscaled = false; # otherwise will conflict with ts serve
+    #   # };
+    # };
+
     virtualisation.oci-containers = {
       containers = {
         fizzy = {
@@ -40,6 +49,12 @@ in
             JOB_CONCURRENCY = "2";
           };
           volumes = [ "/home/${me.username}/Documents/services/fizzy:/rails/storage" ];
+        };
+        commafeed = {
+          image = "athou/commafeed:latest-h2";
+          pull = "always";
+          ports = [ "8082:8082" ];
+          volumes = [ "/home/${me.username}/Documents/${me.username}/commafeed/data:/commafeed/data" ];
         };
       };
     };

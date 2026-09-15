@@ -1,11 +1,10 @@
 _default: boot
 
 build drv="$(hostname)":
-    nom build .#nixosConfigurations.{{ drv }}.config.system.build.toplevel
+    nh os build . -H {{ drv }}
 
-boot drv="$(hostname)": (build drv)
-    sudo nix-env --profile /nix/var/nix/profiles/system --set ./result
-    sudo /nix/var/nix/profiles/system/bin/switch-to-configuration boot
+boot drv="$(hostname)":
+    nh os boot . -H {{ drv }}
 
 switch drv="$(hostname)":
     nh os switch . -H {{ drv }}

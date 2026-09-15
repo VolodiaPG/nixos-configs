@@ -73,3 +73,22 @@ curl https://github.com/elasticdog/transcrypt/compare/suppress-openssl-pbkdf2-wa
 
 Use flatpak
 Then use https://github.com/Rdiger-36/StudioBridge with appimage-run to configure the printer in the slicer
+
+# Immich
+
+1. Check what in the dump actually references it (decisive — do this first):
+zcat <your-dump>.sql.gz | grep -n 'vectors'
+- If you only see CREATE EXTENSION IF NOT EXISTS vectors ... and COMMENT ON EXTENSION vectors ... → it's purely vestigial, proceed.
+- If you also see CREATE INDEX ... USING vectors (...) (old pgvecto.rs indexes) → strip those lines too and re-index afterwards (Admin → Jobs → smart search re-index). Current immich doesn't need them.
+2. Strip and re-create the dump file:
+zcat <your-dump>.sql.gz \
+  | grep -vE 'CREATE EXTENSION IF NOT EXISTS vectors|COMMENT ON EXTENSION vectors' \
+  | gzip > fixed.sql.gz
+3. Restore the fixed dump — either upload fixed.sql.gz through the web UI again (now works, since immich is superuser), or do it manually:
+sudo systemctl stop immich-server
+sudo -u postgres dropdb --if-exists immich
+sudo -u postgres createdb -O immich immich
+gunzip -c fixed.sql.gz | sudo -u postgres psql -d immich -v ON_ERROR_STOP=on -q
+# hand ownership to the role the server connects as:
+sudo -u postgres psql -d immich -c 'REASSIGN OWNED BY postgres TO immich;'
+sudo systemctl start immich-server

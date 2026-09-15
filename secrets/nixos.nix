@@ -74,5 +74,9 @@ in
     }
     // rootReadable;
 
+    tailscale-k8s-operator = {
+      file = ./tailscale-k8s-operator.age;
+    }
+    // rootReadable;
   };
 }

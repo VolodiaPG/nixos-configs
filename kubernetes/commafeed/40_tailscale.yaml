@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: commafeed-ingress
+  annotations:
+    tailscale.com/proxy-group: ingress-proxies
+    tailscale.com/tags: tag:k8s
+spec:
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        - commafeed
+  defaultBackend:
+    service:
+      name: commafeed-service
+      port:
+        number: 80

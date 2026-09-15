@@ -16,9 +16,9 @@ in
         environmentFile = config.age.secrets.tailscale-authkey.path;
         package = pkgs.caddy.withPlugins {
           plugins = [
-            "github.com/tailscale/caddy-tailscale@v0.0.0-20260106222316-bb080c4414ac"
+            "github.com/tailscale/caddy-tailscale@v0.0.0-20260826180304-de41b249af4f"
           ];
-          hash = "sha256-o0oG/9hROjDl69AeuxUhhFVTsdluHJ8VyENVk1KHCOI=";
+          hash = "sha256-IzLM8Qgxurrgs6NBygGEGyzXQUxQMPP3Y6iIWVN5ZvQ=";
         };
         globalConfig = ''
           servers {

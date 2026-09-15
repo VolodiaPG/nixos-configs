@@ -96,7 +96,7 @@
       "https://nix-community.cachix.org?priority=15"
       "https://volodiapg.cachix.org?priority=30"
       "https://cache.numtide.com?priority=20"
-      "https://cache.flakehub.com?priority=20"
+      # "https://cache.flakehub.com?priority=20"
       "https://cache.nixos-cuda.org?priority=10"
       "https://attic.xuyh0120.win/lantian"
       "https://install.determinate.systems"
@@ -106,10 +106,9 @@
       "volodiapg.cachix.org-1:XcJQeUW+7kWbHEqwzFbwIJ/fLix3mddEYa/kw8XXoRI="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+      # "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
-      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "determinate.systems:2f5mBvfSEjPpdnsbvY+JnsrWvSAUVM+HxFpYr0WXB44="
     ];
   };
@@ -129,38 +128,38 @@
         "aarch64-linux"
         "aarch64-darwin"
       ];
+      cuda = [
+        "cuda"
+        "no-cuda"
+      ];
       forAllSystems = lib.genAttrs systems;
-
-      # Unoverlaid nixpkgs per system — for self.packages only.
-      # Repo nixpkgs.config/overlays are applied by the module system, NOT here.
-      pkgsFor =
-        system:
-        import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfree = true;
-            cudaSupport = system == "x86_64-linux";
-            allowInsecurePredicate = pkg: lib.getName pkg == "tensorrt";
-          };
-        };
+      forAllSystemsCuda = lib.genAttrs cuda;
 
       pkgsUnstableFor =
-        system:
+        system: cuda:
+        let
+          cudaSupport = cuda == "cuda";
+        in
         import nixpkgs-unstable {
           inherit system;
           config = {
+            inherit cudaSupport;
             allowUnfree = true;
-            cudaSupport = system == "x86_64-linux";
             allowInsecurePredicate = pkg: lib.getName pkg == "tensorrt";
           };
         };
 
-      pkgsUnstableBySystem = forAllSystems pkgsUnstableFor;
-      # x86_64-linux unstable pkgs — default for nixos hosts msi/home-server
-      pkgs-unstable = pkgsUnstableBySystem.x86_64-linux;
-      # aarch64-linux unstable pkgs for M1
-      pkgs-unstable-aarch64 = pkgsUnstableBySystem.aarch64-linux;
+      # pkgsUnstableBySystem = forAllSystems pkgsUnstableFor;
+      pkgsUnstableBySystemAndCuda = forAllSystems (
+        system: forAllSystemsCuda (cuda: pkgsUnstableFor system cuda)
+      );
 
+      overlays-default =
+        system: cuda:
+        (import ./overlays/default.nix) {
+          inherit flake;
+          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.${cuda};
+        };
       # Carried-over attr from nixos-unified's shape so repo modules stay unmodified.
       # flake.self+"/x" works via self.outPath; flake.inputs.self = self; flake.config.me from config.nix.
       flake = self // {
@@ -171,25 +170,10 @@
         config = import ./config.nix;
       };
 
-      overlays-default = (import ./overlays/default.nix) { inherit flake pkgs-unstable; };
-
-      packagesFor =
-        system:
-        let
-          pkgs = pkgsFor system;
-          base = import ./packages/default.nix { inherit pkgs; };
-          high-tide = lib.optionalAttrs (system == "x86_64-linux" || system == "aarch64-linux") {
-            high-tide = pkgsUnstableBySystem.${system}.callPackage ./packages/high-tide/default.nix {
-              src = inputs.high-tide;
-            };
-          };
-        in
-        base // high-tide;
-
       mkNixos =
-        name: system: extraModules:
+        name: system: cuda: extraModules:
         let
-          pkgs-unstable = pkgsUnstableBySystem.${system};
+          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.${cuda};
         in
         nixpkgs.lib.nixosSystem {
           modules = [
@@ -199,6 +183,7 @@
           ++ extraModules;
           specialArgs = {
             inherit flake pkgs-unstable;
+            overlays = overlays-default system cuda;
           };
         };
 
@@ -209,11 +194,11 @@
           darwinPkgs = import nixpkgs {
             inherit system;
             overlays = [
-              overlays-default
+              (overlays-default system "no-cuda")
             ];
             config.allowUnfree = true;
           };
-          pkgs-unstable = pkgsUnstableBySystem.${system};
+          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.no-cuda;
         in
         inputs.nix-darwin.lib.darwinSystem {
           inherit system;
@@ -229,30 +214,33 @@
           ++ extraModules;
           specialArgs = {
             inherit flake pkgs-unstable;
+            overlays = overlays-default system "no-cuda";
           };
         };
 
       nixosConfigurations = {
-        msi = mkNixos "msi" "x86_64-linux" [
+        msi = mkNixos "msi" "x86_64-linux" "cuda" [
           {
             home-manager.extraSpecialArgs = {
-              inherit flake pkgs-unstable;
+              inherit flake;
+              pkgs-unstable = pkgsUnstableBySystemAndCuda.x86_64-linux.cuda;
             };
           }
         ];
-        home-server = mkNixos "home-server" "x86_64-linux" [
+        home-server = mkNixos "home-server" "x86_64-linux" "no-cuda" [
           {
             home-manager.extraSpecialArgs = {
-              inherit flake pkgs-unstable;
+              inherit flake;
+              pkgs-unstable = pkgsUnstableBySystemAndCuda.x86_64-linux.no-cuda;
             };
           }
         ];
-        installer = mkNixos "installer" "x86_64-linux" [ ];
+        installer = mkNixos "installer" "x86_64-linux" "no-cuda" [ ];
         m1 = mkNixos "m1" "aarch64-linux" [
           {
             home-manager.extraSpecialArgs = {
               inherit flake;
-              pkgs-unstable = pkgs-unstable-aarch64;
+              pkgs-unstable = pkgsUnstableBySystemAndCuda.aarch64-linux.no-cuda;
             };
           }
         ];
@@ -287,10 +275,6 @@
       homeModules.default = ./modules/home/default.nix;
       darwinModules.default = ./modules/darwin/default.nix;
 
-      overlays.default = overlays-default;
-
-      packages = forAllSystems packagesFor;
-
       inherit nixosConfigurations darwinConfigurations;
 
       deploy.nodes.home-server = {
@@ -306,7 +290,7 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = pkgsUnstableFor system;
+          pkgs = pkgsUnstableBySystemAndCuda.${system}.no-cuda;
           check = pre-commit-check.${system};
         in
         {

@@ -47,9 +47,10 @@ in
 
     # Media server stack
     arr.enable = false;
-    caddy.enable = true;
+    caddy.enable = false;
     samba.enable = true;
-    homeLab.enable = true;
+    homeLab.enable = false;
+    mykubernetes.enable = true;
 
     immich.enable = true;
     backup = {

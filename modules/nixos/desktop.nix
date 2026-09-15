@@ -91,18 +91,18 @@ in
     fonts = {
       packages = [
         pkgs.corefonts
-        pkgs.roboto
-        pkgs.roboto-serif
+        # pkgs.roboto
+        # pkgs.roboto-serif
         pkgs.inter
         pkgs.ibm-plex
         pkgs.joypixels
-        pkgs.nerd-fonts.iosevka-term
+        # pkgs.nerd-fonts.iosevka-term
         pkgs.noto-fonts-cjk-sans
         pkgs.noto-fonts-cjk-serif
       ];
       fontconfig.defaultFonts = {
         monospace = [
-          "IosevkaTerm Nerd Font"
+          "Comic Code Ligatures"
         ];
 
         sansSerif = [

@@ -42,7 +42,7 @@ in
       loader.grub = {
         configurationLimit = 10;
         useOSProber = true;
-        copyKernels = true;
+        # copyKernels = true;
       };
       kernel.sysctl = {
         "kernel.threads-max" = lib.mkDefault 2000000;
