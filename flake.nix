@@ -310,6 +310,8 @@
                 transcrypt
                 rsync
                 openssl
+                kubectl
+                k9s
               ]
               ++ check.enabledPackages;
             inherit (check) shellHook;

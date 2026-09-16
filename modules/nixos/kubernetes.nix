@@ -31,9 +31,15 @@ in
       enable = true;
       nodeName = config.networking.hostName;
       extraFlags = [
+        "--disable=traefik"
+        "--disable=servicelb"
         "--kubelet-arg=fail-swap-on=false"
         # Optional: Enable native K8s swap handling (K8s 1.28+)
         "--kubelet-arg=feature-gates=NodeSwap=true"
+        # 4GiB box: reserve headroom so kubelet evicts gracefully before kernel OOM
+        "--kubelet-arg=kube-reserved=memory=300Mi"
+        "--kubelet-arg=system-reserved=memory=400Mi"
+        "--kubelet-arg=eviction-hard=memory.available<300Mi"
       ];
       manifests.tailscale-secret = {
         source = config.age.secrets.tailscale-k8s-operator.path;
@@ -58,6 +64,13 @@ in
             immich.persistence.library.existingClaim = "immich-pvc";
             machine-learning.enabled = false;
             valkey.enabled = true; # REDIS_HOSTNAME defaults to <release>-valkey, so enable it
+            controllers.main.containers.main.resources = {
+              requests = {
+                memory = "512Mi";
+                cpu = "100m";
+              };
+              limits.memory = "2Gi";
+            };
             controllers.main.containers.main.env = {
               DB_HOSTNAME.value = "database-rw.immich.svc.cluster.local";
               DB_DATABASE_NAME.value = "immich";

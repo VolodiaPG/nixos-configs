@@ -11,6 +11,13 @@ spec:
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
 
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi
+
   postgresql:
     shared_preload_libraries:
       - "vchord.so"
