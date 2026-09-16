@@ -15,6 +15,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.etc."kubelet/10-swap.conf".text = ''
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      kind: KubeletConfiguration
+      memorySwap:
+        swapBehavior: LimitedSwap
+    '';
+
+    systemd.tmpfiles.rules = [
+      "d /var/lib/rancher/k3s/agent/etc/kubelet.conf.d 0755 root root -"
+      "L+ /var/lib/rancher/k3s/agent/etc/kubelet.conf.d/10-swap.conf - - - - /etc/kubelet/10-swap.conf"
+    ];
+
     services.k3s = {
       enable = true;
       nodeName = config.networking.hostName;
