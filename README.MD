@@ -92,3 +92,5 @@ gunzip -c fixed.sql.gz | sudo -u postgres psql -d immich -v ON_ERROR_STOP=on -q
 # hand ownership to the role the server connects as:
 sudo -u postgres psql -d immich -c 'REASSIGN OWNED BY postgres TO immich;'
 sudo systemctl start immich-server
+
+gunzip -c ~/Documents/fixed.sql.gz | , kubectl --kubeconfig /home/volodia/Documents/k3s.yaml -n immich exec -i database-1 -- psql -d app -v ON_ERROR_STOP=on -q

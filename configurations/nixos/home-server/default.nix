@@ -52,7 +52,7 @@ in
     homeLab.enable = false;
     mykubernetes.enable = true;
 
-    immich.enable = true;
+    immich.enable = false;
     backup = {
       enable = true;
       paths = [

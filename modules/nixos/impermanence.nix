@@ -281,7 +281,7 @@ in
           "/var/lib/nixos"
           "/var/lib/systemd"
           "/var/lib/containers" # podman caches
-          "/var/lib/rancher/k3s/agent/containerd"
+          "/var/lib/rancher"
           "/var/lib/docker"
           "/var/lib/tailscale"
           {
