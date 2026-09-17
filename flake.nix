@@ -312,6 +312,12 @@
           check = pre-commit-check.${system};
         in
         {
+          ci = pkgs.mkShell {
+            packages = [
+              pkgs.just
+              pkgs.deploy-rs
+            ];
+          };
           default = pkgs.mkShell {
             packages =
               with pkgs;

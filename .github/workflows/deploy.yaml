@@ -60,8 +60,8 @@ jobs:
           #   runner: ubuntu-24.04-arm
           - config: home-server
             runner: ubuntu-24.04
-          - config: msi
-            runner: ubuntu-24.04
+          # - config: msi
+          #   runner: ubuntu-24.04
 
     steps:
       - uses: wimpysworld/nothing-but-nix@main
@@ -96,6 +96,5 @@ jobs:
       - name: Build to cache
         run: |
           set -euxo pipefail
-          nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.${{matrix.config}}.config.environment.systemPackages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
-          nix run github:mic92/nix-fast-build -- --flake .#nixosConfigurations.${{matrix.config}}.config.home-manager.users.volodia.home.packages --select 'pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)' --skip-cached
+          nix develop .#ci -c just deploy
           # nix build --accept-flake-config .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
