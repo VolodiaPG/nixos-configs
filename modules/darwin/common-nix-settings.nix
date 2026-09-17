@@ -4,6 +4,7 @@
 # nix-darwin's nix.settings via nix.custom.conf include.
 {
   lib,
+  config,
   flake,
   ...
 }:
@@ -18,13 +19,16 @@ in
   # For nix determinate
   nix.enable = lib.mkForce false;
 
-  determinateNix.enable = true;
+  determinateNix = {
+    enable = true;
+    customSettings = config.nix.settings;
+  };
 
-  # ponytail: the old flake used determinate with nix.enable=false, which kept nix-darwin's
-  # nixpkgs-flake.nix auto registry/nixPath inert (they're gated on nix.enable). Now that we
-  # use nixpkgs nix, disable those auto-setters explicitly — the imported nixos
-  # common-nix-settings.nix already sets nix.registry/nixPath, and nix-darwin's would
-  # conflict (both at mkDefault) on nix.registry.nixpkgs.to.path.
-  nixpkgs.flake.setFlakeRegistry = false;
-  nixpkgs.flake.setNixPath = false;
+  # # ponytail: the old flake used determinate with nix.enable=false, which kept nix-darwin's
+  # # nixpkgs-flake.nix auto registry/nixPath inert (they're gated on nix.enable). Now that we
+  # # use nixpkgs nix, disable those auto-setters explicitly — the imported nixos
+  # # common-nix-settings.nix already sets nix.registry/nixPath, and nix-darwin's would
+  # # conflict (both at mkDefault) on nix.registry.nixpkgs.to.path.
+  # nixpkgs.flake.setFlakeRegistry = false;
+  # nixpkgs.flake.setNixPath = false;
 }

@@ -70,7 +70,7 @@ in
       pkgs.kitty
       pkgs.fswatch
       pkgs.qbittorrent
-      pkgs.zotero
+      # pkgs.zotero
       pkgs.podman
       pkgs.podman-compose
 
@@ -79,35 +79,35 @@ in
     ];
 
     services = {
-      yabai = {
-        enable = lib.mkForce false;
-        package = pkgs.yabai;
-        enableScriptingAddition = true;
-        # config = {
-        #   mouse_follows_focus = "off";
-        #   focus_follows_mouse = "off";
-        #   window_opacity = "off";
-        #   window_origin_display = "default";
-        #   window_placement = "second_child";
-        #   window_zoom_persist = "off";
-        #   window_shadow = "float";
-        #   window_animation_duration = 0;
-        #   insert_feedback_color = "0xaad75f5f";
-        #   split_ratio = 0.50;
-        #   split_type = "auto";
-        #   auto_balance = "off";
-        #   top_padding = 0;
-        #   bottom_padding = 0;
-        #   left_padding = 0;
-        #   right_padding = 0;
-        #   window_gap = 10;
-        #   layout = "bsp";
-        #   mouse_modifier = "fn";
-        #   mouse_action1 = "move";
-        #   mouse_action2 = "resize";
-        #   mouse_drop_action = "swap";
-        # };
-      };
+      # yabai = {
+      #   enable = lib.mkForce false;
+      #   package = pkgs.yabai;
+      #   enableScriptingAddition = true;
+      #   # config = {
+      #   #   mouse_follows_focus = "off";
+      #   #   focus_follows_mouse = "off";
+      #   #   window_opacity = "off";
+      #   #   window_origin_display = "default";
+      #   #   window_placement = "second_child";
+      #   #   window_zoom_persist = "off";
+      #   #   window_shadow = "float";
+      #   #   window_animation_duration = 0;
+      #   #   insert_feedback_color = "0xaad75f5f";
+      #   #   split_ratio = 0.50;
+      #   #   split_type = "auto";
+      #   #   auto_balance = "off";
+      #   #   top_padding = 0;
+      #   #   bottom_padding = 0;
+      #   #   left_padding = 0;
+      #   #   right_padding = 0;
+      #   #   window_gap = 10;
+      #   #   layout = "bsp";
+      #   #   mouse_modifier = "fn";
+      #   #   mouse_action1 = "move";
+      #   #   mouse_action2 = "resize";
+      #   #   mouse_drop_action = "swap";
+      #   # };
+      # };
       # skhd = {
       #   enable = false;
       #   skhdConfig = ''

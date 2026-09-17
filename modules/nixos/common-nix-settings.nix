@@ -91,8 +91,7 @@ let
     # Add derivations to profile gc roots
     keep-env-derivations = true;
     # Keep the deps of envs
-    keep-outputs = true;
-
+    # keep-outputs = true;
     log-lines = 50;
     fallback = true;
     # lazy-trees = true;
@@ -156,7 +155,8 @@ in
         ];
         trusted-users = [
           "root"
-          "@admin"
+          "wheel"
+          "@wheel"
           me.username
         ];
       };

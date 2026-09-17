@@ -44,6 +44,9 @@ in
       manifests.tailscale-secret = {
         source = config.age.secrets.tailscale-k8s-operator.path;
       };
+      manifests.fizzy-secret = {
+        source = config.age.secrets.fizzy-env.path;
+      };
       autoDeployCharts = {
         tailscale-operator = {
           name = "tailscale-operator";

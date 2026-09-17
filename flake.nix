@@ -277,15 +277,33 @@
 
       inherit nixosConfigurations darwinConfigurations;
 
-      deploy.nodes.home-server = {
-        hostname = "home-server";
-        profiles.system = {
-          user = "root";
-          sshUser = "volodia";
-          path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos nixosConfigurations.home-server;
-          fastConnection = true;
+      deploy.nodes.home-server =
+        let
+          system = "aarch64-linux";
+          # Unmodified nixpkgs
+          pkgs = import nixpkgs { inherit system; };
+          deployPkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.deploy-rs.overlays.default
+              (_self: super: {
+                deploy-rs = {
+                  inherit (pkgs) deploy-rs;
+                  lib = super.deploy-rs.lib;
+                };
+              })
+            ];
+          };
+        in
+        {
+          hostname = "home-server";
+          profiles.system = {
+            user = "root";
+            sshUser = "volodia";
+            path = deployPkgs.deploy-rs.lib.activate.nixos nixosConfigurations.home-server;
+            fastConnection = true;
+          };
         };
-      };
 
       devShells = forAllSystems (
         system:
