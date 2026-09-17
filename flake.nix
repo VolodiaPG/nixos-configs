@@ -279,7 +279,7 @@
 
       deploy.nodes.home-server =
         let
-          system = "aarch64-linux";
+          system = "x86_64-linux";
           # Unmodified nixpkgs
           pkgs = import nixpkgs { inherit system; };
           deployPkgs = import nixpkgs {
