@@ -15,11 +15,25 @@ let
     inherit (inputs) nixpkgs nixpkgs-unstable home-manager;
   };
   # From https://github.com/ojsef39/nix-base/blob/2e89e31ef7148608090db3e19700dc79365991f3/nix/core.nix#L61
-  asyncScript = pkgs.writeScript "cachix-push-hook" ''
+  # The filtering/pushing itself lives in ../../static/cachix-push.sh so that the CI
+  # cache job (.github/workflows/deploy.yaml) pushes exactly the same way.
+  pushScript = ../../static/cachix-push.sh;
+
+  asyncScript = pkgs.writeShellScript "cachix-push" ''
     exec >>/var/log/nix-push-hook.log 2>&1
     echo "===== Starting cachix push at $(date) ====="
-    CACHIX_NAME="${me.cachixName}"
-    IGNORE_PATTERNS="${
+
+    export PATH="${
+      lib.makeBinPath [
+        config.nix.package
+        pkgs.cachix
+        pkgs.coreutils
+      ]
+    }:$PATH"
+
+    export CACHIX_NAME="${me.cachixName}"
+    export CACHIX_TOKEN_FILE="${config.age.secrets.cachix-token.path}"
+    export IGNORE_PATTERNS="${
       lib.concatStringsSep " " (
         [
           "source"
@@ -31,47 +45,9 @@ let
         ++ [ me.username ]
       )
     }"
-    # ponytail: closure-size via nix path-info — one daemon round-trip per output,
-    # but gates on total upload size (path + all deps) which is what cachix actually uploads.
-    MAX_SIZE=$((500 * 1024 * 1024)) # 500 MB
+    export MAX_SIZE=$((500 * 1024 * 1024)) # 500 MB
 
-    # Filter out ignored patterns and oversized paths
-    FILTERED_PATHS=""
-    for path in $OUT_PATHS; do
-      # Check if path should be ignored
-      should_ignore=false
-      if [[ -n "$IGNORE_PATTERNS" ]]; then
-        IFS=' ' read -ra PATTERN_ARRAY <<< "$IGNORE_PATTERNS"
-        for pattern in "''${PATTERN_ARRAY[@]}"; do
-          if [[ -n "$pattern" && "$path" == *"$pattern"* ]]; then
-            should_ignore=true
-            break
-          fi
-        done
-      fi
-
-      if [[ "$should_ignore" == "false" ]]; then
-        size=$(nix path-info --closure-size "$path" 2>/dev/null | cut -f2)
-        if [[ -n "$size" && "$size" -gt "$MAX_SIZE" ]]; then
-          echo "Skipping $path: $size bytes exceeds ''${MAX_SIZE} bytes (500 MB)"
-          should_ignore=true
-        fi
-      fi
-
-      if [[ "$should_ignore" == "false" ]]; then
-        FILTERED_PATHS="$FILTERED_PATHS $path"
-      fi
-    done
-
-    if [ -z "$FILTERED_PATHS" ]; then
-      echo "Nothing to push to cachix"
-      exit 0
-    fi
-
-    # Check if already authenticated by testing cachix config
-    cat ${config.age.secrets.cachix-token.path} | ${pkgs.cachix}/bin/cachix authtoken --stdin
-
-    ${pkgs.cachix}/bin/cachix push $CACHIX_NAME $FILTERED_PATHS
+    ${pkgs.bash}/bin/bash ${pushScript}
     echo "===== Finished cachix push at $(date) ====="
   '';
 

@@ -61,50 +61,66 @@ jobs:
           set -euxo pipefail
           nix develop .#ci -c just deploy
 
-  # cache:
-  #   runs-on: ${{ matrix.runner }}
-  #   strategy:
-  #     matrix:
-  #       include:
-  #         # - config: m1
-  #         #   runner: ubuntu-24.04-arm
-  #         - config: home-server
-  #           runner: ubuntu-24.04
-  #         # - config: msi
-  #         #   runner: ubuntu-24.04
-  #
-  #   steps:
-  #     - uses: wimpysworld/nothing-but-nix@main
-  #       with:
-  #         hatchet-protocol: "holster"
-  #
-  #     - name: Create nix daemon tmpdir path
-  #       run: |
-  #         sudo mkdir -p /nix/tmpdir
-  #         sudo chown "$(whoami)" /nix/tmpdir
-  #
-  #     - name: Install nix
-  #       uses: cachix/install-nix-action@v30
-  #       with:
-  #         nix_path: nixpkgs=channel:nixos-unstable
-  #         github_access_token: ${{ secrets.GH_PRIVATE_REPO_TOKEN }}
-  #         extra_nix_config: |
-  #           experimental-features = nix-command flakes
-  #           extra-experimental-features = nix-command flakes
-  #           log-lines = 50
-  #           build-dir = /nix/tmpdir
-  #           accept-flake-config = true
-  #
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v6
-  #
-  #     - uses: cachix/cachix-action@v17
-  #       with:
-  #         name: volodiapg
-  #         authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-  #
-  #     - name: Build to cache
-  #       run: |
-  #         set -euxo pipefail
-  #         nix develop .#ci -c just deploy
-  #         # nix build --accept-flake-config .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
+  cache:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - config: m1
+          #   runner: ubuntu-24.04-arm
+          # - config: home-server
+          #   runner: ubuntu-24.04
+          - config: msi
+            runner: ubuntu-24.04
+
+    steps:
+      - uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: "holster"
+
+      - name: Create nix daemon tmpdir path
+        run: |
+          sudo mkdir -p /nix/tmpdir
+          sudo chown "$(whoami)" /nix/tmpdir
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            lazy-trees = true
+            experimental-features = nix-command flakes
+            extra-experimental-features = nix-command flakes
+            log-lines = 50
+            build-dir = /nix/tmpdir
+            accept-flake-config = true
+
+      - name: Checkout repository
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      # skipPush: pushing is done by static/cachix-push.sh below, which applies the
+      # same ignore patterns / closure size limit as the post-build-hook on the hosts
+      # (see modules/nixos/common-nix-settings.nix).
+      - uses: cachix/cachix-action@v15
+        with:
+          name: volodiapg
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          skipPush: true
+
+      - name: Build ${{ matrix.config }}
+        run: |
+          set -euxo pipefail
+          nix build --accept-flake-config --out-link result-${{ matrix.config }} \
+            .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
+
+      - name: Push to cachix
+        env:
+          CACHIX_NAME: volodiapg
+          IGNORE_PATTERNS: "source etc system home-manager user-environment volodia"
+          MAX_SIZE: 524288000 # 500 MB
+        run: |
+          set -euo pipefail
+          OUT_PATHS="$(nix path-info --recursive ./result-${{ matrix.config }})"
+          export OUT_PATHS
+          ./static/cachix-push.sh
