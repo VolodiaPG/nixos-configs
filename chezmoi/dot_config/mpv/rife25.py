@@ -1,36 +1,68 @@
-import vapoursynth as vs
+# RIFE frame interpolation via vs-mlrt (TensorRT backend).
+# Bound to 'g' in input.conf. Retimes to 60 fps with the v4.25 model.
 import os
-from vsrife import rife
+from fractions import Fraction
+
+import vapoursynth as vs
+from vsmlrt import RIFE, Backend, RIFEModel
+
 core = vs.core
 core.num_threads = 8
 
-cache_dir = os.path.join(os.getenv("XDG_CACHE_HOME", "~/.cache"), "vsrife")
+TARGET_FPS = Fraction(60)
 
-os.makedirs(cache_dir, exist_ok=True)
+# TensorRT engines are compiled on first use for this exact model + resolution
+# + GPU, which takes a minute or so; keep them out of the read-only nix store.
+engine_dir = os.path.join(
+    os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache")), "vsmlrt"
+)
+os.makedirs(engine_dir, exist_ok=True)
+
+
+def sc_detect(clip, threshold=0.15):
+    """Tag frames preceding a cut so RIFE duplicates instead of interpolating.
+
+    vs-mlrt reads _SceneChangeNext but leaves detection to the caller, and
+    VapourSynth R73 no longer bundles misc.SCDetect, so do it with std filters.
+    """
+    sc_clip = clip.resize.Bicubic(format=vs.GRAY8, matrix_s="709")
+    sc_next = (sc_clip[1:] + sc_clip[-1]).std.PlaneStats(sc_clip)
+
+    def set_props(n, f):
+        fout = f[0].copy()
+        fout.props["_SceneChangeNext"] = int(
+            threshold < f[1].props.get("PlaneStatsDiff", 0.0)
+        )
+        return fout
+
+    return clip.std.ModifyFrame(clips=[clip, sc_next], selector=set_props)
+
 
 clip = video_in
 
-clip = core.resize.Bicubic(clip, format=vs.YUV420P8, matrix_in_s="709")
+# Unknown frame rate (fps_num == 0) leaves nothing to retime against.
+multi = TARGET_FPS / clip.fps if clip.fps_num else Fraction(1)
 
-# Convert to RGBH (Half-precision FP16)
-# This is vital for performance on RTX cards and uses less VRAM
-clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
+if multi > 1:
+    clip = sc_detect(clip)
 
-# 4. Apply RIFE with Real-Time optimizations
-clip = rife(
-    clip,
-    model="4.25",
-    trt=True,
-    scale = 1.0,
-    auto_download=False, # Shouldn't be enabled if using the nix package vsrife
-    # factor_num=2,
-    fps_num=60,
-    # factor_den=1,
-    sc=True,                 # Scene change detection
-    trt_cache_dir=cache_dir,  # Nix store is read-only
-)
+    # RGBH (half-precision float RGB) is what the fp16 engine wants.
+    clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
 
-# 4. Convert back to YUV for mpv display
+    clip = RIFE(
+        clip,
+        multi=multi,
+        model=RIFEModel.v4_25,
+        backend=Backend.TRT(
+            fp16=True,
+            use_cuda_graph=True,
+            engine_folder=engine_dir,
+        ),
+        video_player=True,
+        # Implementation 2 pads internally; implementation 1 (the default)
+        # rejects any frame size that is not a multiple of 32, i.e. most video.
+        _implementation=2,
+    )
+
 clip = core.resize.Bicubic(clip, format=vs.YUV420P8, matrix_s="709")
-
 clip.set_output()
