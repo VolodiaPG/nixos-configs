@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-24.04
 
     steps:
@@ -44,61 +44,6 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - uses: cachix/cachix-action@v15
-        with:
-          name: volodiapg
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-
-      - name: Build and deploy
-        run: |
-          set -euxo pipefail
-          nix develop .#ci -c just deploy
-
-  cache:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # - config: m1
-          #   runner: ubuntu-24.04-arm
-          # - config: home-server
-          #   runner: ubuntu-24.04
-          - config: msi
-            runner: ubuntu-24.04
-
-    steps:
-      - uses: wimpysworld/nothing-but-nix@main
-        with:
-          hatchet-protocol: "holster"
-
-      - name: Create nix daemon tmpdir path
-        run: |
-          sudo mkdir -p /nix/tmpdir
-          sudo chown "$(whoami)" /nix/tmpdir
-
-      - uses: DeterminateSystems/determinate-nix-action@v3
-        with:
-          extra-conf: |
-            lazy-trees = true
-            experimental-features = nix-command flakes
-            extra-experimental-features = nix-command flakes
-            log-lines = 50
-            build-dir = /nix/tmpdir
-            accept-flake-config = true
-
-      - name: Checkout repository
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 0
-
       # skipPush: pushing is done by static/cachix-push.sh below, which applies the
       # same ignore patterns / closure size limit as the post-build-hook on the hosts
       # (see modules/nixos/common-nix-settings.nix).
@@ -108,11 +53,25 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
 
-      - name: Build ${{ matrix.config }}
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+
+      # - m1
+      - name: Build msi
         run: |
           set -euxo pipefail
-          nix build --accept-flake-config --out-link result-${{ matrix.config }} \
-            .#nixosConfigurations.${{ matrix.config }}.config.system.build.toplevel
+          nix build --accept-flake-config --out-link result-msi \
+            .#nixosConfigurations.msi.config.system.build.toplevel
+
+      - name: Build home-server
+        run: |
+          set -euxo pipefail
+          nix build --accept-flake-config --out-link result-home-server \
+            .#nixosConfigurations.home-server.config.system.build.toplevel
 
       - name: Push to cachix
         env:
@@ -123,5 +82,11 @@ jobs:
           set -euo pipefail
           # piped, not exported: a whole closure listing blows past the 128 KB
           # execve limit on a single environment string
-          nix path-info --recursive ./result-${{ matrix.config }} \
+          nix path-info --recursive ./result-msi ./result-home-server \
+            | sort -u \
             | ./static/cachix-push.sh
+
+      - name: Build and deploy
+        run: |
+          set -euxo pipefail
+          nix develop .#ci -c just deploy
