@@ -1,4 +1,7 @@
-{ flake, ... }:
+# Aggregator for the Home Manager modules in this directory. Added to
+# `home-manager.sharedModules` by modules/{nixos,darwin}/home-manager.nix, so
+# every host's user gets the `my.*` options declared; each module stays inert
+# until its `enable` is set.
 {
   imports = [
     ./browser.nix
@@ -17,8 +20,4 @@
     ./tmux.nix
     ./zsh.nix
   ];
-
-  _module.args = {
-    inherit flake;
-  };
 }

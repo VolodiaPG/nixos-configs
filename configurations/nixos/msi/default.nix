@@ -1,3 +1,4 @@
+# msi — desktop/workstation: NVIDIA + CUDA, Hyprland, gaming, HyperHDR.
 { flake, ... }:
 let
   inherit (flake) inputs;
@@ -19,18 +20,15 @@ in
     inputs.determinate.nixosModules.default
   ];
 
-  # Enable services via module options
-  services = {
-    # Core system services
+  # Options defined by this repo (modules/nixos/*.nix).
+  my = {
+    # Core system
     base.enable = true;
-    commonNixSettings.enable = true;
-    # nixCacheProxy.enable = true;
+    nixSettings.enable = true;
     wm = {
       enable = true;
+      hyprland.enable = true;
       # gnome.enable = true;
-      hyprland = {
-        enable = true;
-      };
     };
 
     # Hardware and kernel
@@ -39,22 +37,18 @@ in
       lowLatencyNetworking = true;
       cachyDesktop = true;
     };
-
     nvidia.enable = true;
-
     hyperhdr.enable = true;
-    myAnanicy.enable = true;
+    ananicy.enable = true;
+    hifi.enable = true;
+    betterSleep.enable = true;
+    elegantBoot.enable = false;
+
     virtualization = {
       enable = true;
       libvirt.enable = false;
       containers.enable = true;
     };
-    elegantBoot.enable = false;
-    hifi.enable = true;
-    betterSleep.enable = true;
-    caddy.enable = true;
-    homeLab.enable = false;
-    gaming.enable = true;
 
     # Storage and networking
     impermanence = {
@@ -66,12 +60,15 @@ in
     networking.enable = false;
     vpn.enable = true;
 
-    # From nixos
-    # blueman.enable = true;
-    blocky.enable = false;
+    gaming.enable = true;
+    homeLab.enable = false;
+    immich-ml.enable = false;
+  };
 
-    immich-ml = {
-      enable = false;
-    };
+  # Upstream NixOS options. `caddy` is also extended by modules/nixos/caddy.nix,
+  # which keys off this upstream `enable` flag.
+  services = {
+    caddy.enable = true;
+    blocky.enable = false;
   };
 }

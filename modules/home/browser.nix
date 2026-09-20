@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.browser;
+  cfg = config.my.browser;
   inherit (lib) mkIf;
 in
 {
-  options.browser = {
+  options.my.browser = {
     enable = lib.mkEnableOption "My browser";
   };
 

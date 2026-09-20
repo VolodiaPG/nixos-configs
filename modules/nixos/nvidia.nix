@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.services.nvidia;
+  cfg = config.my.nvidia;
 in
 {
-  options.services.nvidia = {
+  options.my.nvidia = {
     enable = lib.mkEnableOption "NVIDIA drivers and container support";
   };
 

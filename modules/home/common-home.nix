@@ -6,12 +6,12 @@
   ...
 }:
 let
-  cfg = config.commonHome;
+  cfg = config.my.commonHome;
   inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    commonHome = {
+    my.commonHome = {
       enable = mkEnableOption "Common home configuration";
     };
   };

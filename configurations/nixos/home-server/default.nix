@@ -1,7 +1,9 @@
+# home-server — headless laptop acting as NAS / k3s node / backup target.
 { flake, config, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
+  inherit (flake.config) me;
 in
 {
   imports = [
@@ -21,11 +23,11 @@ in
     inputs.determinate.nixosModules.default
   ];
 
-  # Enable services via module options
-  services = {
-    # Core system services
+  # Options defined by this repo (modules/nixos/*.nix).
+  my = {
+    # Core system
     base.enable = true;
-    commonNixSettings.enable = true;
+    nixSettings.enable = true;
 
     # Hardware and kernel
     kernel = {
@@ -33,6 +35,8 @@ in
       serverNetworking = true;
       cachyServer = false;
     };
+    laptopServer.enable = true;
+    backlightOff.enable = true;
 
     # Storage and networking
     impermanence = {
@@ -40,30 +44,32 @@ in
       rootVolume = "/dev/sda3";
       disko = true;
     };
-    vpn.enable = true;
-    laptopServer.enable = true;
-    backlightOff.enable = true;
     networking.enable = true;
+    vpn.enable = true;
 
-    # Media server stack
+    # Services
+    kubernetes.enable = true;
     arr.enable = false;
-    caddy.enable = false;
-    samba.enable = true;
     homeLab.enable = false;
-    mykubernetes.enable = true;
 
-    immich.enable = false;
     backup = {
       enable = true;
       paths = [
         "/data/syncthing"
         "/data/immich"
-        "/home/${flake.config.me.username}/Documents"
+        "/home/${me.username}/Documents"
       ];
-      user = flake.config.me.hetzner-user;
+      user = me.hetzner-user;
       passwordFile = config.age.secrets.hetzner-token.path;
       subuser = "sub1";
     };
+  };
 
+  # Upstream NixOS options. `samba`, `caddy` and `immich` are also extended by
+  # modules/nixos/{samba,caddy,immich}.nix, which key off these `enable` flags.
+  services = {
+    samba.enable = true;
+    caddy.enable = false;
+    immich.enable = false;
   };
 }

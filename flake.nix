@@ -90,6 +90,10 @@
     };
   };
 
+  # NOTE: Nix requires `nixConfig` values to be literals (it refuses thunks), so
+  # this list cannot be imported from config.nix. It must stay in sync with
+  # `me.extra-substituters` / `me.trusted-public-keys` there, which is what the
+  # hosts themselves use (modules/nixos/common-nix-settings.nix).
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org?priority=10"
@@ -123,45 +127,92 @@
     let
       inherit (nixpkgs) lib;
 
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-      cuda = [
+      # ---------------------------------------------------------------------
+      # Machine inventory
+      # ---------------------------------------------------------------------
+      # The single place a machine is declared. Everything else about a host
+      # lives in configurations/<class>/<name>/default.nix.
+      #
+      #   system : the platform it is built for.
+      #   cuda   : build against the CUDA-enabled nixpkgs variant (see below).
+      #   modules: extra modules injected from the flake (rarely needed).
+
+      nixosHosts = {
+        msi = {
+          system = "x86_64-linux";
+          cuda = true;
+        };
+        home-server.system = "x86_64-linux";
+        m1.system = "aarch64-linux";
+        installer.system = "x86_64-linux";
+      };
+
+      darwinHosts = {
+        "Volodias-MacBook-Pro".system = "aarch64-darwin";
+      };
+
+      # Systems we publish per-system outputs (packages, devShells, checks) for:
+      # exactly the ones some machine is built for.
+      systems = lib.unique (lib.mapAttrsToList (_: host: host.system) (nixosHosts // darwinHosts));
+      forAllSystems = lib.genAttrs systems;
+
+      # ---------------------------------------------------------------------
+      # nixpkgs instances
+      # ---------------------------------------------------------------------
+      # Shared with the NixOS/darwin modules so that `nixpkgs.config` and the
+      # hand-built instances below cannot drift apart.
+      nixpkgsConfig = import ./lib/nixpkgs-config.nix { inherit lib; };
+
+      # CUDA is a *variant* of nixpkgs rather than a platform: flipping it
+      # rebuilds a large part of the tree, so each (system, variant) pair gets
+      # its own instance. They are memoised here so that N hosts on the same
+      # pair share one nixpkgs evaluation instead of importing it N times.
+      cudaVariants = [
         "cuda"
         "no-cuda"
       ];
-      forAllSystems = lib.genAttrs systems;
-      forAllSystemsCuda = lib.genAttrs cuda;
 
-      pkgsUnstableFor =
-        system: cuda:
-        let
-          cudaSupport = cuda == "cuda";
-        in
-        import nixpkgs-unstable {
-          inherit system;
-          config = {
-            inherit cudaSupport;
-            allowUnfree = true;
-            allowInsecurePredicate = pkg: lib.getName pkg == "tensorrt";
-          };
-        };
-
-      # pkgsUnstableBySystem = forAllSystems pkgsUnstableFor;
-      pkgsUnstableBySystemAndCuda = forAllSystems (
-        system: forAllSystemsCuda (cuda: pkgsUnstableFor system cuda)
+      pkgsUnstableBySystem = forAllSystems (
+        system:
+        lib.genAttrs cudaVariants (
+          variant:
+          import nixpkgs-unstable {
+            inherit system;
+            config = nixpkgsConfig // {
+              cudaSupport = variant == "cuda";
+            };
+          }
+        )
       );
 
-      overlays-default =
+      pkgsUnstableFor =
+        system: cuda: pkgsUnstableBySystem.${system}.${if cuda then "cuda" else "no-cuda"};
+
+      # The repo's own overlay: in-repo packages (packages/), plus selected
+      # attributes pulled forward from nixpkgs-unstable. See overlays/default.nix.
+      mkOverlay =
         system: cuda:
-        (import ./overlays/default.nix) {
+        import ./overlays/default.nix {
           inherit flake;
-          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.${cuda};
+          pkgs-unstable = pkgsUnstableFor system cuda;
         };
-      # Carried-over attr from nixos-unified's shape so repo modules stay unmodified.
-      # flake.self+"/x" works via self.outPath; flake.inputs.self = self; flake.config.me from config.nix.
+
+      # Stable nixpkgs with the repo overlay applied, used for the `packages`
+      # output and as the darwin `pkgs`.
+      pkgsFor =
+        system:
+        import nixpkgs {
+          inherit system;
+          config = nixpkgsConfig;
+          overlays = [ (mkOverlay system false) ];
+        };
+
+      # ---------------------------------------------------------------------
+      # The `flake` argument every module in this repo receives
+      # ---------------------------------------------------------------------
+      # Carried-over attr from nixos-unified's shape so repo modules stay
+      # unmodified: `flake.self + "/x"` works via self.outPath,
+      # `flake.inputs.self` is self, and `flake.config.me` comes from config.nix.
       flake = self // {
         inherit self;
         inputs = inputs // {
@@ -170,117 +221,142 @@
         config = import ./config.nix;
       };
 
+      # ---------------------------------------------------------------------
+      # Builders
+      # ---------------------------------------------------------------------
+      # Both pass the same three specialArgs to every module:
+      #   flake         : the attrset above (inputs, self, config.me);
+      #   pkgs-unstable : nixpkgs-unstable for this host's (system, cuda) pair;
+      #   overlay       : the repo overlay, applied by common-overlays.nix.
+
       mkNixos =
-        name: system: cuda: extraModules:
-        let
-          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.${cuda};
-        in
-        nixpkgs.lib.nixosSystem {
+        name:
+        {
+          system,
+          cuda ? false,
+          modules ? [ ],
+        }:
+        lib.nixosSystem {
           modules = [
             ./configurations/nixos/${name}/default.nix
             { nixpkgs.hostPlatform = lib.mkDefault system; }
           ]
-          ++ extraModules;
+          ++ modules;
           specialArgs = {
-            inherit flake pkgs-unstable;
-            overlays = overlays-default system cuda;
+            inherit flake;
+            pkgs-unstable = pkgsUnstableFor system cuda;
+            overlay = mkOverlay system cuda;
           };
         };
 
       mkDarwin =
-        name: extraModules:
-        let
-          system = "aarch64-darwin";
-          darwinPkgs = import nixpkgs {
-            inherit system;
-            overlays = [
-              (overlays-default system "no-cuda")
-            ];
-            config.allowUnfree = true;
-          };
-          pkgs-unstable = pkgsUnstableBySystemAndCuda.${system}.no-cuda;
-        in
+        name:
+        {
+          system,
+          modules ? [ ],
+        }:
         inputs.nix-darwin.lib.darwinSystem {
           inherit system;
-          pkgs = darwinPkgs;
+          pkgs = pkgsFor system;
           modules = [
             ./configurations/darwin/${name}/default.nix
-            {
-              home-manager.extraSpecialArgs = {
-                inherit flake pkgs-unstable;
-              };
-            }
           ]
-          ++ extraModules;
+          ++ modules;
           specialArgs = {
-            inherit flake pkgs-unstable;
-            overlays = overlays-default system "no-cuda";
+            inherit flake;
+            pkgs-unstable = pkgsUnstableFor system false;
+            overlay = mkOverlay system false;
           };
         };
 
-      nixosConfigurations = {
-        msi = mkNixos "msi" "x86_64-linux" "cuda" [
-          {
-            home-manager.extraSpecialArgs = {
-              inherit flake;
-              pkgs-unstable = pkgsUnstableBySystemAndCuda.x86_64-linux.cuda;
-            };
-          }
-        ];
-        home-server = mkNixos "home-server" "x86_64-linux" "no-cuda" [
-          {
-            home-manager.extraSpecialArgs = {
-              inherit flake;
-              pkgs-unstable = pkgsUnstableBySystemAndCuda.x86_64-linux.no-cuda;
-            };
-          }
-        ];
-        installer = mkNixos "installer" "x86_64-linux" "no-cuda" [ ];
-        m1 = mkNixos "m1" "aarch64-linux" "no-cuda" [
-          {
-            home-manager.extraSpecialArgs = {
-              inherit flake;
-              pkgs-unstable = pkgsUnstableBySystemAndCuda.aarch64-linux.no-cuda;
-            };
-          }
-        ];
+      # ---------------------------------------------------------------------
+      # Lint / format hooks, shared by `nix flake check` and the dev shell
+      # ---------------------------------------------------------------------
+      # Hooks that are pure linters/formatters: they run anywhere, including
+      # inside the sandbox `nix flake check` builds them in.
+      lintHooks = {
+        nixfmt.enable = true;
+        statix.enable = true;
+        deadnix.enable = true;
+        actionlint.enable = true;
+        shellcheck.enable = true;
+        luacheck.enable = true;
+        stylua.enable = true;
       };
 
-      darwinConfigurations = {
-        "Volodias-MacBook-Pro" = mkDarwin "Volodias-MacBook-Pro" [ ];
-      };
-
-      pre-commit-check = forAllSystems (
-        system:
+      mkPreCommit =
+        system: hooks:
         inputs.git-hooks.lib.${system}.run {
           src = ./.;
-          hooks = {
-            nixfmt.enable = true;
-            statix.enable = true;
-            deadnix.enable = true;
-            actionlint.enable = true;
-            shellcheck.enable = true;
-            luacheck.enable = true;
-            stylua.enable = true;
+          inherit hooks;
+        };
+
+      # What `nix flake check` runs.
+      preCommitCheck = forAllSystems (system: mkPreCommit system lintHooks);
+
+      # What the dev shell installs as the actual git hook. `transcrypt` shells
+      # out to .git/crypt/transcrypt, which only exists in a real checkout, so it
+      # cannot be part of `checks` above.
+      preCommitShell = forAllSystems (
+        system:
+        mkPreCommit system (
+          lintHooks
+          // {
             transcrypt = {
               enable = true;
               entry = "./transcrypt-hook.sh";
             };
-          };
-        }
+          }
+        )
       );
     in
     {
-      nixosModules.default = ./modules/nixos/default.nix;
+      # --- Module sets ------------------------------------------------------
+      nixosModules = {
+        default = ./modules/nixos/default.nix;
+        # Home Manager wiring; imported by the hosts that have a user.
+        home-manager = ./modules/nixos/home-manager.nix;
+      };
+      darwinModules = {
+        default = ./modules/darwin/default.nix;
+        home-manager = ./modules/darwin/home-manager.nix;
+      };
       homeModules.default = ./modules/home/default.nix;
-      darwinModules.default = ./modules/darwin/default.nix;
 
-      inherit nixosConfigurations darwinConfigurations;
+      # --- Machines ---------------------------------------------------------
+      nixosConfigurations = lib.mapAttrs mkNixos nixosHosts;
+      darwinConfigurations = lib.mapAttrs mkDarwin darwinHosts;
 
+      # --- In-repo packages -------------------------------------------------
+      # Exposed so `nix run .#xinstall` works (the installer ISO relies on it,
+      # see configurations/nixos/installer/default.nix) and so CI can build them.
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = pkgsFor system;
+        in
+        # Not every in-repo package can be built everywhere — mpv-rife pulls in
+        # Linux-only vapoursynth plugins. Drop the ones that do not even
+        # evaluate on this system so `nix flake show`/`check` stay green.
+        lib.filterAttrs (_: pkg: (builtins.tryEval (builtins.seq pkg.drvPath true)).success) (
+          import ./packages/default.nix { inherit pkgs; }
+        )
+      );
+
+      # `nix fmt` — same formatter the nixfmt pre-commit hook uses.
+      formatter = forAllSystems (system: pkgsUnstableBySystem.${system}.no-cuda.nixfmt-tree);
+
+      # `nix flake check` — runs the hooks and evaluates every configuration.
+      checks = forAllSystems (system: {
+        pre-commit = preCommitCheck.${system};
+      });
+
+      # --- Remote deployment ------------------------------------------------
       deploy.nodes.home-server =
         let
           system = "x86_64-linux";
-          # Unmodified nixpkgs
+          # deploy-rs' own overlay pulls in a source build of deploy-rs; swap in
+          # the cached binary from unmodified nixpkgs while keeping its lib.
           pkgs = import nixpkgs { inherit system; };
           deployPkgs = import nixpkgs {
             inherit system;
@@ -289,7 +365,7 @@
               (_self: super: {
                 deploy-rs = {
                   inherit (pkgs) deploy-rs;
-                  lib = super.deploy-rs.lib;
+                  inherit (super.deploy-rs) lib;
                 };
               })
             ];
@@ -300,44 +376,45 @@
           profiles.system = {
             user = "root";
             sshUser = "volodia";
-            path = deployPkgs.deploy-rs.lib.activate.nixos nixosConfigurations.home-server;
+            path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.home-server;
             fastConnection = true;
           };
         };
 
+      # --- Dev shells -------------------------------------------------------
       devShells = forAllSystems (
         system:
         let
-          pkgs = pkgsUnstableBySystemAndCuda.${system}.no-cuda;
-          check = pre-commit-check.${system};
+          pkgs = pkgsUnstableBySystem.${system}.no-cuda;
+          check = preCommitShell.${system};
         in
         {
+          # Minimal shell for CI: everything `just deploy` needs, nothing else.
           ci = pkgs.mkShell {
             packages = [
               pkgs.just
               pkgs.deploy-rs
             ];
           };
+
           default = pkgs.mkShell {
-            packages =
-              with pkgs;
-              [
-                just
-                git
-                ragenix
-                deploy-rs
-                nh
-                nix-output-monitor
-                prek
-                nvd
-                gum
-                transcrypt
-                rsync
-                openssl
-                kubectl
-                k9s
-              ]
-              ++ check.enabledPackages;
+            packages = [
+              pkgs.just
+              pkgs.git
+              pkgs.ragenix
+              pkgs.deploy-rs
+              pkgs.nh
+              pkgs.nix-output-monitor
+              pkgs.prek
+              pkgs.nvd
+              pkgs.gum
+              pkgs.transcrypt
+              pkgs.rsync
+              pkgs.openssl
+              pkgs.kubectl
+              pkgs.k9s
+            ]
+            ++ check.enabledPackages;
             inherit (check) shellHook;
           };
         }

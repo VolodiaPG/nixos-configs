@@ -1,47 +1,26 @@
-{
-  flake,
-  ...
-}:
+# Home Manager for m1 — the scaffolding lives in modules/nixos/home-manager.nix.
+{ flake, ... }:
 let
-  inherit (flake) inputs;
-  inherit (inputs) self;
   inherit (flake.config) me;
 in
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-  ];
+  imports = [ flake.self.nixosModules.home-manager ];
 
-  home-manager = {
-    users."${me.username}" = {
-      imports = [
-        self.homeModules.default
-      ];
-
-      # Enable home modules
-      services = {
-        theme-daemon.enable = true;
-        syncthing.enable = true;
-      };
-      # Enable home modules
+  home-manager.users.${me.username} = {
+    my = {
       commonHome.enable = true;
       interactive.enable = true;
       gui.enable = true;
-      wm.gnome.enable = false;
-      wm.hyprland.enable = true;
       chezmoi.enable = true;
-
-      programs.kitty.font.size = 12;
-
-      home.stateVersion = "22.05";
+      themeDaemon.enable = true;
+      wm = {
+        gnome.enable = false;
+        hyprland.enable = true;
+      };
     };
 
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    sharedModules = [
-      (self + "/secrets/home-manager.nix")
-      inputs.agenix.homeManagerModules.default
-    ];
-
+    # Upstream Home Manager options
+    services.syncthing.enable = true;
+    programs.kitty.font.size = 12;
   };
 }

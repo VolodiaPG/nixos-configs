@@ -6,12 +6,12 @@
   ...
 }:
 let
-  cfg = config.services.commonDarwin;
+  cfg = config.my.darwin;
   inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    services.commonDarwin = {
+    my.darwin = {
       enable = mkEnableOption "Common Darwin configuration";
     };
   };

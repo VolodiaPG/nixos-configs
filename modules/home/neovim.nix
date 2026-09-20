@@ -8,11 +8,11 @@
   ...
 }:
 let
-  cfg = config.myneovim;
+  cfg = config.my.neovim;
   inherit (lib) mkEnableOption mkIf;
 in
 {
-  options.myneovim.enable = mkEnableOption "neovim + LSP/formatter/runtime tooling (lua config via chezmoi)";
+  options.my.neovim.enable = mkEnableOption "neovim + LSP/formatter/runtime tooling (lua config via chezmoi)";
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [

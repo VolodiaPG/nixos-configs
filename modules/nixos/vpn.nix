@@ -7,11 +7,11 @@
 let
   inherit (lib) mkIf mkEnableOption mkOption;
   inherit (lib.types) listOf;
-  cfg = config.services.vpn;
+  cfg = config.my.vpn;
 in
 {
   options = {
-    services.vpn = {
+    my.vpn = {
       enable = mkEnableOption "vpn";
 
       nameservers = mkOption {

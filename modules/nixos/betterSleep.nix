@@ -5,11 +5,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.betterSleep;
+  cfg = config.my.betterSleep;
 in
 {
   options = {
-    services.betterSleep = {
+    my.betterSleep = {
       enable = mkEnableOption "sleep mode with powersave CPU governor";
     };
   };

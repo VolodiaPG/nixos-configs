@@ -6,14 +6,14 @@
   ...
 }:
 let
-  cfg = config.interactive;
+  cfg = config.my.interactive;
   inherit (flake) inputs;
   inherit (lib) mkEnableOption mkIf;
 in
 {
 
   options = {
-    interactive = {
+    my.interactive = {
       enable = mkEnableOption "Interactive configuration for users";
     };
   };
@@ -24,19 +24,25 @@ in
   ];
 
   config = mkIf cfg.enable {
-    # Configure Catppuccin theme switching, extending the default catppuccin module
+    # Upstream catppuccin module (inputs.catppuccin)
     catppuccin = {
       enable = true;
       # Lock autoEnable explicitly to silence future-behavior warning
       autoEnable = true;
-      autoThemeSwitch = true;
-      darkFlavor = "mocha"; # Your preferred dark theme
-      lightFlavor = "latte"; # Your preferred light theme
-      # TODO: make use of light and dark flavors in the script itself, hard coded for now
     };
 
-    # Enable the theme daemon for automatic switching
-    services.theme-daemon.enable = true;
+    my = {
+      # Our own theme-switching layer on top of it (modules/home/catppuccin-theme.nix)
+      catppuccin = {
+        autoThemeSwitch = true;
+        darkFlavor = "mocha"; # Your preferred dark theme
+        lightFlavor = "latte"; # Your preferred light theme
+        # TODO: make use of light and dark flavors in the script itself, hard coded for now
+      };
+
+      # Enable the theme daemon for automatic switching
+      themeDaemon.enable = true;
+    };
 
     programs = {
       opencode.enable = true;

@@ -7,11 +7,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.elegantBoot;
+  cfg = config.my.elegantBoot;
 in
 {
   options = {
-    services.elegantBoot = {
+    my.elegantBoot = {
       enable = mkEnableOption "elegantBoot";
     };
   };

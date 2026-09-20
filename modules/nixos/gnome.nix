@@ -6,11 +6,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.wm.gnome;
+  cfg = config.my.wm.gnome;
 in
 {
   options = {
-    services.wm.gnome = {
+    my.wm.gnome = {
       enable = mkEnableOption "gnome";
     };
   };

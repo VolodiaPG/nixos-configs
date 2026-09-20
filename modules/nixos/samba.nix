@@ -1,3 +1,5 @@
+# Extends the *upstream* services.samba: keyed off `services.samba.enable`, not
+# an option of its own.
 {
   config,
   lib,

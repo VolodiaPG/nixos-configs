@@ -1,43 +1,28 @@
+# Home Manager for msi — the scaffolding lives in modules/nixos/home-manager.nix.
 { flake, ... }:
 let
-  inherit (flake) inputs;
-  inherit (inputs) self;
   inherit (flake.config) me;
 in
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-  ];
+  imports = [ flake.self.nixosModules.home-manager ];
 
-  home-manager = {
-    users."${me.username}" = {
-      imports = [
-        self.homeModules.default
-      ];
-      # Enable home modules
-      services = {
-        theme-daemon.enable = true;
-        syncthing.enable = true;
-      };
-      mpv.enable = true;
-      # Enable home modules
+  home-manager.users.${me.username} = {
+    my = {
       commonHome.enable = true;
       interactive.enable = true;
       gui.enable = true;
-      wm.gnome.enable = false;
-      wm.hyprland.enable = true;
       chezmoi.enable = true;
       browser.enable = true;
-      myneovim.enable = true;
-
-      home.stateVersion = "22.05";
+      neovim.enable = true;
+      mpv.enable = true;
+      themeDaemon.enable = true;
+      wm = {
+        gnome.enable = false;
+        hyprland.enable = true;
+      };
     };
 
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    sharedModules = [
-      (self + "/secrets/home-manager.nix")
-      inputs.agenix.homeManagerModules.default
-    ];
+    # Upstream Home Manager options
+    services.syncthing.enable = true;
   };
 }

@@ -19,7 +19,6 @@ LOG_FILE="$THEME_STATE_DIR/theme-switcher.log"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Ensure directories exist
@@ -60,7 +59,8 @@ detect_system_theme() {
     # fi
 
     # macOS theme detection
-    local interface_style=$(defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light")
+    local interface_style
+    interface_style=$(defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light")
     if [[ "$interface_style" == "Dark" ]]; then
       echo "dark"
     else
@@ -70,7 +70,8 @@ detect_system_theme() {
     # Linux theme detection via various methods
     # Try dbus/gsettings first (GNOME/GTK)
     if command -v gsettings &> /dev/null; then
-      local color_scheme=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null || echo "")
+      local color_scheme
+      color_scheme=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null || echo "")
       if [[ "$color_scheme" == *"dark"* ]]; then
         echo "dark"
         return
@@ -81,7 +82,8 @@ detect_system_theme() {
     fi
 
     # Get the last saved theme
-    local last_theme=$(get_saved_theme)
+    local last_theme
+    last_theme=$(get_saved_theme)
     echo "$last_theme"
 
   else
@@ -118,7 +120,8 @@ apply_kitty_theme() {
 
   info "Applying $theme theme to kitty..."
 
-  local conf_path=$(mktemp)
+  local conf_path
+  conf_path=$(mktemp)
   if [ "$theme" == "light" ]; then
      cat ~/.config/kitty/kitty.conf | sed -e "s/Mocha/Latte/g" > "$conf_path"
   else
@@ -134,7 +137,7 @@ apply_kitty_theme() {
     fi
   done
 
-  rm $conf_path 2>/dev/null || true
+  rm "$conf_path" 2>/dev/null || true
 
   log "Kitty theme applied"
 }
@@ -176,13 +179,15 @@ apply_tmux_theme() {
     return
   fi
 
-  local plugin_location=$(cat ~/.config/tmux/tmux.conf | sed -rn 's/^run-shell (.*catppuccin.*)$/\1/p')
+  local plugin_location
+  plugin_location=$(sed -rn 's/^run-shell (.*catppuccin.*)$/\1/p' ~/.config/tmux/tmux.conf)
   # ../
   plugin_location=$(dirname "$plugin_location")
 
   info "Applying $theme theme to tmux..."
 
-  local conf_path=$(mktemp)
+  local conf_path
+  conf_path=$(mktemp)
 
   # Fix hot reloading of tmux catppuccin theme: https://github.com/catppuccin/tmux/issues/426
   cat <<EOF > "$conf_path"
@@ -197,7 +202,7 @@ EOF
 
   tmux source "$conf_path" 2>/dev/null || true
 
-  rm $conf_path 2>/dev/null || true
+  rm "$conf_path" 2>/dev/null || true
 
   log "Tmux theme applied"
 }
@@ -293,7 +298,8 @@ apply_theme_to_target() {
 switch_theme() {
   local new_theme="$1"
   local targets="${2:-all}"
-  local saved_theme=$(get_saved_theme)
+  local saved_theme
+  saved_theme=$(get_saved_theme)
 
   info "Switching theme from '${saved_theme:-none}' to '$new_theme'"
 

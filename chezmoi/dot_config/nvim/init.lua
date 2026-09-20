@@ -48,30 +48,30 @@
 --   confirm = true,
 -- })
 --
-require("myLuaConf.init")
+require 'myLuaConf.init'
 
-vim.cmd.packadd("lze")
-vim.cmd.packadd("lzextras")
-setmetatable(require("lze"), getmetatable(require("lzextras")))
+vim.cmd.packadd 'lze'
+vim.cmd.packadd 'lzextras'
+setmetatable(require 'lze', getmetatable(require 'lzextras'))
 
-local lze = require("lze")
+local lze = require 'lze'
 lze.register_handlers(lze.lsp)
-lze.register_handlers(require("lzextras").lsp)
+lze.register_handlers(require('lzextras').lsp)
 
-lze.load({
-	{ import = "myLuaConf.plugins.telescope" },
-	{ import = "myLuaConf.plugins.treesitter" },
-	{ import = "myLuaConf.plugins.completion" },
-	{ import = "myLuaConf.plugins" },
-	{ import = "myLuaConf.LSPs" },
-	{ import = "myLuaConf.lint" },
-	{ import = "myLuaConf.format" },
-})
+lze.load {
+  { import = 'myLuaConf.plugins.telescope' },
+  { import = 'myLuaConf.plugins.treesitter' },
+  { import = 'myLuaConf.plugins.completion' },
+  { import = 'myLuaConf.plugins' },
+  { import = 'myLuaConf.LSPs' },
+  { import = 'myLuaConf.lint' },
+  { import = 'myLuaConf.format' },
+}
 
-local socket_path = "/tmp/nvim_" .. vim.loop.os_getpid()
+local socket_path = '/tmp/nvim_' .. vim.loop.os_getpid()
 vim.fn.serverstart(socket_path)
 
 -- Fire and forget: non-blocking, ignores output and return codes
-vim.uv.spawn("theme-switcher", {
-	detached = true,
+vim.uv.spawn('theme-switcher', {
+  detached = true,
 })

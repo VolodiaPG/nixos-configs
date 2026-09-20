@@ -5,11 +5,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.mykubernetes;
+  cfg = config.my.kubernetes;
 in
 {
   options = {
-    services.mykubernetes = {
+    my.kubernetes = {
       enable = mkEnableOption "K8S";
     };
   };

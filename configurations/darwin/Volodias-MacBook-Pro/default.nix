@@ -1,3 +1,4 @@
+# Volodias-MacBook-Pro — nix-darwin host.
 { flake, ... }:
 let
   inherit (flake) inputs;
@@ -7,50 +8,31 @@ in
 {
   imports = [
     self.darwinModules.default
-    inputs.home-manager.darwinModules.home-manager
-    flake.inputs.agenix.darwinModules.age
-    (flake.self + "/secrets/nixos.nix")
+    self.darwinModules.home-manager
+    inputs.agenix.darwinModules.age
+    (self + "/secrets/nixos.nix")
   ];
 
-  # Enable Darwin-specific services
-  services = {
-    commonDarwin.enable = true;
-    # nixCacheProxyDarwin.enable = false;
-    commonNixSettings.enable = true;
+  # Options defined by this repo (modules/darwin/*.nix).
+  my = {
+    darwin.enable = true;
+    nixSettings.enable = true;
   };
 
-  # darwinLinuxBuilder.enable = false;
-
-  home-manager = {
-    users.${me.username} = {
-      imports = [
-        self.homeModules.default
-      ];
-
-      # Enable home modules
-      services = {
-        syncthing.enable = true;
-        theme-daemon.enable = true;
-      };
-
-      # Enable home modules
+  home-manager.users.${me.username} = {
+    my = {
       commonHome.enable = true;
       interactive.enable = true;
       chezmoi.enable = true;
       gui.enable = true;
-      myneovim.enable = true;
-
-      home.stateVersion = "22.05";
+      neovim.enable = true;
+      themeDaemon.enable = true;
     };
-    sharedModules = [
-      (self + "/secrets/home-manager.nix")
-      inputs.agenix.homeManagerModules.default
-    ];
-    useGlobalPkgs = true;
-    useUserPackages = true;
+
+    # Upstream Home Manager options
+    services.syncthing.enable = true;
   };
 
-  # Darwin-specific configuration
   system = {
     stateVersion = 5;
     primaryUser = me.username;
@@ -60,6 +42,4 @@ in
     hostPlatform = "aarch64-darwin";
     config.allowUnfree = true;
   };
-
-  # Home Manager configuration
 }

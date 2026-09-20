@@ -7,7 +7,7 @@
 
 let
   inherit (lib) mkIf mkEnableOption mkOption;
-  cfg = config.services.backlightOff;
+  cfg = config.my.backlightOff;
 
   # Script to turn off backlight
   backlightOffScript = pkgs.writeShellScript "backlight-off" ''
@@ -47,7 +47,7 @@ let
   '';
 in
 {
-  options.services.backlightOff = {
+  options.my.backlightOff = {
     enable = mkEnableOption "automatic screen dimming after idle period";
 
     idleTime = mkOption {

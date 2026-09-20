@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.services.backup;
+  cfg = config.my.backup;
 in
 {
   options = {
-    services.backup = {
+    my.backup = {
       enable = lib.mkEnableOption "Backup with restic";
 
       paths = lib.mkOption {

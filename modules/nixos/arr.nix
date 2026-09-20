@@ -6,10 +6,10 @@
 }:
 let
   inherit (flake.config) me;
-  cfg = config.services.arr;
+  cfg = config.my.arr;
 in
 {
-  options.services.arr = {
+  options.my.arr = {
     enable = lib.mkEnableOption "*arr services (Sonarr, Radarr, Prowlarr, Transmission, etc.)";
   };
 

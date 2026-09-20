@@ -5,11 +5,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.laptopServer;
+  cfg = config.my.laptopServer;
 in
 {
   options = {
-    services.laptopServer = {
+    my.laptopServer = {
       enable = mkEnableOption "laptopServer";
     };
   };

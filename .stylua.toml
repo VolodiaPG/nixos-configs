@@ -1,0 +1,12 @@
+# Repo-wide Lua style, used by the stylua pre-commit hook.
+#
+# Mirrors chezmoi/dot_config/nvim/dot_stylua.toml, which chezmoi deploys to
+# ~/.config/nvim/.stylua.toml. Without this file the hook formatted with stylua's
+# defaults (tabs, double quotes) while neovim formatted with the deployed config
+# (2 spaces, single quotes), so the two fought over every file they touched.
+column_width = 160
+line_endings = "Unix"
+indent_type = "Spaces"
+indent_width = 2
+quote_style = "AutoPreferSingle"
+call_parentheses = "None"

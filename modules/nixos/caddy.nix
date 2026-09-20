@@ -1,3 +1,7 @@
+# Extends the *upstream* services.caddy: keyed off `services.caddy.enable`, not
+# an option of its own. Adds the tailscale plugin and the tailnet-wide config;
+# individual virtual hosts are declared by the modules that need them
+# (immich.nix, home-lab.nix, ...).
 {
   config,
   lib,

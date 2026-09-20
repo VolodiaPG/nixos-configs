@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.mpv;
+  cfg = config.my.mpv;
 in
 {
   options = {
-    mpv = {
+    my.mpv = {
       enable = lib.mkEnableOption "MPV configuration";
     };
   };

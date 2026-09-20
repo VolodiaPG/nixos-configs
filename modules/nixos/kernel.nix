@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf mkMerge;
-  cfg = config.services.kernel;
+  cfg = config.my.kernel;
   inherit (flake.inputs) nix-cachyos-kernel;
   cachyos-kernel = nix-cachyos-kernel.legacyPackages.${pkgs.system};
 in
 {
   options = {
-    services.kernel = {
+    my.kernel = {
       enable = mkEnableOption "kernel configuration";
 
       cachyDesktop = mkEnableOption "Cachy kernel";
@@ -29,11 +29,11 @@ in
     assertions = [
       {
         assertion = !(cfg.lowLatencyNetworking && cfg.serverNetworking);
-        message = "services.kernel.lowLatencyNetworking and services.kernel.serverNetworking are mutually exclusive";
+        message = "my.kernel.lowLatencyNetworking and my.kernel.serverNetworking are mutually exclusive";
       }
       {
         assertion = !(cfg.cachyDesktop && cfg.cachyServer);
-        message = "services.kernel.cachyDesktop and services.kernel.cachyServer are mutually exclusive";
+        message = "my.kernel.cachyDesktop and my.kernel.cachyServer are mutually exclusive";
       }
     ];
 

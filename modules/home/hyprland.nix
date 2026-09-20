@@ -5,12 +5,12 @@
   ...
 }:
 let
-  cfg = config.wm.hyprland;
+  cfg = config.my.wm.hyprland;
   inherit (lib) mkEnableOption mkOption mkIf;
 in
 {
   options = {
-    wm.hyprland = {
+    my.wm.hyprland = {
       enable = mkEnableOption "hyprland Wayland compositor configuration";
 
       package = mkOption {

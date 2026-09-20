@@ -1,3 +1,5 @@
+# Extends nixarr's recyclarr module: keyed off `nixarr.recyclarr.enable`, not an
+# option of its own. Holds the TRaSH-guide quality profiles.
 {
   config,
   lib,

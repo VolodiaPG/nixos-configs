@@ -5,12 +5,12 @@
   ...
 }:
 let
-  cfg = config.gui;
+  cfg = config.my.gui;
   inherit (lib) mkEnableOption mkIf;
 in
 {
   options = {
-    gui = {
+    my.gui = {
       enable = mkEnableOption "GUI configuration for users";
     };
   };

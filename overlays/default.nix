@@ -9,6 +9,8 @@ let
   };
 in
 {
+  # Pulled forward from nixpkgs-unstable: newer than the pinned stable channel,
+  # or (avd-fw) simply not present in it yet.
   inherit (pkgs-unstable)
     neovim
     neovim-remote
@@ -22,8 +24,13 @@ in
     brave-origin
     bambu-studio
     orca-slicer
+    # Apple Video Decoder firmware, required by
+    # inputs.nixos-apple-silicon's video module on the m1 host. Only exists in
+    # unstable; without this the m1 config fails to evaluate.
+    avd-fw
     ;
 
+  # In-repo packages (packages/default.nix), also exposed as flake `packages`.
   inherit (packages)
     theme-switcher
     tmux-session-color

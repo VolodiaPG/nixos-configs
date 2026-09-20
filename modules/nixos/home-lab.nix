@@ -6,18 +6,18 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.homeLab;
+  cfg = config.my.homeLab;
   inherit (flake.config) me;
 in
 {
   options = {
-    services.homeLab = {
+    my.homeLab = {
       enable = mkEnableOption "home lab services";
     };
   };
 
   config = mkIf cfg.enable {
-    services.virtualization = {
+    my.virtualization = {
       enable = true;
       containers.enable = true;
     };

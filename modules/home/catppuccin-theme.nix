@@ -9,10 +9,10 @@ let
   # Users can override this by setting catppuccin.flavor directly
   defaultFlavor = "mocha"; # Dark theme default
   defaultLightFlavor = "latte"; # Light theme default
-  cfg = config.catppuccin;
+  cfg = config.my.catppuccin;
 in
 {
-  options.catppuccin = {
+  options.my.catppuccin = {
     autoThemeSwitch = lib.mkEnableOption "automatic theme switching based on system theme";
 
     lightFlavor = lib.mkOption {
@@ -41,7 +41,7 @@ in
   config = lib.mkIf cfg.autoThemeSwitch {
     # Set the default catppuccin flavor globally
     catppuccin = {
-      flavor = lib.mkDefault config.catppuccin.darkFlavor;
+      flavor = lib.mkDefault cfg.darkFlavor;
       lazygit.enable = lib.mkDefault false;
     };
 
@@ -82,7 +82,6 @@ in
     catppuccin.tmux.extraConfig =
       let
         tmux-session-color = lib.getExe pkgs.tmux-session-color;
-        openrouter-credits = lib.getExe pkgs.openrouter-credits;
       in
       ''
         if-shell -b '[ "$(uname -a | grep Linux)" ]' {
@@ -120,6 +119,7 @@ in
         set -g status-right-length 400
       '';
 
-    # set -ag status-right " #[fg=#{@thm_overlay_0}]#{?#(echo $(( #{client_width} < 120 ))),,#(${openrouter-credits})}"
+    # To put the openrouter credits in the status line, add to the block above:
+    #   set -ag status-right " #[fg=#{@thm_overlay_0}]#{?#(echo $(( #{client_width} < 120 ))),,#(${lib.getExe pkgs.openrouter-credits})}"
   };
 }

@@ -1,35 +1,20 @@
+# Home Manager for home-server — headless, so only the shell/CLI bits.
+# Scaffolding lives in modules/nixos/home-manager.nix.
 { flake, ... }:
 let
-  inherit (flake) inputs;
-  inherit (inputs) self;
   inherit (flake.config) me;
 in
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-  ];
+  imports = [ flake.self.nixosModules.home-manager ];
 
-  home-manager = {
-    users."${me.username}" = {
-      imports = [
-        self.homeModules.default
-      ];
+  home-manager.users.${me.username} = {
+    my.commonHome.enable = true;
 
-      # Enable home modules
-      services = {
-        syncthing.enable = true;
-      };
-      commonHome.enable = true;
-      catppuccin.enable = false;
-      catppuccin.autoEnable = false;
-
-      home.stateVersion = "22.05";
+    # Upstream Home Manager options
+    services.syncthing.enable = true;
+    catppuccin = {
+      enable = false;
+      autoEnable = false;
     };
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    sharedModules = [
-      (self + "/secrets/home-manager.nix")
-      inputs.agenix.homeManagerModules.default
-    ];
   };
 }

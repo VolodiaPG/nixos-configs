@@ -10,13 +10,11 @@ let
   inherit (pkgs.stdenv.hostPlatform) isLinux isDarwin;
 in
 {
-  options = {
-    services.theme-daemon = {
-      enable = lib.mkEnableOption "automatic theme switching daemon";
-    };
+  options.my.themeDaemon = {
+    enable = lib.mkEnableOption "automatic theme switching daemon";
   };
 
-  config = lib.mkIf config.services.theme-daemon.enable {
+  config = lib.mkIf config.my.themeDaemon.enable {
     home.packages = [
       pkgs.theme-switcher
     ];

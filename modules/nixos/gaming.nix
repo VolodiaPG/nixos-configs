@@ -6,11 +6,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.gaming;
+  cfg = config.my.gaming;
 in
 {
   options = {
-    services.gaming = {
+    my.gaming = {
       enable = mkEnableOption "gaming";
     };
   };

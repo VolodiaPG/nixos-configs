@@ -8,11 +8,11 @@
 let
   inherit (lib) mkIf mkEnableOption;
   inherit (flake.config) me;
-  cfg = config.services.hyperhdr;
+  cfg = config.my.hyperhdr;
 in
 {
   options = {
-    services.hyperhdr = {
+    my.hyperhdr = {
       enable = mkEnableOption "hyperhdr";
     };
   };

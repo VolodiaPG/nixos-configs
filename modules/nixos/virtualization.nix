@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.services.virtualization;
+  cfg = config.my.virtualization;
 in
 {
   options = {
-    services.virtualization = {
+    my.virtualization = {
       enable = lib.mkEnableOption "virtualization";
       libvirt.enable = lib.mkEnableOption "libvirt";
       containers.enable = lib.mkEnableOption "Docker containers";

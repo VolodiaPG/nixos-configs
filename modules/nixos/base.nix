@@ -7,10 +7,10 @@
 }:
 let
   inherit (flake.config) me;
-  cfg = config.services.base;
+  cfg = config.my.base;
 in
 {
-  options.services.base = {
+  options.my.base = {
     enable = lib.mkEnableOption "base system configuration (users, SSH, Docker, basic settings)";
   };
 
@@ -100,15 +100,7 @@ in
         SystemMaxUse=200M
         RuntimeMaxUse=50M
       '';
-    };
 
-    programs = {
-      mosh.enable = true;
-      nix-ld.enable = true;
-      command-not-found.enable = false;
-    };
-
-    services = {
       openssh = {
         enable = true;
         allowSFTP = true;
@@ -116,6 +108,17 @@ in
       };
       fwupd.enable = true;
       pcscd.enable = true;
+    };
+
+    programs = {
+      mosh.enable = true;
+      nix-ld.enable = true;
+      command-not-found.enable = false;
+      zsh.enable = true;
+      gnupg.agent = {
+        enable = true;
+        enableSSHSupport = true;
+      };
     };
 
     time.timeZone = "Europe/Paris";
@@ -127,20 +130,13 @@ in
         # its native storage driver when the root volume is btrfs.
         extraOptions =
           (lib.optionalString (
-            config.services.impermanence.enable && config.services.impermanence.fsType == "btrfs"
+            config.my.impermanence.enable && config.my.impermanence.fsType == "btrfs"
           ) "--storage-driver btrfs ")
           + "--exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
         autoPrune = {
           enable = true;
           dates = "weekly";
         };
-      };
-    };
-
-    programs = {
-      gnupg.agent = {
-        enable = true;
-        enableSSHSupport = true;
       };
     };
 
@@ -165,8 +161,6 @@ in
       # ];
       sudo.execWheelOnly = lib.mkForce false;
     };
-
-    programs.zsh.enable = true;
 
     users = {
       mutableUsers = false;

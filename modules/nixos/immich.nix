@@ -1,3 +1,6 @@
+# Extends the *upstream* services.immich: keyed off `services.immich.enable`,
+# not an option of its own. Adds the data bind mount, the postgres role and the
+# caddy virtual host.
 {
   flake,
   config,

@@ -7,12 +7,12 @@
 }:
 let
   inherit (flake.config) me;
-  cfg = config.services.immich-ml;
+  cfg = config.my.immich-ml;
 in
 {
 
   options = {
-    services.immich-ml = {
+    my.immich-ml = {
       enable = lib.mkEnableOption "immich machine learning remote service";
 
       port = lib.mkOption {

@@ -7,12 +7,12 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.wm;
+  cfg = config.my.wm;
   kanataConfigPath = flake.self + "/static/kanata.lisp";
 in
 {
   options = {
-    services.wm = {
+    my.wm = {
       enable = mkEnableOption "wm";
     };
   };

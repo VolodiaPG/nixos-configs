@@ -46,12 +46,16 @@ in
     '')
   ];
 
-  # ponytail: impermanence mounts rootVolume at boot — won't exist in installer
-  services = {
-    impermanence.enable = false;
+  # Options defined by this repo (modules/nixos/*.nix).
+  my = {
     base.enable = true;
-    commonNixSettings.enable = true;
+    nixSettings.enable = true;
+    # impermanence mounts rootVolume at boot — it won't exist in the installer.
+    impermanence.enable = false;
+  };
 
+  # Upstream NixOS options.
+  services = {
     envfs.enable = true;
     getty.autologinUser = "nixos";
   };

@@ -9,7 +9,7 @@ let
   inherit (lib) mkIf mkEnableOption mkOption;
   inherit (lib.types) package;
   inherit (flake) inputs;
-  cfg = config.services.wm.hyprland;
+  cfg = config.my.wm.hyprland;
 in
 {
   # ponytail: noctalia module only exists in unstable nixpkgs — import it from there
@@ -21,7 +21,7 @@ in
   ];
 
   options = {
-    services.wm.hyprland = {
+    my.wm.hyprland = {
       enable = mkEnableOption "hyprland - scrollable-tiling Wayland compositor";
 
       package = mkOption {

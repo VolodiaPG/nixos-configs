@@ -1,4 +1,8 @@
-{ flake, ... }:
+# Aggregator for the NixOS modules in this directory. Imported by every host as
+# `self.nixosModules.default`; importing it only *declares* the `my.*` options —
+# each module is inert until its `enable` is set by a host.
+#
+# Home Manager is wired separately, in ./home-manager.nix.
 {
   imports = [
     ./ananicy.nix
@@ -22,6 +26,7 @@
     ./immich.nix
     ./impermanence.nix
     ./kernel.nix
+    ./kubernetes.nix
     ./laptop-server.nix
     ./networking.nix
     ./nvidia.nix
@@ -30,10 +35,5 @@
     ./version.nix
     ./virtualization.nix
     ./vpn.nix
-    ./kubernetes.nix
   ];
-
-  _module.args = {
-    inherit flake;
-  };
 }

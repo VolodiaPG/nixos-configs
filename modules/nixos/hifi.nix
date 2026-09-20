@@ -17,11 +17,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.hifi;
+  cfg = config.my.hifi;
 in
 {
   options = {
-    services.hifi = {
+    my.hifi = {
       enable = mkEnableOption "high-quality audio";
     };
   };

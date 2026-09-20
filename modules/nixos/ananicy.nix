@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.services.myAnanicy;
+  cfg = config.my.ananicy;
 in
 {
-  options.services.myAnanicy = {
+  options.my.ananicy = {
     enable = lib.mkEnableOption "ananicy-cpp with custom rules and types";
   };
 

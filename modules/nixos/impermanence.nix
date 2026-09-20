@@ -22,7 +22,7 @@ let
     attrs
     enum
     ;
-  cfg = config.services.impermanence;
+  cfg = config.my.impermanence;
   #
   # persistServiceNames =
   #   let
@@ -36,7 +36,7 @@ in
   imports = [ flake.inputs.impermanence.nixosModules.impermanence ];
 
   options = {
-    services.impermanence = {
+    my.impermanence = {
       enable = mkEnableOption "impermanence";
 
       fsType = mkOption {
@@ -97,7 +97,7 @@ in
     assertions = [
       {
         assertion = lib.hasPrefix "/dev/" cfg.rootVolume;
-        message = "services.impermanence.rootVolume must be a full device path starting with /dev/ (got: ${cfg.rootVolume})";
+        message = "my.impermanence.rootVolume must be a full device path starting with /dev/ (got: ${cfg.rootVolume})";
       }
     ];
 

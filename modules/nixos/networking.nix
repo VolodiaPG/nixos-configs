@@ -5,11 +5,11 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption;
-  cfg = config.services.networking;
+  cfg = config.my.networking;
 in
 {
   options = {
-    services.networking = {
+    my.networking = {
       enable = mkEnableOption "networking configuration";
     };
   };
