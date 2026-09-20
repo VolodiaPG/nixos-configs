@@ -236,7 +236,7 @@
           }
         ];
         installer = mkNixos "installer" "x86_64-linux" "no-cuda" [ ];
-        m1 = mkNixos "m1" "aarch64-linux" [
+        m1 = mkNixos "m1" "aarch64-linux" "no-cuda" [
           {
             home-manager.extraSpecialArgs = {
               inherit flake;

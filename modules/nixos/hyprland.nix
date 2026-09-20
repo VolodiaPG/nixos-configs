@@ -51,26 +51,26 @@ in
       # Enable dconf for settings management
       dconf.enable = true;
     };
-    programs.noctalia-greeter = {
-      enable = true;
-
-      # Optional configuration
-      greeter-args = "";
-      # Full declarative greeter.toml (overwritten on each activation).
-      # See examples/greeter.toml for every key (appearance.palette, output, …).
-      settings = {
-        cursor = {
-          theme = "graphite-dark";
-          size = 20;
-          path = "${pkgs.graphite-cursors}/share/icons";
-        };
-        keyboard = {
-          layout = "fr";
-        };
-      };
-    };
     # Enable display manager with hyprland support
     services = {
+      displayManager.noctalia-greeter = {
+        enable = true;
+
+        # Optional configuration
+        greeter-args = "";
+        # Full declarative greeter.toml (overwritten on each activation).
+        # See examples/greeter.toml for every key (appearance.palette, output, …).
+        settings = {
+          cursor = {
+            theme = "graphite-dark";
+            size = 20;
+            path = "${pkgs.graphite-cursors}/share/icons";
+          };
+          keyboard = {
+            layout = "fr";
+          };
+        };
+      };
       # Display manager for hyprland (since GNOME/GDM is disabled)
       # greetd = {
       #   enable = true;
@@ -92,6 +92,12 @@ in
 
       # ── Secrets & auth ─────────────────────────────────────────────────
       gnome.gnome-keyring.enable = true;
+
+      # Power management (required for Noctalia battery widget)
+      upower.enable = true;
+
+      # Locale/location
+      geoclue2.enable = true;
     };
 
     security.pam.services.greetd.enableGnomeKeyring = true;
@@ -122,15 +128,6 @@ in
     security = {
       polkit.enable = true;
       # pam.services.greetd.enableGnomeKeyring = true;
-    };
-
-    # Basic services for Wayland compositor
-    services = {
-      # Power management (required for Noctalia battery widget)
-      upower.enable = true;
-
-      # Locale/location
-      geoclue2.enable = true;
     };
 
     # Network management (required for Noctalia wifi widget)

@@ -25,7 +25,7 @@ let
 
     export PATH="${
       lib.makeBinPath [
-        config.nix.package
+        pkgs.nix
         pkgs.cachix
         pkgs.coreutils
       ]

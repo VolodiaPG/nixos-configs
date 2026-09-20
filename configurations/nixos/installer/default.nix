@@ -96,6 +96,9 @@ in
     "xfs"
     "zfs"
   ];
+  # Installer never boots a ZFS root itself; disable the future 26.11 default
+  # explicitly to silence the eval warning.
+  boot.zfs.forceImportRoot = false;
 
   system.stateVersion = "22.05";
 }
