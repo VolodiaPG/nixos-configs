@@ -121,6 +121,7 @@ jobs:
           MAX_SIZE: 524288000 # 500 MB
         run: |
           set -euo pipefail
-          OUT_PATHS="$(nix path-info --recursive ./result-${{ matrix.config }})"
-          export OUT_PATHS
-          ./static/cachix-push.sh
+          # piped, not exported: a whole closure listing blows past the 128 KB
+          # execve limit on a single environment string
+          nix path-info --recursive ./result-${{ matrix.config }} \
+            | ./static/cachix-push.sh

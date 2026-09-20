@@ -28,6 +28,8 @@ let
         pkgs.nix
         pkgs.cachix
         pkgs.coreutils
+        pkgs.findutils
+        pkgs.gnugrep
       ]
     }:$PATH"
 
