@@ -26,6 +26,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: fizzy-pvc
+  namespace: fizzy
 spec:
   accessModes:
     - ReadWriteOnce

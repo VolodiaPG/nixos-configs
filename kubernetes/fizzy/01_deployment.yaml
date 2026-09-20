@@ -17,7 +17,7 @@ spec:
         - name: commafeed
           image: ghcr.io/basecamp/fizzy:main
           ports:
-            - containerPort: 8888
+            - containerPort: 80
           volumeMounts:
             - name: fizzy-data
               mountPath: /rails/storage
@@ -48,12 +48,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: fizzy-env
-                  key: secret-key-base
+                  key: secret_key_base
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: fizzy-env
-                  key: smtp-password
+                  key: smtp_password
 
       volumes:
         - name: fizzy-data
