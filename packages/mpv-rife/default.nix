@@ -24,11 +24,13 @@ let
   # (CVE-2026-24188) and 10.14.1 is the newest it packages. flake.nix already
   # allows the insecure tensorrt for pkgs-unstable, so drop the marker here
   # instead of widening nixpkgs.config for every host.
-  tensorrt = cudaPackages.tensorrt.overrideAttrs (prev: {
-    meta = prev.meta // {
-      knownVulnerabilities = [ ];
-    };
-  });
+  # tensorrt = cudaPackages.tensorrt.overrideAttrs (prev: {
+  #   meta = prev.meta // {
+  #     knownVulnerabilities = [ ];
+  #   };
+  # });
+
+  inherit (cudaPackages) tensorrt;
 
   # ponytail: vapoursynth embeds its python3 at build time; must match the
   # 3.13 toolchain below or the 3.14 default embeds a CPython that cannot
