@@ -8,6 +8,8 @@
   mpv,
   mpv-unwrapped,
   mpvScripts,
+  stdenv,
+  lib,
 }:
 let
   vsmlrtVersion = "15.16";
@@ -71,7 +73,7 @@ mpv.override {
     vapoursynth = vapoursynth313;
   };
   # https://github.com/TheTabbingMan/nixos-configs/blob/0d1a114871948b5fc74faca192a3adf9f3332c2f/modules/programs/mpv.nix#L7
-  extraMakeWrapperArgs = [
+  extraMakeWrapperArgs = lib.optionals stdenv.isLinux [
     "--prefix"
     "PYTHONPATH"
     ":"
@@ -81,12 +83,13 @@ mpv.override {
   youtubeSupport = true;
 
   scripts = [
-    mpvScripts.mpris
     autosub
     mpvScripts.modernz
     # mpvScripts.autosubsync-mpv
-    # mpvScripts.dynamic-crop
     mpvScripts.builtins.autocrop
     mpvScripts.eisa01.smartskip
-  ];
+  ]
+  ++ (lib.optionals stdenv.isLinux [
+    mpvScripts.builtins.mpris
+  ]);
 }

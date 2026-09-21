@@ -27,6 +27,7 @@ in
       gui.enable = true;
       neovim.enable = true;
       themeDaemon.enable = true;
+      mpv.enable = true;
     };
 
     # Upstream Home Manager options
