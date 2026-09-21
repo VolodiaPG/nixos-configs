@@ -20,6 +20,7 @@ in
         gnome.enable = false;
         hyprland.enable = true;
       };
+      claude.enable = true;
     };
 
     # Upstream Home Manager options
