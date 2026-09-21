@@ -4,10 +4,17 @@ import os
 from fractions import Fraction
 
 import vapoursynth as vs
-from vsmlrt import RIFE, Backend, RIFEModel
+import vsmlrt
+from vsmlrt import RIFE, BackendV2, RIFEModel
 
 core = vs.core
 core.num_threads = 8
+
+# vsmlrt.py's own LoadPlugin guard only runs the first time the module is
+# imported in this process, but mpv hands each video its own fresh core
+# without the plugin loaded. Load it again here, every script evaluation.
+if not hasattr(core, "trt"):
+    core.std.LoadPlugin(path=os.path.join(vsmlrt.plugins_path, "libvstrt.so"))
 
 TARGET_FPS = Fraction(60)
 
@@ -41,28 +48,30 @@ def sc_detect(clip, threshold=0.15):
 clip = video_in
 
 # Unknown frame rate (fps_num == 0) leaves nothing to retime against.
-multi = TARGET_FPS / clip.fps if clip.fps_num else Fraction(1)
+multi = TARGET_FPS / clip.fps if clip.fps_num else Fraction(2)
 
-if multi > 1:
-    clip = sc_detect(clip)
+# if multi >= 2:
+clip = sc_detect(clip)
 
-    # RGBH (half-precision float RGB) is what the fp16 engine wants.
-    clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
+# RGBH (half-precision float RGB) is what the fp16 engine wants.
+clip = core.resize.Bicubic(clip, format=vs.RGBH, matrix_in_s="709")
 
-    clip = RIFE(
-        clip,
-        multi=multi,
-        model=RIFEModel.v4_25,
-        backend=Backend.TRT(
-            fp16=True,
-            use_cuda_graph=True,
-            engine_folder=engine_dir,
-        ),
-        video_player=True,
-        # Implementation 2 pads internally; implementation 1 (the default)
-        # rejects any frame size that is not a multiple of 32, i.e. most video.
-        _implementation=2,
-    )
+clip = RIFE(
+    clip,
+    multi=2,
+    model=RIFEModel.v4_25,
+    backend=BackendV2.TRT(
+       num_streams=4,
+       fp16=True,
+       output_format=1,
+       use_cuda_graph=True,
+       engine_folder=engine_dir,
+    ),
+    video_player=True,
+    # Implementation 2 pads internally; implementation 1 (the default)
+    # rejects any frame size that is not a multiple of 32, i.e. most video.
+    _implementation=2,
+)
 
 clip = core.resize.Bicubic(clip, format=vs.YUV420P8, matrix_s="709")
 clip.set_output()
