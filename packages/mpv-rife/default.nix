@@ -90,6 +90,6 @@ mpv.override {
     mpvScripts.eisa01.smartskip
   ]
   ++ (lib.optionals stdenv.isLinux [
-    mpvScripts.builtins.mpris
+    mpvScripts.mpris
   ]);
 }
