@@ -69,7 +69,7 @@ jobs:
       - name: Build packages for home-server
         run: |
           set -euxo pipefail
-          nix develop .#ci -c just ci msi
+          nix develop .#ci -c just ci home-server
 
       - name: Push to cachix
         env:
@@ -79,8 +79,11 @@ jobs:
         run: |
           set -euo pipefail
           # piped, not exported: a whole closure listing blows past the 128 KB
-          # execve limit on a single environment string
-          nix path-info --recursive ./result-* \
+          # execve limit on a single environment string; xargs (not a bare
+          # arg list) keeps us under ARG_MAX too since this can be thousands
+          # of store paths
+          cat ./out-paths-*.txt \
+            | xargs nix path-info --recursive \
             | sort -u \
             | ./static/cachix-push.sh
 

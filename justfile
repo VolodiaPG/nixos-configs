@@ -97,20 +97,19 @@ option drv path:
 repl drv="$(hostname)":
     nix repl .#nixosConfigurations.{{ drv }}
 
-# Build everything a host installs, so the cache is warm (used by CI)
-# Outputs to ./result-[host]-system and ./result-[host]-home
+# Build everything a host installs, so the cache is warm (used by CI).
+# Builds only the packages (not the full system closure, which drags in
+# boot/initrd/activation-script derivations that cachix-push filters out
+# anyway) as installables in a single `nix build` call, so substitution
+# happens as one batched query instead of one nix-eval-jobs job per package.
+# Outputs the resulting store paths to ./out-paths-[host].txt
 ci host="$(hostname)":
     #!/usr/bin/env bash
-    set -euo pipefail
-    select='pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)'
-    nix-fast-build \
-        --flake .#nixosConfigurations.{{host}}.config.environment.systemPackages \
-        --select "$select" --skip-cached \
-        --result-file ./result-{{host}}-system
-    nix-fast-build \
-        --flake .#nixosConfigurations.{{host}}.config.home-manager.users.volodia.home.packages \
-        --select "$select" --skip-cached \
-        --result-file ./result-{{host}}-home
+    set -euxo pipefail
+    toDrvArgs='pkgs: builtins.concatStringsSep " " (map (p: p.drvPath + "^*") pkgs)'
+    system_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.environment.systemPackages" --apply "$toDrvArgs")
+    home_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.home-manager.users.volodia.home.packages" --apply "$toDrvArgs")
+    nix build --no-link --print-out-paths $system_drvs $home_drvs > ./out-paths-{{host}}.txt
 
 # --- Secrets ----------------------------------------------------------------
 

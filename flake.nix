@@ -394,7 +394,6 @@
             packages = [
               pkgs.just
               pkgs.deploy-rs
-              pkgs.nix-fast-build
             ];
           };
 
