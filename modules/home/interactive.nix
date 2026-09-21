@@ -8,7 +8,12 @@
 let
   cfg = config.my.interactive;
   inherit (flake) inputs;
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkMerge
+    mkOverride
+    ;
 in
 {
 
@@ -23,65 +28,74 @@ in
     inputs.nix-index-database.homeModules.nix-index
   ];
 
-  config = mkIf cfg.enable {
-    # Upstream catppuccin module (inputs.catppuccin)
-    catppuccin = {
-      enable = true;
-      # Lock autoEnable explicitly to silence future-behavior warning
-      autoEnable = true;
-    };
+  config = mkMerge [
+    {
+      # The nix-index-database module flips `programs.nix-index.enable` on just
+      # by being imported, which ships the full (several hundred MB) index to
+      # hosts that never get an interactive shell. Tie it back to this module;
+      # 900 beats its mkDefault while still losing to an explicit host setting.
+      programs.nix-index.enable = mkOverride 900 cfg.enable;
+    }
 
-    my = {
-      # Our own theme-switching layer on top of it (modules/home/catppuccin-theme.nix)
+    (mkIf cfg.enable {
+      # Upstream catppuccin module (inputs.catppuccin)
       catppuccin = {
-        autoThemeSwitch = true;
-        darkFlavor = "mocha"; # Your preferred dark theme
-        lightFlavor = "latte"; # Your preferred light theme
-        # TODO: make use of light and dark flavors in the script itself, hard coded for now
+        enable = true;
+        # Lock autoEnable explicitly to silence future-behavior warning
+        autoEnable = true;
       };
 
-      # Enable the theme daemon for automatic switching
-      themeDaemon.enable = true;
-    };
+      my = {
+        # Our own theme-switching layer on top of it (modules/home/catppuccin-theme.nix)
+        catppuccin = {
+          autoThemeSwitch = true;
+          darkFlavor = "mocha"; # Your preferred dark theme
+          lightFlavor = "latte"; # Your preferred light theme
+          # TODO: make use of light and dark flavors in the script itself, hard coded for now
+        };
 
-    programs = {
-      opencode.enable = true;
-      fzf.enable = true;
-      lazygit = {
-        enable = true;
-        enableZshIntegration = true;
-        settings = {
-          git = {
-            pagers = [
-              { useExternalDiffGitConfig = true; }
-            ];
+        # Enable the theme daemon for automatic switching
+        themeDaemon.enable = true;
+      };
+
+      programs = {
+        opencode.enable = true;
+        fzf.enable = true;
+        lazygit = {
+          enable = true;
+          enableZshIntegration = true;
+          settings = {
+            git = {
+              pagers = [
+                { useExternalDiffGitConfig = true; }
+              ];
+            };
           };
         };
+        nix-index-database.comma.enable = true;
+        direnv = {
+          enable = true;
+          silent = true;
+          enableZshIntegration = true;
+          nix-direnv.enable = true;
+          stdlib = ''
+            export DIRENV_LOG_FORMAT=""
+          '';
+        };
       };
-      nix-index.enable = true;
-      nix-index-database.comma.enable = true;
-      direnv = {
-        enable = true;
-        silent = true;
-        enableZshIntegration = true;
-        nix-direnv.enable = true;
-        stdlib = ''
-          export DIRENV_LOG_FORMAT=""
-        '';
-      };
-    };
 
-    home = {
-      packages = [
-        pkgs.direnv
-        pkgs.git-crypt
-        pkgs.python3
-        pkgs.difftastic
-        pkgs.cachix
-        pkgs.vim
-        pkgs.devenv
-        pkgs.just
-      ];
-    };
-  };
+      home = {
+        packages = [
+          pkgs.direnv
+          pkgs.git-crypt
+          pkgs.python3
+          pkgs.difftastic
+          pkgs.cachix
+          pkgs.vim
+          pkgs.devenv
+          pkgs.just
+        ];
+      };
+    })
+  ];
 }

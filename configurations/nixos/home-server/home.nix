@@ -16,5 +16,10 @@ in
       enable = false;
       autoEnable = false;
     };
+
+    # Headless, and `documentation.enable` is already off system-wide: building
+    # the Home Manager option manpage on every rebuild buys nothing here.
+    manual.manpages.enable = false;
+    programs.man.enable = false;
   };
 }

@@ -33,10 +33,12 @@ in
     kernel = {
       enable = true;
       serverNetworking = true;
-      cachyServer = false;
+      cachyServer = true;
     };
+    # Lid stays closed, panel is blanked by `consoleblank=60`; that makes
+    # my.backlightOff (a logind poll every minute, which also force-loads i915)
+    # redundant here.
     laptopServer.enable = true;
-    backlightOff.enable = true;
 
     # Storage and networking
     impermanence = {
@@ -49,8 +51,6 @@ in
 
     # Services
     kubernetes.enable = true;
-    arr.enable = false;
-    homeLab.enable = false;
 
     backup = {
       enable = true;
@@ -65,11 +65,7 @@ in
     };
   };
 
-  # Upstream NixOS options. `samba`, `caddy` and `immich` are also extended by
-  # modules/nixos/{samba,caddy,immich}.nix, which key off these `enable` flags.
-  services = {
-    samba.enable = true;
-    caddy.enable = false;
-    immich.enable = false;
-  };
+  # Upstream NixOS option; modules/nixos/samba.nix keys off this `enable` flag
+  # to add the shares, the mDNS/WSD discovery and the Samba user.
+  services.samba.enable = true;
 }

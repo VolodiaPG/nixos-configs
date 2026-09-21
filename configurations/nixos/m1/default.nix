@@ -35,6 +35,7 @@ in
     virtualization = {
       enable = true;
       libvirt.enable = false;
+      containers.enable = true;
     };
 
     # Storage and networking

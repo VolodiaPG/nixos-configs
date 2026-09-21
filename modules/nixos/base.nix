@@ -70,7 +70,7 @@ in
       # resolve /bin/sh, /bin/bash, etc. dynamically
       envfs.enable = true;
       upower.enable = lib.mkDefault true;
-      power-profiles-daemon.enable = true;
+      power-profiles-daemon.enable = lib.mkDefault true;
       fail2ban = {
         enable = true;
         maxretry = 5;
@@ -106,8 +106,8 @@ in
         allowSFTP = true;
         settings.PermitRootLogin = lib.mkForce "prohibit-password";
       };
-      fwupd.enable = true;
-      pcscd.enable = true;
+      fwupd.enable = lib.mkDefault true;
+      pcscd.enable = lib.mkDefault true;
     };
 
     programs = {
@@ -123,25 +123,7 @@ in
 
     time.timeZone = "Europe/Paris";
 
-    virtualisation = {
-      docker = {
-        enable = true;
-        # overlay2 is the default and works on ext4/xfs; btrfs benefits from
-        # its native storage driver when the root volume is btrfs.
-        extraOptions =
-          (lib.optionalString (
-            config.my.impermanence.enable && config.my.impermanence.fsType == "btrfs"
-          ) "--storage-driver btrfs ")
-          + "--exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
-        autoPrune = {
-          enable = true;
-          dates = "weekly";
-        };
-      };
-    };
-
     environment.systemPackages = [
-      pkgs.docker-compose
       pkgs.lm_sensors
       pkgs.fscrypt-experimental
       pkgs.jq
@@ -178,11 +160,13 @@ in
             "disk"
             "libvirtd"
             "usb"
-            "networkmanager"
-            "docker"
             "dialout"
             "plugdev"
-          ];
+          ]
+          # These only exist when the daemon behind them is enabled, which is
+          # not the case on the headless host.
+          ++ lib.optional config.networking.networkmanager.enable "networkmanager"
+          ++ lib.optional config.virtualisation.docker.enable "docker";
           openssh.authorizedKeys.keys = me.keys;
           hashedPasswordFile = config.age.secrets.hashed-password.path;
           shell = pkgs.zsh;
