@@ -394,12 +394,14 @@
             packages = [
               pkgs.just
               pkgs.deploy-rs
+              pkgs.nix-fast-build
             ];
           };
 
           default = pkgs.mkShell {
             packages = [
               pkgs.just
+              pkgs.nix-fast-build
               pkgs.git
               pkgs.ragenix
               pkgs.deploy-rs

@@ -61,17 +61,15 @@ jobs:
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
       # - m1
-      - name: Build msi
+      - name: Build packages for msi
         run: |
           set -euxo pipefail
-          nix build --accept-flake-config --out-link result-msi \
-            .#nixosConfigurations.msi.config.system.build.toplevel
+          nix develop .#ci -c just ci msi
 
-      - name: Build home-server
+      - name: Build packages for home-server
         run: |
           set -euxo pipefail
-          nix build --accept-flake-config --out-link result-home-server \
-            .#nixosConfigurations.home-server.config.system.build.toplevel
+          nix develop .#ci -c just ci msi
 
       - name: Push to cachix
         env:
@@ -82,7 +80,7 @@ jobs:
           set -euo pipefail
           # piped, not exported: a whole closure listing blows past the 128 KB
           # execve limit on a single environment string
-          nix path-info --recursive ./result-msi ./result-home-server \
+          nix path-info --recursive ./result-* \
             | sort -u \
             | ./static/cachix-push.sh
 

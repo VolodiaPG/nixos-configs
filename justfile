@@ -98,16 +98,19 @@ repl drv="$(hostname)":
     nix repl .#nixosConfigurations.{{ drv }}
 
 # Build everything a host installs, so the cache is warm (used by CI)
-ci:
+# Outputs to ./result-[host]-system and ./result-[host]-home
+ci host="$(hostname)":
     #!/usr/bin/env bash
     set -euo pipefail
     select='pkgs: builtins.listToAttrs (map (p: { name = p.name or (toString p); value = p; }) pkgs)'
-    nix run github:mic92/nix-fast-build -- \
-        --flake .#nixosConfigurations.msi.config.environment.systemPackages \
-        --select "$select" --skip-cached
-    nix run github:mic92/nix-fast-build -- \
-        --flake .#nixosConfigurations.msi.config.home-manager.users.volodia.home.packages \
-        --select "$select" --skip-cached
+    nix-fast-build \
+        --flake .#nixosConfigurations.{{host}}.config.environment.systemPackages \
+        --select "$select" --skip-cached \
+        --result-file ./result-{{host}}-system
+    nix-fast-build \
+        --flake .#nixosConfigurations.{{host}}.config.home-manager.users.volodia.home.packages \
+        --select "$select" --skip-cached \
+        --result-file ./result-{{host}}-home
 
 # --- Secrets ----------------------------------------------------------------
 
