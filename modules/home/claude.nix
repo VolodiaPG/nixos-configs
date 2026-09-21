@@ -80,6 +80,7 @@ in
       # exactly one of them may be in the profile at a time.
       packages = [
         (if cfg.headroom.enable then pkgs.claude-code-headroom else pkgs.claude-code)
+        pkgs.t3code
       ]
       ++
         lib.optional cfg.headroom.enable
