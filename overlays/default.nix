@@ -40,6 +40,7 @@ in
     # inputs.nixos-apple-silicon's video module on the m1 host. Only exists in
     # unstable; without this the m1 config fails to evaluate.
     avd-fw
+    t3code
     ;
 
   # In-repo packages (packages/default.nix), also exposed as flake `packages`.
