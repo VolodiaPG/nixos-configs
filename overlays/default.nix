@@ -25,8 +25,9 @@ in
     neovim-remote
     neovim-unwrapped
     opencode
-    # Claude Code ships several releases a week; stable lags by dozens of them.
     claude-code
+    rtk
+    codegraph
     noctalia
     hyprland
     tailscale
