@@ -7,6 +7,7 @@
     ./browser.nix
     ./catppuccin-theme.nix
     ./chezmoi.nix
+    ./claude.nix
     ./common-home.nix
     ./git.nix
     ./gnome.nix

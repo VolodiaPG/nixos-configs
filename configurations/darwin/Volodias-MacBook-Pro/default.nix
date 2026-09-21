@@ -24,6 +24,7 @@ in
       commonHome.enable = true;
       interactive.enable = true;
       chezmoi.enable = true;
+      claude.enable = true;
       gui.enable = true;
       neovim.enable = true;
       themeDaemon.enable = true;

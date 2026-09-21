@@ -7,6 +7,15 @@ let
   high-tide = pkgs-unstable.callPackage (self + "/packages/high-tide/default.nix") {
     src = inputs.high-tide;
   };
+  # headroom's Python dependencies (litellm, mcp, ast-grep-cli) are only new
+  # enough in unstable, so it and the Claude Code wrapper built on top of it are
+  # taken from that package set rather than from `packages/default.nix`.
+  headroom = pkgs-unstable.callPackage (self + "/packages/headroom/default.nix") { };
+  claude-code-headroom =
+    pkgs-unstable.callPackage (self + "/packages/claude-code-headroom/default.nix")
+      {
+        inherit headroom;
+      };
 in
 {
   # Pulled forward from nixpkgs-unstable: newer than the pinned stable channel,
@@ -16,6 +25,8 @@ in
     neovim-remote
     neovim-unwrapped
     opencode
+    # Claude Code ships several releases a week; stable lags by dozens of them.
+    claude-code
     noctalia
     hyprland
     tailscale
@@ -40,7 +51,7 @@ in
     mpv-rife
     ;
 
-  inherit high-tide;
+  inherit high-tide headroom claude-code-headroom;
 
   mosh = prev.mosh.overrideAttrs (
     old:
