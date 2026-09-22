@@ -94,24 +94,36 @@ in
         HEADROOM_PORT = toString cfg.headroom.port;
       };
 
-      # Runs after Home Manager has linked packages into $NIX_PROFILES/bin, so
-      # `rtk`/`codegraph` on $PATH below actually resolve.
-      activation = mkIf (cfg.rtk.enable || cfg.codegraph.enable) {
-        claudeAgentTools = lib.hm.dag.entryAfter [ "installPackages" ] ''
-          PATH="${config.home.path}/bin:$PATH"
+      activation = lib.mkMerge [
+        {
+          # ~/.claude has to exist before Claude Code's first run, rtk's hook
+          # install, or codegraph's registration write into it — and, on
+          # hosts using modules/nixos/impermanence.nix, before that path can
+          # be bind mounted from /persistent. Harmless if it's already there.
+          claudeDir = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
+            run mkdir -p "${config.home.homeDirectory}/.claude"
+          '';
+        }
+        (mkIf (cfg.rtk.enable || cfg.codegraph.enable) {
+          # Runs after Home Manager has linked packages into
+          # $NIX_PROFILES/bin, so `rtk`/`codegraph` on $PATH below actually
+          # resolve.
+          claudeAgentTools = lib.hm.dag.entryAfter [ "installPackages" ] ''
+            PATH="${config.home.path}/bin:$PATH"
 
-          ${lib.optionalString cfg.rtk.enable ''
-            # --auto-patch: approve overwriting a stock hook block without
-            # prompting, but never touch unrelated content — safe to re-run.
-            RTK_TELEMETRY_DISABLED=1 run ${pkgs.rtk}/bin/rtk init -g --auto-patch
-          ''}
-          ${lib.optionalString cfg.codegraph.enable ''
-            # --target=claude: wire up Claude Code only, not every agent
-            # codegraph can detect on this machine.
-            CODEGRAPH_TELEMETRY=0 run ${pkgs.codegraph}/bin/codegraph install --yes --target=claude
-          ''}
-        '';
-      };
+            ${lib.optionalString cfg.rtk.enable ''
+              # --auto-patch: approve overwriting a stock hook block without
+              # prompting, but never touch unrelated content — safe to re-run.
+              RTK_TELEMETRY_DISABLED=1 run ${pkgs.rtk}/bin/rtk init -g --auto-patch
+            ''}
+            ${lib.optionalString cfg.codegraph.enable ''
+              # --target=claude: wire up Claude Code only, not every agent
+              # codegraph can detect on this machine.
+              CODEGRAPH_TELEMETRY=0 run ${pkgs.codegraph}/bin/codegraph install --yes --target=claude
+            ''}
+          '';
+        })
+      ];
     };
   };
 }
