@@ -106,7 +106,7 @@ repl drv="$(hostname)":
 ci host="$(hostname)":
     #!/usr/bin/env bash
     set -euxo pipefail
-    toDrvArgs='pkgs: builtins.concatStringsSep " " (map (p: p.drvPath + "^*") pkgs)'
+    toDrvArgs='pkgs: builtins.concatStringsSep " " (map (p: p.drvPath) pkgs)'
     system_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.environment.systemPackages" --apply "$toDrvArgs")
     home_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.home-manager.users.volodia.home.packages" --apply "$toDrvArgs")
     nix build --no-link --print-out-paths $system_drvs $home_drvs > ./out-paths-{{host}}.txt
