@@ -10,7 +10,7 @@ local mainMod = 'SUPER'
 --─────────────────────────────
 -- Monitors
 --─────────────────────────────
-local iiyama_desc = 'Iiyama North America PL3461WQ 1171803800833'
+local iiyama_desc = 'iiyama Corporation PL3461WQ 1171803800833'
 -- local cloudium_desc = "Cloudium Systems Ltd. CSL421 0x00004210"
 
 local known_config = {
@@ -97,30 +97,34 @@ local elect_master_or_restore_known = function()
     end
   end
 
-  local has_unknown = false
+  local unknown_descs = {}
   local first_known_desc = nil
-  local unknown_master = nil
 
   for _, mon in ipairs(real_mons) do
     local desc = norm_desc(mon.description)
     if not known_config[desc] then
-      has_unknown = true
-      unknown_master = desc
+      table.insert(unknown_descs, desc)
     elseif not first_known_desc then
       first_known_desc = desc
     end
   end
 
   local target
-  if not has_unknown then
+  if #unknown_descs == 0 then
     -- Prefer Iiyama as reclaim target when connected (primary desktop).
     target = connected[iiyama_desc] and iiyama_desc or first_known_desc
     for desc, _ in pairs(known_config) do
       apply_known(desc, nil, connected)
     end
   else
+    -- First unknown monitor becomes master; any other unknown monitors and
+    -- all known monitors mirror it.
+    local unknown_master = unknown_descs[1]
     target = unknown_master
     hl.monitor { output = 'desc:' .. unknown_master, mode = 'preferred', position = '0x0', scale = 1 }
+    for i = 2, #unknown_descs do
+      hl.monitor { output = 'desc:' .. unknown_descs[i], mirror = 'desc:' .. unknown_master }
+    end
     for desc, _ in pairs(known_config) do
       apply_known(desc, { mirror = 'desc:' .. unknown_master }, connected)
     end
@@ -446,7 +450,7 @@ local function place(win, fw, fh, move)
     x = math.floor(m.x + dx),
     y = math.floor(m.y + h - y - 40),
     exact = true,
-    window = w,
+    window = win,
   })
 end
 
