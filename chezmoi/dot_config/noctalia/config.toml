@@ -19,7 +19,7 @@ order = [ "main" ]
     radius = 12
     scale = 1.1000000089406967
     shadow = true
-    start = [ "nix-monitor", "sysmon", "cpu", "status_2", "pill" ]
+    start = [ "nix-monitor", "sysmon", "cpu", "pill" ]
     thickness = 25
     widget_spacing = 12
 
@@ -250,6 +250,9 @@ update_command = "cd ~/Documents/nixos-configs && nix develop --command just upd
 manager_placement = "attached"
 notify_on_peer_change = false
 
+[plugin_settings."jrohland/claudecode"]
+currency = "eur"
+
 [plugin_settings."nzlov/daily-wallpaper"]
 locale = "fr-FR"
 
@@ -394,7 +397,7 @@ up_to_date_color = "tertiary"
 update_available_color = "error"
 
 [widget.pill]
-pill_extras = "countdown"
+pill_extras = "both"
 type = "jrohland/claudecode:pill"
 
 [widget.status]
