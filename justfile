@@ -98,41 +98,22 @@ repl drv="$(hostname)":
     nix repl .#nixosConfigurations.{{ drv }}
 
 # Build everything a host installs, so the cache is warm (used by CI).
-# Builds only the packages (not the full system closure, which drags in
-# boot/initrd/activation-script derivations that cachix-push filters out
-# anyway) as installables in a single `nix build` call, so substitution
-# happens as one batched query instead of one nix-eval-jobs job per package.
-# Outputs the resulting store paths to ./out-paths-[host].txt, and the
-# build plan (which .drv nix actually built vs substituted) to
-# ./build-log-[host].txt, so CI can push only what it built (see
-# static/cachix-push.sh / the "Push to cachix" step in deploy.yaml).
-#
-# Dry-runs first to find what's actually missing from every substituter, then
-# only builds that: a plain `nix build` on the full package list would
-# download every already-cached package too, even though nothing here uses
-# those bits locally (the real host fetches them itself on `deploy`).
+# Targets `ciPackages.<host>` (see flake.nix) — the host's packages
+# (systemPackages ++ home packages) as a flat attrset, not the whole system
+# closure, which drags in boot/initrd/activation-script derivations that are
+# never worth caching. nix-fast-build gives each package its own
+# nix-eval-jobs job, so --skip-cached skips (without downloading) anything
+# already sitting in a configured substituter (cache.nixos.org, the cuda
+# cache, volodiapg's own cachix, ...), and --cachix-cache streams only the
+# packages it actually builds from source straight to volodiapg as they
+# finish — no separate "what did we build" bookkeeping/push step needed.
 ci host="$(hostname)":
-    #!/usr/bin/env bash
-    set -euxo pipefail
-    toDrvArgs='pkgs: builtins.concatStringsSep " " (map (p: p.drvPath) pkgs)'
-    system_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.environment.systemPackages" --apply "$toDrvArgs")
-    home_drvs=$(nix eval --raw ".#nixosConfigurations.{{host}}.config.home-manager.users.volodia.home.packages" --apply "$toDrvArgs")
-
-    filterMissing='
-        /^(this derivation|these [0-9]+ derivations) will be built:/ { building = 1; next }
-        /^(this path|these [0-9]+ paths) will be fetched/ { building = 0 }
-        building { print $1 }
-    '
-    missing=$(nix build --dry-run $system_drvs $home_drvs 2>&1 | awk "$filterMissing")
-
-    if [ -z "$missing" ]; then
-        echo "Nothing to build for {{host}}: already fully cached" | tee ./build-log-{{host}}.txt
-        : > ./out-paths-{{host}}.txt
-    else
-        nix build --no-link --print-out-paths $missing \
-            > ./out-paths-{{host}}.txt \
-            2> >(tee ./build-log-{{host}}.txt >&2)
-    fi
+    nix-fast-build \
+        --nix $(which nix) \
+        --nix-build $(which nix-build) \
+        --skip-cached \
+        --flake ".#ciPackages.{{host}}" \
+        --cachix-cache volodiapg
 
 # --- Secrets ----------------------------------------------------------------
 
@@ -160,4 +141,3 @@ update:
     nix flake update
     just boot
     flatpak update
-    just deploy

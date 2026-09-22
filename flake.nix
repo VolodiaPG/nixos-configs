@@ -327,6 +327,23 @@
       nixosConfigurations = lib.mapAttrs mkNixos nixosHosts;
       darwinConfigurations = lib.mapAttrs mkDarwin darwinHosts;
 
+      # A host's individual packages (systemPackages ++ home packages), flat
+      # per package rather than the whole system closure. Consumed by
+      # `nix-fast-build` in the `ci` justfile recipe: one job per package
+      # means it can skip/push per package instead of all-or-nothing on the
+      # toplevel activation derivation (which also drags in boot/initrd/
+      # activation-script derivations that are never worth caching).
+      ciPackages = lib.mapAttrs (
+        name: _:
+        let
+          cfg = self.nixosConfigurations.${name}.config;
+          hostPkgs =
+            cfg.environment.systemPackages
+            ++ (cfg.home-manager.users.${flake.config.me.username}.home.packages or [ ]);
+        in
+        lib.listToAttrs (lib.imap0 (i: pkg: lib.nameValuePair "${toString i}-${pkg.name}" pkg) hostPkgs)
+      ) nixosHosts;
+
       # --- In-repo packages -------------------------------------------------
       # Exposed so `nix run .#xinstall` works (the installer ISO relies on it,
       # see configurations/nixos/installer/default.nix) and so CI can build them.
@@ -389,11 +406,19 @@
           check = preCommitShell.${system};
         in
         {
-          # Minimal shell for CI: everything `just deploy` needs, nothing else.
+          # Minimal shell for CI: everything `just deploy`/`just ci` needs,
+          # nothing else. nix-fast-build shells out to nix-eval-jobs/cachix/
+          # nix-output-monitor on demand if they're not already on PATH, but
+          # listing them here pins them to this flake's nixpkgs and skips
+          # that extra `nix shell` fetch in CI.
           ci = pkgs.mkShell {
             packages = [
               pkgs.just
               pkgs.deploy-rs
+              pkgs.nix-fast-build
+              pkgs.nix-eval-jobs
+              pkgs.nix-output-monitor
+              pkgs.cachix
             ];
           };
 
