@@ -78,12 +78,24 @@ jobs:
           MAX_SIZE: 524288000 # 500 MB
         run: |
           set -euo pipefail
-          # piped, not exported: a whole closure listing blows past the 128 KB
-          # execve limit on a single environment string; xargs (not a bare
-          # arg list) keeps us under ARG_MAX too since this can be thousands
-          # of store paths
-          cat ./out-paths-*.txt \
-            | xargs nix path-info --recursive \
+          # Only push what this job actually built from source. Everything
+          # else in the closure was substituted from an upstream cache
+          # (cache.nixos.org, nix-community, ...) and re-uploading it to our
+          # own cache would just be wasted bandwidth/storage. `nix build`
+          # prints its plan up front as "these N derivations will be
+          # built:" / "these N paths will be fetched:" blocks (see
+          # ./justfile's `ci` recipe for where build-log-*.txt comes from);
+          # piped, not exported: a whole closure listing blows past the
+          # 128 KB execve limit on a single environment string; xargs (not a
+          # bare arg list) keeps us under ARG_MAX too since this can be
+          # thousands of store paths
+          awk '
+            /^(this derivation|these [0-9]+ derivations) will be built:/ { building = 1; next }
+            /^(this path|these [0-9]+ paths) will be fetched/ { building = 0 }
+            building { print $1 }
+          ' ./build-log-*.txt \
+            | sort -u \
+            | xargs -r nix-store -q --outputs \
             | sort -u \
             | ./static/cachix-push.sh
 
