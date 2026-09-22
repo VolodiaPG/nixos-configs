@@ -30,9 +30,7 @@ in
           nvim-treesitter-context
           nvim-lint
           conform-nvim
-          (colorizer.overrideAttrs (_: {
-            pname = "nvim-colorizer.lua";
-          }))
+          nvim-colorizer-lua
           nvim-web-devicons
           nui-nvim
           noice-nvim
