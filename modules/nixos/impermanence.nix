@@ -368,6 +368,8 @@ in
             ".zotero"
             ".cache/flatpak"
             ".cache/nvim"
+            ".claude"
+            ".t3"
           ];
           files = [
             ".bash_history"
