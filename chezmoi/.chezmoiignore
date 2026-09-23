@@ -1,0 +1,58 @@
+{{- /*
+     Per-OS exclusions — task 2.1 of PLAN.MD.
+
+     NOTE: .chezmoiignore patterns match TARGET paths relative to the
+     destination directory (`.config/hypr`), never source paths
+     (`dot_config/hypr`). This file is itself a template and is evaluated
+     once per target, so the two blocks below are mutually exclusive.
+*/ -}}
+
+{{- if eq .chezmoi.os "darwin" }}
+# ── Linux-only trees: never applied on macOS ─────────────────────────────
+.config/hypr
+.config/noctalia
+.config/OrcaSlicer
+
+# Flatpak data dir; meaningless on macOS.
+.var
+
+# KDE / Plasma. Nothing here yet — tasks 2.7 (theme assets) and 2.9 (KDE rc
+# files via chezmoi_modify_manager) land under these paths. Pre-declared so
+# those tasks need no change here.
+.config/kdeglobals
+.config/kwinrc
+.config/kwinrulesrc
+.config/kded5rc
+.config/kxkbrc
+.config/krunnerrc
+.config/kglobalshortcutsrc
+.config/dolphinrc
+.config/plasmashellrc
+.config/plasmanotifyrc
+.config/plasma-org.kde.plasma.desktop-appletsrc
+.local/share/plasma
+.local/share/color-schemes
+.local/share/aurorae
+.local/share/darkman
+
+# Linux input remapping (kanata); macOS uses Karabiner instead.
+.config/kanata
+
+# User systemd units are Ansible's, and Linux-only anyway.
+.config/systemd
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+# ── macOS-only trees: never applied on Linux ─────────────────────────────
+.config/karabiner
+Library
+{{- end }}
+
+# ── Unconditional ────────────────────────────────────────────────────────
+# Inputs to chezmoi_modify_manager (task 2.9), not files to apply. Without
+# this, chezmoi litters ~/.config/ with *.src.ini. Must be in place BEFORE
+# the first KDE file is added (dotfiles-merge.md §5, P2).
+**/*.src.ini
+
+# Kate editor swap files.
+*.kate-swp

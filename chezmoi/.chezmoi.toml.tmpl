@@ -1,0 +1,41 @@
+{{- /*
+     chezmoi config template — task 2.1 of PLAN.MD.
+
+     Every value below has a default derived from `.chezmoi.os` /
+     `.chezmoi.hostname`, so a non-interactive `chezmoi init` (no TTY, or
+     `--no-tty`) succeeds without a single prompt: chezmoi's prompt*
+     functions return their default when it cannot prompt.
+
+     `email` / `signing_key` are the same source of truth as config.nix's
+     `me` attrset and ansible/inventory/group_vars/all/main.yml. If you
+     change one, change all three.
+*/ -}}
+{{- $isDarwin := eq .chezmoi.os "darwin" -}}
+
+{{- /* role: `mac` on Darwin, `desktop` on Linux. */ -}}
+{{- $defaultRole := "desktop" -}}
+{{- if $isDarwin }}{{ $defaultRole = "mac" }}{{ end -}}
+
+{{- /* login shell, consumed by dot_config/kitty/kitty.conf (task 2.5). */ -}}
+{{- $defaultShell := "/usr/bin/zsh" -}}
+{{- if $isDarwin }}{{ $defaultShell = "/opt/homebrew/bin/zsh" }}{{ end -}}
+
+{{- $host       := promptStringOnce . "host"        "Short host name"                        .chezmoi.hostname -}}
+{{- $role       := promptStringOnce . "role"        "Role (desktop|mac)"                     $defaultRole -}}
+{{- $flavor     := promptStringOnce . "flavor"      "Catppuccin flavor (mocha|latte)"        "mocha" -}}
+{{- $name       := promptStringOnce . "name"        "Full name"                              "Volodia P.G." -}}
+{{- $username   := promptStringOnce . "username"    "User name"                              .chezmoi.username -}}
+{{- $email      := promptStringOnce . "email"       "Email"                                  "volodia.parol-guarino@proton.me" -}}
+{{- $signingKey := promptStringOnce . "signing_key" "SSH signing key"                        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM635CwP66Qv05RT" -}}
+{{- $shell      := promptStringOnce . "shell"       "Login shell (absolute path)"            $defaultShell -}}
+
+[data]
+host = {{ $host | quote }}
+role = {{ $role | quote }}
+flavor = {{ $flavor | quote }}
+name = {{ $name | quote }}
+username = {{ $username | quote }}
+email = {{ $email | quote }}
+signing_key = {{ $signingKey | quote }}
+shell = {{ $shell | quote }}
+home_dir = {{ .chezmoi.homeDir | quote }}

@@ -1,0 +1,67 @@
+# Assets Home Manager used to symlink out of the Nix store into $HOME.
+# Those symlinks die with Home Manager (PLAN.MD phase 2), so they are
+# vendored here and must exist BEFORE the first `chezmoi apply` on a host.
+#
+# Every entry is pinned to an immutable tag or commit — never a branch — and
+# the pin matches what nixpkgs was resolving to at migration time, so the
+# post-cutover files are byte-identical to the pre-cutover ones.
+#
+# The old dotfiles repo's single entry (~/.config/nvim from VolodiaPG/vim)
+# is deliberately NOT carried over: PLAN.MD §0 rules that this repo's inline
+# chezmoi/dot_config/nvim/ tree wins.
+
+# kitty-themes — replaces gui.nix:77
+#   `.config/kitty/kitty-themes".source = "${pkgs.kitty-themes}/share/kitty-themes"`.
+# dot_config/kitty/kitty.conf does
+#   `include ~/.config/kitty/kitty-themes/themes/Catppuccin-Mocha.conf`,
+# so without this kitty starts with a broken include.
+# Pin = pkgs.kitty-themes 0-unstable-2026-03-31 src.rev.
+#
+# No include/exclude filters: chezmoi's `include = ["themes/**"]` matched the
+# `themes` directory but not its contents, silently leaving the external with
+# zero theme files. The whole repo is 2 MB — just take it.
+[".config/kitty/kitty-themes"]
+    type = "archive"
+    url = "https://github.com/kovidgoyal/kitty-themes/archive/c467f3ef3fd44f3fa3c16599e0d1663be027dea0.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "720h"
+
+# catppuccin/tmux — replaces the `run-shell /nix/store/...-tmuxplugin-catppuccin-...`
+# line HM baked into ~/.config/tmux/tmux.conf. Task 2.4 rewrites that line to
+# `run-shell ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux`.
+# Pin = pkgs.tmuxPlugins.catppuccin src.rev (v2.1.3).
+[".config/tmux/plugins/catppuccin/tmux"]
+    type = "archive"
+    url = "https://github.com/catppuccin/tmux/archive/refs/tags/v2.1.3.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "720h"
+
+# catppuccin/lazygit — replaces catppuccin-theme.nix's
+#   xdg.configFile."lazygit/theme.{dark,light}.yml".source =
+#     "${config.catppuccin.sources.lazygit}/{mocha,latte}/${accent}.yml"
+# with accent = mauve. LG_CONFIG_FILE points at ~/.config/lazygit/theme.yml,
+# which the theme switcher symlinks to one of these two.
+# Pin = the catppuccin flake input's lazygit source rev that nixpkgs built
+# catppuccin-lazygit-0-unstable-2026-04-01 from; upstream
+# themes-mergable/{mocha,latte}/mauve.yml are byte-identical to that output.
+[".config/lazygit/theme.dark.yml"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/catppuccin/lazygit/798ad2e75a11766e9ba50e76e59aea6a81eb4866/themes-mergable/mocha/mauve.yml"
+    refreshPeriod = "720h"
+
+[".config/lazygit/theme.light.yml"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/catppuccin/lazygit/798ad2e75a11766e9ba50e76e59aea6a81eb4866/themes-mergable/latte/mauve.yml"
+    refreshPeriod = "720h"
+
+# ModernZ mpv OSC — previously bundled into the mpv wrapper by
+# packages/mpv-rife (mpvScripts.modernz). mpv-rife is dropped (PLAN.MD §0)
+# but dot_config/mpv/script-opts/modernz.conf is kept, and it is inert
+# without the script.
+# Pin = pkgs.mpvScripts.modernz src.rev (v0.3.3).
+[".config/mpv/scripts/modernz.lua"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/Samillion/ModernZ/v0.3.3/modernz.lua"
+    refreshPeriod = "720h"
