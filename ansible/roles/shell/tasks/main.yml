@@ -1,0 +1,6 @@
+---
+# shell: zsh as login shell, starship, CLI tooling; pairs with chezmoi
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | shell role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'shell' is a scaffold; see PLAN.MD"

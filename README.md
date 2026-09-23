@@ -9,7 +9,6 @@ dotfiles they deploy (via [chezmoi](https://www.chezmoi.io/)).
 | ---------------------- | --------------- | ---------------------------------------------------------- |
 | `msi`                  | `x86_64-linux`  | Desktop/workstation: NVIDIA + CUDA, Hyprland, gaming, HyperHDR |
 | `home-server`          | `x86_64-linux`  | Headless laptop: NAS, k3s, restic backups                  |
-| `m1`                   | `aarch64-linux` | MacBook on Asahi, Hyprland                                 |
 | `installer`            | `x86_64-linux`  | Bootable installer ISO                                     |
 | `Volodias-MacBook-Pro` | `aarch64-darwin`| nix-darwin laptop                                          |
 

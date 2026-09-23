@@ -1,0 +1,13 @@
+---
+# Package names verified against fedora:43 — see docs/migration/package-map.md.
+# Populated in phase 3. Keep these lists in the same grouping as the map so
+# rows can be lifted across without re-deciding anything.
+dnf_packages: []
+rpmfusion_packages: []
+copr_repos: []
+copr_packages: []
+flatpak_remotes:
+  - name: flathub
+    url: https://flathub.org/repo/flathub.flatpakrepo
+flatpak_packages: []
+nix_profile_packages: []

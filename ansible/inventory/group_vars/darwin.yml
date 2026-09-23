@@ -1,0 +1,6 @@
+---
+# See PLAN.MD §0.2 — 13 casks (the 11-entry intersection, plus kitty and zed).
+# Populated in phase 3 from docs/migration/package-map.md.
+brew_taps: []
+brew_formulae: []
+brew_casks: []

@@ -1,0 +1,6 @@
+---
+# audio: ex-hifi.nix: pipewire, realtime limits
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | audio role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'audio' is a scaffold; see PLAN.MD"

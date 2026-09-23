@@ -1,0 +1,6 @@
+---
+# virtualization: podman, distrobox
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | virtualization role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'virtualization' is a scaffold; see PLAN.MD"

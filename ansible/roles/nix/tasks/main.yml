@@ -1,0 +1,6 @@
+---
+# nix: Determinate Nix installer + nix.conf substituters
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | nix role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'nix' is a scaffold; see PLAN.MD"

@@ -1,0 +1,3 @@
+---
+# chezmoi: install chezmoi + chezmoi_modify_manager, init repo, apply
+dependencies: []

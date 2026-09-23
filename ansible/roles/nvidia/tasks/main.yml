@@ -1,0 +1,6 @@
+---
+# nvidia: msi only - verify Nobara own setup first
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | nvidia role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'nvidia' is a scaffold; see PLAN.MD"

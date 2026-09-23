@@ -1,0 +1,6 @@
+---
+# vpn: tailscale
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | vpn role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'vpn' is a scaffold; see PLAN.MD"

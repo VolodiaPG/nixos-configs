@@ -1,0 +1,20 @@
+---
+- name: Configure Linux hosts
+  hosts: linux
+  gather_facts: true
+  roles:
+    - base
+    - users
+    - nix
+    - pkgs
+    - shell
+    - networking
+    - vpn
+    - audio
+    - virtualization
+    - desktop_linux
+    - kde
+    - nvidia
+    - gaming
+    - secrets
+    - chezmoi

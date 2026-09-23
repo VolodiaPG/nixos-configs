@@ -1,0 +1,6 @@
+---
+# gaming: steam, gamemode, mangohud
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | gaming role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'gaming' is a scaffold; see PLAN.MD"

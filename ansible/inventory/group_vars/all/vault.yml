@@ -1,0 +1,4 @@
+---
+# ansible-vault encrypted. Placeholder — populated in phase 4 (secrets).
+# Encrypt with: ansible-vault encrypt group_vars/all/vault.yml
+# The vault password lives at ~/.config/ansible/vault-pass (see ansible.cfg).

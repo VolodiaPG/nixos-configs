@@ -1,0 +1,6 @@
+---
+# chezmoi: install chezmoi + chezmoi_modify_manager, init repo, apply
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | chezmoi role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'chezmoi' is a scaffold; see PLAN.MD"

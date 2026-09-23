@@ -1,0 +1,3 @@
+---
+# Defaults for the users role. Do not duplicate anything from
+# group_vars/all/main.yml here.

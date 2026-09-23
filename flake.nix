@@ -39,11 +39,6 @@
       url = "https://flakehub.com/f/nixos/nixos-hardware/*";
     };
 
-    nixos-apple-silicon = {
-      url = "github:nix-community/nixos-apple-silicon/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     catppuccin = {
       url = "github:catppuccin/nix/main";
     };
@@ -143,7 +138,6 @@
           cuda = true;
         };
         home-server.system = "x86_64-linux";
-        m1.system = "aarch64-linux";
         installer.system = "x86_64-linux";
       };
 

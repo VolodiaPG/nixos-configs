@@ -1,0 +1,3 @@
+---
+# nix: Determinate Nix installer + nix.conf substituters
+dependencies: []

@@ -1,0 +1,6 @@
+---
+- name: Linux hosts
+  ansible.builtin.import_playbook: linux.yml
+
+- name: Darwin (macOS) hosts
+  ansible.builtin.import_playbook: macos.yml

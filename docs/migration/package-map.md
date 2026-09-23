@@ -177,7 +177,7 @@ installed**, so these are guaranteed like-for-like.
 
 | nixpkgs attr | host(s) | source | exact name / app id | verified? | notes |
 | --- | --- | --- | --- | --- | --- |
-| `brave-origin` | msi | nix | `brave-origin` | `nix eval → brave-origin-1.95.102` | §0 ordering: Flatpak of brave-origin (**does not exist** — Flathub only has `com.brave.Browser`, a different build) → Brave's RPM repo (also upstream Brave, same problem) → **Nix**. Nix preserves the exact build, so no STOP is triggered. Extensions become a managed-policy JSON (task 2.10) |
+| `brave-origin` | msi | flatpak | `com.brave.Browser` | `flathub API 200` | **User decision (2026-09-23): use the Brave Flatpak.** This is upstream Brave, not the `brave-origin` build installed today — a deliberate, accepted substitution. Extensions become a managed-policy JSON (task 2.10). nixpkgs `brave-origin` 1.95.102 remains the fallback if the upstream build proves unacceptable |
 | `devenv` | msi + mac | nix | `devenv` | `nix eval → devenv-2.1.2` | the whole reason Nix is retained (§0) |
 | `determinate-nix` / `determinate-nixd` | msi + mac | nix | Determinate installer | n/a — installer, task 3.4 | `curl -fsSL https://install.determinate.systems/nix \| sh -s -- install --determinate` |
 | `claude` | msi + mac | nix | `claude-code` | `nix eval → claude-code-2.1.278` | npm is the alternative; nix keeps the pinned version |

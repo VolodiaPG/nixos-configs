@@ -1,0 +1,6 @@
+---
+# users: user account, groups, authorized_keys
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | users role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'users' is a scaffold; see PLAN.MD"

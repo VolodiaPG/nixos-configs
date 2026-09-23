@@ -1,0 +1,6 @@
+---
+# homebrew: taps, formulae, casks
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | homebrew role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'homebrew' is a scaffold; see PLAN.MD"

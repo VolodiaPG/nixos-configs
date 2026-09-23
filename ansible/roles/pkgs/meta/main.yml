@@ -1,0 +1,3 @@
+---
+# pkgs: platform-dispatching package role (dnf/flatpak/brew/nix)
+dependencies: []

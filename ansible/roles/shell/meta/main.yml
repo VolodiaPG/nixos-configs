@@ -1,0 +1,3 @@
+---
+# shell: zsh as login shell, starship, CLI tooling; pairs with chezmoi
+dependencies: []

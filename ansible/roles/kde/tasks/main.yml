@@ -1,0 +1,6 @@
+---
+# kde: Plasma settings that need root
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | kde role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'kde' is a scaffold; see PLAN.MD"

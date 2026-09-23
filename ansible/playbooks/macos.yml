@@ -1,0 +1,12 @@
+---
+- name: Configure macOS hosts
+  hosts: darwin
+  gather_facts: true
+  roles:
+    - nix
+    - homebrew
+    - pkgs
+    - shell
+    - darwin_defaults
+    - secrets
+    - chezmoi

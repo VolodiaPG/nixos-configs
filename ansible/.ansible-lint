@@ -1,0 +1,7 @@
+---
+profile: basic
+
+skip_list:
+  # SSH public keys and cache substituter keys are single unbreakable tokens
+  # well past 160 chars. Nothing is gained by wrapping them.
+  - yaml[line-length]

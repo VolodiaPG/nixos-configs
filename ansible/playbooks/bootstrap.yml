@@ -1,0 +1,8 @@
+---
+# Run once against a freshly installed host, before site.yml. Creates the
+# user and installs the minimum needed for the main playbooks to connect.
+- name: Bootstrap a new host
+  hosts: all
+  gather_facts: true
+  roles:
+    - users

@@ -1,0 +1,3 @@
+---
+# base: locale fr_FR, timezone Europe/Paris, sysctl, sudo, sshd
+dependencies: []

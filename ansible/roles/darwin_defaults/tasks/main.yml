@@ -1,0 +1,6 @@
+---
+# darwin_defaults: osx_defaults, TouchID sudo, maxfiles, launchd
+# Scaffold only - populated in a later phase. See PLAN.MD.
+- name: "Placeholder | darwin_defaults role is not implemented yet"
+  ansible.builtin.debug:
+    msg: "role 'darwin_defaults' is a scaffold; see PLAN.MD"
