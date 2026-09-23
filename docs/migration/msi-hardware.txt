@@ -1,0 +1,396 @@
+=== lsblk -f ===
+NAME                   FSTYPE      FSVER            LABEL           UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
+sda                                                                                                                       
+├─sda1                 vfat        FAT16                            E285-DFC8                               300,3M    40% /boot
+└─sda2                 LVM2_member LVM2 001                         vmyRUe-qCC1-UJh1-bNUT-OKlm-nxWL-VHG6fa                
+  ├─root_vg-nix        ext4        1.0              nix             9a094f8e-d106-4589-a771-cff7abcbcdaa     70,4G    47% /nix/store
+  │                                                                                                                       /nix
+  ├─root_vg-root       ext4        1.0              root            82874474-6242-4bfa-bbc1-722021ec7e27     14,7G     0% /
+  └─root_vg-persistent ext4        1.0              persistent      4e147d1e-6c87-4bdf-ac3d-3100c61929b7      8,6G    82% /persistent/home/volodia/.tmux/resurrect
+                                                                                                                          /persistent/home/volodia/.local/share/keyrings
+                                                                                                                          /home/volodia/.tmux/resurrect
+                                                                                                                          /home/volodia/.local/share/keyrings
+                                                                                                                          /var/lib/tailscale
+                                                                                                                          /var/lib/systemd
+                                                                                                                          /var/lib/redis-immich
+                                                                                                                          /var/lib/rancher
+                                                                                                                          /var/lib/postgresql
+                                                                                                                          /var/lib/fail2ban
+                                                                                                                          /var/lib/flatpak
+                                                                                                                          /var/lib/docker
+                                                                                                                          /var/lib/containers
+                                                                                                                          /var/lib/colord
+                                                                                                                          /var/lib/bluetooth
+                                                                                                                          /run/k3s/containerd
+                                                                                                                          /root
+                                                                                                                          /home/volodia/~/.cache/vsmlrt
+                                                                                                                          /home/volodia/Videos
+                                                                                                                          /home/volodia/Pictures
+                                                                                                                          /home/volodia/Music
+                                                                                                                          /home/volodia/Documents
+                                                                                                                          /home/volodia/Downloads
+                                                                                                                          /home/volodia/.zotero
+                                                                                                                          /home/volodia/.var/app
+                                                                                                                          /home/volodia/.tmux
+                                                                                                                          /home/volodia/.t3
+                                                                                                                          /home/volodia/.supermaven
+                                                                                                                          /home/volodia/.ssh
+                                                                                                                          /home/volodia/.nixops
+                                                                                                                          /home/volodia/.local
+                                                                                                                          /home/volodia/.hyperhdr
+                                                                                                                          /home/volodia/.gnupg
+                                                                                                                          /home/volodia/.docker
+                                                                                                                          /home/volodia/.cache/nvim
+                                                                                                                          /home/volodia/.config
+                                                                                                                          /home/volodia/.claude
+                                                                                                                          /home/volodia/.cache/flatpak
+                                                                                                                          /etc/NetworkManager/system-connections
+                                                                                                                          /home/volodia/.zsh_history
+                                                                                                                          /home/volodia/.bash_history
+                                                                                                                          /etc/ssh/ssh_host_rsa_key.pub
+                                                                                                                          /etc/ssh/ssh_host_rsa_key
+                                                                                                                          /etc/ssh/ssh_host_ed25519_key.pub
+                                                                                                                          /etc/ssh/ssh_host_ed25519_key
+                                                                                                                          /etc/machine-id
+                                                                                                                          /var/log
+                                                                                                                          /var/lib/nixos
+                                                                                                                          /persistent
+sdb                                                                                                                       
+├─sdb1                 vfat        FAT32                            8E57-9B72                                             
+├─sdb2                                                                                                                    
+├─sdb3                 ntfs                                         500A59EA0A59CE1A                                      
+├─sdb4                 ntfs                                         70A6148EA6145746                                      
+└─sdb5                 ext4        1.0              Games           cc5b767d-91f8-465b-9e08-a4b80853fb30     34,6G    74% /Games
+sdc                    iso9660     Joliet Extension NIXOS_INSTALLER 1980-01-01-00-00-00-00                                
+├─sdc1                 iso9660     Joliet Extension NIXOS_INSTALLER 1980-01-01-00-00-00-00                                
+└─sdc2                 vfat        FAT12            EFIBOOT         1234-5678                                             
+zram0                  swap        1                zram0           bb4bbb1c-ec08-4381-a0c1-e0482a450468                  [SWAP]
+
+=== lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS,MODEL ===
+NAME                     SIZE TYPE FSTYPE      MOUNTPOINTS                                    MODEL
+sda                    232,9G disk                                                            Samsung SSD 840 EVO 250GB
+├─sda1                   499M part vfat        /boot                                          
+└─sda2                 232,4G part LVM2_member                                                
+  ├─root_vg-nix          150G lvm  ext4        /nix/store                                     
+  │                                            /nix                                           
+  ├─root_vg-root          16G lvm  ext4        /                                              
+  └─root_vg-persistent  66,4G lvm  ext4        /persistent/home/volodia/.tmux/resurrect       
+                                               /persistent/home/volodia/.local/share/keyrings 
+                                               /home/volodia/.tmux/resurrect                  
+                                               /home/volodia/.local/share/keyrings            
+                                               /var/lib/tailscale                             
+                                               /var/lib/systemd                               
+                                               /var/lib/redis-immich                          
+                                               /var/lib/rancher                               
+                                               /var/lib/postgresql                            
+                                               /var/lib/fail2ban                              
+                                               /var/lib/flatpak                               
+                                               /var/lib/docker                                
+                                               /var/lib/containers                            
+                                               /var/lib/colord                                
+                                               /var/lib/bluetooth                             
+                                               /run/k3s/containerd                            
+                                               /root                                          
+                                               /home/volodia/~/.cache/vsmlrt                  
+                                               /home/volodia/Videos                           
+                                               /home/volodia/Pictures                         
+                                               /home/volodia/Music                            
+                                               /home/volodia/Documents                        
+                                               /home/volodia/Downloads                        
+                                               /home/volodia/.zotero                          
+                                               /home/volodia/.var/app                         
+                                               /home/volodia/.tmux                            
+                                               /home/volodia/.t3                              
+                                               /home/volodia/.supermaven                      
+                                               /home/volodia/.ssh                             
+                                               /home/volodia/.nixops                          
+                                               /home/volodia/.local                           
+                                               /home/volodia/.hyperhdr                        
+                                               /home/volodia/.gnupg                           
+                                               /home/volodia/.docker                          
+                                               /home/volodia/.cache/nvim                      
+                                               /home/volodia/.config                          
+                                               /home/volodia/.claude                          
+                                               /home/volodia/.cache/flatpak                   
+                                               /etc/NetworkManager/system-connections         
+                                               /home/volodia/.zsh_history                     
+                                               /home/volodia/.bash_history                    
+                                               /etc/ssh/ssh_host_rsa_key.pub                  
+                                               /etc/ssh/ssh_host_rsa_key                      
+                                               /etc/ssh/ssh_host_ed25519_key.pub              
+                                               /etc/ssh/ssh_host_ed25519_key                  
+                                               /etc/machine-id                                
+                                               /var/log                                       
+                                               /var/lib/nixos                                 
+                                               /persistent                                    
+sdb                    447,1G disk                                                            CT480BX500SSD1
+├─sdb1                   100M part vfat                                                       
+├─sdb2                    16M part                                                            
+├─sdb3                 280,5G part ntfs                                                       
+├─sdb4                   530M part ntfs                                                       
+└─sdb5                   166G part ext4        /Games                                         
+sdc                      7,5G disk iso9660                                                    Cruzer Slice
+├─sdc1                   1,6G part iso9660                                                    
+└─sdc2                     3M part vfat                                                       
+zram0                    7,8G disk swap        [SWAP]                                         
+
+=== mounted filesystems (df -hT) ===
+Sys. de fichiers               Type     Taille Utilisé Dispo Uti% Monté sur
+/dev/mapper/root_vg-root       ext4        16G     38M   15G   1% /
+/dev/mapper/root_vg-persistent ext4        65G     53G  8,6G  87% /persistent
+/dev/mapper/root_vg-nix        ext4       147G     69G   71G  50% /nix
+efivarfs                       efivarfs   128K     82K   42K  67% /sys/firmware/efi/efivars
+/dev/sdb5                      ext4       163G    120G   35G  78% /Games
+/dev/sda1                      vfat       499M    199M  301M  40% /boot
+
+=== findmnt ===
+TARGET                                             SOURCE                                                                 FSTYPE OPTIONS
+/                                                  /dev/mapper/root_vg-root                                               ext4   rw,noatime
+├─/etc/NetworkManager/system-connections           /dev/mapper/root_vg-persistent[/etc/NetworkManager/system-connections] ext4   rw,noatime
+├─/home/volodia/.cache/flatpak                     /dev/mapper/root_vg-persistent[/home/volodia/.cache/flatpak]           ext4   rw,noatime
+├─/home/volodia/.claude                            /dev/mapper/root_vg-persistent[/home/volodia/.claude]                  ext4   rw,noatime
+├─/home/volodia/.config                            /dev/mapper/root_vg-persistent[/home/volodia/.config]                  ext4   rw,noatime
+├─/home/volodia/.cache/nvim                        /dev/mapper/root_vg-persistent[/home/volodia/.cache/nvim]              ext4   rw,noatime
+├─/home/volodia/.docker                            /dev/mapper/root_vg-persistent[/home/volodia/.docker]                  ext4   rw,noatime
+├─/persistent                                      /dev/mapper/root_vg-persistent                                         ext4   rw,noatime
+│ ├─/persistent/home/volodia/.local/share/keyrings /dev/mapper/root_vg-persistent[/home/volodia/.local/share/keyrings]    ext4   rw,noatime
+│ └─/persistent/home/volodia/.tmux/resurrect       /dev/mapper/root_vg-persistent[/home/volodia/.tmux/resurrect]          ext4   rw,noatime
+├─/run/k3s/containerd                              /dev/mapper/root_vg-persistent[/run/k3s/containerd]                    ext4   rw,noatime
+├─/home/volodia/.gnupg                             /dev/mapper/root_vg-persistent[/home/volodia/.gnupg]                   ext4   rw,noatime
+├─/nix                                             /dev/mapper/root_vg-nix                                                ext4   rw,noatime
+│ └─/nix/store                                     /dev/mapper/root_vg-nix[/store]                                        ext4   ro,nosuid,nodev,noatime
+├─/home/volodia/.hyperhdr                          /dev/mapper/root_vg-persistent[/home/volodia/.hyperhdr]                ext4   rw,noatime
+├─/var/lib/nixos                                   /dev/mapper/root_vg-persistent[/var/lib/nixos]                         ext4   rw,noatime
+├─/var/log                                         /dev/mapper/root_vg-persistent[/var/log]                               ext4   rw,noatime
+├─/home/volodia/.local                             /dev/mapper/root_vg-persistent[/home/volodia/.local]                   ext4   rw,noatime
+│ └─/home/volodia/.local/share/keyrings            /dev/mapper/root_vg-persistent[/home/volodia/.local/share/keyrings]    ext4   rw,noatime
+├─/etc/machine-id                                  /dev/mapper/root_vg-persistent[/etc/machine-id]                        ext4   rw,noatime
+├─/etc/ssh/ssh_host_ed25519_key                    /dev/mapper/root_vg-persistent[/etc/ssh/ssh_host_ed25519_key]          ext4   rw,noatime
+├─/etc/ssh/ssh_host_ed25519_key.pub                /dev/mapper/root_vg-persistent[/etc/ssh/ssh_host_ed25519_key.pub]      ext4   rw,noatime
+├─/etc/ssh/ssh_host_rsa_key                        /dev/mapper/root_vg-persistent[/etc/ssh/ssh_host_rsa_key]              ext4   rw,noatime
+├─/etc/ssh/ssh_host_rsa_key.pub                    /dev/mapper/root_vg-persistent[/etc/ssh/ssh_host_rsa_key.pub]          ext4   rw,noatime
+├─/home/volodia/.bash_history                      /dev/mapper/root_vg-persistent[/home/volodia/.bash_history]            ext4   rw,noatime
+├─/home/volodia/.zsh_history                       /dev/mapper/root_vg-persistent[/home/volodia/.zsh_history]             ext4   rw,noatime
+├─/home/volodia/.nixops                            /dev/mapper/root_vg-persistent[/home/volodia/.nixops]                  ext4   rw,noatime
+├─/home/volodia/.ssh                               /dev/mapper/root_vg-persistent[/home/volodia/.ssh]                     ext4   rw,noatime
+├─/home/volodia/.supermaven                        /dev/mapper/root_vg-persistent[/home/volodia/.supermaven]              ext4   rw,noatime
+├─/home/volodia/.t3                                /dev/mapper/root_vg-persistent[/home/volodia/.t3]                      ext4   rw,noatime
+├─/home/volodia/.tmux                              /dev/mapper/root_vg-persistent[/home/volodia/.tmux]                    ext4   rw,noatime
+│ └─/home/volodia/.tmux/resurrect                  /dev/mapper/root_vg-persistent[/home/volodia/.tmux/resurrect]          ext4   rw,noatime
+├─/home/volodia/.var/app                           /dev/mapper/root_vg-persistent[/home/volodia/.var/app]                 ext4   rw,noatime
+├─/home/volodia/.zotero                            /dev/mapper/root_vg-persistent[/home/volodia/.zotero]                  ext4   rw,noatime
+├─/home/volodia/Downloads                          /dev/mapper/root_vg-persistent[/home/volodia/Downloads]                ext4   rw,noatime
+├─/home/volodia/Documents                          /dev/mapper/root_vg-persistent[/home/volodia/Documents]                ext4   rw,noatime
+├─/home/volodia/Music                              /dev/mapper/root_vg-persistent[/home/volodia/Music]                    ext4   rw,noatime
+├─/home/volodia/Pictures                           /dev/mapper/root_vg-persistent[/home/volodia/Pictures]                 ext4   rw,noatime
+├─/home/volodia/Videos                             /dev/mapper/root_vg-persistent[/home/volodia/Videos]                   ext4   rw,noatime
+├─/home/volodia/~/.cache/vsmlrt                    /dev/mapper/root_vg-persistent[/home/volodia/~/.cache/vsmlrt]          ext4   rw,noatime
+├─/root                                            /dev/mapper/root_vg-persistent[/root]                                  ext4   rw,noatime
+├─/var/lib/bluetooth                               /dev/mapper/root_vg-persistent[/var/lib/bluetooth]                     ext4   rw,noatime
+├─/var/lib/colord                                  /dev/mapper/root_vg-persistent[/var/lib/colord]                        ext4   rw,noatime
+├─/var/lib/containers                              /dev/mapper/root_vg-persistent[/var/lib/containers]                    ext4   rw,noatime
+├─/var/lib/docker                                  /dev/mapper/root_vg-persistent[/var/lib/docker]                        ext4   rw,noatime
+├─/var/lib/flatpak                                 /dev/mapper/root_vg-persistent[/var/lib/flatpak]                       ext4   rw,noatime
+├─/var/lib/fail2ban                                /dev/mapper/root_vg-persistent[/var/lib/fail2ban]                      ext4   rw,noatime
+├─/var/lib/postgresql                              /dev/mapper/root_vg-persistent[/var/lib/postgresql]                    ext4   rw,noatime
+├─/var/lib/rancher                                 /dev/mapper/root_vg-persistent[/var/lib/rancher]                       ext4   rw,noatime
+├─/var/lib/redis-immich                            /dev/mapper/root_vg-persistent[/var/lib/redis-immich]                  ext4   rw,noatime
+├─/var/lib/systemd                                 /dev/mapper/root_vg-persistent[/var/lib/systemd]                       ext4   rw,noatime
+├─/var/lib/tailscale                               /dev/mapper/root_vg-persistent[/var/lib/tailscale]                     ext4   rw,noatime
+├─/Games                                           /dev/sdb5                                                              ext4   rw,relatime
+└─/boot                                            /dev/sda1                                                              vfat   rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro
+
+=== /etc/fstab ===
+# This is a generated file.  Do not edit!
+#
+# To make changes, edit the fileSystems and swapDevices NixOS options
+# in your /etc/nixos/configuration.nix file.
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+
+# Filesystems.
+/dev/root_vg/root / ext4 x-initrd.mount,noatime 0 1
+/dev/disk/by-label/Games /Games ext4 defaults 0 2
+none /usr/bin envfs bind-mount=/bin,fallback-path=/nix/store/j6azskiby6mbdpd06dk9b6v24fhi80xj-fallback-path,nofail 0 0
+/usr/bin /bin none bind,nofail 0 0
+/dev/disk/by-partlabel/disk-main-ESP /boot vfat defaults 0 2
+/dev/root_vg/nix /nix ext4 x-initrd.mount,noatime 0 2
+/dev/root_vg/persistent /persistent ext4 x-initrd.mount,noatime 0 2
+
+
+# Swap devices.
+/persistent/swapfile none swap defaults
+
+
+=== swap ===
+NAME                 TYPE      SIZE USED PRIO
+/persistent/swapfile file       16G   0B   -1
+/dev/zram0           partition 7,8G   0B  100
+               total       utilisé      libre     partagé tamp/cache   disponible
+Mem:            15Gi       1,4Gi        12Gi       7,4Mi       2,4Gi        14Gi
+Échange:        23Gi          0B        23Gi
+
+=== CPU ===
+Architecture :                            x86_64
+Mode(s) opératoire(s) des processeurs :   32-bit, 64-bit
+Tailles des adresses:                     39 bits physical, 48 bits virtual
+Boutisme :                                Little Endian
+Processeur(s) :                           8
+Liste de processeur(s) en ligne :         0-7
+Identifiant constructeur :                GenuineIntel
+Nom de modèle :                           Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz
+Famille de processeur :                   6
+Modèle :                                  60
+Thread(s) par cœur :                      2
+Cœur(s) par socket :                      4
+Socket(s) :                               1
+Révision :                                3
+Version du microcode :                    0x28
+multiplication des MHz du/des CPU(s) :    87%
+Vitesse maximale du processeur en MHz :   4400,0000
+Vitesse minimale du processeur en MHz :   800,0000
+BogoMIPS :                                8000,47
+Drapeaux :                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm cpuid_fault ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt dtherm ida arat pln pts vnmi md_clear flush_l1d
+Virtualisation :                          VT-x
+Cache L1d :                               128 KiB (4 instances)
+Cache L1i :                               128 KiB (4 instances)
+Cache L2 :                                1 MiB (4 instances)
+Cache L3 :                                8 MiB (1 instance)
+Nœud(s) NUMA :                            1
+Nœud NUMA 0 de processeur(s) :            0-7
+Vulnérabilité Gather data sampling :      Not affected
+Vulnérabilité Ghostwrite :                Not affected
+Vulnérabilité Indirect target selection : Not affected
+
+=== DMI ===
+MSI
+MS-7920
+Z97I GAMING AC (MS-7920)
+V1.9
+
+=== lspci ===
+
+=== lspci -k (drivers) ===
+
+=== lsusb ===
+
+=== nvidia-smi -q (head) ===
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Wed Sep 23 15:04:03 2026
+Driver Version                                         : 595.99.02
+CUDA Version                                           : 13.2
+
+Attached GPUs                                          : 1
+GPU 00000000:01:00.0
+    Product Name                                       : NVIDIA GeForce RTX 4070
+    Product Brand                                      : GeForce
+    Product Architecture                               : Ada Lovelace
+    Display Mode                                       : Requested functionality has been deprecated
+    Display Attached                                   : Yes
+    Display Active                                     : Enabled
+    Persistence Mode                                   : Disabled
+    Addressing Mode                                    : None
+    MIG Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    Accounting Mode                                    : Disabled
+    Accounting Mode Buffer Size                        : 4000
+    Driver Model
+        Current                                        : N/A
+        Pending                                        : N/A
+    Serial Number                                      : N/A
+    GPU UUID                                           : GPU-affec6be-a04d-fd8a-3a03-87765bc05011
+    GPU PDI                                            : 0x52b65f440478c8cc
+    Minor Number                                       : 0
+    VBIOS Version                                      : 95.04.3E.40.5F
+    MultiGPU Board                                     : No
+    Board ID                                           : 0x100
+    Board Part Number                                  : N/A
+    GPU Part Number                                    : 2786-251-A1
+    FRU Part Number                                    : N/A
+    Platform Info
+        Chassis Serial Number                          : N/A
+        Slot Number                                    : N/A
+        Tray Index                                     : N/A
+        Host ID                                        : N/A
+        Peer Type                                      : N/A
+        Module Id                                      : 1
+        GPU Fabric GUID                                : N/A
+    Inforom Version
+        Image Version                                  : G002.0000.00.03
+        OEM Object                                     : 2.0
+        ECC Object                                     : N/A
+        Power Management Object                        : N/A
+    Inforom BBX Object Flush
+        Latest Timestamp                               : N/A
+        Latest Duration                                : N/A
+    GPU Operation Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    GPU C2C Mode                                       : N/A
+    GPU Virtualization Mode
+        Virtualization Mode                            : None
+        Host VGPU Mode                                 : N/A
+        vGPU Heterogeneous Mode                        : N/A
+    GPU Recovery Action                                : None
+
+=== nvidia-smi ===
+Wed Sep 23 15:04:03 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.99.02              Driver Version: 595.99.02      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4070        Off |   00000000:01:00.0  On |                  N/A |
+|  0%   50C    P3             19W /  200W |     145MiB /  12282MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            2761      G   ...n/noctalia-greeter-compositor          3MiB |
+|    0   N/A  N/A            2777      G   ...er-1.5.0/bin/noctalia-greeter         36MiB |
++-----------------------------------------------------------------------------------------+
+
+=== displays/monitors ===
+card1
+card1-DP-1
+card1-DP-2
+card1-DP-3
+card1-HDMI-A-1
+renderD128
+version
+/sys/class/drm/card1-DP-1/status: disconnected
+/sys/class/drm/card1-DP-2/status: disconnected
+/sys/class/drm/card1-DP-3/status: connected
+/sys/class/drm/card1-HDMI-A-1/status: disconnected
+
+=== audio ===
+card0
+card1
+card2
+cards
+DAC
+devices
+hwdep
+modules
+NVidia
+oss
+PCH
+pcm
+seq
+timers
+version
+ 0 [PCH            ]: HDA-Intel - HDA Intel PCH
+                      HDA Intel PCH at 0xf7210000 irq 37
+ 1 [NVidia         ]: HDA-Intel - HDA NVidia
+                      HDA NVidia at 0xf7080000 irq 17
+ 2 [DAC            ]: USB-Audio - Qudelix-5K USB DAC
+                      QTIL Qudelix-5K USB DAC at usb-0000:00:14.0-3.1, full speed

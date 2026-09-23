@@ -361,13 +361,20 @@ both hosts.
 ```yaml
 all:
   children:
-    linux:   { hosts: { msi: { ansible_host: msi.{{ tailnet }} } } }   # tailnet: goblin-alewife.ts.net
+    linux:   { hosts: { msi: { ansible_host: msi } } }   # NOT the FQDN — see below
     nobara:  { hosts: { msi: {} } }
     darwin:  { hosts: { macbook: { ansible_connection: local } } }
     desktop: { hosts: { msi: {}, macbook: {} } }
 ```
 
 `home-server` is deliberately absent. Do not add it.
+
+**Use the bare name `msi`, not `msi.goblin-alewife.ts.net`.** The control
+node's `known_hosts` has msi's keys recorded under the short name only, so
+the FQDN fails host-key verification even though `ssh-keyscan` confirms both
+names return byte-identical ed25519/RSA keys. Either keep the short name
+(simplest) or add the FQDN to `known_hosts` — but do **not** paper over it
+with `host_key_checking = False`.
 
 **Verify:** `ansible-inventory --graph`.
 
@@ -576,6 +583,9 @@ the files. The headroom wrapper becomes a script in `dot_local/bin/`.
 
 `syncthing.nix` becomes a systemd user unit written by Ansible (per the
 split rule) on Linux, and a `brew services` / launchd agent on macOS.
+Note task 0.2 found msi's Syncthing running with **no peers and no
+configured folders** — it is doing nothing. Confirm with the user whether it
+is wanted at all before porting it.
 
 ### Task 2.11 — `neovim.nix` → packages only
 
@@ -843,14 +853,27 @@ until step 2. Take a Time Machine snapshot before step 2 regardless.
 
 **Destructive. STOP and confirm with the user before touching disks.**
 
-1. Verify task 0.2's backup checklist is fully ticked.
-2. Install Nobara KDE from the official ISO (the `installer` ISO and `disko`
+1. Verify task 0.2's backup checklist is fully ticked. **Nothing on msi is
+   backed up today** — restic is enabled only on `home-server`, and msi's
+   Syncthing has no peers and no configured folders. There is no safety net
+   but the checklist. Treat it as the gate it is.
+2. **Install to `sda` only.** `/Games` lives on a physically separate disk
+   (`sdb5`, 120 G of Steam content plus ~2 G of Proton saves in
+   `compatdata`); the OS is entirely on `sda`. Pointing the Nobara installer
+   at `sda` preserves all of it with zero copying. Confirm the disk
+   identifiers against `docs/migration/msi-hardware.txt` on the day — device
+   names are not stable.
+3. **Read `/etc/NetworkManager/system-connections/` as root before the wipe.**
+   It holds the Wi-Fi PSKs and was unreadable during task 0.2 (msi has no
+   passwordless sudo). Losing it means re-entering every network by hand.
+4. Install Nobara KDE from the official ISO (the `installer` ISO and `disko`
    config are not ported; partitioning is manual/guided).
-3. Keep the NixOS install bootable on a separate partition/disk if disk space
-   allows — cheapest possible rollback.
-4. Bootstrap: `playbooks/bootstrap.yml` (user, SSH keys, vault password,
-   tailscale) then `playbooks/site.yml`.
-5. Work through a functional checklist before declaring done: boots to
+5. Keep the NixOS install bootable on a separate partition if space allows —
+   cheapest possible rollback.
+6. Bootstrap: `playbooks/bootstrap.yml` (user, SSH keys, vault password,
+   tailscale, and the `rm ~/.config/plasma-org.kde.plasma.desktop-appletsrc`
+   from task 2.9) then `playbooks/site.yml`.
+7. Work through a functional checklist before declaring done: boots to
    Plasma, NVIDIA driver active + `nvidia-frequency` applied, audio, kanata
    remapping, fr/oss keyboard with swapped caps, tailscale up, syncthing
    syncing, mpv plays HDR, Steam runs a game, `nix develop` works in a
