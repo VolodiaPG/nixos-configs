@@ -74,19 +74,41 @@ What it contains and how to treat each part:
 | Asset | Disposition |
 | --- | --- |
 | `dot_config/modify_*` + `*.src.ini` — KDE rc files via **`chezmoi_modify_manager`** | **Adopt wholesale.** This is the correct solution to task 2.9; do not invent another. |
-| `dot_local/share/plasma/look-and-feel/` — Catppuccin Mocha/Latte + `Custom dark`/`Custom light` global themes; `dot_local/share/color-schemes/`; `dot_local/share/aurorae/themes/` | **Adopt.** These give instantaneous, chezmoi-independent theme switching (§0) for free. |
+| `dot_local/share/plasma/look-and-feel/` — 11 themes | **Adopt only 4**: `Catppuccin-Mocha-Mauve`, `Catppuccin-Latte-Mauve`, `Custom dark`, `Custom light`. The other 7 (`dark`, `light`, `Custom latte`, `Custom latte 2`, `Custom moccha`, `Itchy`, `Scratchy`) are a legacy generation. |
+| `dot_local/share/plasma/desktoptheme/{Itchy,Scratchy}` | **Drop.** All four adopted look-and-feels set `[plasmarc][Theme] name=default`, so nothing references them. Verified. This is 228 of B's 392 files — 58% of the repo. |
+| `dot_local/share/color-schemes/`, `dot_local/share/aurorae/themes/` | **Adopt the Catppuccin ones only** (`CatppuccinMochaMauve.colors`, `CatppuccinMocha-Modern`, `CatppuccinLatte-Modern`). Drop `Itchy.colors` and the Itchy/Scratchy aurorae. |
 | `dot_config/private_kxkbrc` — already `LayoutList=fr`, `VariantList=oss` | **Adopt.** Satisfies part of task 4.4. |
 | `run_once_kanata.sh.tmpl` — uinput group + udev rule + user service | **Adopt the logic, move to Ansible** (needs root). |
 | `run_once_packages.sh.tmpl` — `brew bundle` block (macOS) + `paru -S` list (Arch) | **macOS: take the intersection with the nix-darwin block** per §0.2, not this list wholesale. **Linux: translate** the paru list to dnf; it is Arch-only. |
 | `run_once_defaults.tmpl` — macOS `defaults write` settings | **Adopt**, translate to `osx_defaults`. More complete than `modules/darwin/common-darwin.nix`. |
 | nvidia clock-lock systemd unit (inside `run_once_packages.sh.tmpl`) | **Adopt**, but see task 4.5 — its values disagree with the Nix module. |
-| `run_once_{docker,services,udev_usb_chrome,mediacontrole}` | **Port to Ansible roles** (all need root). |
+| `run_once_{docker,services,udev_usb_chrome}` | **Port to Ansible roles** (all need root). |
+| `run_once_mediacontrole.sh.tmpl` | **Drop.** Depends on MTMR + nushell + `/opt/homebrew/bin/media-control`, all dropped by §0.2 — the port would have no consumer. |
+| `dot_config/zed/` | **Adopt** (current-era, missed by the first pass). Zed is in no package list — add it, or confirm it is unwanted. |
+| `Documents/docker-services/syncthing/` | **Conflicts** with `modules/home/syncthing.nix` (container vs native user service). See open question 2. |
 | `run_once_governor.tmpl` | **Drop** (§0 — Nobara handles power profiles). |
 | `dot_config/systemd/user/{kanata,immich-ml}.service` | kanata → Ansible; immich-ml → **drop** (§0, dead). |
 | `dot_zshrc`, `dot_bashrc`, `dot_profile`, `dot_blerc` | **Do not adopt.** Oh-my-zsh based, older than the HM-generated zshrc, and carries hardcoded paths (`/Users/volodia/...`, lmstudio). The HM output wins — see task 2.6. |
 | `.chezmoiexternal.toml` — pulls `~/.config/nvim` from `github:VolodiaPG/vim` | **Drop the nvim entry.** This repo's inline tree is authoritative (§0). Keep the file only if something else needs vendoring. |
 | `dot_config/{yabai,skhd,opencode}/` | **Drop.** yabai/skhd were already disabled in Nix; opencode is dropped per §0. |
 | `run_once_yabai.tmpl`, `run_once_ble.sh.tmpl`, `run_once_devenv.sh.tmpl` | Drop (devenv now comes from Determinate Nix, task 3.4). |
+
+**Theme assets have three gaps — resolve them in task 2.7, not at cutover:**
+
+1. **`CatppuccinLatteMauve` is missing.** `Catppuccin-Latte-Mauve` and
+   `Custom light` both set `ColorScheme=CatppuccinLatteMauve`, but the tree
+   ships only `CatppuccinMochaMauve.colors`, `Itchy.colors` and
+   `private_CatppuccinLatteFlamingo.colors`. **Light mode breaks as-is.**
+   Either install `catppuccin-kde` or repoint those two themes at the
+   Flamingo scheme that is actually present.
+2. **Cursor and window-decoration themes are assumed, not shipped.**
+   `Catppuccin-{Mocha,Latte}-Mauve-Cursors` and `Fluent-purple-{dark,light}`
+   are referenced by the adopted themes but exist in neither tree — they
+   become Ansible-installed packages (task 3.1/4.7).
+3. **`.chezmoiignore` is load-bearing, not cosmetic.** Without
+   `**/*.src.ini`, chezmoi writes the `chezmoi_modify_manager` *source* files
+   into `~/.config/` alongside the real ones. It must exist before any KDE
+   file is applied.
 
 **Two structural lessons from it, both of which the plan applies:**
 
@@ -427,6 +449,12 @@ inputs to `chezmoi_modify_manager`, not files to apply (task 2.9).
 
 `.chezmoiroot` already points at `chezmoi/` — leave it.
 
+`kitty.conf` `include`s `~/.config/kitty/kitty-themes/...`, which
+`modules/home/gui.nix:77` currently symlinks out of `pkgs.kitty-themes`. That
+symlink dies with Home Manager, so the themes must be vendored via
+`.chezmoiexternal.toml` **before first apply** or kitty starts with a broken
+include. Same for the catppuccin tmux/lazygit themes and `modernz.lua`.
+
 Neither `.chezmoi.toml.tmpl` nor `.chezmoiexternal.toml` exists here yet; the
 old dotfiles repo has an `.chezmoiexternal.toml` (nvim) and an
 `.chezmoiignore` to start from. It has no `.chezmoi.toml.tmpl` either — the
@@ -486,6 +514,9 @@ switches color schemes on a day/night schedule natively, so the custom
 daemon, the dual-flavor generation and the `theme-switcher` package all go
 away. Install a Catppuccin Plasma global theme and configure the native
 switch (task 4.7).
+
+Mind the three theme-asset gaps in §0.1 — the missing `CatppuccinLatteMauve`
+scheme in particular, which breaks light mode.
 
 The Catppuccin Plasma assets are **already vendored** in the old dotfiles
 repo — `dot_local/share/plasma/look-and-feel/` (Mocha/Latte plus `Custom
@@ -971,9 +1002,21 @@ State these to the user if they come up; do not pretend otherwise.
 
 ## Open questions for the user
 
-None outstanding — both rounds are answered and folded into §0/§0.1/§0.2.
+Raised by task 0.4 (`docs/migration/dotfiles-merge.md`):
 
-New questions will surface during phase 0, chiefly from task 0.3, where
-packages with no clean Fedora/Nobara source need a per-package ruling
-(Flatpak vs Nix vs drop). Agents should batch those rather than asking one
-at a time.
+1. **Hetzner storagebox SSH user** — this repo's `static/config.ssh` uses
+   `u593939`, the old dotfiles repo uses `u593939-sub1`. Different
+   sub-accounts; which is current? (`config.nix` has
+   `hetzner-user = "u593939"` and home-server's backup sets
+   `subuser = "sub1"`, so both may be live for different purposes.)
+2. **Syncthing** — the old repo runs it as a linuxserver.io container
+   (`Documents/docker-services/syncthing/docker-compose.yml`); this repo runs
+   it as a native user service (`modules/home/syncthing.nix`). Mutually
+   exclusive. Which model? Task 0.2 also found msi's Syncthing has **no peers
+   and no configured folders**, so a third option is to drop it entirely.
+3. **Zed** — its config is in the old repo and looks current, but Zed is in
+   no package list. Want it installed?
+
+Still open from my side: **I need a Fedora/Nobara target for task 0.3.** A
+`fedora:41` container on msi via podman would do, if you're happy for me to
+run one there.
