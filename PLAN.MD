@@ -24,6 +24,10 @@ Branch: `ansible`. Control node: the macOS host (`Volodias-MacBook-Pro`).
 | Theme switching | Must stay **instantaneous and decoupled from chezmoi**. Use Plasma's native day/night scheme switching. Low priority. |
 | `mpv-rife` | **Dropped.** Keep `mpv.conf`/`input.conf` (auto-subs, UI); drop the RIFE/VapourSynth/TensorRT stack. |
 | Secrets | **ansible-vault.** Several existing secrets are dead — audit and prune. |
+| Syncthing | **Native service**, not a container. Systemd user unit on Linux (per the split rule), launchd agent on macOS. Wanted even though msi's instance currently has no peers/folders. Do not port the old repo's linuxserver.io compose file. |
+| Hetzner storagebox users | **Both are live.** `u593939` is the general account (`config.nix` `hetzner-user`, `static/config.ssh`); `u593939-sub1` is the **backup** user. Carry both. |
+| Zed | **Install it.** Add to the Linux and macOS package sets; adopt `dot_config/zed/` from the old repo. |
+| Container runtime on msi | **Docker** is installed and available today. Use it for throwaway verification containers (task 0.3). Long-term runtime choice for the Ansible `virtualization` role is still podman + distrobox unless a role needs docker. |
 | Repo | Migrate on branch `ansible`. |
 | Prior dotfiles repo | **`github.com/VolodiaPG/dotfiles` is in scope as source material** — see §0.1. It is a working pre-Nix version of the target architecture. |
 | `services.caddy` on msi | **Dropped.** Do not port `modules/nixos/caddy.nix` or `static/services-page/`. |
@@ -84,8 +88,8 @@ What it contains and how to treat each part:
 | nvidia clock-lock systemd unit (inside `run_once_packages.sh.tmpl`) | **Adopt**, but see task 4.5 — its values disagree with the Nix module. |
 | `run_once_{docker,services,udev_usb_chrome}` | **Port to Ansible roles** (all need root). |
 | `run_once_mediacontrole.sh.tmpl` | **Drop.** Depends on MTMR + nushell + `/opt/homebrew/bin/media-control`, all dropped by §0.2 — the port would have no consumer. |
-| `dot_config/zed/` | **Adopt** (current-era, missed by the first pass). Zed is in no package list — add it, or confirm it is unwanted. |
-| `Documents/docker-services/syncthing/` | **Conflicts** with `modules/home/syncthing.nix` (container vs native user service). See open question 2. |
+| `dot_config/zed/` | **Adopt** (current-era, missed by the first pass). Zed is not in any Nix package list; add it to the package sets (§0). |
+| `Documents/docker-services/syncthing/` | **Drop.** Resolved in §0: Syncthing runs as a native service, so `modules/home/syncthing.nix` is the model and this compose file is superseded. |
 | `run_once_governor.tmpl` | **Drop** (§0 — Nobara handles power profiles). |
 | `dot_config/systemd/user/{kanata,immich-ml}.service` | kanata → Ansible; immich-ml → **drop** (§0, dead). |
 | `dot_zshrc`, `dot_bashrc`, `dot_profile`, `dot_blerc` | **Do not adopt.** Oh-my-zsh based, older than the HM-generated zshrc, and carries hardcoded paths (`/Users/volodia/...`, lmstudio). The HM output wins — see task 2.6. |
@@ -294,6 +298,10 @@ all installed today but absent from the JSON. This is why
 and `modules/nixos/*.nix` for `programs.*.enable` and `services.*.enable` and
 fold those in before considering the table complete.
 
+Also add packages that are in **neither** source but are wanted (§0):
+`zed` (Flatpak `dev.zed.Zed` or the upstream COPR — verify which), and
+`syncthing` itself, which becomes a native service rather than a container.
+
 Ignore the synthetic helper derivations (`hm-session-vars.sh`,
 `dummy-fc-dir*`, `ld-library-path`, `glibc-locales`, `X11-fonts`,
 `index.theme`, `home-configuration-reference-manpage`) — already marked
@@ -301,8 +309,22 @@ NIX-ONLY in `package-inventory.md`. Likewise skip NixOS's stock base set
 (`systemd`, `util-linux`, `shadow`, `procps`, `perl`, `which`, …), which
 Nobara supplies from its own base install.
 
-Verify each on a live Nobara box (or a `fedora:41` container as a first
-pass) with `dnf search` / `dnf provides`. **Do not guess.** Names known to
+Verify each with `dnf search` / `dnf provides`. **Do not guess.** msi has
+**docker** installed, so run the first pass in a throwaway container from the
+macOS control node:
+
+```sh
+ssh msi -- docker run --rm -i fedora:41 bash -s <<'EOF'
+dnf -y install dnf-plugins-core >/dev/null 2>&1
+dnf -q search <name>
+EOF
+```
+
+This is read-only with respect to msi (rule 3): `--rm`, no volume mounts, no
+writes outside the container. A plain `fedora:41` image has **neither RPM
+Fusion nor Nobara's own repos**, so enable RPM Fusion inside the container
+before searching, and mark anything that only resolves via a Nobara-specific
+repo as `verified: on-box-required` rather than guessing. Names known to
 differ or to be absent from the main repos — check every one of these:
 `fd` (Fedora: `fd-find`), `bottom`, `starship`, `lazygit`, `difftastic`,
 `chezmoi`, `gdu`, `grc`, `mosh`, `zoxide`, `just`.
@@ -614,9 +636,10 @@ the files. The headroom wrapper becomes a script in `dot_local/bin/`.
 
 `syncthing.nix` becomes a systemd user unit written by Ansible (per the
 split rule) on Linux, and a `brew services` / launchd agent on macOS.
-Note task 0.2 found msi's Syncthing running with **no peers and no
-configured folders** — it is doing nothing. Confirm with the user whether it
-is wanted at all before porting it.
+Task 0.2 found msi's Syncthing running with **no peers and no configured
+folders**. It is still wanted (§0) — port the unit, and expect to configure
+peers and folders by hand afterwards. Do not port the old repo's
+linuxserver.io container.
 
 ### Task 2.11 — `neovim.nix` → packages only
 
@@ -1002,21 +1025,13 @@ State these to the user if they come up; do not pretend otherwise.
 
 ## Open questions for the user
 
-Raised by task 0.4 (`docs/migration/dotfiles-merge.md`):
+None outstanding. The four questions raised by task 0.4 and my task 0.3
+blocker are all resolved into §0:
 
-1. **Hetzner storagebox SSH user** — this repo's `static/config.ssh` uses
-   `u593939`, the old dotfiles repo uses `u593939-sub1`. Different
-   sub-accounts; which is current? (`config.nix` has
-   `hetzner-user = "u593939"` and home-server's backup sets
-   `subuser = "sub1"`, so both may be live for different purposes.)
-2. **Syncthing** — the old repo runs it as a linuxserver.io container
-   (`Documents/docker-services/syncthing/docker-compose.yml`); this repo runs
-   it as a native user service (`modules/home/syncthing.nix`). Mutually
-   exclusive. Which model? Task 0.2 also found msi's Syncthing has **no peers
-   and no configured folders**, so a third option is to drop it entirely.
-3. **Zed** — its config is in the old repo and looks current, but Zed is in
-   no package list. Want it installed?
+- Hetzner storagebox — both users live, `u593939-sub1` is the backup user.
+- Syncthing — native service, kept.
+- Zed — install it.
+- Fedora/Nobara verification target for 0.3 — a `fedora:41` docker container
+  on msi.
 
-Still open from my side: **I need a Fedora/Nobara target for task 0.3.** A
-`fedora:41` container on msi via podman would do, if you're happy for me to
-run one there.
+Raise new ones here as phases progress.
