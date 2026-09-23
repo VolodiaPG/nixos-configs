@@ -59,7 +59,8 @@ on, plus those three, and drop the rest:
   `common-home.nix`/`interactive.nix` provided under Nix (task 3.1). These
   were never cask-level disagreements and this ruling does not touch them.
 
-That is **11 casks** total. `steam`, `calibre` and `qbittorrent` are a
+That is **11 casks** from the intersection, plus `kitty` (in both Nix
+lists, so never a disputed entry) and `zed` (§0) — **13 casks** total. `steam`, `calibre` and `qbittorrent` are a
 deliberate override of the intersection rule, not an oversight — do not prune
 them back out when reconciling.
 
@@ -286,17 +287,22 @@ The single most load-bearing artifact of this migration. Create
 
 Sources, in order of preference: Nobara/Fedora main repo → RPM Fusion →
 COPR (`atim/*` covers many Rust tools) → Flatpak → Nix (`nix profile`) →
-drop it.
+`upstream` (a released prebuilt binary, `get_url` + `unarchive` into
+`~/.local/bin`) → drop it. `upstream` is a last resort and currently has
+exactly one user: `chezmoi_modify_manager`.
 
-**The Task 0.1 lists are incomplete — do not treat them as the full set.**
-They capture only derivations added to `environment.systemPackages` /
-`home.packages`. Anything enabled through a Home Manager `programs.<x>.enable`
-module never appears: `git`, `zsh`, `tmux`, `ssh`, `keychain`, `zoxide`,
-`fzf`, `direnv`, `lazygit`, `starship`, `nix-index`/`comma` and friends are
-all installed today but absent from the JSON. This is why
-`mac-home-pkgs.json` looks implausibly thin. Cross-check `modules/home/*.nix`
-and `modules/nixos/*.nix` for `programs.*.enable` and `services.*.enable` and
-fold those in before considering the table complete.
+**Correction (task 0.3, verified):** an earlier draft of this task claimed
+the Task 0.1 lists were incomplete because Home Manager's
+`programs.<x>.enable` packages never reach `home.packages`. **That was
+wrong.** HM *does* add an enabled program's package to `home.packages` —
+`git`, `zsh`, `tmux`, `zoxide`, `keychain`, `fzf`, `lazygit`, `direnv`,
+`starship` and `neovim` are all present in both `msi-home-pkgs.json` and
+`mac-home-pkgs.json`. `mac-home-pkgs.json` is not implausibly thin; the Mac
+simply has no Linux desktop packages. What the JSON genuinely does not
+capture is module-generated **config**, not packages — that is phase 2's
+problem, not this table's. The one real package gap was `programs.ssh` /
+`services.ssh-agent`, which resolve to `openssh-clients` from the base
+install.
 
 Also add packages that are in **neither** source but are wanted (§0):
 `zed` (Flatpak `dev.zed.Zed` or the upstream COPR — verify which), and
@@ -327,10 +333,19 @@ base release is unconfirmed until the install ISO is picked, so record the
 Fedora release you verified against in the table header. A plain `fedora:43`
 image has **neither RPM Fusion nor Nobara's own repos**, so enable RPM Fusion inside the container
 before searching, and mark anything that only resolves via a Nobara-specific
-repo as `verified: on-box-required` rather than guessing. Names known to
-differ or to be absent from the main repos — check every one of these:
-`fd` (Fedora: `fd-find`), `bottom`, `starship`, `lazygit`, `difftastic`,
-`chezmoi`, `gdu`, `grc`, `mosh`, `zoxide`, `just`.
+repo as `verified: on-box-required` rather than guessing.
+
+**Verified name differences** (the rest of the once-suspected list —
+`difftastic`, `chezmoi`, `gdu`, `grc`, `mosh`, `zoxide`, `just` — are all in
+Fedora main under their nixpkgs name): `fd`→`fd-find`, `cpupower`→
+`kernel-tools`, `gnumake`→`make`, `go`→`golang`, `vim`→`vim-enhanced`,
+`wget`→`wget2-wget`, `lm-sensors`→`lm_sensors`, `libgtop`→`libgtop2`,
+`kdeconnect-kde`→`kde-connect`, `docker`→`moby-engine`, `qttools`→
+`qt6-qttools`, `bash-language-server`→`nodejs-bash-language-server`,
+`inter`→`rsms-inter-fonts`, `noto-fonts-cjk-*`→`google-noto-{sans,serif}-cjk-fonts`,
+`ShellCheck` (Fedora) vs `shellcheck` (brew), and the `NetworkManager` /
+`ModemManager` capitalisation. `starship`, `lazygit`, `bottom` are absent
+from Fedora main and come from COPR `atim/*`.
 
 Packages with no clean Fedora path go to the **Nix column** — that's what
 Determinate Nix is retained for. Prefer Nix over a hand-rolled COPR.
@@ -623,6 +638,11 @@ before copying it forward.
   silently substitute it. Order of preference: Flatpak of brave-origin →
   Brave's RPM repo → Nix. If only upstream Brave is obtainable, **stop and
   ask**; that is a different browser, not a packaging detail.
+  **Resolved by task 0.3: it comes from Nix.** No `brave-origin` Flatpak
+  exists and Brave's own RPM repo also ships the upstream build, but
+  nixpkgs has `brave-origin` (1.95.102, verified by eval) — so Nix
+  preserves the exact build in use today. This is one of the reasons
+  Determinate Nix is retained.
 - **Extensions**: HM declared them via `programs.chromium.extensions`
   (bitwarden `nngceckbapebfimnlniiiahkandclblb`, sponsorblock
   `mnjggcdmjocbbbhaepdhchncahnbgone`, Quedelix `phaodiidhofhdmfkjiacigibgikhfafn`).
@@ -989,7 +1009,7 @@ State these to the user if they come up; do not pretend otherwise.
 | --- | --- | --- | --- |
 | 0.1 | Dump Nix package sets | ☐ | |
 | 0.2 | Dump msi live state + backup checklist | ☐ | |
-| 0.3 | Package-name mapping table | ☐ | blocks phase 3 |
+| 0.3 | Package-name mapping table | ☑ | `docs/migration/package-map.md`, 277 rows, verified against `fedora:43` |
 | 0.4 | Reconcile the two chezmoi trees | ☐ | blocks phase 2; STOP on nvim |
 | 1.1 | Ansible skeleton | ☐ | |
 | 1.2 | `config.nix` → `group_vars/all.yml` | ☐ | |
