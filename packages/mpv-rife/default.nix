@@ -45,9 +45,17 @@ let
     version = vsmlrtVersion;
   };
 
+  # core.misc.SCDetect: nixpkgs vapoursynth ships no plugin providing it, and
+  # the pure-Python std.ModifyFrame fallback in rife.py serializes frame
+  # production on the GIL, starving vs-mlrt's multi-stream TRT pipeline and
+  # stuttering playback.
+  miscfilters = callPackage ./_miscfilters.nix {
+    vapoursynth = vapoursynth313;
+  };
+
   # The python wrapper (vsmlrt.RIFE) plus the RIFE onnx models.
   vsmlrt = python313Packages.callPackage ./_vsmlrt.nix {
-    inherit tensorrt vstrt;
+    inherit tensorrt vstrt miscfilters;
     src = vsmlrtSrc;
     version = vsmlrtVersion;
   };
@@ -88,8 +96,8 @@ mpv.override {
     autosub
     mpvScripts.modernz
     # mpvScripts.autosubsync-mpv
-    mpvScripts.builtins.autocrop
-    mpvScripts.eisa01.smartskip
+    # mpvScripts.builtins.autocrop
+    # mpvScripts.eisa01.smartskip
   ]
   ++ (lib.optionals stdenv.isLinux [
     mpvScripts.mpris

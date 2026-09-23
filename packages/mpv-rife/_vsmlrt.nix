@@ -8,10 +8,21 @@
   vapoursynth,
   tensorrt,
   vstrt,
+  miscfilters,
   src,
   version,
 }:
 let
+  # rife.py loads both vstrt (core.trt) and miscfilters (core.misc) by walking
+  # this same directory, so join them once instead of tracking two paths.
+  plugins = symlinkJoin {
+    name = "vsmlrt-plugins";
+    paths = [
+      vstrt
+      miscfilters
+    ];
+  };
+
   # ponytail: vs-mlrt ships models outside the source tree. The per-model
   # archives in the external-models release each contain rife/<model>.onnx
   # (implementation 1, needs frame dims divisible by 32/64) and
@@ -40,24 +51,27 @@ let
         hash = "sha256-d6MWNsvmUQzXujU2ZIxblVifAc6DneEvQahrq8kyGsU=";
       })
       (fetchRifeModel {
-        model = "rife_v4.26";
-        hash = "sha256-v12krW1ldu1EtEurcbaN/bR8OFUVoFQDfpla1HHmGew=";
+        model = "rife_v4.7";
+        hash = "sha256-cZwmXKTFC7JHkHG0FFNesEAf4OmCqSEL5SxJLDKcG60=";
       })
       (fetchRifeModel {
-        model = "rife_v4.26_heavy";
-        hash = "sha256-CYXOGRmBIS305UhthrMsi3fWa0yMxCl+MUznDaay7ww=";
+        model = "rife_v4.25_lite";
+        hash = "sha256-dZSfkmZUhRMceT8IBu4CnHfB0sl3zAzlcvR8GK6A59Y=";
       })
     ];
   };
 
   # ponytail: upstream derives every path from wherever VapourSynth autoloaded
-  # the plugin from. Nothing autoloads here, so load vstrt by store path on
-  # import and pin the model/trtexec paths to their own store paths.
+  # the plugin from. Nothing autoloads here, so load vstrt and miscfilters by
+  # store path on import and pin the model/trtexec paths to their own store
+  # paths.
   loadPlugin = ''
     if not hasattr(core, "trt"):
-        core.std.LoadPlugin(path="${vstrt}/lib/vapoursynth/libvstrt.so")
+        core.std.LoadPlugin(path="${plugins}/lib/vapoursynth/libvstrt.so")
+    if not hasattr(core, "misc"):
+        core.std.LoadPlugin(path="${plugins}/lib/vapoursynth/libmiscfilters.so")
 
-    plugins_path: str = "${vstrt}/lib/vapoursynth"'';
+    plugins_path: str = "${plugins}/lib/vapoursynth"'';
 in
 buildPythonPackage {
   pname = "vsmlrt";
