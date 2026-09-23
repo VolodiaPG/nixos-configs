@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Claude Code routed through a local headroom compression proxy.
+#
+# Port of packages/claude-code-headroom (PLAN.MD task 2.10). The Nix
+# derivation was a `writeShellApplication` whose store paths pinned both the
+# real `claude` binary and `headroom`; without Nix those paths are gone, so
+# this copy resolves the real binary from PATH instead — skipping itself,
+# since dot_zshrc puts ~/.local/bin ahead of every package manager's bindir.
+#
+# Drop-in: same name, same arguments, nothing of its own on stdout, so
+# non-interactive callers (`claude -p`, the SDK, T3 Code's binaryPath) still
+# parse the stream they expect.
+#
+# COLLISION, read before moving this file: Claude Code's *native* installer
+# also owns ~/.local/bin/claude (a symlink into
+# ~/.local/share/claude/versions/<v>) and rewrites it on self-update, which
+# would replace this wrapper until the next `chezmoi apply`. That is why the
+# resolver below also falls back to the versions directory: whichever of the
+# two most recently won the path, the wrapper can still find a real binary.
+# The migration installs claude-code from a package manager (Nix/brew, see
+# docs/migration/package-map.md), so the intended steady state is: package
+# manager provides the binary, this wrapper shadows it, the native installer
+# is not used.
+set -o errexit
+set -o nounset
+set -o pipefail
+
+port="${HEADROOM_PORT:-8787}"
+log_dir="${XDG_STATE_HOME:-$HOME/.local/state}/headroom"
+
+self="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/$(basename "${BASH_SOURCE[0]}")"
+
+# The real Claude Code binary: $CLAUDE_REAL_BIN, else the first `claude` on
+# PATH that is not this wrapper.
+find_real_claude() {
+  if [ -n "${CLAUDE_REAL_BIN:-}" ]; then
+    printf '%s\n' "$CLAUDE_REAL_BIN"
+    return 0
+  fi
+  local dir candidate
+  while IFS= read -r dir; do
+    [ -n "$dir" ] || continue
+    candidate="$dir/claude"
+    [ -x "$candidate" ] || continue
+    [ "$(cd "$dir" && pwd -P)/claude" = "$self" ] && continue
+    printf '%s\n' "$candidate"
+    return 0
+  done < <(printf '%s' "$PATH" | tr ':' '\n')
+
+  # Last resort: the native installer's tree, newest version first.
+  local native
+  for native in $(ls -1 "$HOME/.local/share/claude/versions" 2>/dev/null | sort -rV); do
+    candidate="$HOME/.local/share/claude/versions/$native"
+    if [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+if ! real_claude="$(find_real_claude)"; then
+  echo "claude: no claude-code binary found on PATH (set CLAUDE_REAL_BIN)" >&2
+  exit 127
+fi
+
+# TCP probe, same liveness test headroom's own `wrap` uses.
+proxy_up() {
+  (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null
+}
+
+if ! command -v headroom >/dev/null 2>&1; then
+  # No proxy available: behave exactly like plain Claude Code.
+  exec "$real_claude" "$@"
+fi
+
+if ! proxy_up; then
+  mkdir -p "$log_dir"
+  HEADROOM_AGENT_TYPE=claude \
+    nohup headroom proxy --port "$port" >>"$log_dir/proxy.log" 2>&1 &
+  disown || true
+
+  # Bounded wait for the bind. The very first start also downloads the
+  # compression model from HuggingFace into ~/.cache, which is why the
+  # budget is minutes rather than seconds; later starts take ~2s.
+  echo "claude: starting headroom proxy on port $port..." >&2
+  for _ in $(seq 1 360); do
+    proxy_up && break
+    sleep 0.5
+  done
+
+  if ! proxy_up; then
+    echo "claude: headroom proxy failed to start on port $port," \
+         "see $log_dir/proxy.log — falling back to a direct connection" >&2
+    exec "$real_claude" "$@"
+  fi
+fi
+
+export ANTHROPIC_BASE_URL="http://127.0.0.1:$port"
+# A custom ANTHROPIC_BASE_URL otherwise makes Claude Code materialize every
+# MCP/system tool schema into context (headroom GH #746); keep deferral on.
+export ENABLE_TOOL_SEARCH="${ENABLE_TOOL_SEARCH:-true}"
+
+exec "$real_claude" "$@"
