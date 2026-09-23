@@ -526,8 +526,22 @@ build/cachix job, and only in phase 7.
 ## PHASE 2 — Dotfiles into chezmoi
 
 The bulk of the work, and fully reversible: for each Home Manager module,
-copy what it *generated* into chezmoi, delete the module, rebuild. If the
-rebuild is a no-op for that file, the port was exact.
+copy what it *generated* into chezmoi. If a later rebuild is a no-op for that
+file, the port was exact.
+
+**CORRECTION — do NOT delete any `modules/home/*.nix` in phase 2.** An
+earlier draft said "copy it out, delete the module, rebuild". That is unsafe:
+`configurations/nixos/home-server/home.nix` imports
+`flake.self.nixosModules.home-manager`, which pulls in
+`self.homeModules.default` — i.e. **all of `modules/home/`** — and sets
+`my.commonHome.enable = true`. Deleting those modules breaks rule 1.
+Phase 2 is **copy-out only**; every deletion waits for phase 7, where each
+one is checked against home-server individually.
+
+**Also do not run `darwin-rebuild switch`, `nixos-rebuild switch`, or
+`chezmoi apply`.** Phase 2 produces files in the repo; it does not mutate a
+running machine. Verify with `chezmoi diff`, `chezmoi execute-template`, and
+`nix eval` — never with a switch. The cutover is phase 6.
 
 **The core technique:** HM-generated dotfiles are symlinks into the Nix
 store, so `cat ~/.zshrc > chezmoi/dot_zshrc` captures exact current
