@@ -314,15 +314,18 @@ Verify each with `dnf search` / `dnf provides`. **Do not guess.** msi has
 macOS control node:
 
 ```sh
-ssh msi -- docker run --rm -i fedora:41 bash -s <<'EOF'
+ssh msi -- docker run --rm -i fedora:43 bash -s <<'EOF'
 dnf -y install dnf-plugins-core >/dev/null 2>&1
 dnf -q search <name>
 EOF
 ```
 
 This is read-only with respect to msi (rule 3): `--rm`, no volume mounts, no
-writes outside the container. A plain `fedora:41` image has **neither RPM
-Fusion nor Nobara's own repos**, so enable RPM Fusion inside the container
+writes outside the container. Verified working from the control node: msi runs Docker 29.8.0 and the
+`fedora:{41,42,43,44}` images all pull. Use **`fedora:43`** — Nobara's exact
+base release is unconfirmed until the install ISO is picked, so record the
+Fedora release you verified against in the table header. A plain `fedora:43`
+image has **neither RPM Fusion nor Nobara's own repos**, so enable RPM Fusion inside the container
 before searching, and mark anything that only resolves via a Nobara-specific
 repo as `verified: on-box-required` rather than guessing. Names known to
 differ or to be absent from the main repos — check every one of these:
@@ -1031,7 +1034,7 @@ blocker are all resolved into §0:
 - Hetzner storagebox — both users live, `u593939-sub1` is the backup user.
 - Syncthing — native service, kept.
 - Zed — install it.
-- Fedora/Nobara verification target for 0.3 — a `fedora:41` docker container
+- Fedora/Nobara verification target for 0.3 — a `fedora:43` docker container
   on msi.
 
 Raise new ones here as phases progress.
