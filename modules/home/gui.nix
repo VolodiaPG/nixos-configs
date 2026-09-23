@@ -55,7 +55,7 @@ in
         # pkgs.calibre
         pkgs.inkscape
         pkgs.gimp
-        pkgs.freecad
+        # pkgs.freecad
         # pkgs.bambu-studio
         # (pkgs.symlinkJoin {
         #   #  Wrap for nvidia drivers, don't use the default override not to rebuild the whole package
