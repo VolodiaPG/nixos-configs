@@ -1,0 +1,48 @@
+# ~/.ssh/config — PLAN.MD task 2.3.
+#
+# This is the concatenation Home Manager actually produced: the explicit
+# `programs.ssh.settings."*"` block from modules/home/common-home.nix first,
+# then static/config.ssh verbatim. ORDER IS LOAD-BEARING: ssh_config takes
+# the FIRST value seen for each keyword, so the block below wins over the
+# second `Host *` for AddKeysToAgent / Compression / ForwardAgent.
+
+Host *
+  AddKeysToAgent no
+  Compression no
+  ControlMaster no
+  ControlPath ~/.ssh/master-%r@%n:%p
+  ControlPersist no
+  ForwardAgent no
+  HashKnownHosts no
+  ServerAliveCountMax 3
+  ServerAliveInterval 0
+  UserKnownHostsFile ~/.ssh/known_hosts
+
+# Alias for the gateway (not really needed, but convenient)
+Host *
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_ed25519
+    ForwardAgent yes
+    Compression yes
+    IgnoreUnknown UseKeychain
+    UseKeychain yes
+
+Host access.grid5000.fr
+  User volparolguarino
+
+Host !access.grid5000.fr *.grid5000.fr
+   User @g5k_login@
+   ProxyJump access.grid5000.fr
+   StrictHostKeyChecking no
+   UserKnownHostsFile /dev/null
+
+Host linux-builder
+  Hostname 127.0.0.1
+  HostKeyAlias linux-builder
+  Port 31022
+
+Host storagebox
+    Hostname u593939.your-storagebox.de
+    Port 23
+    User u593939
+    IdentityFile ~/.ssh/id_ed25519

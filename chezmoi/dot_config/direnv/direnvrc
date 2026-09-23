@@ -1,0 +1,10 @@
+# shellcheck shell=bash
+# direnv stdlib extension — PLAN.MD task 2.5.
+# Copied verbatim from the HM-generated ~/.config/direnv/direnvrc, which was
+# `programs.direnv.stdlib` in modules/home/interactive.nix.
+#
+# NOTE: HM also wrote ~/.config/direnv/lib/hm-nix-direnv.sh (nix-direnv,
+# resholved against /nix/store paths). That is deliberately NOT vendored
+# here; installing nix-direnv and sourcing its direnvrc belongs to the `nix`
+# role (PLAN.MD task 3.4).
+export DIRENV_LOG_FORMAT=""

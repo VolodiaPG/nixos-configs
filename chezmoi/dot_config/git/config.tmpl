@@ -1,0 +1,44 @@
+{{- /*
+     Port of modules/home/git.nix — PLAN.MD task 2.2.
+
+     Layout mirrors the Home-Manager-generated ~/.config/git/config
+     byte-for-byte (sections alphabetical, tab-indented values) except for:
+       * user.email / user.signingKey  -> chezmoi data
+       * [gpg "ssh"].program           -> dropped (HM hardcoded a
+         /nix/store/...-openssh/bin/ssh-keygen path; git's built-in default
+         for gpg.ssh.program is `ssh-keygen` from $PATH, which is what we
+         want post-Nix)
+       * No [credential] section. PLAN.MD task 2.2 asked for a per-OS
+         credential helper, but Home Manager set none anywhere in the Nix
+         tree (verified by grep). Adding one would be a behaviour change,
+         not a port, so it is deliberately absent. Add it later if wanted.
+*/ -}}
+[alias]
+	lg = "log --color --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+[commit]
+	gpgSign = true
+
+[core]
+	editor = "vim"
+
+
+[diff]
+	external = "difft"
+
+[gpg]
+	format = "ssh"
+
+[init]
+	defaultBranch = "main"
+
+[rebase]
+	autostash = true
+
+[tag]
+	gpgSign = true
+
+[user]
+	email = {{ .email | quote }}
+	name = {{ .name | quote }}
+	signingKey = {{ .signing_key | quote }}

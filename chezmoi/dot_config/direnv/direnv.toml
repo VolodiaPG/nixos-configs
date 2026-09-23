@@ -1,0 +1,6 @@
+# Port of `programs.direnv.silent = true` from modules/home/interactive.nix
+# (PLAN.MD task 2.5). Copied verbatim from the HM-generated
+# ~/.config/direnv/direnv.toml.
+[global]
+log_filter = "^$"
+log_format = "-"

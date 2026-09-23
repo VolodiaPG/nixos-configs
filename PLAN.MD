@@ -580,10 +580,45 @@ templating data is genuinely new work.
 **Verify:** `chezmoi execute-template < .chezmoi.toml.tmpl` renders on both
 OSes; `chezmoi diff` on the mac shows no unexpected churn.
 
+**How to render a template for verification — the obvious command does not
+work.** `chezmoi execute-template < file` fails on `promptStringOnce` (that
+function exists only during `init`), and `--init` only *enables* the prompt
+functions — it does **not** populate `.data` from `.chezmoi.toml.tmpl`, so
+any template referencing `.email` etc. dies with `map has no entry for key`.
+The working recipe:
+
+```sh
+chezmoi execute-template --init < chezmoi/.chezmoi.toml.tmpl > /tmp/cfg.toml
+# sourceDir MUST be prepended, before [data], or it lands inside that table
+sed -i "" "1i\\
+sourceDir = \"$PWD/chezmoi\"
+" /tmp/cfg.toml
+chezmoi --config /tmp/cfg.toml execute-template < chezmoi/dot_config/git/config.tmpl
+```
+
+**Expect `chezmoi diff` to be loud, and for that to be correct.** Every
+target on the mac is currently a symlink into
+`/nix/store/…-home-manager-files/`, so chezmoi reports each as "delete
+symlink (120755) → write regular file". That *is* the cutover, not a porting
+error. What matters is that no *content* differs unexpectedly.
+
 ### Task 2.2 — `git.nix` → `dot_config/git/config.tmpl`
 
-31 lines. Template the signing key and email from chezmoi data; the
-credential helper differs per OS.
+31 lines. Template the signing key and email from chezmoi data.
+
+**DONE.** Two things in this spec described features that do not exist:
+
+- **"the credential helper differs per OS"** — Home Manager set **no**
+  credential helper anywhere in the Nix tree (verified by grep across
+  `modules/` and `static/`). Adding one would be a behaviour change, not a
+  port, so `dot_config/git/config.tmpl` deliberately has no `[credential]`
+  section. Add one later if it is actually wanted.
+- **"the difftastic/delta pager setup"** — there is no delta. The generated
+  config has `diff.external = difft` and nothing else: no `[pager]`, no
+  `[delta]`, no `core.pager`. delta is in no package list.
+
+One Nix-ism dropped: `gpg.ssh.program` pointed at a `/nix/store/…-openssh`
+`ssh-keygen`; git's built-in default resolves it from `$PATH`.
 
 ### Task 2.3 — SSH bits from `common-home.nix`
 
@@ -593,6 +628,27 @@ credential helper differs per OS.
 
 Note `common-home.nix` sets HM's `programs.ssh.settings."*"` defaults
 explicitly; fold those into the config file rather than losing them.
+
+**DONE**, with three notes:
+
+- Files are `private_dot_ssh/private_config` and
+  `private_dot_ssh/private_authorized_keys.tmpl`. `private_` on the
+  *directory* alone gives `~/.ssh` 0700 but leaves the files 0644 — the
+  prefix is needed on each file too. Verified: `.ssh` → 40700, both files →
+  100600.
+- Equivalence was checked with `ssh -G -F <file> <host>`, byte-identical for
+  `storagebox`, `github.com`, `access.grid5000.fr`, `foo.grid5000.fr` and an
+  unmatched host.
+- **There is no `u593939-sub1` stanza to port.** `static/config.ssh` has only
+  `Host storagebox` → `u593939`; the backup sub-account exists solely as
+  `hetzner_backup_user` in the Ansible vars. Adding a stanza is new work, not
+  a port — do it in phase 4 if the backup role needs it.
+- `static/config.ssh` is **not deleted**: `modules/home/common-home.nix:106`
+  still `readFile`s it, so removing it breaks rule 1. Phase 7.
+- Two pre-existing warts carried over verbatim, to be fixed in phase 4, not
+  hidden now: the literal unsubstituted `User @g5k_login@` placeholder, and
+  the `Host linux-builder` block (127.0.0.1:31022) which dies with
+  nix-darwin.
 
 ### Task 2.4 — `tmux.nix` (94 lines) → `dot_config/tmux/tmux.conf`
 
@@ -608,6 +664,26 @@ zoxide (`--cmd cd`). Shell integration hooks move into the zshrc (2.6).
 Dropped here: `nix-index`/`comma` (Nix-specific) and `programs.opencode`
 (dropped per §0 — also delete `dot_config/opencode/` if it arrives from the
 old dotfiles repo).
+
+**DONE.** `dot_config/opencode/` deleted. **fzf and zoxide write no config
+file at all** under this setup — they are pure shell-hook, so task 2.6 is
+their entire port. lazygit, `direnv.toml` and `direnvrc` were copied
+verbatim.
+
+**Two gaps this opens, neither owned by 2.5:**
+
+1. **`~/.config/lazygit/theme.yml` has no owner post-migration.**
+   `LG_CONFIG_FILE` lists it, but it is a *symlink* created at runtime by
+   `packages/theme-switcher/theme-switcher.sh:158`, which §0 drops.
+   `.chezmoiexternal.toml` vendors only `theme.{dark,light}.yml`. On a fresh
+   host lazygit fails to start until something seeds that symlink — task 2.7
+   or a `run_once_` script must do it. Confirmed live: `theme.yml ->
+   theme.light.yml`.
+2. **`~/.config/direnv/lib/hm-nix-direnv.sh` is not portable** — it is a
+   resholved script hardcoding a `/nix/store/…/bin/nix`. direnv still works
+   without it, but loses nix-direnv's flake caching until the `nix` role
+   (task 3.4) installs nix-direnv and sources its `direnvrc`. Since §0 keeps
+   Determinate Nix precisely for devenv/direnv projects, this one matters.
 
 ### Task 2.6 — `zsh.nix` (225 lines) → `dot_zshrc.tmpl` + fragments
 

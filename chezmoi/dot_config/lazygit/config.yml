@@ -1,0 +1,11 @@
+# Port of modules/home/interactive.nix `programs.lazygit.settings` —
+# PLAN.MD task 2.5. Copied verbatim from the HM-generated
+# ~/.config/lazygit/config.yml.
+#
+# Theming is NOT here: catppuccin-theme.nix layered it via the env var
+#   LG_CONFIG_FILE=~/.config/lazygit/config.yml,~/.config/lazygit/theme.yml
+# which task 2.6 sets in the zshrc. theme.yml is a symlink to
+# theme.{dark,light}.yml, both vendored by .chezmoiexternal.toml (task 2.1).
+git:
+  pagers:
+  - useExternalDiffGitConfig: true
