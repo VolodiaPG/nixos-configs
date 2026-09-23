@@ -262,6 +262,23 @@ Sources, in order of preference: Nobara/Fedora main repo → RPM Fusion →
 COPR (`atim/*` covers many Rust tools) → Flatpak → Nix (`nix profile`) →
 drop it.
 
+**The Task 0.1 lists are incomplete — do not treat them as the full set.**
+They capture only derivations added to `environment.systemPackages` /
+`home.packages`. Anything enabled through a Home Manager `programs.<x>.enable`
+module never appears: `git`, `zsh`, `tmux`, `ssh`, `keychain`, `zoxide`,
+`fzf`, `direnv`, `lazygit`, `starship`, `nix-index`/`comma` and friends are
+all installed today but absent from the JSON. This is why
+`mac-home-pkgs.json` looks implausibly thin. Cross-check `modules/home/*.nix`
+and `modules/nixos/*.nix` for `programs.*.enable` and `services.*.enable` and
+fold those in before considering the table complete.
+
+Ignore the synthetic helper derivations (`hm-session-vars.sh`,
+`dummy-fc-dir*`, `ld-library-path`, `glibc-locales`, `X11-fonts`,
+`index.theme`, `home-configuration-reference-manpage`) — already marked
+NIX-ONLY in `package-inventory.md`. Likewise skip NixOS's stock base set
+(`systemd`, `util-linux`, `shadow`, `procps`, `perl`, `which`, …), which
+Nobara supplies from its own base install.
+
 Verify each on a live Nobara box (or a `fedora:41` container as a first
 pass) with `dnf search` / `dnf provides`. **Do not guess.** Names known to
 differ or to be absent from the main repos — check every one of these:
