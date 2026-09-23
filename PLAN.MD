@@ -831,6 +831,52 @@ plain `nvim` reads `~/.config/nvim` directly.
 
 ---
 
+### PHASE 2 — what it leaves behind
+
+Phase 2 is finished, but it did not resolve everything it touched. These are
+owned by later phases; none of them is optional.
+
+**Hard blockers — a fresh host is broken until these are done:**
+
+1. **`chezmoi/dot_config/nvim/init.lua` has its whole `vim.pack.add` block
+   commented out** (lines 1–49), because Home Manager supplied the 43 plugins
+   through `wrapNeovimUnstable`. Line 53 `vim.cmd.packadd 'lze'` is live, so
+   with plain `neovim` nvim fails on startup. The commented list matches the
+   43 entries in `nvim-pack-lock.json`, so uncommenting it is the fix. Owner:
+   phase 6, before the first nvim launch.
+2. **`~/.config/lazygit/theme.yml` has no owner.** It was a symlink created by
+   `theme-switcher.sh:158` to `theme.{dark,light}.yml`. Both targets are
+   vendored as externals, but nothing creates the symlink, and `LG_CONFIG_FILE`
+   names it — lazygit will not start on a fresh host. Owner: phase 4 (task
+   4.1, with theme-switcher).
+3. **`chezmoi_modify_manager` must be on the `PATH` of whatever runs the first
+   `chezmoi apply`**, or all six `modify_*` scripts fail the apply outright.
+   Not in nixpkgs, not in Fedora. Owner: phase 4. See
+   `docs/migration/kde-cutover.md`.
+
+**Degradations — working, but worse than before:**
+
+4. `~/.config/direnv/lib/hm-nix-direnv.sh` was resholved with a hardcoded
+   store path, so nix-direnv's flake caching is lost until the `nix` role
+   reinstalls it. Owner: phase 3 (task 3.4).
+5. `~/.config/mpv/{input.conf,rife*.py,rife*.vpy}` still exist on the live mac
+   as unmanaged leftovers. chezmoi will not remove what it never owned; delete
+   them by hand at cutover.
+
+**Unverifiable from here — decide at first boot, do not guess now:**
+
+6. **Nothing in the KDE work has been tested against a running Plasma.** The
+   macOS host has none, and `msi` is still NixOS/Hyprland until its reinstall.
+   All 17 files are byte-identical copies of the old dotfiles repo, which is
+   the best available source, but that is provenance, not verification.
+7. `private_kded5rc` is a Plasma 5 filename and Nobara 43 ships Plasma 6
+   (`kded6rc`). Kept under the original name; rename at first boot if Plasma
+   ignores it.
+8. The Brave Flatpak policy path is read from the Flathub manifest
+   (`--filesystem=host-etc` plus a launcher symlink, so the same
+   `/etc/brave/policies/managed` as the RPM), not confirmed on msi. Confirm
+   with `flatpak info --show-permissions com.brave.Browser` after install.
+
 ## PHASE 3 — Packages
 
 ### Task 3.1 — `roles/pkgs`
@@ -1172,17 +1218,17 @@ State these to the user if they come up; do not pretend otherwise.
 | 1.3 | Inventory | ☑ | msi reached over SSH by bare name |
 | 1.4 | Retire `m1` | ☑ | rule 1 re-verified; `avd-fw` overlay went with it |
 | 1.5 | CI | ◐ | `ansible.yaml` added; msi job removal deferred to phase 7 |
-| 2.1 | chezmoi templating scaffold | ☐ | do first in phase 2 |
-| 2.2 | git config | ☐ | |
-| 2.3 | ssh config + authorized_keys | ☐ | |
-| 2.4 | tmux | ☐ | |
-| 2.5 | interactive tools | ☐ | |
-| 2.6 | zshrc | ☐ | largest |
-| 2.7 | theme → Plasma native | ☐ | |
-| 2.8 | mpv (strip RIFE) | ☐ | |
-| 2.9 | KDE Plasma config | ☐ | adopt `chezmoi_modify_manager` from old repo |
-| 2.10 | browser/claude/gui/syncthing | ☐ | |
-| 2.11 | neovim packages | ☐ | |
+| 2.1 | chezmoi templating scaffold | ☑ | `.chezmoi.toml.tmpl` renders on both hosts; 8 externals, all URLs 200 |
+| 2.2 | git config | ☑ | no credential helper and no delta — my spec invented both |
+| 2.3 | ssh config + authorized_keys | ☑ | |
+| 2.4 | tmux | ☑ | resurrect + continuum externals were missing; added |
+| 2.5 | interactive tools | ☑ | two gaps carried forward, see §2.5 |
+| 2.6 | zshrc | ☑ | split into `.zshenv` + 8 `~/.config/zsh` fragments |
+| 2.7 | theme → Plasma native | ☑ | 4 live look-and-feels only; latte colour scheme now an external |
+| 2.8 | mpv (strip RIFE) | ☑ | spec wrong twice — see commit cf72736 |
+| 2.9 | KDE Plasma config | ☑ | all 17 files byte-identical to old repo; **untested — no host runs Plasma yet**, see `docs/migration/kde-cutover.md` |
+| 2.10 | browser/claude/gui/syncthing | ☑ | Flatpak policy path corrected; specs in `docs/migration/` |
+| 2.11 | neovim packages | ☑ | **blocker found**: `init.lua` plugin list is commented out |
 | 3.1 | `roles/pkgs` | ☐ | |
 | 3.2 | flatpak | ☐ | |
 | 3.3 | fonts | ☐ | |
