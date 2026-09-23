@@ -1,0 +1,939 @@
+# Migration runbook — NixOS/nix-darwin → Ansible + chezmoi
+
+**Audience: agents executing this migration.** Each task below is a
+self-contained ticket: preconditions, steps, deliverable, verification. Work
+tasks in order within a phase; phases 2–5 can overlap. Update the
+[progress table](#progress) as you go.
+
+Branch: `ansible`. Control node: the macOS host (`Volodias-MacBook-Pro`).
+
+---
+
+## 0. Decisions already made — do not relitigate
+
+| Question | Decision |
+| --- | --- |
+| Target Linux distro | **Nobara Linux, KDE edition** (Fedora-based). Chosen partly for a later Asahi path. |
+| `msi` | Migrates to Nobara KDE. Full reinstall. |
+| `m1` | **Retired.** Delete its config; do not port it. |
+| `home-server` | **Stays on NixOS.** Out of scope. The flake must keep evaluating for it. |
+| Desktop | **KDE Plasma** (Nobara default). Hyprland, noctalia, GNOME/dconf are all dropped. |
+| Impermanence | **Dropped** on migrated hosts. (`home-server` keeps it, in the flake.) |
+| Nix | **Kept as a package manager only** — Determinate Nix, for `devenv`/direnv/`.envrc` projects. No NixOS, no nix-darwin, no Home Manager on migrated hosts. |
+| Deploy model | **Push** (`ansible-playbook` over SSH/Tailscale) now. Pull (`ansible-pull` on a timer) later. |
+| Theme switching | Must stay **instantaneous and decoupled from chezmoi**. Use Plasma's native day/night scheme switching. Low priority. |
+| `mpv-rife` | **Dropped.** Keep `mpv.conf`/`input.conf` (auto-subs, UI); drop the RIFE/VapourSynth/TensorRT stack. |
+| Secrets | **ansible-vault.** Several existing secrets are dead — audit and prune. |
+| Repo | Migrate on branch `ansible`. |
+| Prior dotfiles repo | **`github.com/VolodiaPG/dotfiles` is in scope as source material** — see §0.1. It is a working pre-Nix version of the target architecture. |
+| `services.caddy` on msi | **Dropped.** Do not port `modules/nixos/caddy.nix` or `static/services-page/`. |
+| `hyperhdr` | **Dropped.** Do not port `modules/nixos/hyperhdr.nix`. |
+| `programs.opencode` | **Dropped.** Remove from the tooling list; also drop `dot_config/opencode/` if merging the old dotfiles repo. |
+| Browser | **`brave-origin`**, Flatpak if a Flatpak of it exists (verify — Flathub ships `com.brave.Browser`, which is *not* the same build). |
+| `msi` addressing | Reachable by **Tailscale name**. Use it in the inventory, not a LAN IP. |
+| `~/.config/nvim` | **This repo's inline tree wins** (`chezmoi/dot_config/nvim/`). It is up to date; `github.com/VolodiaPG/vim` is not. Drop the old `.chezmoiexternal.toml` nvim entry. |
+| macOS app set | **Intersection, plus `steam`, `calibre`, `qbittorrent`** — see §0.2. Where the two sources otherwise disagree, neither side is worth carrying. |
+| CPU governor | **Dropped.** Let Nobara's own power-profile handling run. Do not port `run_once_governor.tmpl`. |
+| `immich-ml` | **Dead.** Do not port the module or the old repo's user unit. |
+
+### 0.2 macOS app set — resolved to the intersection
+
+The two lists disagree; none of the disputed entries are worth carrying
+**except three the user has explicitly kept**. Install what both lists agree
+on, plus those three, and drop the rest:
+
+- **Keep** (in both lists): `karabiner-elements`, `tg-pro`, `bettermouse`,
+  `betterdisplay`, `tidal`, `signal`, `vlc`, `parsec`.
+- **Keep** (explicit rulings, also present in the Linux set): `steam`,
+  `calibre` (both nix-darwin-only), `qbittorrent` (old-repo-only).
+- **Drop** (nix-darwin only): `hiddenbar`, `alt-tab`.
+- **Drop** (old dotfiles repo only): `ghostty`, `mtmr`, `skim`, `bitwarden`,
+  `container`, `bambu-studio`, `obsidian`, `zotero`, `unified-remote`, `jan`,
+  `drawio`, `helium-chromium`, plus the `nushell`, `carapace`, `aider`,
+  `docker`, `skhd` formulae.
+- **Brews still needed regardless of the two lists**: the CLI tooling that
+  `common-home.nix`/`interactive.nix` provided under Nix (task 3.1). These
+  were never cask-level disagreements and this ruling does not touch them.
+
+That is **11 casks** total. `steam`, `calibre` and `qbittorrent` are a
+deliberate override of the intersection rule, not an oversight — do not prune
+them back out when reconciling.
+
+### 0.1 Prior art — `github.com/VolodiaPG/dotfiles`
+
+**Read this repo before starting phase 2.** It is a chezmoi dotfiles repo the
+user ran *before* the Nix setup, targeting Arch + KDE Plasma + macOS. It
+already implements much of what this plan describes, and it solves the
+hardest open problem (KDE config) properly. Last commit 2026-07-16.
+
+Clone it read-only for reference:
+`git clone --depth 1 https://github.com/VolodiaPG/dotfiles`
+
+What it contains and how to treat each part:
+
+| Asset | Disposition |
+| --- | --- |
+| `dot_config/modify_*` + `*.src.ini` — KDE rc files via **`chezmoi_modify_manager`** | **Adopt wholesale.** This is the correct solution to task 2.9; do not invent another. |
+| `dot_local/share/plasma/look-and-feel/` — Catppuccin Mocha/Latte + `Custom dark`/`Custom light` global themes; `dot_local/share/color-schemes/`; `dot_local/share/aurorae/themes/` | **Adopt.** These give instantaneous, chezmoi-independent theme switching (§0) for free. |
+| `dot_config/private_kxkbrc` — already `LayoutList=fr`, `VariantList=oss` | **Adopt.** Satisfies part of task 4.4. |
+| `run_once_kanata.sh.tmpl` — uinput group + udev rule + user service | **Adopt the logic, move to Ansible** (needs root). |
+| `run_once_packages.sh.tmpl` — `brew bundle` block (macOS) + `paru -S` list (Arch) | **macOS: take the intersection with the nix-darwin block** per §0.2, not this list wholesale. **Linux: translate** the paru list to dnf; it is Arch-only. |
+| `run_once_defaults.tmpl` — macOS `defaults write` settings | **Adopt**, translate to `osx_defaults`. More complete than `modules/darwin/common-darwin.nix`. |
+| nvidia clock-lock systemd unit (inside `run_once_packages.sh.tmpl`) | **Adopt**, but see task 4.5 — its values disagree with the Nix module. |
+| `run_once_{docker,services,udev_usb_chrome,mediacontrole}` | **Port to Ansible roles** (all need root). |
+| `run_once_governor.tmpl` | **Drop** (§0 — Nobara handles power profiles). |
+| `dot_config/systemd/user/{kanata,immich-ml}.service` | kanata → Ansible; immich-ml → **drop** (§0, dead). |
+| `dot_zshrc`, `dot_bashrc`, `dot_profile`, `dot_blerc` | **Do not adopt.** Oh-my-zsh based, older than the HM-generated zshrc, and carries hardcoded paths (`/Users/volodia/...`, lmstudio). The HM output wins — see task 2.6. |
+| `.chezmoiexternal.toml` — pulls `~/.config/nvim` from `github:VolodiaPG/vim` | **Drop the nvim entry.** This repo's inline tree is authoritative (§0). Keep the file only if something else needs vendoring. |
+| `dot_config/{yabai,skhd,opencode}/` | **Drop.** yabai/skhd were already disabled in Nix; opencode is dropped per §0. |
+| `run_once_yabai.tmpl`, `run_once_ble.sh.tmpl`, `run_once_devenv.sh.tmpl` | Drop (devenv now comes from Determinate Nix, task 3.4). |
+
+**Two structural lessons from it, both of which the plan applies:**
+
+1. That repo did *everything* in chezmoi `run_once_` scripts because it had no
+   Ansible. We do. Apply the split rule from §2: anything needing root (udev,
+   system units, packages, groups) becomes an **Ansible role**; only `$HOME`
+   content stays in chezmoi.
+2. It used `run_once_` for package installation, which runs exactly once per
+   machine — adding a package later never installs it. Where a script *does*
+   stay in chezmoi, prefer **`run_onchange_`** so edits re-trigger it.
+
+### Scope
+
+In scope: **`msi`** (→ Nobara KDE) and **`Volodias-MacBook-Pro`** (→ macOS +
+Ansible + Homebrew + Determinate Nix).
+
+Out of scope: `home-server` (stays NixOS), `m1` (retired), `installer` ISO
+(dropped — a stock Nobara ISO plus `playbooks/bootstrap.yml` replaces it).
+
+---
+
+## 1. Rules for agents
+
+1. **Never break `home-server`.** It stays on NixOS and is deployed from this
+   repo. After *any* change touching `flake.nix`, `modules/nixos/`,
+   `secrets/`, `config.nix`, `lib/` or `overlays/`, run:
+   ```sh
+   nix eval --raw .#nixosConfigurations.home-server.config.system.build.toplevel.drvPath
+   ```
+   It must succeed. If a deletion breaks it, the module is still in use —
+   keep it.
+2. **Deletions are last.** Nothing under `modules/`, `configurations/nixos/msi/`
+   or `configurations/darwin/` is deleted until the corresponding host has
+   successfully cut over (phase 6). `configurations/nixos/m1/` is the sole
+   exception (retired, task 1.4).
+3. **Never run a destructive command on a live host without confirming with
+   the user first.** Disk partitioning, `dnf remove`, `rm -rf ~/.config/*`,
+   uninstalling Nix. Ask, then act.
+4. **`--check --diff` before every real run.** Every Ansible task must be
+   idempotent: a second run reports zero changes. If it doesn't, fix the task,
+   don't shrug.
+5. **Commit per task**, message `ansible: <task id> <what>`, on branch
+   `ansible`.
+6. **Record what you verify.** Package-name lookups, unit names, config paths
+   — write them into `docs/migration/`, don't leave them in a transcript.
+7. **Stop and ask** when a task says STOP, or when a decision would be
+   irreversible and isn't in §0.
+
+### Nobara-specific gotchas — read before writing any Linux role
+
+- Nobara **must not** be upgraded with a bare `dnf upgrade`. It ships
+  `nobara-sync` (CLI: `nobara-sync cli`), which sequences repo/package fixups.
+  Ansible roles must never do a blanket `dnf: name='*' state=latest`. Pin
+  explicit package names with `state: present`.
+- Nobara preconfigures RPM Fusion, multimedia codecs, and (on the NVIDIA
+  edition) the NVIDIA driver. **Check before adding** — do not re-add repos
+  Nobara already ships, and do not install `akmod-nvidia` by hand if the
+  image already did.
+- Extra packages frequently come from **COPR** (`community.general.copr`) or
+  **Flatpak**, not the main repos. Verify every package name on the target
+  with `dnf provides` / `dnf search` before writing it into a var file.
+- Use `ansible.builtin.dnf5` (Fedora 41+ / Nobara 41+) — `dnf` module aliases
+  work but emit deprecations. Confirm which is present on the target and
+  note it in `docs/migration/msi-facts.md`.
+- KDE Plasma **rewrites its own config files at runtime**. A file chezmoi
+  owns outright will be clobbered by Plasma and produce a permanent diff.
+  See task 2.9 for the handling.
+
+---
+
+## 2. Target layout
+
+```
+ansible/
+  ansible.cfg                 # vault_password_file, inventory, ssh settings
+  requirements.yml            # community.general, containers.podman
+  inventory/
+    hosts.yml                 # msi (ssh), macbook (local) + groups
+    group_vars/
+      all.yml                 # ← port of config.nix `me`
+      all/vault.yml           # ansible-vault encrypted
+      nobara.yml              # dnf/copr/flatpak package names
+      darwin.yml              # brew formulae + casks
+      desktop.yml
+    host_vars/{msi,macbook}.yml
+  roles/
+    base/                     # locale fr_FR, tz Europe/Paris, sysctl, sudo, ssh
+    users/                    # user, groups, authorized_keys
+    nix/                      # Determinate Nix installer + nix.conf substituters
+    pkgs/                     # platform-dispatching package role
+    shell/                    # zsh login shell, starship, tooling (pairs w/ chezmoi)
+    chezmoi/                  # install chezmoi, init from this repo, apply
+    secrets/                  # vault-sourced files into place
+    desktop_linux/            # fonts (incl. Comic Code), kanata, flatpak, xkb fr/oss
+    kde/                      # Plasma settings that need root or kwriteconfig6
+    nvidia/                   # msi only — verify against Nobara's own setup first
+    gaming/                   # steam, gamemode, mangohud
+    audio/                    # ex-hifi.nix: pipewire, realtime limits
+    virtualization/           # podman, distrobox
+    networking/               # NetworkManager tweaks, firewalld ports
+    vpn/                      # tailscale
+    darwin_defaults/          # osx_defaults, TouchID sudo, maxfiles launchd
+    homebrew/
+  playbooks/
+    site.yml  linux.yml  macos.yml  bootstrap.yml
+chezmoi/
+  .chezmoi.toml.tmpl          # NEW — host/role/flavor data
+  .chezmoiignore              # NEW — per-OS exclusions
+  .chezmoiexternal.toml       # NEW — vendored assets
+  dot_config/ ... dot_zshrc.tmpl ...
+docs/migration/               # phase-0 inventory + verified name mappings
+```
+
+**Split rule, applied without exception:** chezmoi owns everything under
+`$HOME`; Ansible owns anything needing root or a package manager. The one
+carve-out is user systemd units, which Ansible writes (it must also enable
+them).
+
+---
+
+## PHASE 0 — Inventory
+
+Goal: capture ground truth from the running systems *before* dismantling
+anything. Output is `docs/migration/`.
+
+### Task 0.1 — Dump what Nix installs (run on macOS control node)
+
+Cross-platform evaluation works from macOS, so both hosts can be dumped here.
+
+```sh
+mkdir -p docs/migration
+nix eval --json --apply 'ps: map (p: p.pname or p.name) ps' \
+  '.#nixosConfigurations.msi.config.environment.systemPackages' \
+  > docs/migration/msi-system-pkgs.json
+nix eval --json --apply 'ps: map (p: p.pname or p.name) ps' \
+  '.#nixosConfigurations.msi.config.home-manager.users.volodia.home.packages' \
+  > docs/migration/msi-home-pkgs.json
+nix eval --json --apply 'ps: map (p: p.pname or p.name) ps' \
+  '.#darwinConfigurations.Volodias-MacBook-Pro.config.environment.systemPackages' \
+  > docs/migration/mac-system-pkgs.json
+nix eval --json --apply 'ps: map (p: p.pname or p.name) ps' \
+  '.#darwinConfigurations.Volodias-MacBook-Pro.config.home-manager.users.volodia.home.packages' \
+  > docs/migration/mac-home-pkgs.json
+```
+
+**Done when:** four JSON files exist and are non-empty.
+
+### Task 0.2 — Dump live system state from `msi`
+
+Run **on msi** (SSH from the control node), before it is reinstalled:
+
+```sh
+systemctl list-unit-files --state=enabled        > msi-units-system.txt
+systemctl --user list-unit-files --state=enabled > msi-units-user.txt
+ip -j addr; nmcli -t con show                     # network, for the firewall/NM port
+```
+
+Also copy off anything not in git that you'd miss: `~/.ssh/known_hosts`,
+browser profiles, `~/.local/share/` app data worth keeping. **This machine
+gets wiped in phase 6.**
+
+**Done when:** files are committed under `docs/migration/` and a
+`docs/migration/msi-backup-checklist.md` lists what must be preserved
+across the reinstall, with each item ticked as backed up.
+
+### Task 0.3 — Build the package-name mapping table
+
+The single most load-bearing artifact of this migration. Create
+`docs/migration/package-map.md`: one row per package from 0.1, with columns
+`nixpkgs attr | Fedora/Nobara source | exact name | verified?`.
+
+Sources, in order of preference: Nobara/Fedora main repo → RPM Fusion →
+COPR (`atim/*` covers many Rust tools) → Flatpak → Nix (`nix profile`) →
+drop it.
+
+Verify each on a live Nobara box (or a `fedora:41` container as a first
+pass) with `dnf search` / `dnf provides`. **Do not guess.** Names known to
+differ or to be absent from the main repos — check every one of these:
+`fd` (Fedora: `fd-find`), `bottom`, `starship`, `lazygit`, `difftastic`,
+`chezmoi`, `gdu`, `grc`, `mosh`, `zoxide`, `just`.
+
+Packages with no clean Fedora path go to the **Nix column** — that's what
+Determinate Nix is retained for. Prefer Nix over a hand-rolled COPR.
+
+Known drops (do not map): `mpv-rife`, `vsmlrt`, `vstrt`, `miscfilters`,
+`high-tide` (→ Flatpak if available), `noctalia*`, `hyprland*`, everything
+GNOME-specific, `nixos-*` tooling, `nix-index`/`comma`, `home-manager`.
+
+**Done when:** every entry from 0.1 has a decision and the `verified?`
+column is fully populated. **STOP and ask** if more than ~10 desktop
+packages have no source.
+
+### Task 0.4 — Reconcile the two chezmoi trees
+
+Produce `docs/migration/dotfiles-merge.md`: for every path present in both
+`chezmoi/` (this repo) and the old dotfiles repo, which one wins and why.
+
+Known conflicts to decide explicitly:
+
+- **`~/.config/nvim`** — **resolved** (§0): the inline tree here wins. Drop
+  the old repo's `.chezmoiexternal.toml` nvim entry; do not merge anything
+  from `VolodiaPG/vim`.
+- **zshrc** — HM output wins (see table above).
+- **`dot_config/kitty`, `dot_config/tmux`, `dot_config/git`, `dot_config/zathura`**
+  — present in both. The Nix-era versions are newer; diff them and take the
+  union deliberately, per file.
+- **`private_karabiner`** — present in both; diff.
+
+**Done when:** the table is complete and every row has a decision. Nothing is
+copied yet — that happens in phase 2.
+
+---
+
+## PHASE 1 — Scaffold
+
+### Task 1.1 — Create the Ansible skeleton
+
+Create `ansible/` per §2 with empty-but-valid roles. `ansible.cfg`:
+
+```ini
+[defaults]
+inventory = inventory/hosts.yml
+roles_path = roles
+vault_password_file = ~/.config/ansible/vault-pass
+host_key_checking = True
+stdout_callback = yaml
+[ssh_connection]
+pipelining = True
+```
+
+`requirements.yml`: `community.general`, `containers.podman`.
+
+**Verify:** `ansible-playbook --syntax-check playbooks/site.yml` passes;
+`ansible-lint` is clean.
+
+### Task 1.2 — Port `config.nix` → `group_vars/all.yml`
+
+`config.nix`'s `me` attrset is the existing single source of truth; keep that
+property. Port to snake_case: `username`, `full_name`, `email`,
+`signing_key`, `ssh_keys` (list of 3), `tailnet`, `hetzner_user`,
+`bot_email`, `bot_smtp_address`.
+
+Drop: `cachixName`, `extra-substituters`, `trusted-public-keys` —
+**except** keep the substituter list for the `nix` role (task 3.4), since
+Determinate Nix still benefits from them.
+
+`homeDirectory`/`chezmoiDirectory` were stdenv-conditional functions; in
+Ansible they become `home_dir: "{{ '/Users/' if ansible_system == 'Darwin' else '/home/' }}{{ username }}"`.
+
+**Verify:** `ansible -m debug -a 'var=ssh_keys' all` prints all three keys on
+both hosts.
+
+### Task 1.3 — Inventory
+
+```yaml
+all:
+  children:
+    linux:   { hosts: { msi: { ansible_host: msi.{{ tailnet }} } } }   # tailnet: goblin-alewife.ts.net
+    nobara:  { hosts: { msi: {} } }
+    darwin:  { hosts: { macbook: { ansible_connection: local } } }
+    desktop: { hosts: { msi: {}, macbook: {} } }
+```
+
+`home-server` is deliberately absent. Do not add it.
+
+**Verify:** `ansible-inventory --graph`.
+
+### Task 1.4 — Retire `m1`
+
+Delete `configurations/nixos/m1/` and its entry in `flake.nix`'s `nixosHosts`.
+Check whether any module becomes unused as a result (`nixos-apple-silicon`
+input; `modules/nixos/betterSleep.nix`, `elegant-boot.nix`, `ananicy.nix`,
+`hifi.nix`, `home-lab.nix` are referenced by msi too — keep those until
+phase 7).
+
+**Verify:** rule 1 (home-server evaluates); `nix flake check` passes;
+`nixos-apple-silicon` removed from `flake.lock` after `nix flake update`.
+
+### Task 1.5 — CI
+
+Replace the nix-building workflows for the *migrated* hosts with
+`ansible-lint` + `--syntax-check`. **Leave `deploy.yaml`'s `home-server`
+job alone** — that host still deploys from this repo. Remove only the `msi`
+build/cachix job, and only in phase 7.
+
+---
+
+## PHASE 2 — Dotfiles into chezmoi
+
+The bulk of the work, and fully reversible: for each Home Manager module,
+copy what it *generated* into chezmoi, delete the module, rebuild. If the
+rebuild is a no-op for that file, the port was exact.
+
+**The core technique:** HM-generated dotfiles are symlinks into the Nix
+store, so `cat ~/.zshrc > chezmoi/dot_zshrc` captures exact current
+behaviour. Do this **on the macOS host, which is still running HM**, before
+that host is cut over. Do not hand-rewrite what you can copy.
+
+Today `chezmoi/` is a **flat tree with no templates, no `.chezmoiignore`, no
+`run_*` scripts, and no `.chezmoi.toml.tmpl`** — all host/OS differentiation
+currently comes from Home Manager. That machinery must be built, not ported.
+
+### Task 2.1 — chezmoi config scaffolding (do this first)
+
+Create `chezmoi/.chezmoi.toml.tmpl` exposing: `host`, `role`
+(`desktop`/`mac`), `flavor` (`mocha`/`latte`), `email`, `signing_key`,
+`home_dir`. Source values from prompts on first `chezmoi init`, defaults
+derived from `.chezmoi.os` / `.chezmoi.hostname`.
+
+Create `.chezmoiignore`: mac excludes `dot_config/hypr`, `dot_config/noctalia`,
+`dot_config/OrcaSlicer`; Linux excludes `private_karabiner`. It must also
+carry over `**/*.src.ini` from the old repo's `.chezmoiignore` — those are
+inputs to `chezmoi_modify_manager`, not files to apply (task 2.9).
+
+`.chezmoiroot` already points at `chezmoi/` — leave it.
+
+Neither `.chezmoi.toml.tmpl` nor `.chezmoiexternal.toml` exists here yet; the
+old dotfiles repo has an `.chezmoiexternal.toml` (nvim) and an
+`.chezmoiignore` to start from. It has no `.chezmoi.toml.tmpl` either — the
+templating data is genuinely new work.
+
+**Verify:** `chezmoi execute-template < .chezmoi.toml.tmpl` renders on both
+OSes; `chezmoi diff` on the mac shows no unexpected churn.
+
+### Task 2.2 — `git.nix` → `dot_config/git/config.tmpl`
+
+31 lines. Template the signing key and email from chezmoi data; the
+credential helper differs per OS.
+
+### Task 2.3 — SSH bits from `common-home.nix`
+
+`~/.ssh/config` is already `static/config.ssh` — move it to
+`private_dot_ssh/config`. `authorized_keys` is generated from the key list →
+`private_dot_ssh/authorized_keys.tmpl`.
+
+Note `common-home.nix` sets HM's `programs.ssh.settings."*"` defaults
+explicitly; fold those into the config file rather than losing them.
+
+### Task 2.4 — `tmux.nix` (94 lines) → `dot_config/tmux/tmux.conf`
+
+`cat ~/.config/tmux/tmux.conf` from the live mac. The `tmux-session-color`
+helper it calls becomes a script (task 4.1).
+
+### Task 2.5 — `interactive.nix` (101 lines) → per-tool configs
+
+fzf, direnv (`direnv.toml` with the silent/`DIRENV_LOG_FORMAT` stdlib),
+lazygit (`lazygit/config.yml`, incl. the `useExternalDiffGitConfig` pager),
+zoxide (`--cmd cd`). Shell integration hooks move into the zshrc (2.6).
+
+Dropped here: `nix-index`/`comma` (Nix-specific) and `programs.opencode`
+(dropped per §0 — also delete `dot_config/opencode/` if it arrives from the
+old dotfiles repo).
+
+### Task 2.6 — `zsh.nix` (225 lines) → `dot_zshrc.tmpl` + fragments
+
+The gnarliest one. Notes:
+- It embeds a `date_since_last_nixpkgs` script built on `nixos-version`.
+  **Dead post-migration — drop it**, don't port it.
+- It has tmux session-name refresh hooks and `zle_application_mode` handling
+  — keep those.
+- Starship init, zoxide init, direnv hook, keychain, fzf bindings all land
+  here.
+- Nobara ships zsh but bash is the default shell; the `users` role must set
+  the login shell (task 4.2).
+
+Split into `dot_config/zsh/` fragments sourced by `dot_zshrc.tmpl` if the
+single file exceeds ~150 lines.
+
+### Task 2.7 — `catppuccin-theme.nix` + `theme-daemon.nix` → **drop, replace with Plasma native**
+
+Per §0, switching must stay instantaneous and chezmoi-independent. Plasma 6
+switches color schemes on a day/night schedule natively, so the custom
+daemon, the dual-flavor generation and the `theme-switcher` package all go
+away. Install a Catppuccin Plasma global theme and configure the native
+switch (task 4.7).
+
+The Catppuccin Plasma assets are **already vendored** in the old dotfiles
+repo — `dot_local/share/plasma/look-and-feel/` (Mocha/Latte plus `Custom
+dark`/`Custom light`), `dot_local/share/color-schemes/`, and
+`dot_local/share/aurorae/themes/`. Copy them across rather than re-sourcing
+from the KDE store; they are plain files chezmoi handles fine.
+
+Keep only per-app themes that Plasma can't drive — kitty, tmux, starship,
+bat — as static chezmoi files in the dark flavor. **STOP and ask** before
+investing in live per-app switching; §0 marks it low priority.
+
+### Task 2.8 — `mpv.nix` → chezmoi only
+
+`chezmoi/dot_config/mpv/{mpv.conf,input.conf}` already exist and stay.
+**Delete** `rife_high.py` and `rife25.py` (RIFE is dropped) and strip
+`mpv.conf` of RIFE/vapoursynth lines. Keep the auto-subtitle and UI
+settings, cache settings, and `ytdl-format`.
+
+Package: plain `mpv` from Nobara's repos (RPM Fusion), not `mpv-rife`.
+
+### Task 2.9 — KDE Plasma config — **already solved upstream, adopt it**
+
+`modules/home/gnome.nix` (424 lines of dconf) and `hyprland.nix` are both
+**dropped**, not ported.
+
+Plasma rewrites its own `~/.config/*rc` files at runtime, so chezmoi must not
+own them outright — it produces permanent diffs and silently lost settings.
+The old dotfiles repo already solves this with
+**[`chezmoi_modify_manager`](https://github.com/VorpalBlade/chezmoi_modify_manager)**:
+a `modify_<file>` script paired with a `<file>.src.ini` of the desired values,
+merged into whatever Plasma currently has. Adopt this pattern as-is — do not
+invent a `kwriteconfig6` alternative.
+
+Copy across from the old repo, then re-capture current values:
+
+```
+dot_config/modify_kdeglobals                           + kdeglobals.src.ini
+dot_config/modify_kwinrc                               + kwinrc.src.ini
+dot_config/modify_plasmashellrc                        + plasmashellrc.src.ini
+dot_config/modify_plasma-org.kde.plasma.desktop-appletsrc + .src.ini
+dot_config/modify_private_kglobalshortcutsrc           + .src.ini
+dot_config/modify_private_krunnerrc                    + .src.ini
+dot_config/private_kxkbrc      # fr/oss — already correct
+dot_config/private_{dolphinrc,kwinrulesrc,plasmanotifyrc,kded5rc}
+```
+
+Note the existing ignore rules — they matter and were clearly learned the hard
+way. `modify_private_kglobalshortcutsrc` ignores
+`ActivityManager/switch-to-activity-.*` (per-machine UUIDs) and the
+`org.chromium.Chromium` section (auto-generated). Expect to add more as
+per-machine keys surface; the symptom is a `chezmoi diff` that never goes
+quiet.
+
+**Two hard requirements:**
+
+1. `chezmoi_modify_manager` must be installed **before first apply** — add it
+   to the package lists (task 3.1; Fedora source needs verifying, it may be
+   `cargo install` or a COPR).
+2. Per the old repo's README, before the *first* apply on a new machine:
+   ```sh
+   rm ~/.config/plasma-org.kde.plasma.desktop-appletsrc
+   chezmoi apply
+   ```
+   Otherwise the merge creates duplicate containments, because panel
+   containment/applet IDs are auto-generated per machine. Put this in
+   `playbooks/bootstrap.yml` and in the msi cutover checklist (task 6.2).
+
+`private_kded5rc` is Plasma 5 era — verify the Plasma 6 equivalent on Nobara
+before copying it forward.
+
+### Task 2.10 — Remaining home modules
+
+`browser.nix` (46), `claude.nix` (129), `gui.nix` (95), `syncthing.nix` (17).
+
+`browser.nix` is **brave-origin**, confirmed current (§0). The old repo's
+`helium-chromium` is superseded — ignore it. Two things to resolve:
+- **Packaging**: verify whether a `brave-origin` Flatpak exists. Flathub's
+  `com.brave.Browser` is upstream Brave, **not** the same build — do not
+  silently substitute it. Order of preference: Flatpak of brave-origin →
+  Brave's RPM repo → Nix. If only upstream Brave is obtainable, **stop and
+  ask**; that is a different browser, not a packaging detail.
+- **Extensions**: HM declared them via `programs.chromium.extensions`
+  (bitwarden `nngceckbapebfimnlniiiahkandclblb`, sponsorblock
+  `mnjggcdmjocbbbhaepdhchncahnbgone`, Quedelix `phaodiidhofhdmfkjiacigibgikhfafn`).
+  The Ansible equivalent is a managed-policy JSON with `ExtensionInstallForcelist`
+  dropped into the browser's policies directory (`/etc/brave/policies/managed/`
+  or the Flatpak-scoped path). Preserve the three IDs exactly.
+
+`claude.nix` is worth reading closely: it deliberately does *not* own
+`~/.claude/settings.json` or `~/.claude.json` (Claude Code writes to them at
+runtime) and instead runs idempotent merge installers for the rtk hook and
+codegraph MCP entry. That pattern maps cleanly onto a chezmoi
+`run_onchange_` script — keep the merge semantics, don't switch to owning
+the files. The headroom wrapper becomes a script in `dot_local/bin/`.
+
+`syncthing.nix` becomes a systemd user unit written by Ansible (per the
+split rule) on Linux, and a `brew services` / launchd agent on macOS.
+
+### Task 2.11 — `neovim.nix` → packages only
+
+No dotfile work: the lua config already lives in `chezmoi/dot_config/nvim/`,
+and the module already avoids `programs.neovim` precisely to stay out of
+chezmoi's way. Only the package set moves (task 3.x): plain `neovim`, the
+LSPs/formatters/treesitter toolchain, and `nvim-pack-lock.json` continues to
+drive plugins. `wrapNeovimUnstable`/`wrapRc = false` has no successor —
+plain `nvim` reads `~/.config/nvim` directly.
+
+---
+
+## PHASE 3 — Packages
+
+### Task 3.1 — `roles/pkgs`
+
+Platform-dispatching role consuming plain lists:
+
+```yaml
+# group_vars/nobara.yml
+pkgs_dnf:     [ripgrep, fd-find, jq, ...]      # names VERIFIED in task 0.3
+pkgs_copr:    { "atim/starship": [starship], ... }
+pkgs_flatpak: [com.brave.Browser, ...]
+pkgs_nix:     [devenv, ...]                     # only where no RPM exists
+# group_vars/darwin.yml
+brew_formulae: [ripgrep, fd, ...]
+brew_casks:    [hiddenbar, karabiner-elements, tg-pro, bettermouse, alt-tab,
+                tidal, parsec, signal, vlc, calibre, steam, betterdisplay]
+```
+
+macOS is nearly a 1:1 port of the `homebrew` block already sitting in
+`modules/darwin/common-darwin.nix` (currently `enable = false`) — it just
+gets turned on under Ansible instead.
+
+`chezmoi` and **`chezmoi_modify_manager`** must both land here — the latter
+is a hard prerequisite for task 2.9 and is unlikely to be in Fedora's main
+repos (expect COPR, the upstream release binary, or `cargo install`).
+Verify and record the source.
+
+Remember rule: `state: present`, never `state: latest` on Nobara.
+
+**Verify:** second run reports zero changes on both hosts.
+
+### Task 3.2 — Flatpak
+
+`community.general.flatpak` + `flatpak_remote` for Flathub. Nobara ships
+Flathub already — check before adding. Port the GTK-config override
+(`flatpak override --user --filesystem=xdg-config/gtk-4.0:ro`) from
+`modules/nixos/desktop.nix`.
+
+### Task 3.3 — Fonts
+
+`modules/nixos/desktop.nix` sets fontconfig defaults: monospace = *Comic Code
+Ligatures* (licensed, in `persistent/.../fonts/comicode/`, transcrypt-encrypted),
+sans = Inter, serif = IBM Plex Serif. Port: install `inter-fonts`,
+`ibm-plex-fonts-all`, Noto CJK from dnf; ship Comic Code from the repo into
+`~/.local/share/fonts` (chezmoi, since it's per-user); write the fontconfig
+defaults as a chezmoi `dot_config/fontconfig/fonts.conf`.
+
+`joypixels` requires license acceptance — drop unless the user asks.
+
+### Task 3.4 — `roles/nix` — Determinate Nix
+
+Both hosts. Install via the Determinate installer
+(`curl -fsSL https://install.determinate.systems/nix | sh -s -- install --determinate`),
+guarded by a `creates:`/`command -v nix` check so it's idempotent.
+
+Carry the substituter list from `config.nix` (`me.extra-substituters` +
+`trusted-public-keys`) into `/etc/nix/nix.conf`. This keeps `devenv`, `.envrc`
+and direnv projects working, which is the whole reason Nix is retained.
+
+**On macOS this is a replacement, not a fresh install** — nix-darwin is
+currently managing the Nix installation there. See task 6.1; do not run the
+installer on the mac before nix-darwin is removed.
+
+---
+
+## PHASE 4 — System roles
+
+### Task 4.1 — In-repo scripts → `dot_local/bin/`
+
+| Package | Disposition |
+| --- | --- |
+| `tmux-session-color` | script → `chezmoi/dot_local/bin/` |
+| `openrouter-credits` | script → `chezmoi/dot_local/bin/` |
+| `claude-code-headroom`, `headroom` | scripts → `dot_local/bin/` |
+| `theme-switcher` | **dropped** (Plasma native, task 2.7) |
+| `xinstall`, `xmount` | installer helpers → `scripts/`, run by hand |
+| `high-tide` | Flatpak if available, else drop |
+| `mpv-rife` + `_vsmlrt`/`_vstrt`/`_miscfilters` | **dropped** |
+
+Each script currently gets its runtime deps from Nix. Add an explicit
+dependency check at the top, and add those deps to the package lists.
+
+### Task 4.2 — `roles/base` + `roles/users`
+
+From `modules/nixos/base.nix` (180 lines): locale `fr_FR.UTF-8` (all the
+`LC_*`), timezone `Europe/Paris`, console keymap `fr`, sysctl
+(`vm.max_map_count=6000000`, `fs.file-max`, `kernel.threads-max`), sshd
+(`PermitRootLogin prohibit-password`, SFTP), fail2ban (maxretry 5, the
+ignoreIP list), earlyoom (thresholds 5/5, and the `--prefer`/`--avoid`
+process lists — update them: `Hyprland`/`noctalia` are gone, `plasmashell`
+and `kwin_wayland` take their place), journald caps (200M/50M), user +
+groups + authorized_keys, zsh as login shell.
+
+Dropped from that module: `documentation.enable=false`, `nix.optimise`,
+`nix-ld`, `envfs` (all Nix-isms), `mutableUsers` (no analogue).
+
+### Task 4.3 — `roles/audio` (ex `hifi.nix`, 190 lines)
+
+Pipewire + realtime limits. Nobara ships Pipewire configured; port only the
+deltas (realtime group/limits, any custom config). Verify what's already
+there before writing anything.
+
+### Task 4.4 — `roles/desktop_linux`
+
+From `modules/nixos/desktop.nix`: kanata (unit + `static/kanata.lisp`, with
+`concurrent-tap-hold yes` and `Restart=always`/`RestartSec=1s`), XKB
+`fr`/`oss` with `eurosign:e,ctrl:swapcaps`, the i2c udev rule
+(`KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"`) + `i2c-dev` module +
+`i2c` group for ddcutil, `FREETYPE_PROPERTIES` env.
+
+Firewall: NixOS's `networking.firewall` → `firewalld`. Ports to carry over:
+TCP 22, 3389; TCP+UDP 1714–1764 (KDE Connect — now actually apt, on KDE);
+TCP 6881–6999 (torrents); UDP 3389, 5353 (mDNS).
+
+kanata under KDE/Wayland needs uinput access. The old dotfiles repo's
+`run_once_kanata.sh.tmpl` already works out the full recipe — create the
+`uinput` group, add the user to `input` and `uinput`, write
+`/etc/udev/rules.d/99-input.rules` with
+`KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"`,
+reload udev, then enable the **user** unit
+(`dot_config/systemd/user/kanata.service`). Port that logic into this role
+(it needs root, so it belongs in Ansible, not chezmoi). Note the script has a
+typo — `--sysname-match=uniput` — fix it rather than copying it.
+
+The XKB layout is set twice on Plasma: `private_kxkbrc` (task 2.9) covers the
+desktop session; this role covers the console/TTY keymap.
+
+### Task 4.5 — `roles/nvidia` (msi)
+
+**Check what Nobara already did first.** Nobara's NVIDIA edition ships the
+proprietary driver. Likely all that remains is the msi-specific bits from
+`configurations/nixos/msi/configuration.nix`: blacklist `nouveau` and
+`iTCO_wdt`, and the `nvidia-frequency` oneshot unit
+(`nvidia-smi -lmc 1620,2100`, `-lgc 210,3105`) that works around slow clock
+ramping.
+
+The old dotfiles repo has the same unit as `nvidia-clock-lock.service`, but
+with `-lmc 1620,21002` — note the trailing `2`. The two disagree and one is
+a typo. **Use the Nix module's `1620,2100`** (it is the value currently
+running on msi); do not copy the old repo's number.
+
+CUDA (`msi` was built with a cuda nixpkgs variant) — was only for
+`immich-ml`, which is `false` on msi. Confirm nothing else needs it, then
+drop.
+
+### Task 4.6 — `roles/gaming`, `roles/virtualization`, `roles/vpn`, `roles/networking`
+
+- gaming: Nobara is gaming-oriented and ships Steam/gamemode/mangohud —
+  verify, then port only gaps from `modules/nixos/gaming.nix` (33 lines).
+- virtualization: podman + distrobox (`libvirt.enable = false` on msi, so
+  skip libvirt).
+- vpn: tailscale (`modules/nixos/vpn.nix`, 63 lines) — repo + `tailscale up`
+  with an authkey from vault.
+- networking: NetworkManager is Nobara's default; port only the deltas
+  (`NetworkManager-wait-online` disabled, etc.).
+
+Dropped entirely: `kernel.nix` (CachyOS-kernel-specific — Nobara ships its
+own patched kernel), `impermanence.nix`, `hyperhdr.nix` (dropped per §0),
+`backlight-off.nix`,
+`betterSleep.nix` (verify Plasma/Nobara defaults suffice),
+`elegant-boot.nix` (was `false` on msi), `ananicy.nix` (Nobara ships
+ananicy-cpp — verify, then port the 410-line ruleset only if it isn't
+already covered), `home-lab.nix` (`false` on msi), `immich-ml.nix`
+(`false`), and `caddy.nix` (dropped per §0 — also drop
+`static/services-page/`).
+
+Also portable from the old dotfiles repo: `run_once_docker.sh.tmpl` (docker
+group) — needs root, so it becomes an Ansible role. `run_once_governor.tmpl`
+is **dropped** per §0.
+
+### Task 4.7 — `roles/kde`
+
+Plasma-level settings needing root, plus the Catppuccin global theme and the
+native day/night color scheme switch (the replacement for the theme daemon,
+task 2.7). SDDM config if needed.
+
+---
+
+## PHASE 5 — Secrets
+
+### Task 5.1 — Audit and prune
+
+The 13 agenix secrets, with a first-pass read of who uses them:
+
+| Secret | Used by | Likely disposition |
+| --- | --- | --- |
+| `hashed-password` | `base.nix` users | **msi**: not needed (Nobara sets the password at install) |
+| `tailscale-authkey` | vpn | keep → vault |
+| `access-token`, `envvars`, `pythong5k`, `mail.inria.password` | user scope | keep → vault, deployed to `$HOME` |
+| `cachix-token` | cachix push hook | **drop** (no more Nix builds to push) |
+| `hetzner-token`, `hetzner-data-encryption-key` | backup (home-server) | **home-server only — leave in agenix** |
+| `samba-user-password`, `tailscale-k8s-operator`, `fizzy-env`, `rss-password`, `ssh-remote-builder{,-pub}` | home-server services | **home-server only — leave in agenix** |
+
+**STOP and confirm the disposition column with the user before deleting
+anything.** Deleting an `.age` file that `home-server` still references
+breaks rule 1.
+
+Note the split: `secrets/` keeps serving `home-server` via agenix, while the
+migrated hosts get ansible-vault. Both coexist until phase 7.
+
+### Task 5.2 — ansible-vault
+
+Vault password at `~/.config/ansible/vault-pass` (mode 0600, **never
+committed**; store it in Bitwarden). `ansible/inventory/group_vars/all/vault.yml`
+encrypted with `ansible-vault`. Decrypt each surviving secret with
+`ragenix`/`agenix` once, re-encrypt into vault.
+
+`roles/secrets` writes user-scope secrets to their existing paths so nothing
+downstream changes: `~/.envvars.sh`, `~/.python-grid5000.yaml`,
+`~/.mail.inria.password.txt` (all mode 0400).
+
+transcrypt stays as-is for in-tree binaries (SSH keys, Comic Code fonts) —
+it's orthogonal to Nix and needs no migration.
+
+**Verify:** `git grep -n 'BEGIN.*PRIVATE\|password' ansible/` finds nothing
+in plaintext; a fresh clone + vault password reproduces every secret file.
+
+---
+
+## PHASE 6 — Cutover
+
+### Task 6.1 — macOS first (lowest risk, proves the stack)
+
+No bootloader, no reinstall, and nix-darwin uninstalls cleanly. Order:
+
+1. Ansible + chezmoi run **alongside** the existing nix-darwin setup;
+   resolve every conflict (chezmoi and HM both wanting a file) until
+   `chezmoi diff` is empty and `darwin-rebuild` is a no-op.
+2. **STOP — confirm with the user before this step.** Uninstall nix-darwin
+   and Home Manager. Preserve `/opt/homebrew`: it is currently owned by
+   `nix-homebrew`, and Homebrew must survive and be adopted by
+   `roles/homebrew`.
+3. Reinstall Nix via the Determinate installer (task 3.4).
+4. Port `modules/darwin/common-darwin.nix` (210 lines): TouchID sudo
+   (`security.pam.services.sudo_local` → `/etc/pam.d/sudo_local`),
+   `limit-maxfiles` launchd daemon (524288) + the `ulimit -n` shell init,
+   `NSWindowResizeTime` via `osx_defaults`, Rosetta install check.
+   Most of the file is commented-out yabai/skhd — do not port it.
+5. Port the old dotfiles repo's `run_once_defaults.tmpl` to `osx_defaults`
+   tasks — it is **more complete than the Nix module** (Finder hidden files
+   and sort order, instant Dock autohide, dated screenshots to `~/Downloads`,
+   `LSQuarantine` off, trackpad `FirstClickThreshold`, CMD-drag windows,
+   linear mouse). Remember the `killall Finder/Dock/SystemUIServer` those
+   need to take effect.
+6. Build `group_vars/darwin.yml` per §0.2 — the 8-cask intersection plus the
+   3 explicit keeps (`steam`, `calibre`, `qbittorrent`), plus the CLI tooling
+   from task 3.1. Carry nothing else that appears in only one source.
+
+**Rollback:** the nix-darwin generation is still in `/nix/var/nix/profiles`
+until step 2. Take a Time Machine snapshot before step 2 regardless.
+
+### Task 6.2 — msi: Nobara install
+
+**Destructive. STOP and confirm with the user before touching disks.**
+
+1. Verify task 0.2's backup checklist is fully ticked.
+2. Install Nobara KDE from the official ISO (the `installer` ISO and `disko`
+   config are not ported; partitioning is manual/guided).
+3. Keep the NixOS install bootable on a separate partition/disk if disk space
+   allows — cheapest possible rollback.
+4. Bootstrap: `playbooks/bootstrap.yml` (user, SSH keys, vault password,
+   tailscale) then `playbooks/site.yml`.
+5. Work through a functional checklist before declaring done: boots to
+   Plasma, NVIDIA driver active + `nvidia-frequency` applied, audio, kanata
+   remapping, fr/oss keyboard with swapped caps, tailscale up, syncthing
+   syncing, mpv plays HDR, Steam runs a game, `nix develop` works in a
+   devenv project, `chezmoi diff` clean, second `site.yml` run reports zero
+   changes.
+
+**Rollback:** reinstall NixOS from the flake — `configurations/nixos/msi/`
+is still in the repo at this point. Do not delete it until 6.2 is signed off.
+
+---
+
+## PHASE 7 — Decommission
+
+Only after both hosts are signed off. **Rule 1 still applies throughout:
+`home-server` stays on NixOS and must keep evaluating.**
+
+Delete: `configurations/nixos/msi/`, `configurations/darwin/`,
+`modules/darwin/`, `modules/home/`, and the `modules/nixos/*` files
+home-server does not import. Prune `flake.nix` (`darwinHosts`, msi from
+`nixosHosts`, and the inputs that become unused: `nix-darwin`, `nix-homebrew`,
+`home-manager` — *check*, home-server has a `home.nix`; `catppuccin`,
+`nix-index-database`, `nix-cachyos-kernel`, `high-tide`, `noctalia-greeter`).
+Drop `packages/mpv-rife/`. Prune the `overlays/` entries that lose consumers.
+
+Keep: `flake.nix` (slimmer), `modules/nixos/` for home-server, `secrets/`
+(agenix, home-server's), `kubernetes/`, `.gitattributes`/transcrypt.
+
+Rewrite `justfile` around Ansible (`just apply`, `just check`,
+`just deploy msi`, `just dots`) while keeping the home-server recipes
+(`just deploy home-server`, `just eval`). Rewrite `README.md`. Rename the
+repo (`nixos-configs` → e.g. `system-configs`) — note `config.nix`'s
+`chezmoiDirectory` hardcodes the path `~/Documents/nixos-configs` and
+`.chezmoi.toml.tmpl` will too.
+
+---
+
+## What this migration gives up
+
+State these to the user if they come up; do not pretend otherwise.
+
+1. **Atomic rollback.** No `nixos-rebuild --rollback`. Mitigate with btrfs
+   snapshots (`snapper`) configured in `roles/base`.
+2. **Idempotence is aspirational.** Ansible converges *toward* a state; it
+   never removes what you stopped declaring. Dropping a package from a list
+   leaves it installed. Budget for periodic drift audits.
+3. **Reproducible pins.** `flake.lock` → whatever Nobara ships today.
+4. **Cross-host evaluation.** `just eval-all` catching breakage on a host you
+   aren't sitting at is gone; `--check --diff` needs a reachable host.
+5. **Weaker CI.** Building a host's closure in CI → lint + syntax check.
+
+---
+
+## Progress
+
+| # | Task | Status | Notes |
+| --- | --- | --- | --- |
+| 0.1 | Dump Nix package sets | ☐ | |
+| 0.2 | Dump msi live state + backup checklist | ☐ | |
+| 0.3 | Package-name mapping table | ☐ | blocks phase 3 |
+| 0.4 | Reconcile the two chezmoi trees | ☐ | blocks phase 2; STOP on nvim |
+| 1.1 | Ansible skeleton | ☐ | |
+| 1.2 | `config.nix` → `group_vars/all.yml` | ☐ | |
+| 1.3 | Inventory | ☐ | |
+| 1.4 | Retire `m1` | ☐ | |
+| 1.5 | CI | ☐ | keep home-server deploy job |
+| 2.1 | chezmoi templating scaffold | ☐ | do first in phase 2 |
+| 2.2 | git config | ☐ | |
+| 2.3 | ssh config + authorized_keys | ☐ | |
+| 2.4 | tmux | ☐ | |
+| 2.5 | interactive tools | ☐ | |
+| 2.6 | zshrc | ☐ | largest |
+| 2.7 | theme → Plasma native | ☐ | |
+| 2.8 | mpv (strip RIFE) | ☐ | |
+| 2.9 | KDE Plasma config | ☐ | adopt `chezmoi_modify_manager` from old repo |
+| 2.10 | browser/claude/gui/syncthing | ☐ | |
+| 2.11 | neovim packages | ☐ | |
+| 3.1 | `roles/pkgs` | ☐ | |
+| 3.2 | flatpak | ☐ | |
+| 3.3 | fonts | ☐ | |
+| 3.4 | Determinate Nix | ☐ | |
+| 4.1 | scripts → `dot_local/bin` | ☐ | |
+| 4.2 | base + users | ☐ | |
+| 4.3 | audio | ☐ | |
+| 4.4 | desktop_linux | ☐ | |
+| 4.5 | nvidia | ☐ | |
+| 4.6 | gaming/virt/vpn/net | ☐ | |
+| 4.7 | kde | ☐ | |
+| 5.1 | secret audit | ☐ | STOP before deleting |
+| 5.2 | ansible-vault | ☐ | |
+| 6.1 | macOS cutover | ☐ | STOP before uninstalling nix-darwin |
+| 6.2 | msi Nobara install | ☐ | STOP before touching disks |
+| 7 | Decommission | ☐ | |
+
+---
+
+## Open questions for the user
+
+None outstanding — both rounds are answered and folded into §0/§0.1/§0.2.
+
+New questions will surface during phase 0, chiefly from task 0.3, where
+packages with no clean Fedora/Nobara source need a per-package ruling
+(Flatpak vs Nix vs drop). Agents should batch those rather than asking one
+at a time.
