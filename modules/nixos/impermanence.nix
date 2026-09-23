@@ -368,6 +368,7 @@ in
             ".zotero"
             ".cache/flatpak"
             ".cache/nvim"
+            "~/.cache/vsmlrt/"
             ".claude"
             ".t3"
           ];

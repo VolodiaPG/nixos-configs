@@ -38,8 +38,8 @@ in
     ];
 
     boot.kernelPackages = mkMerge [
-      # (mkIf cfg.cachyDesktop cachyos-kernel.linuxPackages-cachyos-latest-lto-x86_64-v3)
-      (mkIf cfg.cachyDesktop cachyos-kernel.linuxPackages-cachyos-bore-lto-x86_64-v3)
+      (mkIf cfg.cachyDesktop cachyos-kernel.linuxPackages-cachyos-latest-lto-x86_64-v3)
+      # (mkIf cfg.cachyDesktop cachyos-kernel.linuxPackages-cachyos-bore-lto-x86_64-v3)
       (mkIf cfg.cachyServer cachyos-kernel.linuxPackages-cachyos-server)
     ];
 
