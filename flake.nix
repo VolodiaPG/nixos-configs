@@ -273,7 +273,14 @@
         statix.enable = true;
         deadnix.enable = true;
         actionlint.enable = true;
-        shellcheck.enable = true;
+        shellcheck = {
+          enable = true;
+          # shellcheck has no zsh support (upstream declines it), so it lints
+          # the ~/.config/zsh fragments as sh and reports false positives:
+          # SC2148 for files that are sourced, never executed, and SC2034 for
+          # variables zsh itself consumes (SAVEHIST, HISTORY_IGNORE).
+          excludes = [ "^chezmoi/dot_config/zsh/" ];
+        };
         luacheck.enable = true;
         stylua.enable = true;
       };

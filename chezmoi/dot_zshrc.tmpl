@@ -1,0 +1,56 @@
+{{- /*
+     ~/.zshrc — PLAN.MD task 2.6 (modules/home/zsh.nix -> chezmoi).
+
+     Derived from the Home-Manager-generated ~/.zshrc on the macOS host, with
+     every /nix/store path replaced by a portable lookup and the NixOS-only
+     machinery removed (see chezmoi/dot_config/zsh/README-less notes in each
+     fragment header).
+
+     This file is only the loader: PATH/fpath bootstrap plus a source loop
+     over ~/.config/zsh/*.zsh, which run in numeric order. Add new shell
+     config as a numbered fragment there, not here.
+
+     NOTE: nothing below assumes zsh is the login shell — on Nobara bash
+     still is until the `users` role (task 4.2) changes it.
+*/ -}}
+# Managed by chezmoi (source: chezmoi/dot_zshrc.tmpl). Do not edit in place.
+
+typeset -U path cdpath fpath manpath
+
+# ── fpath ────────────────────────────────────────────────────────────────
+# Nix profiles still contribute completions: PLAN.MD §0 keeps Determinate Nix
+# as a package manager for devenv/direnv. NIX_PROFILES is unset when Nix is
+# absent, so the loop is a no-op there.
+for profile in ${(z)NIX_PROFILES}; do
+  fpath+=($profile/share/zsh/site-functions $profile/share/zsh/$ZSH_VERSION/functions $profile/share/zsh/vendor-completions)
+done
+unset profile
+
+# ── PATH ─────────────────────────────────────────────────────────────────
+# Replaces Home Manager's /etc/profiles/per-user/$USER/bin and
+# ~/.nix-profile/bin injection. Prepended lowest-priority first;
+# `typeset -U path` above keeps it de-duplicated across nested shells.
+for _dir in /nix/var/nix/profiles/default/bin "$HOME/.nix-profile/bin"; do
+  [[ -d $_dir ]] && path=("$_dir" $path)
+done
+{{- if eq .chezmoi.os "darwin" }}
+[[ -d /opt/homebrew/bin ]] && path=(/opt/homebrew/bin $path)
+{{- end }}
+# chezmoi/dot_local/bin (PLAN.MD task 4.1) wins over everything.
+[[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" $path)
+unset _dir
+export PATH
+
+# ── shell ────────────────────────────────────────────────────────────────
+# zsh.nix assigned SHELL to the zsh store path. Tools that spawn a subshell
+# (lazygit, fzf, direnv) read it, and on Nobara the login shell is still bash
+# until the `users` role (task 4.2) runs, so leaving it inherited would hand
+# them bash. Resolved from PATH instead of hardcoded.
+SHELL=${commands[zsh]:-$SHELL}
+export SHELL
+
+# ── fragments ────────────────────────────────────────────────────────────
+for _frag in ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/*.zsh(N); do
+  source $_frag
+done
+unset _frag
