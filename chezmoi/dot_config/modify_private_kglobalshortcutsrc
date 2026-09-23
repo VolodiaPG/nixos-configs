@@ -1,0 +1,7 @@
+#!/usr/bin/env chezmoi_modify_manager
+
+source auto
+
+# ponytail: ignore machine-specific keys (activity UUIDs, Chromium auto-generated extension shortcuts)
+ignore regex "ActivityManager" "switch-to-activity-.*"
+ignore section "org.chromium.Chromium"

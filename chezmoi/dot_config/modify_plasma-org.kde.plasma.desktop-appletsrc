@@ -1,0 +1,9 @@
+#!/usr/bin/env chezmoi_modify_manager
+
+source auto
+
+# ponytail: ignore machine-specific keys (activity UUIDs, screen numbers, resolution-dependent geometry)
+ignore section "ScreenMapping"
+ignore regex ".*" "activityId"
+ignore regex ".*" "lastScreen"
+ignore regex ".*" "ItemGeometries.*"

@@ -65,3 +65,59 @@
     type = "file"
     url = "https://raw.githubusercontent.com/Samillion/ModernZ/v0.3.3/modernz.lua"
     refreshPeriod = "720h"
+
+# catppuccin/kde — the ONE colour scheme the old dotfiles repo referenced but
+# never shipped (PLAN.MD §0.1 gap 1, resolved in task 2.7).
+#
+# Both light look-and-feels we adopted (`Catppuccin-Latte-Mauve` and
+# `Custom light`) set `[kdeglobals][General] ColorScheme=CatppuccinLatteMauve`,
+# but only `CatppuccinMochaMauve.colors` was vendored. Without this entry
+# light mode falls back to Breeze and the light L&F is broken on first apply.
+#
+# The dark counterpart is NOT fetched here: the vendored
+# `dot_local/share/color-schemes/CatppuccinMochaMauve.colors` is a
+# hand-tweaked / older-generation variant of upstream's (it differs from
+# upstream at this pin in ChangeSelectionColor, DecorationHover and the
+# whole [Colors:Selection] block), and it is the state the user actually
+# ran. Keeping it in-tree preserves observed dark-mode appearance byte for
+# byte; only the missing light scheme comes from upstream. That asymmetry is
+# deliberate — see docs/migration/kde-cutover.md.
+#
+# Pin = catppuccin/kde main @ 6606b517 (resolved 2026-09-23). Ignored on
+# macOS by .chezmoiignore (`.local/share/color-schemes`).
+
+[".local/share/color-schemes/CatppuccinLatteMauve.colors"]
+
+    type = "file"
+    url = "https://raw.githubusercontent.com/catppuccin/kde/6606b5179cfc1e9ba5c3b6b70e15c468e2dddca2/generated/color-schemes/CatppuccinLatteMauve.colors"
+    refreshPeriod = "720h"
+
+# tmux-plugins/resurrect + tmux-plugins/continuum — replace the two
+# `run-shell /nix/store/...-tmuxplugin-{resurrect,continuum}-.../...` lines HM
+# baked into ~/.config/tmux/tmux.conf. Task 2.4 rewrote them to
+# `run-shell ~/.config/tmux/plugins/{resurrect,continuum}/...tmux`, but the
+# matching externals were never added — without these two entries tmux starts
+# with a `run-shell` failure on every new server and silently loses session
+# save/restore.
+#
+# continuum requires resurrect: it is a scheduler that shells out to
+# resurrect's save script. Order in this file does not matter (chezmoi fetches
+# both before tmux ever runs), but both must be present.
+#
+# Pins = pkgs.tmuxPlugins.{resurrect,continuum} src.rev:
+#   tmuxplugin-resurrect-unstable-2022-05-01
+#   tmuxplugin-continuum-unstable-2022-01-25
+
+[".config/tmux/plugins/resurrect"]
+type = "archive"
+url = "https://github.com/tmux-plugins/tmux-resurrect/archive/ca6468e2deef11efadfe3a62832ae67742505432.tar.gz"
+exact = true
+stripComponents = 1
+refreshPeriod = "720h"
+
+[".config/tmux/plugins/continuum"]
+type = "archive"
+url = "https://github.com/tmux-plugins/tmux-continuum/archive/fc2f31d79537a5b349f55b74c8ca69abaac1ddbb.tar.gz"
+exact = true
+stripComponents = 1
+refreshPeriod = "720h"
