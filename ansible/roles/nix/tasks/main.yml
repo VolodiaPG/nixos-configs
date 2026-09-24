@@ -72,7 +72,7 @@
         path: /etc/nix
         state: directory
         owner: root
-        group: root
+        group: "{{ root_group }}"
         mode: "0755"
       become: true
 
@@ -86,7 +86,7 @@
         src: nix.custom.conf.j2
         dest: "{{ nix_custom_conf_path }}"
         owner: root
-        group: root
+        group: "{{ root_group }}"
         mode: "0644"
       become: true
 

@@ -15,6 +15,21 @@ signing_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7eU7+cUxzOuU3lfwKODvOvCVa6PM
 home_dir: "{{ '/Users/' if ansible_system == 'Darwin' else '/home/' }}{{ username }}"
 chezmoi_dir: "{{ home_dir }}/Documents/nixos-configs"
 
+# Primary group of {{ username }}, which is NOT the same on both platforms:
+# Fedora/Nobara create a user-private group named after the user, while
+# macOS puts ordinary users in `staff` and has no `volodia` group at all
+# (`dscl . -read /Groups/volodia` -> eDSRecordNotFound). Any cross-platform
+# role that sets `group:` must use this, not `username`, or it hard-fails
+# on Darwin with "chgrp failed: failed to look up group volodia".
+# Linux-only roles may keep using `username` directly.
+user_group: "{{ 'staff' if ansible_system == 'Darwin' else username }}"
+
+# Same problem for gid 0: Linux calls it `root`, macOS calls it `wheel` and
+# has no `root` group at all (`python3 -c "import grp; grp.getgrnam('root')"`
+# -> KeyError on Darwin, while getgrgid(0) returns `wheel`). Any
+# cross-platform role writing a root-owned file must use this.
+root_group: "{{ 'wheel' if ansible_system == 'Darwin' else 'root' }}"
+
 tailnet: "goblin-alewife.ts.net"
 
 # Both storagebox users are live (PLAN.MD §0): the general account and the
