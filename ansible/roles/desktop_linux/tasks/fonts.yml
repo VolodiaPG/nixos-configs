@@ -1,0 +1,44 @@
+---
+# desktop_linux: fonts (PLAN.MD task 3.3).
+#
+# Ported from modules/nixos/desktop.nix `fonts` block:
+#   fonts.packages           -> corefonts, inter, ibm-plex, joypixels,
+#                                noto-fonts-cjk-{sans,serif} (+ commented-out
+#                                roboto/roboto-serif/iosevka-term, never enabled)
+#   fonts.fontconfig.defaultFonts -> monospace = Comic Code Ligatures,
+#                                     sansSerif = Inter, serif = IBM Plex Serif
+#
+# `font_packages` (dnf names, verified against docs/migration/package-map.md)
+# lives in group_vars/desktop.yml. It deliberately excludes:
+#   - joypixels: requires nixpkgs.config.joypixels.acceptLicense = true in
+#     the old module (license acceptance); dropped per PLAN.MD task 3.3
+#     unless the user asks for it back.
+#   - corefonts: no Fedora/RPM Fusion package exists (see package-map.md);
+#     dropped for the same "unless asked" reason as joypixels.
+#
+# The fontconfig defaults themselves are shipped as a plain (non-templated)
+# chezmoi file at chezmoi/dot_config/fontconfig/fonts.conf, not applied here.
+#
+# Comic Code Ligatures (the monospace default) is NOT installed by this
+# file. It is a licensed, transcrypt-encrypted, per-user asset currently
+# living under persistent/home/volodia/.local/share/fonts/comicode/ —
+# how it should reach ~/.local/share/fonts via chezmoi is unresolved; see
+# the migration report for options. Do not add tasks here that copy it
+# until that's decided.
+
+- name: "Fonts | install dnf font packages"
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ font_packages }}"
+    state: present
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - font_packages | length > 0
+
+- name: "Fonts | refresh font cache"
+  ansible.builtin.command:
+    cmd: fc-cache -f
+  register: _fonts_fc_cache
+  changed_when: false
+  when:
+    - ansible_facts['os_family'] == "RedHat"

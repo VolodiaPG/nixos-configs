@@ -1,3 +1,10 @@
 ---
 # Defaults for the desktop_linux role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+
+# Task 3.3 (fonts). font_packages itself lives in
+# group_vars/desktop.yml (shared with macbook; see that file's comment for
+# why). This default is only a safety net so fonts.yml doesn't fail with an
+# undefined variable if group_vars is ever skipped (e.g. ansible-playbook
+# run with --limit against a stray inventory).
+font_packages: []

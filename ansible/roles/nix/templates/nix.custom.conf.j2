@@ -1,0 +1,16 @@
+# Managed by Ansible (roles/nix) — do not hand-edit, changes will be
+# overwritten on the next run.
+#
+# Determinate Nix owns /etc/nix/nix.conf outright and regenerates it on
+# every install/upgrade (its own header says "do not modify! this file
+# will be replaced!"); it `!include`s nix.custom.conf for local overrides.
+# This file is that override file — never write to nix.conf itself.
+#
+# Values below are carried from config.nix's `me` attrset (extra-
+# substituters, trusted-public-keys), ported to
+# inventory/group_vars/all/main.yml by task 1.2 as nix_extra_substituters /
+# nix_trusted_public_keys. Fix drift at that source, not here.
+
+extra-substituters = {{ nix_extra_substituters | join(' ') }}
+trusted-public-keys = {{ nix_trusted_public_keys | join(' ') }}
+trusted-users = {{ nix_trusted_users | join(' ') }}

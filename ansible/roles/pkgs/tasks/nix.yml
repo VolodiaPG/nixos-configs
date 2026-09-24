@@ -1,0 +1,40 @@
+---
+# Task 3.1 — nix_profile_packages (map §5), installed only where no RPM
+# exists. `roles/nix` (task 3.4) is still a scaffold at the time this was
+# written and runs before `pkgs` in playbooks/linux.yml, so on a fully
+# built-out run `nix` is already on PATH; this guards against running
+# `pkgs` on its own, or before task 3.4 lands, by skipping cleanly rather
+# than hard-failing.
+#
+# Idempotency guess (cannot be run/verified from here): `nix profile
+# install` errors if an element for the same store path is already
+# present, so this greps `nix profile list` output for the package name
+# first and only installs what isn't already listed. `nix profile list`'s
+# text format includes the flake attribute (e.g. `nixpkgs#devenv`), so a
+# plain substring match on the package name is expected to work, but it
+# has not been exercised against a real profile — flag this if the second
+# run does not come back clean.
+
+- name: Check for a nix binary
+  ansible.builtin.shell: command -v nix
+  register: nix_bin_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  args:
+    executable: /bin/sh
+
+- name: List currently installed nix-profile packages
+  ansible.builtin.command: nix profile list
+  register: nix_profile_list
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: nix_bin_check.rc == 0
+
+- name: Install nix-profile packages
+  ansible.builtin.command: "nix profile install nixpkgs#{{ item }}"
+  loop: "{{ nix_profile_packages | default([]) }}"
+  when:
+    - nix_bin_check.rc == 0
+    - item not in (nix_profile_list.stdout | default(''))

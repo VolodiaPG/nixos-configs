@@ -1,0 +1,57 @@
+---
+# Task 3.1 — Fedora main-repo packages (map §1 + §1b) plus chezmoi and
+# chezmoi_modify_manager (map §6 `upstream`), both hard prerequisites for
+# task 2.9/2.10.
+
+- name: Install dnf packages
+  ansible.builtin.dnf:
+    name: "{{ dnf_packages | default([]) }}"
+    state: present
+  become: true
+  when: (dnf_packages | default([])) | length > 0
+
+# --- chezmoi_modify_manager -------------------------------------------
+# Not in Fedora, no COPR (Copr API search returns zero projects), not in
+# nixpkgs, not in Homebrew. Installed from the upstream GitHub release
+# tarball per docs/migration/kde-cutover.md:
+#   - pinned v3.7.1
+#   - installed to ~/.local/bin/chezmoi_modify_manager, mode 0755
+#   - never use cmm's own -u/--upgrade (would drift the pinned version)
+#
+# Idempotency is a version check (`--version` against the pinned value),
+# not `creates:`, so bumping chezmoi_modify_manager_version here actually
+# triggers a reinstall instead of being silently ignored by a stale
+# creates: path.
+
+- name: Check installed chezmoi_modify_manager version
+  ansible.builtin.command: "{{ chezmoi_modify_manager_install_dir }}/chezmoi_modify_manager --version"
+  register: cmm_installed_version
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: chezmoi_modify_manager | install/upgrade to the pinned version
+  when: chezmoi_modify_manager_version not in (cmm_installed_version.stdout | default(''))
+  block:
+    - name: Ensure ~/.local/bin exists
+      ansible.builtin.file:
+        path: "{{ chezmoi_modify_manager_install_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download chezmoi_modify_manager {{ chezmoi_modify_manager_version }}
+      ansible.builtin.get_url:
+        url: "{{ chezmoi_modify_manager_url }}"
+        dest: "/tmp/{{ chezmoi_modify_manager_asset }}"
+        mode: "0644"
+
+    - name: Extract chezmoi_modify_manager into ~/.local/bin
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ chezmoi_modify_manager_asset }}"
+        dest: "{{ chezmoi_modify_manager_install_dir }}"
+        remote_src: true
+
+    - name: Ensure chezmoi_modify_manager is executable
+      ansible.builtin.file:
+        path: "{{ chezmoi_modify_manager_install_dir }}/chezmoi_modify_manager"
+        mode: "0755"

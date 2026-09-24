@@ -1,6 +1,114 @@
 ---
-# nix: Determinate Nix installer + nix.conf substituters
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | nix role is not implemented yet"
+# roles/nix — Determinate Nix, retained only as a package manager for
+# devenv/direnv/.envrc projects. See PLAN.MD Task 3.4 and "PHASE 2 — what
+# it leaves behind", item 4.
+#
+# Safety: on macOS, nix-darwin is STILL the Nix installer/manager until
+# PLAN.MD task 6.1 removes it. Running the Determinate installer while
+# nix-darwin is active would fight nix-darwin for ownership of /nix and
+# /etc/nix. Detect that state and skip entirely rather than proceed —
+# this guard is the most important property of this role.
+
+- name: "Nix-darwin guard | check for darwin-rebuild"
+  ansible.builtin.command: command -v darwin-rebuild
+  register: nix_darwin_rebuild_check
+  changed_when: false
+  failed_when: false
+  when: ansible_system == 'Darwin'
+
+- name: "Nix-darwin guard | check whether /run/current-system is a nix-darwin generation"
+  ansible.builtin.stat:
+    path: /run/current-system
+  register: nix_darwin_current_system
+  when: ansible_system == 'Darwin'
+
+- name: "Nix-darwin guard | set fact"
+  ansible.builtin.set_fact:
+    nix_darwin_present: >-
+      {{
+        ansible_system == 'Darwin' and (
+          (nix_darwin_rebuild_check.rc | default(1)) == 0
+          or (nix_darwin_current_system.stat.lnk_source | default('')) is search('darwin-system')
+        )
+      }}
+
+- name: "Nix-darwin guard | skip, nix-darwin still owns Nix on this host"
   ansible.builtin.debug:
-    msg: "role 'nix' is a scaffold; see PLAN.MD"
+    msg: >-
+      Skipping roles/nix: nix-darwin is still managing the Nix install on
+      this host (darwin-rebuild is on PATH and/or /run/current-system is a
+      darwin-system generation). Do not run the Determinate installer here
+      until nix-darwin has been removed (PLAN.MD task 6.1 — "macOS first").
+  when: nix_darwin_present | default(false)
+
+- name: Install and configure Determinate Nix
+  when: not (nix_darwin_present | default(false))
+  block:
+    - name: Check whether Nix is already installed
+      ansible.builtin.command: command -v nix
+      register: nix_present_check
+      changed_when: false
+      failed_when: false
+
+    # Verified against the live install.determinate.systems/nix shell
+    # wrapper (2026-09-24): the wrapper only downloads and execs the
+    # `nix-installer` binary with "$@" — it does not interpret any flags
+    # itself. Flags below go to `nix-installer install`:
+    #   --determinate  enables Determinate Nix (PLAN.MD's command)
+    #   --no-confirm   required for non-interactive runs; PLAN.MD's command
+    #                  as written omits it and would hang waiting on a TTY
+    #                  prompt under Ansible.
+    - name: Install Nix via the Determinate installer
+      ansible.builtin.shell: |
+        set -o pipefail
+        curl -fsSL {{ nix_installer_url }} | sh -s -- install --no-confirm --determinate
+      args:
+        executable: /bin/sh
+        creates: "{{ nix_marker_bin }}"
+      when: nix_present_check.rc != 0
+
+    - name: Ensure /etc/nix exists
+      ansible.builtin.file:
+        path: /etc/nix
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      become: true
+
+    # Determinate Nix regenerates /etc/nix/nix.conf itself and !includes
+    # nix.custom.conf for overrides (confirmed from a live install's
+    # nix.conf header: "do not modify! this file will be replaced!").
+    # Writing to nix.conf directly would be clobbered on the next
+    # Determinate upgrade, so we only ever touch nix.custom.conf.
+    - name: Write /etc/nix/nix.custom.conf (substituters, keys, trusted-users)
+      ansible.builtin.template:
+        src: nix.custom.conf.j2
+        dest: "{{ nix_custom_conf_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      become: true
+
+    # nix-direnv half of PHASE-2 item 4: make sure a real nix-direnv exists
+    # again in the managed user's Nix profile. The other half — repointing
+    # direnv's global direnvrc away from the broken, hardcoded-store-path
+    # ~/.config/direnv/lib/hm-nix-direnv.sh at ~/.nix-profile/share/nix-direnv/direnvrc
+    # — is a chezmoi source-tree edit (outside roles/nix) and is NOT done
+    # here; report it to the chezmoi role owner.
+    - name: Check whether nix-direnv is already in {{ username }}'s Nix profile
+      ansible.builtin.command: nix profile list
+      become: true
+      become_user: "{{ username }}"
+      register: nix_profile_list
+      changed_when: false
+      failed_when: false
+      when: nix_install_nix_direnv | default(true)
+
+    - name: Install nix-direnv into {{ username }}'s Nix profile
+      ansible.builtin.command: "nix profile install {{ nix_direnv_package }}"
+      become: true
+      become_user: "{{ username }}"
+      when: >-
+        (nix_install_nix_direnv | default(true))
+        and 'nix-direnv' not in (nix_profile_list.stdout | default(''))

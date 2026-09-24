@@ -1,6 +1,40 @@
 ---
-# pkgs: platform-dispatching package role (dnf/flatpak/brew/nix)
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | pkgs role is not implemented yet"
+# pkgs: platform-dispatching package role (PLAN.MD task 3.1).
+#
+# Nobara (the only Linux group member today, see inventory/hosts.yml):
+# RPM Fusion -> COPR -> dnf (incl. chezmoi + chezmoi_modify_manager) ->
+# nix-profile -> flatpak. Ordered so a repo/COPR is always enabled before
+# anything from it is installed.
+#
+# Darwin: no-op. roles/homebrew (task 3.1/6.1) owns package installation
+# there — see inventory/group_vars/darwin.yml.
+#
+# Package name lists themselves live in inventory/group_vars/nobara.yml,
+# not here — see that file's header for provenance (docs/migration/
+# package-map.md) and the discrepancies found while populating it.
+
+- name: pkgs | Nobara package installation
+  when: ansible_system == 'Linux'
+  block:
+    - name: pkgs | RPM Fusion (map §2)
+      ansible.builtin.include_tasks: rpmfusion.yml
+
+    - name: pkgs | COPR (map §3)
+      ansible.builtin.include_tasks: copr.yml
+
+    - name: pkgs | dnf packages + chezmoi/chezmoi_modify_manager (map §1/§1b/§6)
+      ansible.builtin.include_tasks: dnf.yml
+
+    - name: pkgs | nix-profile packages (map §5)
+      ansible.builtin.include_tasks: nix.yml
+
+    # flatpak.yml (task 3.2, map §4) is owned by a separate agent working
+    # in parallel. Guarded on file existence so this role degrades to a
+    # no-op for that step rather than failing if it ever goes missing.
+    - name: pkgs | flatpak remotes, packages and GTK override (task 3.2)
+      ansible.builtin.include_tasks: flatpak.yml
+
+- name: pkgs | Darwin — no-op, roles/homebrew owns package installation
   ansible.builtin.debug:
-    msg: "role 'pkgs' is a scaffold; see PLAN.MD"
+    msg: "pkgs role is a no-op on Darwin; see roles/homebrew"
+  when: ansible_system == 'Darwin'

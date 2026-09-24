@@ -942,6 +942,86 @@ installer on the mac before nix-darwin is removed.
 
 ---
 
+### PHASE 3 — what it leaves behind
+
+Hard blockers (each must be closed before the phase named):
+
+1. **Comic Code Ligatures is not installed by anything.** The 5 `.otf` files
+   sit at `persistent/home/volodia/.local/share/fonts/comicode/`, transcrypt-
+   encrypted, and are currently *decrypted plaintext* in the working copy.
+   They were deliberately NOT copied into `chezmoi/` — that would put a paid
+   font in the repo in the clear. Note `.gitattributes` matches them by bare
+   basename, so a copy anywhere in the repo would also hit transcrypt's
+   filter; that is accidental, not a mechanism, and must not be relied on.
+   Until this is resolved `fonts.conf` names a monospace family that does not
+   exist and every terminal falls back to the fontconfig default.
+   Options: (a) leave them under transcrypt and have Ansible install them
+   into `~/.local/share/fonts` at apply time, never touching the chezmoi
+   tree; (b) migrate to chezmoi's native `encrypted_` + age once phase 5
+   stands up a backend. **Owner: phase 5.**
+2. **`chezmoi_modify_manager` PATH wiring is not done.** `roles/pkgs` installs
+   the binary to `~/.local/bin` and exports the location as
+   `chezmoi_modify_manager_install_dir`, but the `modify_` scripts' shebang
+   resolves from `PATH` at `chezmoi apply` time, and `roles/chezmoi` is still
+   a scaffold. Consume that variable there. **Owner: task 4.7 / `roles/chezmoi`.**
+3. **`~/.config/direnv/lib/hm-nix-direnv.sh` is still the resholved store
+   path.** `roles/nix` now installs `nix-direnv` into the user profile, but
+   nothing repoints direnv at `~/.nix-profile/share/nix-direnv/direnvrc`.
+   That file is in the chezmoi tree, outside `roles/nix`. **Owner: phase 6.**
+
+Degradations accepted for now:
+
+4. **`/etc/nix/nix.custom.conf` loses ~17 settings.** PLAN's task 3.4 only
+   specified carrying the substituters, so `roles/nix` templates exactly
+   `extra-substituters`, `trusted-public-keys` and `trusted-users`. The live
+   nix-darwin file also sets `sandbox = false`, `fallback`, `keep-derivations`,
+   `keep-env-derivations`, `accept-flake-config`, `warn-dirty`, `nix-path`,
+   `connect-timeout`, `http-connections`, the narinfo TTLs and a
+   `post-build-hook` pointing at a `/nix/store` cachix push hook. The hook is
+   a store path and dies at cutover: local builds stop being pushed to
+   `volodiapg.cachix.org` while still being read from it.
+5. **`FREETYPE_PROPERTIES` is not ported.** `modules/nixos/desktop.nix` sets
+   `cff:no-stem-darkening=0 autofitter:no-stem-darkening=0` as a session-wide
+   env var for font rendering. `.zshenv` cannot carry it (GUI apps never read
+   it); on Fedora it belongs in `/etc/environment`. **Owner: task 4.4.**
+6. **`corefonts` is dropped.** No Fedora or RPM Fusion package exists; it
+   would need `cabextract` plus the Microsoft installer. Web pages specifying
+   Arial/Times New Roman will substitute.
+
+Unverified / needs a real machine:
+
+7. **Nothing in phase 3 has run anywhere.** `msi` is still NixOS/Hyprland, so
+   no `dnf`, `flatpak`, `copr` or `fc-cache` call has ever executed. Package
+   names come from a `fedora:43` container, not Nobara. The stated acceptance
+   bar — "second run reports zero changes on both hosts" — is unmet and
+   untestable until the Nobara install.
+8. **`nix profile list` parsing is a guess.** `roles/pkgs`' nix step decides
+   idempotency by substring-matching that command's output; its exact format
+   was never checked against a live Determinate Nix profile. This is the most
+   likely task to report spurious changes on a second run.
+9. **`vmnet-helper` + the `nirs/vmnet-helper` tap are unaccounted for.**
+   Both are in `modules/darwin/common-darwin.nix` (lines 43, 60) and appear
+   nowhere in `docs/migration/package-map.md`, not even in its drop list —
+   a genuine gap in task 0.3. Left out of `brew_formulae`/`brew_taps` rather
+   than guessed. Likely needed by `podman machine`.
+
+Corrections to this plan found while executing phase 3 (the plan text above
+has NOT been rewritten; these are the facts):
+
+- Task 3.3's Inter RPM is `rsms-inter-fonts`, not `inter-fonts` (no such
+  package).
+- Task 3.4's installer command omits `--no-confirm` and would hang forever
+  under Ansible waiting on a TTY prompt.
+- Task 3.1's `brew_casks` example is stale: it omits `qbittorrent` and lists
+  `hiddenbar` and `alt-tab`, both retired by §0.2. The real set is 13.
+- `package-map.md` files `com.brave.Browser` under §5 `nix` although its own
+  source column says `flatpak`; its §10a header says 12 casks while its table
+  and Counts say 13. The source column and Counts were followed.
+- Task 3.2 was accurate — `modules/nixos/desktop.nix` has exactly the one
+  `flatpak override --user --filesystem=xdg-config/gtk-4.0:ro` it describes.
+
+---
+
 ## PHASE 4 — System roles
 
 ### Task 4.1 — In-repo scripts → `dot_local/bin/`
@@ -1229,10 +1309,10 @@ State these to the user if they come up; do not pretend otherwise.
 | 2.9 | KDE Plasma config | ☑ | all 17 files byte-identical to old repo; **untested — no host runs Plasma yet**, see `docs/migration/kde-cutover.md` |
 | 2.10 | browser/claude/gui/syncthing | ☑ | Flatpak policy path corrected; specs in `docs/migration/` |
 | 2.11 | neovim packages | ☑ | **blocker found**: `init.lua` plugin list is commented out |
-| 3.1 | `roles/pkgs` | ☐ | |
-| 3.2 | flatpak | ☐ | |
-| 3.3 | fonts | ☐ | |
-| 3.4 | Determinate Nix | ☐ | |
+| 3.1 | `roles/pkgs` | ☑ | dnf 71 / rpmfusion 2 / copr 3 / nix 21; brew 13 casks + 52 formulae |
+| 3.2 | flatpak | ☑ | 6 app IDs, GTK override ported |
+| 3.3 | fonts | ◐ | fontconfig + 4 font RPMs done; Comic Code unresolved |
+| 3.4 | Determinate Nix | ◐ | role done; nix.custom.conf carries only 3 of ~20 settings |
 | 4.1 | scripts → `dot_local/bin` | ☐ | |
 | 4.2 | base + users | ☐ | |
 | 4.3 | audio | ☐ | |

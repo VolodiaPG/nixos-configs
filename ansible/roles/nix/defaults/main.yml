@@ -1,3 +1,40 @@
 ---
-# Defaults for the nix role. Do not duplicate anything from
-# group_vars/all/main.yml here.
+# roles/nix defaults — see PLAN.MD Task 3.4.
+#
+# Substituter / signing-key data lives in inventory/group_vars/all/main.yml
+# (nix_extra_substituters, nix_trusted_public_keys) — generated from
+# config.nix's `me` attrset by task 1.2. Do NOT duplicate that data here;
+# this role only consumes it.
+
+# Determinate Nix's own installer entrypoint; it resolves the current
+# release itself. See tasks/main.yml for the exact invocation and the
+# nix-darwin guard around it.
+nix_installer_url: "https://install.determinate.systems/nix"
+
+# Used both to test whether Nix is already installed and as the `creates:`
+# idempotency marker for the installer task.
+nix_marker_bin: "/nix/var/nix/profiles/default/bin/nix"
+
+# Determinate Nix regenerates /etc/nix/nix.conf on every install/upgrade
+# ("do not modify! this file will be replaced!" — verified against the
+# header of a live Determinate Nix install) and `!include`s this file for
+# local overrides. We manage nix.custom.conf, never nix.conf.
+nix_custom_conf_path: "/etc/nix/nix.custom.conf"
+
+# config.nix has no trusted-users list of its own; this mirrors what
+# nix-darwin's determinate module currently sets for the real account on
+# this mac (root + the primary user), so the substituters above are
+# actually usable non-interactively.
+nix_trusted_users:
+  - "root"
+  - "{{ username }}"
+
+# nix-direnv: PLAN.MD "PHASE 2 — what it leaves behind" item 4.
+# ~/.config/direnv/lib/hm-nix-direnv.sh was resholved by Home Manager to a
+# hardcoded store path that will not survive cutover, so nix-direnv's flake
+# caching breaks. This role's job is to make sure a real, working
+# nix-direnv exists in the managed user's Nix profile again. Repointing
+# direnv's global direnvrc at it is a chezmoi-side fix this role does NOT
+# make (that file is outside roles/nix) — see tasks/main.yml.
+nix_install_nix_direnv: true
+nix_direnv_package: "nixpkgs#nix-direnv"

@@ -1,3 +1,33 @@
 ---
 # Defaults for the pkgs role. Do not duplicate anything from
-# group_vars/all/main.yml here.
+# group_vars/all/main.yml here. Package name *lists* (dnf_packages,
+# rpmfusion_packages, copr_repos, copr_packages, flatpak_remotes,
+# flatpak_packages, nix_profile_packages) live in
+# inventory/group_vars/nobara.yml, not here, so they can be reviewed
+# independently of role logic (same convention as roles/homebrew).
+
+# RPM Fusion release RPM URLs (map §2). The map's own verification only
+# covers Fedora 43 (Nobara's underlying release is unconfirmed until the
+# install ISO is picked — see docs/migration/package-map.md's header
+# caveat), so this is pinned rather than derived from
+# ansible_distribution_major_version, which may read "Nobara"/some other
+# value on the real host rather than a plain Fedora release number.
+# Override with -e rpmfusion_release_version=<n> if the installed ISO
+# turns out to track a different Fedora base.
+rpmfusion_release_version: 43
+rpmfusion_free_url: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ rpmfusion_release_version }}.noarch.rpm"
+rpmfusion_nonfree_url: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ rpmfusion_release_version }}.noarch.rpm"
+
+# chezmoi_modify_manager (map §6 `upstream`): not in Fedora, no COPR, not
+# in nixpkgs. Pinned per docs/migration/kde-cutover.md. The asset name
+# below is the msi (x86_64 Linux) asset; this role is a no-op on Darwin
+# so the darwin asset name is not needed here.
+chezmoi_modify_manager_version: "3.7.1"
+chezmoi_modify_manager_asset: "chezmoi_modify_manager-v{{ chezmoi_modify_manager_version }}-x86_64-unknown-linux-gnu.tar.gz"
+chezmoi_modify_manager_url: "https://github.com/VorpalBlade/chezmoi_modify_manager/releases/download/v{{ chezmoi_modify_manager_version }}/{{ chezmoi_modify_manager_asset }}"
+# ~/.local/bin, exported for other roles (notably roles/chezmoi, task 4.x)
+# that need to put this directory on PATH explicitly for the process
+# running the first `chezmoi apply` — see kde-cutover.md's "cmm on PATH"
+# section. This role only installs the binary; wiring PATH for the apply
+# itself is roles/chezmoi's job, coordinated by this variable name.
+chezmoi_modify_manager_install_dir: "{{ home_dir }}/.local/bin"

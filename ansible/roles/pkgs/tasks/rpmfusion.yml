@@ -1,0 +1,27 @@
+---
+# Task 3.1 — RPM Fusion free + nonfree (map §2: mpv, steam).
+#
+# ansible.builtin.dnf installing a release RPM by URL is natively
+# idempotent: dnf resolves the package's NEVRA from the RPM header before
+# deciding whether anything needs changing, so re-running this with the
+# repo already enabled reports "ok" not "changed" — no separate `rpm -q`
+# guard needed to satisfy the "second run reports zero changes" bar.
+
+- name: Enable RPM Fusion free
+  ansible.builtin.dnf:
+    name: "{{ rpmfusion_free_url }}"
+    state: present
+  become: true
+
+- name: Enable RPM Fusion nonfree
+  ansible.builtin.dnf:
+    name: "{{ rpmfusion_nonfree_url }}"
+    state: present
+  become: true
+
+- name: Install RPM Fusion packages
+  ansible.builtin.dnf:
+    name: "{{ rpmfusion_packages | default([]) }}"
+    state: present
+  become: true
+  when: (rpmfusion_packages | default([])) | length > 0

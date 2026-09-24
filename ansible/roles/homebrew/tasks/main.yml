@@ -1,6 +1,36 @@
 ---
-# homebrew: taps, formulae, casks
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | homebrew role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'homebrew' is a scaffold; see PLAN.MD"
+# homebrew: taps, formulae and casks for macOS.
+#
+# No-op on Linux hosts (guarded by the block `when` below) so this role can
+# stay in playbooks/macos.yml only, or in a shared play, without blowing up
+# on Nobara.
+#
+# Package lists live in inventory/group_vars/darwin.yml (brew_taps,
+# brew_formulae, brew_casks) — see docs/migration/package-map.md §10.
+
+- name: "homebrew | macOS package management"
+  when: ansible_system == 'Darwin'
+  block:
+    - name: "homebrew | opt-in brew update (only when homebrew_update=true)"
+      community.general.homebrew:
+        update_homebrew: true
+      when: homebrew_update | bool
+
+    - name: "homebrew | tap external repositories"
+      community.general.homebrew_tap:
+        name: "{{ brew_taps }}"
+        state: present
+      when: brew_taps | length > 0
+
+    - name: "homebrew | install formulae"
+      community.general.homebrew:
+        name: "{{ brew_formulae }}"
+        state: present
+        update_homebrew: false
+      when: brew_formulae | length > 0
+
+    - name: "homebrew | install casks"
+      community.general.homebrew_cask:
+        name: "{{ brew_casks }}"
+        state: present
+      when: brew_casks | length > 0

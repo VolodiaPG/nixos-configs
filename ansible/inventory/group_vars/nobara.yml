@@ -2,12 +2,154 @@
 # Package names verified against fedora:43 — see docs/migration/package-map.md.
 # Populated in phase 3. Keep these lists in the same grouping as the map so
 # rows can be lifted across without re-deciding anything.
-dnf_packages: []
-rpmfusion_packages: []
-copr_repos: []
-copr_packages: []
+#
+# Font packages (Inter, IBM Plex, Noto CJK — map §1b) are intentionally
+# NOT listed here; another agent owns fonts (task 3.3) and consumes its
+# own list. `papirus-icon-theme` is an icon theme, not a font, so it stays.
+#
+# `com.brave.Browser` is filed under the map's §5 "nix" heading, but its
+# own `source` column and notes say `flatpak` (flathub API 200) — this
+# looks like a miscategorisation in the map itself. Treated here as a
+# flatpak, per the source column, not per the section heading. See the
+# task 3.1 report for the full discrepancy writeup.
+#
+# The two `determinate-nix` / `determinate-nixd` map rows are the Nix
+# installer itself (task 3.4, `roles/nix`), not `nix profile install`
+# packages, so they are not carried into nix_profile_packages here.
+
+# §1 fedora main repo + §1b new rows (RPM names, alphabetised).
+dnf_packages:
+  - alsa-utils
+  - brightnessctl
+  - cargo
+  - chezmoi
+  - ddcutil
+  - difftastic
+  - direnv
+  - distrobox
+  - docker-compose
+  - earlyoom # §1b — task 4.2
+  - easyeffects
+  - fail2ban
+  - filezilla
+  - firewalld # §1b — replaces networking.firewall, task 4.4
+  - fzf
+  - gamemode # Nobara likely already ships this — verify before applying (task 4.6)
+  - gcc
+  - gdu
+  - gimp
+  - git
+  - git-crypt
+  - glibc-langpack-fr # §1b — fr_FR.UTF-8, task 4.2
+  - gnupg2 # §1b — pairs with pinentry-tty
+  - golang # name differs from nixpkgs `go`; map lists host as "mac (+msi dev)" — kept for msi's dev toolchain, see report
+  - gparted
+  - grc
+  - htop
+  - i2c-tools # §1b — ddcutil prerequisite + i2c group/udev rule, task 4.4
+  - inkscape
+  - jq
+  - just
+  - kde-connect # name differs from nixpkgs `kdeconnect-kde`
+  - kernel-tools # name differs from nixpkgs `cpupower` — cpupower ships in kernel-tools
+  - keychain
+  - kitty
+  - libgtop2 # name differs from nixpkgs `libgtop`
+  - libnotify
+  - lm_sensors # underscore, not hyphen
+  - lsof
+  - make # name differs from nixpkgs `gnumake`
+  - mangohud # §1b — Nobara likely already ships this — verify before applying (task 4.6)
+  - mkpasswd
+  - moby-engine # name differs from nixpkgs `docker`
+  - moreutils
+  - mosh
+  - neovim
+  - nmap
+  - nodejs-bash-language-server # name differs from nixpkgs `bash-language-server`
+  - papirus-icon-theme # §1b — base icon theme; Catppuccin folder recolour is nix_profile_packages
+  - parallel
+  - pavucontrol-qt
+  - pinentry-tty # §1b — pairs with gnupg2
+  - podman
+  - podman-compose
+  - python3
+  - qbittorrent
+  - qpwgraph
+  - qt6-qttools # name differs from nixpkgs `qttools`
+  - ripgrep
+  - ShellCheck # capital S, as in nixpkgs
+  - shfmt
+  - syncthing
+  - tailscale
+  - tmux
+  - vim-enhanced # name differs from nixpkgs `vim`
+  - wget2-wget # name differs from nixpkgs `wget`; Fedora 43 default is wget2
+  - wl-clipboard
+  - zathura
+  - zathura-plugins-all # pairs with zathura
+  - zoxide
+  - zsh
+
+# §2 rpmfusion. `roles/pkgs` enables the free+nonfree repos idempotently
+# before these are installed.
+rpmfusion_packages:
+  - mpv # rpmfusion-free; RIFE/VapourSynth stack dropped per §0
+  - steam # rpmfusion-nonfree; Nobara ships Steam — verify before applying (task 4.6)
+
+# §3 copr:<repo>. All three are atim/*, none are in Fedora main.
+copr_repos:
+  - atim/bottom
+  - atim/lazygit
+  - atim/starship
+
+copr_packages:
+  "atim/starship":
+    - starship
+  "atim/lazygit":
+    - lazygit
+  "atim/bottom":
+    - bottom
+
+# §4 flatpak. Consumed by the flatpak-role agent's flatpak.yml.
 flatpak_remotes:
   - name: flathub
     url: https://flathub.org/repo/flathub.flatpakrepo
-flatpak_packages: []
-nix_profile_packages: []
+flatpak_packages:
+  - app.legcord.Legcord
+  - com.brave.Browser # see the header note — map files this under §5 "nix" but its own source column says flatpak
+  - dev.zed.Zed
+  - io.github.Faugus.faugus-launcher
+  - io.github.nokse22.high-tide
+  - org.signal.Signal
+
+# §5 nix — Determinate Nix profile installs, only where no RPM exists.
+# Excludes com.brave.Browser (see above) and the determinate-nix/nixd
+# installer rows (task 3.4, not a profile package).
+nix_profile_packages:
+  - catppuccin-cursors
+  - catppuccin-kde
+  - catppuccin-papirus-folders
+  - claude-code
+  - codegraph
+  - devenv
+  - distrobox-tui
+  - graphite-cursors
+  - kanata
+  - lua-language-server
+  - nixd
+  - nixfmt-rfc-style
+  - notify-desktop # "consider dropping" per the map (libnotify's notify-send overlaps) — kept, not our call to drop
+  - prettierd
+  - rtk
+  - shellharden
+  - stylua
+  - t3code
+  - texlab
+  - tinymist
+  - typstyle
+
+# chezmoi_modify_manager (map §6 `upstream`) is not a dnf/copr/flatpak/nix
+# package — it is installed from a GitHub release tarball by `roles/pkgs`
+# per docs/migration/kde-cutover.md. See defaults/main.yml in that role
+# for the pinned version and asset name.

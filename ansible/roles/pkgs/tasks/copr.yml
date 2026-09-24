@@ -1,0 +1,22 @@
+---
+# Task 3.1 — COPR (map §3: atim/starship, atim/lazygit, atim/bottom).
+#
+# community.general.copr supports check_mode and only flips the repo's
+# enabled state when it isn't already what was asked for, so re-enabling
+# an already-enabled repo reports no change.
+
+- name: Enable COPR repositories
+  community.general.copr:
+    name: "{{ item }}"
+    state: enabled
+  become: true
+  loop: "{{ copr_repos | default([]) }}"
+
+- name: Install COPR-sourced packages
+  ansible.builtin.dnf:
+    name: "{{ copr_packages[item] }}"
+    state: present
+  become: true
+  loop: "{{ copr_packages | default({}) | list }}"
+  loop_control:
+    label: "{{ item }}"

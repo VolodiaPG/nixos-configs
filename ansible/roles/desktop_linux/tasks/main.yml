@@ -1,6 +1,10 @@
 ---
 # desktop_linux: fonts (incl. Comic Code), kanata, flatpak, xkb fr/oss
 # Scaffold only - populated in a later phase. See PLAN.MD.
+# BEGIN task-3.3-fonts (owned by task 3.3; see ansible/roles/desktop_linux/tasks/fonts.yml)
+- name: "Fonts | include font tasks"
+  ansible.builtin.include_tasks: fonts.yml
+# END task-3.3-fonts
 - name: "Placeholder | desktop_linux role is not implemented yet"
   ansible.builtin.debug:
     msg: "role 'desktop_linux' is a scaffold; see PLAN.MD"

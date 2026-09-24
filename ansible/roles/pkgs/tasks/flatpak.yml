@@ -1,0 +1,72 @@
+---
+# Task 3.2 — Flatpak (PLAN.MD).
+#
+# include_tasks'd from roles/pkgs/tasks/main.yml, guarded to Linux by the
+# caller. Written to also work standalone: every variable read here falls
+# back to an empty list via `default([])`, so an empty/absent
+# flatpak_remotes / flatpak_packages simply makes this a no-op.
+#
+# Vars consumed (owned by inventory/group_vars/nobara.yml, not by this
+# role): flatpak_remotes (list of {name, url}), flatpak_packages (list of
+# Flathub app IDs). Neither is defined or overridden here.
+#
+# --user vs --system: this migration targets a single-user desktop (msi),
+# so every flatpak_remote/flatpak call below uses `method: user`. That
+# avoids `become: true` for app installs, keeps app data under the user's
+# own XDG dirs, and matches the GTK-config override below, which is itself
+# inherently user-scoped (`flatpak override --user`). Nobara/Fedora
+# preconfigures Flathub as a *system* remote (see package-map.md §4 and
+# roles/pkgs/defaults — flatpak is dnf-installed with Flathub baked in);
+# adding a --user remote of the same name alongside it is normal flatpak
+# practice and does not conflict, since `flatpak install --user` only
+# resolves against remotes registered for the user scope.
+#
+# Idempotency:
+#  - community.general.flatpak_remote already queries `flatpak remote-list
+#    --user` (or --system) before deciding to add, so re-running this with
+#    the remote already present reports no change — no unconditional
+#    `flatpak remote-add`.
+#  - community.general.flatpak likewise checks `flatpak list` before
+#    installing, so re-running with the app already installed is a no-op.
+#  - The GTK override has no Ansible module (there is no
+#    community.general.flatpak_override). It is applied with
+#    ansible.builtin.command, gated by parsing
+#    `flatpak override --user --show` (global override, no app id) first,
+#    so the command only runs — and only reports changed — when
+#    `filesystems=` doesn't already list `xdg-config/gtk-4.0:ro`.
+
+- name: Ensure configured Flatpak remotes are present (user-level)
+  community.general.flatpak_remote:
+    name: "{{ item.name }}"
+    flatpakrepo_url: "{{ item.url }}"
+    method: user
+    state: present
+  loop: "{{ flatpak_remotes | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install Flatpak applications (user-level)
+  community.general.flatpak:
+    name: "{{ item }}"
+    method: user
+    state: present
+  loop: "{{ flatpak_packages | default([]) }}"
+  when: (flatpak_packages | default([])) | length > 0
+
+# --- GTK-config override, ported verbatim from modules/nixos/desktop.nix ---
+# desktop.nix only ever ran one flatpak override:
+#   flatpak override --user --filesystem=xdg-config/gtk-4.0:ro
+# (a systemd user service `flatpak-override-gtk`, run-once at login). No
+# other `flatpak override` calls, and no other filesystem entries, exist in
+# that file — confirmed by reading it directly rather than trusting
+# PLAN.MD's paraphrase of it.
+
+- name: Check current global Flatpak user override
+  ansible.builtin.command: flatpak override --user --show
+  register: flatpak_gtk_override_show
+  changed_when: false
+  check_mode: false
+
+- name: Expose GTK config directory to Flatpak apps (user-level, global override)
+  ansible.builtin.command: flatpak override --user --filesystem=xdg-config/gtk-4.0:ro
+  changed_when: "'xdg-config/gtk-4.0:ro' not in flatpak_gtk_override_show.stdout"

@@ -1,3 +1,12 @@
 ---
 # Defaults for the homebrew role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Package lists themselves live in inventory/group_vars/darwin.yml
+# (brew_taps / brew_formulae / brew_casks) so they can be reviewed
+# independently of role logic.
+
+# Opt-in only: `brew update` before installing. Off by default so normal
+# runs stay fast and idempotent; set to true (e.g. -e homebrew_update=true)
+# when you deliberately want fresh formula/cask definitions.
+homebrew_update: false

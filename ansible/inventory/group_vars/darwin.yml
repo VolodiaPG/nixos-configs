@@ -1,6 +1,90 @@
 ---
-# See PLAN.MD §0.2 — 13 casks (the 11-entry intersection, plus kitty and zed).
-# Populated in phase 3 from docs/migration/package-map.md.
+# See PLAN.MD §3.1 and docs/migration/package-map.md §10.
+#
+# Cask count discrepancy (see task 3.1 report): three places in the repo
+# disagree about the cask count — this file's old comment said 13
+# (11-entry intersection + kitty + zed), PLAN.MD's §3.1 example homebrew
+# block lists 12 tokens, and the map's own §10a header says "12 entries".
+# Resolved against the map's §10a *table*, which is the verified artifact
+# (every token checked with `brew info` on 2026-09-23): the table actually
+# lists 13 rows — the 8-way intersection, plus steam/calibre/qbittorrent
+# (§0.2 explicit keeps, 11 total), plus kitty (carried regardless per the
+# map's own note), plus zed (added by §0). The map's own "12 entries"
+# header undercounts its table by one (it forgets to count zed, which is
+# "listed separately below" in the same paragraph). 13 is correct.
 brew_taps: []
-brew_formulae: []
-brew_casks: []
+
+# §10b — the CLI tooling Home Manager provided. chezmoi is included here
+# (task 3.1 requires chezmoi on macOS too; it becomes the replacement for
+# the nix-darwin-provided chezmoi once nix-darwin is removed in task 6.1).
+brew_formulae:
+  - ripgrep
+  - fzf
+  - direnv
+  - zoxide
+  - starship
+  - lazygit
+  - difftastic
+  - chezmoi
+  - gdu
+  - grc
+  - mosh
+  - just
+  - keychain
+  - tmux
+  - neovim
+  - git
+  - git-crypt
+  - make
+  - go
+  - gopls
+  - rust
+  - ruff
+  - rustfmt
+  - stylua
+  - shfmt
+  - shellcheck
+  - shellharden
+  - prettierd
+  - bash-language-server
+  - lua-language-server
+  - texlab
+  - tinymist
+  - typstyle
+  - jq
+  - htop
+  - nmap
+  - parallel
+  - wget
+  - moreutils
+  - bottom
+  - libgtop
+  - lsof
+  - python@3.13
+  - mpv
+  - syncthing
+  - terminal-notifier
+  - fswatch
+  - podman
+  - podman-compose
+  - texinfo
+  - bc
+  - findutils
+
+# §10a — the fixed cask set: 8-way intersection + steam/calibre/qbittorrent
+# (§0.2 explicit keeps) + kitty (carried regardless, not a §0.2 dispute) +
+# zed (added by §0). 13 entries total.
+brew_casks:
+  - karabiner-elements
+  - tg-pro
+  - bettermouse
+  - betterdisplay
+  - tidal
+  - signal
+  - vlc
+  - parsec
+  - steam
+  - calibre
+  - qbittorrent
+  - kitty
+  - zed

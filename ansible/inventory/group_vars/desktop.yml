@@ -1,2 +1,24 @@
 ---
 # Shared by msi and macbook. Populated in phase 3.
+
+# Task 3.3 (fonts): dnf package names for the non-per-user, non-licensed
+# fonts pulled from modules/nixos/desktop.nix `fonts.packages`. Linux-only
+# (dnf) — consumed by roles/desktop_linux/tasks/fonts.yml, which only runs
+# on the nobara/linux host, so this list being in a host-shared file is
+# harmless on macbook (the role simply never runs there).
+#
+# Names verified against docs/migration/package-map.md (fedora:43), NOT
+# invented:
+#   pkgs.inter              -> rsms-inter-fonts        (name differs from PLAN.MD's "inter-fonts")
+#   pkgs.ibm-plex            -> ibm-plex-fonts-all
+#   pkgs.noto-fonts-cjk-sans -> google-noto-sans-cjk-fonts
+#   pkgs.noto-fonts-cjk-serif -> google-noto-serif-cjk-fonts
+#
+# Dropped, see report:
+#   pkgs.joypixels  - requires license acceptance (map row @350); drop unless asked.
+#   pkgs.corefonts  - no Fedora/RPM Fusion package exists (map row @349); drop unless asked.
+font_packages:
+  - rsms-inter-fonts
+  - ibm-plex-fonts-all
+  - google-noto-sans-cjk-fonts
+  - google-noto-serif-cjk-fonts
