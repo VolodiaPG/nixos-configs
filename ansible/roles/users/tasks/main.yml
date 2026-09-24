@@ -41,12 +41,11 @@
     # secondary group membership added by hand outside of this list will
     # be removed on the next run - that is intentional parity with the
     # source module, not an oversight.
-    # NOTE (ordering): zsh itself is installed by roles/pkgs, which runs
-    # after roles/users in playbooks/linux.yml - same root cause as the
-    # glibc-langpack-fr/locale note in roles/base. Setting shell to a path
-    # that doesn't exist yet does not fail (usermod does not validate the
-    # target, only interactive chsh does); it is resolved by the time the
-    # same playbook run finishes installing zsh via roles/pkgs.
+    # NOTE (ordering): zsh is installed by roles/pkgs, which now runs
+    # BEFORE roles/users in playbooks/linux.yml, so the shell path exists
+    # by the time this task sets it. Even if it did not, usermod does not
+    # validate the target (only interactive chsh does), so this is safe to
+    # run standalone as well.
     - name: users | create primary user account
       ansible.builtin.user:
         name: "{{ username }}"

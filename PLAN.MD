@@ -11,34 +11,34 @@ Branch: `ansible`. Control node: the macOS host (`Volodias-MacBook-Pro`).
 
 ## 0. Decisions already made — do not relitigate
 
-| Question | Decision |
-| --- | --- |
-| Target Linux distro | **Nobara Linux, KDE edition** (Fedora-based). Chosen partly for a later Asahi path. |
-| `msi` | Migrates to Nobara KDE. Full reinstall. |
-| `m1` | **Retired.** Delete its config; do not port it. |
-| `home-server` | **Stays on NixOS.** Out of scope. The flake must keep evaluating for it. |
-| Desktop | **KDE Plasma** (Nobara default). Hyprland, noctalia, GNOME/dconf are all dropped. |
-| Impermanence | **Dropped** on migrated hosts. (`home-server` keeps it, in the flake.) |
-| Nix | **Kept as a package manager only** — Determinate Nix, for `devenv`/direnv/`.envrc` projects. No NixOS, no nix-darwin, no Home Manager on migrated hosts. |
-| Deploy model | **Push** (`ansible-playbook` over SSH/Tailscale) now. Pull (`ansible-pull` on a timer) later. |
-| Theme switching | Must stay **instantaneous and decoupled from chezmoi**. Use Plasma's native day/night scheme switching. Low priority. |
-| `mpv-rife` | **Dropped.** Keep `mpv.conf`/`input.conf` (auto-subs, UI); drop the RIFE/VapourSynth/TensorRT stack. |
-| Secrets | **ansible-vault.** Several existing secrets are dead — audit and prune. |
-| Syncthing | **Native service**, not a container. Systemd user unit on Linux (per the split rule), launchd agent on macOS. Wanted even though msi's instance currently has no peers/folders. Do not port the old repo's linuxserver.io compose file. |
-| Hetzner storagebox users | **Both are live.** `u593939` is the general account (`config.nix` `hetzner-user`, `static/config.ssh`); `u593939-sub1` is the **backup** user. Carry both. |
-| Zed | **Install it.** Add to the Linux and macOS package sets; adopt `dot_config/zed/` from the old repo. |
-| Container runtime on msi | **Docker** is installed and available today. Use it for throwaway verification containers (task 0.3). Long-term runtime choice for the Ansible `virtualization` role is still podman + distrobox unless a role needs docker. |
-| Repo | Migrate on branch `ansible`. |
-| Prior dotfiles repo | **`github.com/VolodiaPG/dotfiles` is in scope as source material** — see §0.1. It is a working pre-Nix version of the target architecture. |
-| `services.caddy` on msi | **Dropped.** Do not port `modules/nixos/caddy.nix` or `static/services-page/`. |
-| `hyperhdr` | **Dropped.** Do not port `modules/nixos/hyperhdr.nix`. |
-| `programs.opencode` | **Dropped.** Remove from the tooling list; also drop `dot_config/opencode/` if merging the old dotfiles repo. |
-| Browser | **Brave Flatpak `com.brave.Browser`.** Task 0.3 established no `brave-origin` Flatpak exists and that Flathub ships upstream Brave; the user chose the Flatpak anyway (2026-09-23), accepting the different build. nixpkgs `brave-origin` is the fallback. |
-| `msi` addressing | Reachable by **Tailscale name**. Use it in the inventory, not a LAN IP. |
-| `~/.config/nvim` | **This repo's inline tree wins** (`chezmoi/dot_config/nvim/`). It is up to date; `github.com/VolodiaPG/vim` is not. Drop the old `.chezmoiexternal.toml` nvim entry. |
-| macOS app set | **Intersection, plus `steam`, `calibre`, `qbittorrent`** — see §0.2. Where the two sources otherwise disagree, neither side is worth carrying. |
-| CPU governor | **Dropped.** Let Nobara's own power-profile handling run. Do not port `run_once_governor.tmpl`. |
-| `immich-ml` | **Dead.** Do not port the module or the old repo's user unit. |
+| Question                 | Decision                                                                                                                                                                                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Target Linux distro      | **Nobara Linux, KDE edition** (Fedora-based). Chosen partly for a later Asahi path.                                                                                                                                                                        |
+| `msi`                    | Migrates to Nobara KDE. Full reinstall.                                                                                                                                                                                                                    |
+| `m1`                     | **Retired.** Delete its config; do not port it.                                                                                                                                                                                                            |
+| `home-server`            | **Stays on NixOS.** Out of scope. The flake must keep evaluating for it.                                                                                                                                                                                   |
+| Desktop                  | **KDE Plasma** (Nobara default). Hyprland, noctalia, GNOME/dconf are all dropped.                                                                                                                                                                          |
+| Impermanence             | **Dropped** on migrated hosts. (`home-server` keeps it, in the flake.)                                                                                                                                                                                     |
+| Nix                      | **Kept as a package manager only** — Determinate Nix, for `devenv`/direnv/`.envrc` projects. No NixOS, no nix-darwin, no Home Manager on migrated hosts.                                                                                                   |
+| Deploy model             | **Push** (`ansible-playbook` over SSH/Tailscale) now. Pull (`ansible-pull` on a timer) later.                                                                                                                                                              |
+| Theme switching          | Must stay **instantaneous and decoupled from chezmoi**. Use Plasma's native day/night scheme switching. Low priority.                                                                                                                                      |
+| `mpv-rife`               | **Dropped.** Keep `mpv.conf`/`input.conf` (auto-subs, UI); drop the RIFE/VapourSynth/TensorRT stack.                                                                                                                                                       |
+| Secrets                  | **ansible-vault.** Several existing secrets are dead — audit and prune.                                                                                                                                                                                    |
+| Syncthing                | **Native service**, not a container. Systemd user unit on Linux (per the split rule), launchd agent on macOS. Wanted even though msi's instance currently has no peers/folders. Do not port the old repo's linuxserver.io compose file.                    |
+| Hetzner storagebox users | **Both are live.** `u593939` is the general account (`config.nix` `hetzner-user`, `static/config.ssh`); `u593939-sub1` is the **backup** user. Carry both.                                                                                                 |
+| Zed                      | **Install it.** Add to the Linux and macOS package sets; adopt `dot_config/zed/` from the old repo.                                                                                                                                                        |
+| Container runtime on msi | **Docker** is installed and available today. Use it for throwaway verification containers (task 0.3). Long-term runtime choice for the Ansible `virtualization` role is still podman + distrobox unless a role needs docker.                               |
+| Repo                     | Migrate on branch `ansible`.                                                                                                                                                                                                                               |
+| Prior dotfiles repo      | **`github.com/VolodiaPG/dotfiles` is in scope as source material** — see §0.1. It is a working pre-Nix version of the target architecture.                                                                                                                 |
+| `services.caddy` on msi  | **Dropped.** Do not port `modules/nixos/caddy.nix` or `static/services-page/`.                                                                                                                                                                             |
+| `hyperhdr`               | **Dropped.** Do not port `modules/nixos/hyperhdr.nix`.                                                                                                                                                                                                     |
+| `programs.opencode`      | **Dropped.** Remove from the tooling list; also drop `dot_config/opencode/` if merging the old dotfiles repo.                                                                                                                                              |
+| Browser                  | **Brave Flatpak `com.brave.Browser`.** Task 0.3 established no `brave-origin` Flatpak exists and that Flathub ships upstream Brave; the user chose the Flatpak anyway (2026-09-23), accepting the different build. nixpkgs `brave-origin` is the fallback. |
+| `msi` addressing         | Reachable by **Tailscale name**. Use it in the inventory, not a LAN IP.                                                                                                                                                                                    |
+| `~/.config/nvim`         | **This repo's inline tree wins** (`chezmoi/dot_config/nvim/`). It is up to date; `github.com/VolodiaPG/vim` is not. Drop the old `.chezmoiexternal.toml` nvim entry.                                                                                       |
+| macOS app set            | **Intersection, plus `steam`, `calibre`, `qbittorrent`** — see §0.2. Where the two sources otherwise disagree, neither side is worth carrying.                                                                                                             |
+| CPU governor             | **Dropped.** Let Nobara's own power-profile handling run. Do not port `run_once_governor.tmpl`.                                                                                                                                                            |
+| `immich-ml`              | **Dead.** Do not port the module or the old repo's user unit.                                                                                                                                                                                              |
 
 ### 0.2 macOS app set — resolved to the intersection
 
@@ -67,7 +67,7 @@ them back out when reconciling.
 ### 0.1 Prior art — `github.com/VolodiaPG/dotfiles`
 
 **Read this repo before starting phase 2.** It is a chezmoi dotfiles repo the
-user ran *before* the Nix setup, targeting Arch + KDE Plasma + macOS. It
+user ran _before_ the Nix setup, targeting Arch + KDE Plasma + macOS. It
 already implements much of what this plan describes, and it solves the
 hardest open problem (KDE config) properly. Last commit 2026-07-16.
 
@@ -76,27 +76,27 @@ Clone it read-only for reference:
 
 What it contains and how to treat each part:
 
-| Asset | Disposition |
-| --- | --- |
-| `dot_config/modify_*` + `*.src.ini` — KDE rc files via **`chezmoi_modify_manager`** | **Adopt wholesale.** This is the correct solution to task 2.9; do not invent another. |
-| `dot_local/share/plasma/look-and-feel/` — 11 themes | **Adopt only 4**: `Catppuccin-Mocha-Mauve`, `Catppuccin-Latte-Mauve`, `Custom dark`, `Custom light`. The other 7 (`dark`, `light`, `Custom latte`, `Custom latte 2`, `Custom moccha`, `Itchy`, `Scratchy`) are a legacy generation. |
-| `dot_local/share/plasma/desktoptheme/{Itchy,Scratchy}` | **Drop.** All four adopted look-and-feels set `[plasmarc][Theme] name=default`, so nothing references them. Verified. This is 228 of B's 392 files — 58% of the repo. |
-| `dot_local/share/color-schemes/`, `dot_local/share/aurorae/themes/` | **Adopt the Catppuccin ones only** (`CatppuccinMochaMauve.colors`, `CatppuccinMocha-Modern`, `CatppuccinLatte-Modern`). Drop `Itchy.colors` and the Itchy/Scratchy aurorae. |
-| `dot_config/private_kxkbrc` — already `LayoutList=fr`, `VariantList=oss` | **Adopt.** Satisfies part of task 4.4. |
-| `run_once_kanata.sh.tmpl` — uinput group + udev rule + user service | **Adopt the logic, move to Ansible** (needs root). |
-| `run_once_packages.sh.tmpl` — `brew bundle` block (macOS) + `paru -S` list (Arch) | **macOS: take the intersection with the nix-darwin block** per §0.2, not this list wholesale. **Linux: translate** the paru list to dnf; it is Arch-only. |
-| `run_once_defaults.tmpl` — macOS `defaults write` settings | **Adopt**, translate to `osx_defaults`. More complete than `modules/darwin/common-darwin.nix`. |
-| nvidia clock-lock systemd unit (inside `run_once_packages.sh.tmpl`) | **Adopt**, but see task 4.5 — its values disagree with the Nix module. |
-| `run_once_{docker,services,udev_usb_chrome}` | **Port to Ansible roles** (all need root). |
-| `run_once_mediacontrole.sh.tmpl` | **Drop.** Depends on MTMR + nushell + `/opt/homebrew/bin/media-control`, all dropped by §0.2 — the port would have no consumer. |
-| `dot_config/zed/` | **Adopt** (current-era, missed by the first pass). Zed is not in any Nix package list; add it to the package sets (§0). |
-| `Documents/docker-services/syncthing/` | **Drop.** Resolved in §0: Syncthing runs as a native service, so `modules/home/syncthing.nix` is the model and this compose file is superseded. |
-| `run_once_governor.tmpl` | **Drop** (§0 — Nobara handles power profiles). |
-| `dot_config/systemd/user/{kanata,immich-ml}.service` | kanata → Ansible; immich-ml → **drop** (§0, dead). |
-| `dot_zshrc`, `dot_bashrc`, `dot_profile`, `dot_blerc` | **Do not adopt.** Oh-my-zsh based, older than the HM-generated zshrc, and carries hardcoded paths (`/Users/volodia/...`, lmstudio). The HM output wins — see task 2.6. |
-| `.chezmoiexternal.toml` — pulls `~/.config/nvim` from `github:VolodiaPG/vim` | **Drop the nvim entry.** This repo's inline tree is authoritative (§0). Keep the file only if something else needs vendoring. |
-| `dot_config/{yabai,skhd,opencode}/` | **Drop.** yabai/skhd were already disabled in Nix; opencode is dropped per §0. |
-| `run_once_yabai.tmpl`, `run_once_ble.sh.tmpl`, `run_once_devenv.sh.tmpl` | Drop (devenv now comes from Determinate Nix, task 3.4). |
+| Asset                                                                               | Disposition                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dot_config/modify_*` + `*.src.ini` — KDE rc files via **`chezmoi_modify_manager`** | **Adopt wholesale.** This is the correct solution to task 2.9; do not invent another.                                                                                                                                               |
+| `dot_local/share/plasma/look-and-feel/` — 11 themes                                 | **Adopt only 4**: `Catppuccin-Mocha-Mauve`, `Catppuccin-Latte-Mauve`, `Custom dark`, `Custom light`. The other 7 (`dark`, `light`, `Custom latte`, `Custom latte 2`, `Custom moccha`, `Itchy`, `Scratchy`) are a legacy generation. |
+| `dot_local/share/plasma/desktoptheme/{Itchy,Scratchy}`                              | **Drop.** All four adopted look-and-feels set `[plasmarc][Theme] name=default`, so nothing references them. Verified. This is 228 of B's 392 files — 58% of the repo.                                                               |
+| `dot_local/share/color-schemes/`, `dot_local/share/aurorae/themes/`                 | **Adopt the Catppuccin ones only** (`CatppuccinMochaMauve.colors`, `CatppuccinMocha-Modern`, `CatppuccinLatte-Modern`). Drop `Itchy.colors` and the Itchy/Scratchy aurorae.                                                         |
+| `dot_config/private_kxkbrc` — already `LayoutList=fr`, `VariantList=oss`            | **Adopt.** Satisfies part of task 4.4.                                                                                                                                                                                              |
+| `run_once_kanata.sh.tmpl` — uinput group + udev rule + user service                 | **Adopt the logic, move to Ansible** (needs root).                                                                                                                                                                                  |
+| `run_once_packages.sh.tmpl` — `brew bundle` block (macOS) + `paru -S` list (Arch)   | **macOS: take the intersection with the nix-darwin block** per §0.2, not this list wholesale. **Linux: translate** the paru list to dnf; it is Arch-only.                                                                           |
+| `run_once_defaults.tmpl` — macOS `defaults write` settings                          | **Adopt**, translate to `osx_defaults`. More complete than `modules/darwin/common-darwin.nix`.                                                                                                                                      |
+| nvidia clock-lock systemd unit (inside `run_once_packages.sh.tmpl`)                 | **Adopt**, but see task 4.5 — its values disagree with the Nix module.                                                                                                                                                              |
+| `run_once_{docker,services,udev_usb_chrome}`                                        | **Port to Ansible roles** (all need root).                                                                                                                                                                                          |
+| `run_once_mediacontrole.sh.tmpl`                                                    | **Drop.** Depends on MTMR + nushell + `/opt/homebrew/bin/media-control`, all dropped by §0.2 — the port would have no consumer.                                                                                                     |
+| `dot_config/zed/`                                                                   | **Adopt** (current-era, missed by the first pass). Zed is not in any Nix package list; add it to the package sets (§0).                                                                                                             |
+| `Documents/docker-services/syncthing/`                                              | **Drop.** Resolved in §0: Syncthing runs as a native service, so `modules/home/syncthing.nix` is the model and this compose file is superseded.                                                                                     |
+| `run_once_governor.tmpl`                                                            | **Drop** (§0 — Nobara handles power profiles).                                                                                                                                                                                      |
+| `dot_config/systemd/user/{kanata,immich-ml}.service`                                | kanata → Ansible; immich-ml → **drop** (§0, dead).                                                                                                                                                                                  |
+| `dot_zshrc`, `dot_bashrc`, `dot_profile`, `dot_blerc`                               | **Do not adopt.** Oh-my-zsh based, older than the HM-generated zshrc, and carries hardcoded paths (`/Users/volodia/...`, lmstudio). The HM output wins — see task 2.6.                                                              |
+| `.chezmoiexternal.toml` — pulls `~/.config/nvim` from `github:VolodiaPG/vim`        | **Drop the nvim entry.** This repo's inline tree is authoritative (§0). Keep the file only if something else needs vendoring.                                                                                                       |
+| `dot_config/{yabai,skhd,opencode}/`                                                 | **Drop.** yabai/skhd were already disabled in Nix; opencode is dropped per §0.                                                                                                                                                      |
+| `run_once_yabai.tmpl`, `run_once_ble.sh.tmpl`, `run_once_devenv.sh.tmpl`            | Drop (devenv now comes from Determinate Nix, task 3.4).                                                                                                                                                                             |
 
 **Theme assets have three gaps — resolve them in task 2.7, not at cutover:**
 
@@ -111,18 +111,18 @@ What it contains and how to treat each part:
    are referenced by the adopted themes but exist in neither tree — they
    become Ansible-installed packages (task 3.1/4.7).
 3. **`.chezmoiignore` is load-bearing, not cosmetic.** Without
-   `**/*.src.ini`, chezmoi writes the `chezmoi_modify_manager` *source* files
+   `**/*.src.ini`, chezmoi writes the `chezmoi_modify_manager` _source_ files
    into `~/.config/` alongside the real ones. It must exist before any KDE
    file is applied.
 
 **Two structural lessons from it, both of which the plan applies:**
 
-1. That repo did *everything* in chezmoi `run_once_` scripts because it had no
+1. That repo did _everything_ in chezmoi `run_once_` scripts because it had no
    Ansible. We do. Apply the split rule from §2: anything needing root (udev,
    system units, packages, groups) becomes an **Ansible role**; only `$HOME`
    content stays in chezmoi.
 2. It used `run_once_` for package installation, which runs exactly once per
-   machine — adding a package later never installs it. Where a script *does*
+   machine — adding a package later never installs it. Where a script _does_
    stay in chezmoi, prefer **`run_onchange_`** so edits re-trigger it.
 
 ### Scope
@@ -138,7 +138,7 @@ Out of scope: `home-server` (stays NixOS), `m1` (retired), `installer` ISO
 ## 1. Rules for agents
 
 1. **Never break `home-server`.** It stays on NixOS and is deployed from this
-   repo. After *any* change touching `flake.nix`, `modules/nixos/`,
+   repo. After _any_ change touching `flake.nix`, `modules/nixos/`,
    `secrets/`, `config.nix`, `lib/` or `overlays/`, run:
    ```sh
    nix eval --raw .#nixosConfigurations.home-server.config.system.build.toplevel.drvPath
@@ -236,7 +236,7 @@ them).
 
 ## PHASE 0 — Inventory
 
-Goal: capture ground truth from the running systems *before* dismantling
+Goal: capture ground truth from the running systems _before_ dismantling
 anything. Output is `docs/migration/`.
 
 ### Task 0.1 — Dump what Nix installs (run on macOS control node)
@@ -296,7 +296,7 @@ user, 2026-09-23). It is a hard prerequisite for task 2.9.
 **Correction (task 0.3, verified):** an earlier draft of this task claimed
 the Task 0.1 lists were incomplete because Home Manager's
 `programs.<x>.enable` packages never reach `home.packages`. **That was
-wrong.** HM *does* add an enabled program's package to `home.packages` —
+wrong.** HM _does_ add an enabled program's package to `home.packages` —
 `git`, `zsh`, `tmux`, `zoxide`, `keychain`, `fzf`, `lazygit`, `direnv`,
 `starship` and `neovim` are all present in both `msi-home-pkgs.json` and
 `mac-home-pkgs.json`. `mac-home-pkgs.json` is not implausibly thin; the Mac
@@ -406,14 +406,13 @@ pipelining = True
 **DONE.** Four corrections to the spec above, all found by actually running
 the verification:
 
-1. **`vault_password_file` is commented out.** Ansible hard-fails *every*
+1. **`vault_password_file` is commented out.** Ansible hard-fails _every_
    command, including `--syntax-check`, when it points at a file that does
-   not exist — which would make the whole scaffold unverifiable until phase
-   4. Re-enable it in phase 4 when the vault has contents.
+   not exist — which would make the whole scaffold unverifiable until phase 4. Re-enable it in phase 4 when the vault has contents.
 2. **`stdout_callback = yaml` does not exist any more.** It resolved to
    `community.general.yaml`, removed in community.general 12.0.0. The
    supported replacement is `stdout_callback = default` + `result_format =
-   yaml`.
+yaml`.
 3. **`group_vars/` and `host_vars/` live under `inventory/`**, not beside
    `ansible.cfg` as §2 drew them. Ansible only resolves playbook-adjacent
    `group_vars`, so with playbooks in `playbooks/` the vars silently never
@@ -468,9 +467,9 @@ accounts are live (§0).
 ```yaml
 all:
   children:
-    linux:   { hosts: { msi: { ansible_host: msi } } }   # NOT the FQDN — see below
-    nobara:  { hosts: { msi: {} } }
-    darwin:  { hosts: { macbook: { ansible_connection: local } } }
+    linux: { hosts: { msi: { ansible_host: msi } } } # NOT the FQDN — see below
+    nobara: { hosts: { msi: {} } }
+    darwin: { hosts: { macbook: { ansible_connection: local } } }
     desktop: { hosts: { msi: {}, macbook: {} } }
 ```
 
@@ -511,7 +510,7 @@ the darwin host.
 
 ### Task 1.5 — CI
 
-Replace the nix-building workflows for the *migrated* hosts with
+Replace the nix-building workflows for the _migrated_ hosts with
 `ansible-lint` + `--syntax-check`. **Leave `deploy.yaml`'s `home-server`
 job alone** — that host still deploys from this repo. Remove only the `msi`
 build/cachix job, and only in phase 7.
@@ -526,7 +525,7 @@ build/cachix job, and only in phase 7.
 ## PHASE 2 — Dotfiles into chezmoi
 
 The bulk of the work, and fully reversible: for each Home Manager module,
-copy what it *generated* into chezmoi. If a later rebuild is a no-op for that
+copy what it _generated_ into chezmoi. If a later rebuild is a no-op for that
 file, the port was exact.
 
 **CORRECTION — do NOT delete any `modules/home/*.nix` in phase 2.** An
@@ -582,7 +581,7 @@ OSes; `chezmoi diff` on the mac shows no unexpected churn.
 
 **How to render a template for verification — the obvious command does not
 work.** `chezmoi execute-template < file` fails on `promptStringOnce` (that
-function exists only during `init`), and `--init` only *enables* the prompt
+function exists only during `init`), and `--init` only _enables_ the prompt
 functions — it does **not** populate `.data` from `.chezmoi.toml.tmpl`, so
 any template referencing `.email` etc. dies with `map has no entry for key`.
 The working recipe:
@@ -599,8 +598,8 @@ chezmoi --config /tmp/cfg.toml execute-template < chezmoi/dot_config/git/config.
 **Expect `chezmoi diff` to be loud, and for that to be correct.** Every
 target on the mac is currently a symlink into
 `/nix/store/…-home-manager-files/`, so chezmoi reports each as "delete
-symlink (120755) → write regular file". That *is* the cutover, not a porting
-error. What matters is that no *content* differs unexpectedly.
+symlink (120755) → write regular file". That _is_ the cutover, not a porting
+error. What matters is that no _content_ differs unexpectedly.
 
 ### Task 2.2 — `git.nix` → `dot_config/git/config.tmpl`
 
@@ -633,9 +632,8 @@ explicitly; fold those into the config file rather than losing them.
 
 - Files are `private_dot_ssh/private_config` and
   `private_dot_ssh/private_authorized_keys.tmpl`. `private_` on the
-  *directory* alone gives `~/.ssh` 0700 but leaves the files 0644 — the
-  prefix is needed on each file too. Verified: `.ssh` → 40700, both files →
-  100600.
+  _directory_ alone gives `~/.ssh` 0700 but leaves the files 0644 — the
+  prefix is needed on each file too. Verified: `.ssh` → 40700, both files → 100600.
 - Equivalence was checked with `ssh -G -F <file> <host>`, byte-identical for
   `storagebox`, `github.com`, `access.grid5000.fr`, `foo.grid5000.fr` and an
   unmatched host.
@@ -673,12 +671,12 @@ verbatim.
 **Two gaps this opens, neither owned by 2.5:**
 
 1. **`~/.config/lazygit/theme.yml` has no owner post-migration.**
-   `LG_CONFIG_FILE` lists it, but it is a *symlink* created at runtime by
+   `LG_CONFIG_FILE` lists it, but it is a _symlink_ created at runtime by
    `packages/theme-switcher/theme-switcher.sh:158`, which §0 drops.
    `.chezmoiexternal.toml` vendors only `theme.{dark,light}.yml`. On a fresh
    host lazygit fails to start until something seeds that symlink — task 2.7
    or a `run_once_` script must do it. Confirmed live: `theme.yml ->
-   theme.light.yml`.
+theme.light.yml`.
 2. **`~/.config/direnv/lib/hm-nix-direnv.sh` is not portable** — it is a
    resholved script hardcoding a `/nix/store/…/bin/nix`. direnv still works
    without it, but loses nix-direnv's flake caching until the `nix` role
@@ -688,6 +686,7 @@ verbatim.
 ### Task 2.6 — `zsh.nix` (225 lines) → `dot_zshrc.tmpl` + fragments
 
 The gnarliest one. Notes:
+
 - It embeds a `date_since_last_nixpkgs` script built on `nixos-version`.
   **Dead post-migration — drop it**, don't port it.
 - It has tmux session-name refresh hooks and `zle_application_mode` handling
@@ -768,7 +767,7 @@ quiet.
 1. `chezmoi_modify_manager` must be installed **before first apply** — add it
    to the package lists (task 3.1; Fedora source needs verifying, it may be
    `cargo install` or a COPR).
-2. Per the old repo's README, before the *first* apply on a new machine:
+2. Per the old repo's README, before the _first_ apply on a new machine:
    ```sh
    rm ~/.config/plasma-org.kde.plasma.desktop-appletsrc
    chezmoi apply
@@ -786,6 +785,7 @@ before copying it forward.
 
 `browser.nix` is **brave-origin**, confirmed current (§0). The old repo's
 `helium-chromium` is superseded — ignore it. Two things to resolve:
+
 - **Packaging**: verify whether a `brave-origin` Flatpak exists. Flathub's
   `com.brave.Browser` is upstream Brave, **not** the same build — do not
   silently substitute it. Order of preference: Flatpak of brave-origin →
@@ -806,7 +806,7 @@ before copying it forward.
   dropped into the browser's policies directory (`/etc/brave/policies/managed/`
   or the Flatpak-scoped path). Preserve the three IDs exactly.
 
-`claude.nix` is worth reading closely: it deliberately does *not* own
+`claude.nix` is worth reading closely: it deliberately does _not_ own
 `~/.claude/settings.json` or `~/.claude.json` (Claude Code writes to them at
 runtime) and instead runs idempotent merge installers for the rtk hook and
 codegraph MCP entry. That pattern maps cleanly onto a chezmoi
@@ -885,14 +885,27 @@ Platform-dispatching role consuming plain lists:
 
 ```yaml
 # group_vars/nobara.yml
-pkgs_dnf:     [ripgrep, fd-find, jq, ...]      # names VERIFIED in task 0.3
-pkgs_copr:    { "atim/starship": [starship], ... }
+pkgs_dnf: [ripgrep, fd-find, jq, ...] # names VERIFIED in task 0.3
+pkgs_copr: { "atim/starship": [starship], ... }
 pkgs_flatpak: [com.brave.Browser, ...]
-pkgs_nix:     [devenv, ...]                     # only where no RPM exists
+pkgs_nix: [devenv, ...] # only where no RPM exists
 # group_vars/darwin.yml
 brew_formulae: [ripgrep, fd, ...]
-brew_casks:    [hiddenbar, karabiner-elements, tg-pro, bettermouse, alt-tab,
-                tidal, parsec, signal, vlc, calibre, steam, betterdisplay]
+brew_casks:
+  [
+    hiddenbar,
+    karabiner-elements,
+    tg-pro,
+    bettermouse,
+    alt-tab,
+    tidal,
+    parsec,
+    signal,
+    vlc,
+    calibre,
+    steam,
+    betterdisplay,
+  ]
 ```
 
 macOS is nearly a 1:1 port of the `homebrew` block already sitting in
@@ -917,8 +930,8 @@ Flathub already — check before adding. Port the GTK-config override
 
 ### Task 3.3 — Fonts
 
-`modules/nixos/desktop.nix` sets fontconfig defaults: monospace = *Comic Code
-Ligatures* (licensed, in `persistent/.../fonts/comicode/`, transcrypt-encrypted),
+`modules/nixos/desktop.nix` sets fontconfig defaults: monospace = _Comic Code
+Ligatures_ (licensed, in `persistent/.../fonts/comicode/`, transcrypt-encrypted),
 sans = Inter, serif = IBM Plex Serif. Port: install `inter-fonts`,
 `ibm-plex-fonts-all`, Noto CJK from dnf; ship Comic Code from the repo into
 `~/.local/share/fonts` (chezmoi, since it's per-user); write the fontconfig
@@ -1027,15 +1040,15 @@ has NOT been rewritten; these are the facts):
 
 ### Task 4.1 — In-repo scripts → `dot_local/bin/`
 
-| Package | Disposition |
-| --- | --- |
-| `tmux-session-color` | script → `chezmoi/dot_local/bin/` |
-| `openrouter-credits` | script → `chezmoi/dot_local/bin/` |
-| `claude-code-headroom`, `headroom` | scripts → `dot_local/bin/` |
-| `theme-switcher` | **dropped** (Plasma native, task 2.7) |
-| `xinstall`, `xmount` | installer helpers → `scripts/`, run by hand |
-| `high-tide` | Flatpak if available, else drop |
-| `mpv-rife` + `_vsmlrt`/`_vstrt`/`_miscfilters` | **dropped** |
+| Package                                        | Disposition                                 |
+| ---------------------------------------------- | ------------------------------------------- |
+| `tmux-session-color`                           | script → `chezmoi/dot_local/bin/`           |
+| `openrouter-credits`                           | script → `chezmoi/dot_local/bin/`           |
+| `claude-code-headroom`, `headroom`             | scripts → `dot_local/bin/`                  |
+| `theme-switcher`                               | **dropped** (Plasma native, task 2.7)       |
+| `xinstall`, `xmount`                           | installer helpers → `scripts/`, run by hand |
+| `high-tide`                                    | Flatpak if available, else drop             |
+| `mpv-rife` + `_vsmlrt`/`_vstrt`/`_miscfilters` | **dropped**                                 |
 
 Each script currently gets its runtime deps from Nix. Add an explicit
 dependency check at the top, and add those deps to the package lists.
@@ -1190,7 +1203,7 @@ Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
     day/night pair, `Custom dark` / `Custom light` (`LookAndFeelPackage` to
     `Custom light`). Those two are the self-contained ones: stock Breeze
     widgets, decorations and window/desktop switchers, with only the
-    Catppuccin *color scheme* layered on. The `Catppuccin-*-Mauve` packages
+    Catppuccin _color scheme_ layered on. The `Catppuccin-*-Mauve` packages
     were not used because they additionally pull in aurorae decorations,
     cursor themes and splash screens that ship nowhere in this migration.
     Two known-missing pieces remain, both already recorded in
@@ -1198,11 +1211,15 @@ Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
     packaged nowhere — theme gap 3) and the `CatppuccinLatteMauve` color
     scheme (only `CatppuccinMochaMauve.colors` is in
     `dot_local/share/color-schemes/`). Plasma falls back silently on both.
-12. **Role order.** `playbooks/linux.yml` runs `base`, `users` before `pkgs`.
-    `roles/{audio,virtualization,vpn}` each guard on `package_facts` and
-    degrade to a skip-with-message if their package is not installed yet, so
-    a first run is safe but incomplete for those roles. Consider moving
-    `pkgs` ahead of `base`.
+12. **Role order — RESOLVED.** `playbooks/linux.yml` ran `base`, `users`
+    before `nix`, `pkgs`, which meant a from-scratch first run configured
+    fail2ban/earlyoom before they were installed, set zsh as the login shell
+    before zsh existed, and warned "Cannot set LC_ALL to default locale"
+    because `glibc-langpack-fr` was not in yet. Reordered to `nix`, `pkgs`,
+    `base`, `users`, so one run converges. Every `package_facts` gate was
+    kept — the roles must stay safe to run standalone with `--tags` — and
+    the now-stale ordering comments in `roles/base` and `roles/users` were
+    corrected to match.
 
 ---
 
@@ -1212,14 +1229,16 @@ Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
 
 The 13 agenix secrets, with a first-pass read of who uses them:
 
-| Secret | Used by | Likely disposition |
-| --- | --- | --- |
-| `hashed-password` | `base.nix` users | **msi**: not needed (Nobara sets the password at install) |
-| `tailscale-authkey` | vpn | keep → vault |
-| `access-token`, `envvars`, `pythong5k`, `mail.inria.password` | user scope | keep → vault, deployed to `$HOME` |
-| `cachix-token` | cachix push hook | **drop** (no more Nix builds to push) |
-| `hetzner-token`, `hetzner-data-encryption-key` | backup (home-server) | **home-server only — leave in agenix** |
-| `samba-user-password`, `tailscale-k8s-operator`, `fizzy-env`, `rss-password`, `ssh-remote-builder{,-pub}` | home-server services | **home-server only — leave in agenix** |
+| Secret                                                                                                    | Used by              | Likely disposition                                        |
+| --------------------------------------------------------------------------------------------------------- | -------------------- | --------------------------------------------------------- |
+| `hashed-password`                                                                                         | `base.nix` users     | **msi**: not needed (Nobara sets the password at install) |
+| `tailscale-authkey`                                                                                       | vpn                  | keep → vault                                              |
+| `access-token`, `envvars`, `pythong5k`, `mail.inria.password`                                             | user scope           | keep → vault, deployed to `$HOME`                         |
+| `cachix-token`                                                                                            | cachix push hook     | **drop** (no more Nix builds to push)                     |
+| `hetzner-token`, `hetzner-data-encryption-key`                                                            | backup (home-server) | **home-server only — leave in agenix**                    |
+| `samba-user-password`, `tailscale-k8s-operator`, `fizzy-env`, `rss-password`, `ssh-remote-builder{,-pub}` | home-server services | **home-server only — leave in agenix**                    |
+
+User edit: drop pythong5k, mail.inria.password, cachix-token.
 
 **STOP and confirm the disposition column with the user before deleting
 anything.** Deleting an `.age` file that `home-server` still references
@@ -1324,7 +1343,7 @@ Delete: `configurations/nixos/msi/`, `configurations/darwin/`,
 `modules/darwin/`, `modules/home/`, and the `modules/nixos/*` files
 home-server does not import. Prune `flake.nix` (`darwinHosts`, msi from
 `nixosHosts`, and the inputs that become unused: `nix-darwin`, `nix-homebrew`,
-`home-manager` — *check*, home-server has a `home.nix`; `catppuccin`,
+`home-manager` — _check_, home-server has a `home.nix`; `catppuccin`,
 `nix-index-database`, `nix-cachyos-kernel`, `high-tide`, `noctalia-greeter`).
 Drop `packages/mpv-rife/`. Prune the `overlays/` entries that lose consumers.
 
@@ -1346,7 +1365,7 @@ State these to the user if they come up; do not pretend otherwise.
 
 1. **Atomic rollback.** No `nixos-rebuild --rollback`. Mitigate with btrfs
    snapshots (`snapper`) configured in `roles/base`.
-2. **Idempotence is aspirational.** Ansible converges *toward* a state; it
+2. **Idempotence is aspirational.** Ansible converges _toward_ a state; it
    never removes what you stopped declaring. Dropping a package from a list
    leaves it installed. Budget for periodic drift audits.
 3. **Reproducible pins.** `flake.lock` → whatever Nobara ships today.
@@ -1358,44 +1377,44 @@ State these to the user if they come up; do not pretend otherwise.
 
 ## Progress
 
-| # | Task | Status | Notes |
-| --- | --- | --- | --- |
-| 0.1 | Dump Nix package sets | ☐ | |
-| 0.2 | Dump msi live state + backup checklist | ☐ | |
-| 0.3 | Package-name mapping table | ☑ | `docs/migration/package-map.md`, 277 rows, verified against `fedora:43` |
-| 0.4 | Reconcile the two chezmoi trees | ☐ | blocks phase 2; STOP on nvim |
-| 1.1 | Ansible skeleton | ☑ | `ansible/`, 17 roles, ansible-lint clean at `production` |
-| 1.2 | `config.nix` → `group_vars/all.yml` | ☑ | at `inventory/group_vars/all/main.yml`, generated by `nix eval` |
-| 1.3 | Inventory | ☑ | msi reached over SSH by bare name |
-| 1.4 | Retire `m1` | ☑ | rule 1 re-verified; `avd-fw` overlay went with it |
-| 1.5 | CI | ◐ | `ansible.yaml` added; msi job removal deferred to phase 7 |
-| 2.1 | chezmoi templating scaffold | ☑ | `.chezmoi.toml.tmpl` renders on both hosts; 8 externals, all URLs 200 |
-| 2.2 | git config | ☑ | no credential helper and no delta — my spec invented both |
-| 2.3 | ssh config + authorized_keys | ☑ | |
-| 2.4 | tmux | ☑ | resurrect + continuum externals were missing; added |
-| 2.5 | interactive tools | ☑ | two gaps carried forward, see §2.5 |
-| 2.6 | zshrc | ☑ | split into `.zshenv` + 8 `~/.config/zsh` fragments |
-| 2.7 | theme → Plasma native | ☑ | 4 live look-and-feels only; latte colour scheme now an external |
-| 2.8 | mpv (strip RIFE) | ☑ | spec wrong twice — see commit cf72736 |
-| 2.9 | KDE Plasma config | ☑ | all 17 files byte-identical to old repo; **untested — no host runs Plasma yet**, see `docs/migration/kde-cutover.md` |
-| 2.10 | browser/claude/gui/syncthing | ☑ | Flatpak policy path corrected; specs in `docs/migration/` |
-| 2.11 | neovim packages | ☑ | **blocker found**: `init.lua` plugin list is commented out |
-| 3.1 | `roles/pkgs` | ☑ | dnf 71 / rpmfusion 2 / copr 3 / nix 21; brew 13 casks + 52 formulae |
-| 3.2 | flatpak | ☑ | 6 app IDs, GTK override ported |
-| 3.3 | fonts | ☑ | fontconfig, 4 font RPMs, Comic Code via Ansible (option a) |
-| 3.4 | Determinate Nix | ☑ | extra nix.conf settings deliberately not ported |
-| 4.1 | scripts → `dot_local/bin` | ☑ | `tmux-session-color`, `openrouter-credits` ported with dep preflights; `xinstall`/`xmount` in `scripts/` |
-| 4.2 | base + users | ☑ | `ignoreIP` CIDR ported verbatim — see §"what it leaves behind" |
-| 4.3 | audio | ☑ | kernelParams (`threadirqs`, `usbcore.autosuspend=-1`) deliberately not ported |
-| 4.4 | desktop_linux | ☑ | kanata, XKB console keymap, i2c, firewalld |
-| 4.5 | nvidia | ☑ | no driver install (Nobara ships it); blacklist + clock lock only |
-| 4.6 | gaming/virt/vpn/net | ☑ | `kernel.nix`/`ananicy.nix`/`betterSleep.nix` dropped by decision |
-| 4.7 | kde | ☑ | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty |
-| 5.1 | secret audit | ☐ | STOP before deleting |
-| 5.2 | ansible-vault | ☐ | |
-| 6.1 | macOS cutover | ☐ | STOP before uninstalling nix-darwin |
-| 6.2 | msi Nobara install | ☐ | STOP before touching disks |
-| 7 | Decommission | ☐ | |
+| #    | Task                                   | Status | Notes                                                                                                                |
+| ---- | -------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
+| 0.1  | Dump Nix package sets                  | ☐      |                                                                                                                      |
+| 0.2  | Dump msi live state + backup checklist | ☐      |                                                                                                                      |
+| 0.3  | Package-name mapping table             | ☑      | `docs/migration/package-map.md`, 277 rows, verified against `fedora:43`                                              |
+| 0.4  | Reconcile the two chezmoi trees        | ☐      | blocks phase 2; STOP on nvim                                                                                         |
+| 1.1  | Ansible skeleton                       | ☑      | `ansible/`, 17 roles, ansible-lint clean at `production`                                                             |
+| 1.2  | `config.nix` → `group_vars/all.yml`    | ☑      | at `inventory/group_vars/all/main.yml`, generated by `nix eval`                                                      |
+| 1.3  | Inventory                              | ☑      | msi reached over SSH by bare name                                                                                    |
+| 1.4  | Retire `m1`                            | ☑      | rule 1 re-verified; `avd-fw` overlay went with it                                                                    |
+| 1.5  | CI                                     | ◐      | `ansible.yaml` added; msi job removal deferred to phase 7                                                            |
+| 2.1  | chezmoi templating scaffold            | ☑      | `.chezmoi.toml.tmpl` renders on both hosts; 8 externals, all URLs 200                                                |
+| 2.2  | git config                             | ☑      | no credential helper and no delta — my spec invented both                                                            |
+| 2.3  | ssh config + authorized_keys           | ☑      |                                                                                                                      |
+| 2.4  | tmux                                   | ☑      | resurrect + continuum externals were missing; added                                                                  |
+| 2.5  | interactive tools                      | ☑      | two gaps carried forward, see §2.5                                                                                   |
+| 2.6  | zshrc                                  | ☑      | split into `.zshenv` + 8 `~/.config/zsh` fragments                                                                   |
+| 2.7  | theme → Plasma native                  | ☑      | 4 live look-and-feels only; latte colour scheme now an external                                                      |
+| 2.8  | mpv (strip RIFE)                       | ☑      | spec wrong twice — see commit cf72736                                                                                |
+| 2.9  | KDE Plasma config                      | ☑      | all 17 files byte-identical to old repo; **untested — no host runs Plasma yet**, see `docs/migration/kde-cutover.md` |
+| 2.10 | browser/claude/gui/syncthing           | ☑      | Flatpak policy path corrected; specs in `docs/migration/`                                                            |
+| 2.11 | neovim packages                        | ☑      | **blocker found**: `init.lua` plugin list is commented out                                                           |
+| 3.1  | `roles/pkgs`                           | ☑      | dnf 71 / rpmfusion 2 / copr 3 / nix 21; brew 13 casks + 52 formulae                                                  |
+| 3.2  | flatpak                                | ☑      | 6 app IDs, GTK override ported                                                                                       |
+| 3.3  | fonts                                  | ☑      | fontconfig, 4 font RPMs, Comic Code via Ansible (option a)                                                           |
+| 3.4  | Determinate Nix                        | ☑      | extra nix.conf settings deliberately not ported                                                                      |
+| 4.1  | scripts → `dot_local/bin`              | ☑      | `tmux-session-color`, `openrouter-credits` ported with dep preflights; `xinstall`/`xmount` in `scripts/`             |
+| 4.2  | base + users                           | ☑      | `ignoreIP` CIDR ported verbatim — see §"what it leaves behind"                                                       |
+| 4.3  | audio                                  | ☑      | kernelParams (`threadirqs`, `usbcore.autosuspend=-1`) deliberately not ported                                        |
+| 4.4  | desktop_linux                          | ☑      | kanata, XKB console keymap, i2c, firewalld                                                                           |
+| 4.5  | nvidia                                 | ☑      | no driver install (Nobara ships it); blacklist + clock lock only                                                     |
+| 4.6  | gaming/virt/vpn/net                    | ☑      | `kernel.nix`/`ananicy.nix`/`betterSleep.nix` dropped by decision                                                     |
+| 4.7  | kde                                    | ☑      | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty                                                                    |
+| 5.1  | secret audit                           | ☐      | STOP before deleting                                                                                                 |
+| 5.2  | ansible-vault                          | ☐      |                                                                                                                      |
+| 6.1  | macOS cutover                          | ☐      | STOP before uninstalling nix-darwin                                                                                  |
+| 6.2  | msi Nobara install                     | ☐      | STOP before touching disks                                                                                           |
+| 7    | Decommission                           | ☐      |                                                                                                                      |
 
 ---
 

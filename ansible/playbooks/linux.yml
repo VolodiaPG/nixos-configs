@@ -2,11 +2,15 @@
 - name: Configure Linux hosts
   hosts: linux
   gather_facts: true
+  # Order matters: `nix` installs the Nix binary that `pkgs` needs for
+  # nix_profile_packages, and `pkgs` installs the packages that `base`
+  # (fail2ban, earlyoom) and `users` (zsh as the login shell) configure.
+  # Running pkgs first lets a single run converge instead of needing two.
   roles:
-    - base
-    - users
     - nix
     - pkgs
+    - base
+    - users
     - shell
     - networking
     - vpn

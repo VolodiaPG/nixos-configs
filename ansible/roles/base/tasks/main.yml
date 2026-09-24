@@ -15,17 +15,14 @@
         manager: auto
 
     # --- locale / keymap / timezone -----------------------------------
-    # NOTE (ordering): fr_FR.UTF-8 needs glibc-langpack-fr, which is a dnf
-    # package installed by roles/pkgs. In playbooks/linux.yml roles run
-    # base, users, nix, pkgs, ... - i.e. base (this role) executes BEFORE
-    # pkgs installs the langpack. Writing /etc/locale.conf here doesn't
-    # fail even if the locale isn't generated yet (it's just a text file),
-    # but any command run in the same play that evaluates the locale
-    # before pkgs completes may warn "Cannot set LC_ALL to default
-    # locale". This resolves itself by the end of the same playbook run
-    # (pkgs runs later in the same play) and is fully correct from the
-    # second playbook run onward. Not fixed here per instructions - not
-    # reordering playbooks/linux.yml; flagged in the task report.
+    # NOTE (ordering): fr_FR.UTF-8 needs glibc-langpack-fr, a dnf package
+    # installed by roles/pkgs. playbooks/linux.yml runs nix, pkgs, base,
+    # users, ... so the langpack is already installed by the time this
+    # runs. (This role was originally written to run before pkgs, which
+    # produced "Cannot set LC_ALL to default locale" warnings on a
+    # from-scratch first run; the reorder is what fixed that.) Writing
+    # /etc/locale.conf is just a text file write and never fails either
+    # way, so the role is still safe to run standalone.
     - name: base | write /etc/locale.conf (fr_FR.UTF-8)
       ansible.builtin.template:
         src: locale.conf.j2
@@ -71,12 +68,12 @@
         - Reload sshd
 
     # --- fail2ban ----------------------------------------------------------
-    # Gated on the package already being present: fail2ban is installed by
-    # roles/pkgs, which runs after this role in playbooks/linux.yml (see
-    # locale note above - same root cause). Enabling a systemd unit that
-    # doesn't exist yet is a hard failure, not just a warning, so this
-    # skips cleanly on a from-scratch first run and self-heals on the next
-    # playbook run once roles/pkgs has installed the package.
+    # Gated on the package already being present. roles/pkgs now runs
+    # BEFORE this role in playbooks/linux.yml, so on a normal full run
+    # fail2ban is already installed and this gate is always true. The gate
+    # is kept because enabling a systemd unit that doesn't exist is a hard
+    # failure, and this role must stay safe to run standalone (e.g.
+    # `--tags base`) on a host where pkgs has never run.
     - name: base | fail2ban
       when: "'fail2ban' in ansible_facts.packages"
       block:
@@ -99,8 +96,8 @@
       when: "'fail2ban' not in ansible_facts.packages"
       ansible.builtin.debug:
         msg: >-
-          fail2ban is not installed yet (roles/pkgs runs after roles/base);
-          skipping jail.local + enable this run, will apply next run.
+          fail2ban is not installed (roles/pkgs normally runs before this
+          role and installs it); skipping jail.local + enable this run.
 
     # --- earlyoom ------------------------------------------------------
     - name: base | earlyoom
@@ -125,7 +122,7 @@
       when: "'earlyoom' not in ansible_facts.packages"
       ansible.builtin.debug:
         msg: >-
-          earlyoom is not installed yet (roles/pkgs runs after roles/base);
+          earlyoom is not installed (roles/pkgs normally runs before this role);
           skipping sysconfig + enable this run, will apply next run.
 
     # --- journald caps -----------------------------------------------------
