@@ -1266,6 +1266,61 @@ in plaintext; a fresh clone + vault password reproduces every secret file.
 
 ---
 
+### PHASE 5 — what it leaves behind
+
+The mechanism is built and the audit is written; **nothing has been deleted
+and the vault is still empty.** `docs/migration/secret-audit.md` is the
+authoritative disposition list, `docs/migration/vault-setup.md` the human
+runbook. Open items:
+
+1. **`tailscale-authkey` is not what PLAN.MD's table said it was.** Its only
+   consumer in the whole tree is `modules/nixos/caddy.nix:20`
+   (`environmentFile`, for the caddy-tailscale plugin), gated on
+   `services.caddy.enable`, which is `true` only on msi
+   (`configurations/nixos/msi/default.nix:71`). `modules/nixos/vpn.nix` never
+   references it — tailscale was always enrolled interactively. Since caddy
+   is dropped per §0, this `.age` file has no successor: `roles/vpn` needs a
+   **freshly generated** authkey from the tailnet admin console, not a
+   migration of this one (which is an env-file, `TS_AUTHKEY=...`, and would
+   have expired anyway).
+2. **`ssh-remote-builder`, `ssh-remote-builder-pub`, `rss-password` have zero
+   consumers.** Declared in `secrets/nixos.nix:32,37,27`, read by nothing —
+   no `nix.buildMachines`, no `distributedBuilds`, no reference to their
+   `.path`. PLAN.MD lists them as active home-server services; the code
+   disagrees. **Decision needed:** genuinely dead, or backing something
+   out-of-repo?
+3. **`cachix-token` is wired in on all three hosts, not just msi.**
+   `common-nix-settings.nix:49,66-70,106` attaches a `cachix-push`
+   post-build-hook whenever `nixSettings.enable`, which is true on
+   home-server, msi *and* darwin. Dropping the secret is not enough — the
+   hook in that module must go too, or it will reference a missing path.
+   That edit touches `modules/`, so it is phase-7 work under rule 1.
+4. **`access-token` is also a darwin consumer**, via
+   `modules/darwin/common-nix-settings.nix:16` → the shared nixos module,
+   `!include`d into `nix.conf` at `common-nix-settings.nix:86`. Phase 3
+   decided not to port the extra `nix.conf` settings, so **decision needed**:
+   does the migrated `nix.custom.conf` still want a GitHub `access-token`
+   (avoids API rate limits on `nix profile install`), or is it dropped?
+5. **All 15 `.age` files are still load-bearing for evaluation.**
+   `secrets/nixos.nix` and `secrets/home-manager.nix` declare every secret
+   unconditionally as a Nix path literal, so deleting any file — including
+   the three already decided drops — breaks evaluation for every host until
+   its attribute is removed from the declaring `.nix` too. Deletion is
+   phase-7 work, done attribute-and-file together, verified with the rule-1
+   `nix eval` on `home-server`.
+6. **`home-lab.nix` is fully dormant** — `my.homeLab.enable` is never set
+   `true` anywhere, so its `fizzy-env` consumer at `home-lab.nix:39` never
+   runs. `fizzy-env`'s live consumer is `kubernetes.nix:47-48` on
+   home-server. Confirm home-lab is intentionally shelved.
+7. **PLAN.MD says "13 agenix secrets"; `secrets/` holds 15 `.age` files.**
+   Reconciles only if `ssh-remote-builder{,-pub}` counts as one.
+8. **Human steps not done:** create `~/.config/ansible/vault-pass`, run the
+   decrypt/re-encrypt loop, uncomment `vault_password_file` in
+   `ansible.cfg`. Until then `roles/secrets` skips `~/.envvars.sh` and
+   `roles/vpn` does not log the host into the tailnet.
+
+---
+
 ## PHASE 6 — Cutover
 
 ### Task 6.1 — macOS first (lowest risk, proves the stack)
@@ -1410,8 +1465,8 @@ State these to the user if they come up; do not pretend otherwise.
 | 4.5  | nvidia                                 | ☑      | no driver install (Nobara ships it); blacklist + clock lock only                                                     |
 | 4.6  | gaming/virt/vpn/net                    | ☑      | `kernel.nix`/`ananicy.nix`/`betterSleep.nix` dropped by decision                                                     |
 | 4.7  | kde                                    | ☑      | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty                                                                    |
-| 5.1  | secret audit                           | ☐      | STOP before deleting                                                                                                 |
-| 5.2  | ansible-vault                          | ☐      |                                                                                                                      |
+| 5.1  | secret audit                           | ◐      | `docs/migration/secret-audit.md` written; dispositions await sign-off, nothing deleted                               |
+| 5.2  | ansible-vault                          | ◐      | `roles/secrets` + `docs/migration/vault-setup.md` built; vault itself is still empty (human step)                    |
 | 6.1  | macOS cutover                          | ☐      | STOP before uninstalling nix-darwin                                                                                  |
 | 6.2  | msi Nobara install                     | ☐      | STOP before touching disks                                                                                           |
 | 7    | Decommission                           | ☐      |                                                                                                                      |
