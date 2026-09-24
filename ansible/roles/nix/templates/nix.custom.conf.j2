@@ -14,3 +14,9 @@
 extra-substituters = {{ nix_extra_substituters | join(' ') }}
 trusted-public-keys = {{ nix_trusted_public_keys | join(' ') }}
 trusted-users = {{ nix_trusted_users | join(' ') }}
+
+# GitHub access token, written separately by this role from the vault so it
+# is not exposed in this 0644 file. `!include` (not `include`) is the
+# tolerant form: Nix ignores it silently when the file does not exist,
+# which is the case until the vault is populated.
+!include {{ nix_access_tokens_path | basename }}

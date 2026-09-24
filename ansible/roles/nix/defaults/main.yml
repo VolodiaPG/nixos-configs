@@ -29,6 +29,23 @@ nix_trusted_users:
   - "root"
   - "{{ username }}"
 
+# GitHub access token for Nix (PLAN.MD phase 5, user decision: keep it).
+# On NixOS this was modules/nixos/common-nix-settings.nix:86,
+# `!include ${config.age.secrets.access-token.path}` inside nix.extraOptions
+# — a nix.conf fragment (`access-tokens = github.com=...`) pulled in by
+# reference so the token never appears in nix.conf itself. Same shape here:
+# the fragment goes to its own root-only file and nix.custom.conf !includes
+# it. Without a token, flake/tarball fetches from GitHub hit the 60/hour
+# unauthenticated rate limit, which bites hardest on `nix profile install`.
+#
+# Empty until the vault is populated (docs/migration/vault-setup.md). The
+# `!include` form — as opposed to `include` — is the *tolerant* one: Nix
+# silently ignores a missing file rather than erroring, verified with
+# `NIX_CONFIG=... nix config show` against a nonexistent path. So the
+# reference in nix.custom.conf is safe to emit unconditionally.
+nix_access_tokens: "{{ vault_access_token | default('') }}"
+nix_access_tokens_path: "/etc/nix/nix.access-tokens.conf"
+
 # nix-direnv: PLAN.MD "PHASE 2 — what it leaves behind" item 4.
 # ~/.config/direnv/lib/hm-nix-direnv.sh was resholved by Home Manager to a
 # hardcoded store path that will not survive cutover, so nix-direnv's flake

@@ -1273,7 +1273,7 @@ and the vault is still empty.** `docs/migration/secret-audit.md` is the
 authoritative disposition list, `docs/migration/vault-setup.md` the human
 runbook. Open items:
 
-1. **`tailscale-authkey` is not what PLAN.MD's table said it was.** Its only
+1. **`tailscale-authkey` — DROPPED, not migrated.** Its only
    consumer in the whole tree is `modules/nixos/caddy.nix:20`
    (`environmentFile`, for the caddy-tailscale plugin), gated on
    `services.caddy.enable`, which is `true` only on msi
@@ -1283,24 +1283,24 @@ runbook. Open items:
    **freshly generated** authkey from the tailnet admin console, not a
    migration of this one (which is an env-file, `TS_AUTHKEY=...`, and would
    have expired anyway).
-2. **`ssh-remote-builder`, `ssh-remote-builder-pub`, `rss-password` have zero
-   consumers.** Declared in `secrets/nixos.nix:32,37,27`, read by nothing —
-   no `nix.buildMachines`, no `distributedBuilds`, no reference to their
-   `.path`. PLAN.MD lists them as active home-server services; the code
-   disagrees. **Decision needed:** genuinely dead, or backing something
-   out-of-repo?
-3. **`cachix-token` is wired in on all three hosts, not just msi.**
-   `common-nix-settings.nix:49,66-70,106` attaches a `cachix-push`
+2. **`ssh-remote-builder`, `ssh-remote-builder-pub`, `rss-password` —
+   DROPPED** (user decision: dead). Declared in `secrets/nixos.nix:32,37,27`
+   and read by nothing. Phase-7 deletion batch: attribute and `.age` file
+   removed in one commit, then the rule-1 `nix eval`.
+3. **`cachix-token` — KEPT in agenix** (user decision: the cheaper path).
+   `common-nix-settings.nix:49,66-70,106` attaches the `cachix-push`
    post-build-hook whenever `nixSettings.enable`, which is true on
-   home-server, msi *and* darwin. Dropping the secret is not enough — the
-   hook in that module must go too, or it will reference a missing path.
-   That edit touches `modules/`, so it is phase-7 work under rule 1.
-4. **`access-token` is also a darwin consumer**, via
-   `modules/darwin/common-nix-settings.nix:16` → the shared nixos module,
-   `!include`d into `nix.conf` at `common-nix-settings.nix:86`. Phase 3
-   decided not to port the extra `nix.conf` settings, so **decision needed**:
-   does the migrated `nix.custom.conf` still want a GitHub `access-token`
-   (avoids API rate limits on `nix profile install`), or is it dropped?
+   home-server, msi *and* darwin. Rather than doing module surgery to remove
+   the hook, `modules/` is left untouched: `home-server` keeps working, and
+   the migrated hosts simply never inherit the hook because `roles/nix`
+   writes only `nix.custom.conf` and never touches `nix.extraOptions`.
+4. **`access-token` — KEPT, in the vault** (user decision). Implemented in
+   `roles/nix`, not `roles/secrets`, since it is a `nix.conf` concern:
+   `vault_access_token` is written to `/etc/nix/nix.access-tokens.conf`
+   (root, `0600`) and `nix.custom.conf` `!include`s it. `!include` is the
+   tolerant form — Nix ignores a missing file rather than erroring
+   (verified against a nonexistent path) — so the reference is emitted
+   unconditionally and degrades cleanly while the vault is empty.
 5. **All 15 `.age` files are still load-bearing for evaluation.**
    `secrets/nixos.nix` and `secrets/home-manager.nix` declare every secret
    unconditionally as a Nix path literal, so deleting any file — including
@@ -1308,10 +1308,11 @@ runbook. Open items:
    its attribute is removed from the declaring `.nix` too. Deletion is
    phase-7 work, done attribute-and-file together, verified with the rule-1
    `nix eval` on `home-server`.
-6. **`home-lab.nix` is fully dormant** — `my.homeLab.enable` is never set
-   `true` anywhere, so its `fizzy-env` consumer at `home-lab.nix:39` never
-   runs. `fizzy-env`'s live consumer is `kubernetes.nix:47-48` on
-   home-server. Confirm home-lab is intentionally shelved.
+6. **`home-lab.nix` — DEPRECATED** (user decision): replaced by k3s
+   (`modules/nixos/kubernetes.nix`, which is what actually consumes
+   `fizzy-env` on home-server). `my.homeLab.enable` is never set `true`
+   anywhere. Add it to the phase-7 decommission batch; nothing in it needs
+   porting.
 7. **PLAN.MD says "13 agenix secrets"; `secrets/` holds 15 `.age` files.**
    Reconciles only if `ssh-remote-builder{,-pub}` counts as one.
 8. **Human steps not done:** create `~/.config/ansible/vault-pass`, run the

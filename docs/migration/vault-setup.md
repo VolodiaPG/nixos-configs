@@ -22,6 +22,7 @@ former `secrets/*.age` files only these are still slated for
 | --------------------- | ------------------------ | ------------------------------- | -------------------------------- |
 | `tailscale-authkey`   | `vault_tailscale_authkey` | `ansible/roles/vpn`             | `tailscale up --authkey=...` (not a file) |
 | `envvars`             | `vault_envvars`           | `ansible/roles/secrets`         | `~/.envvars.sh` (mode `0400`)  |
+| `access-token`        | `vault_access_token`      | `ansible/roles/nix`             | `/etc/nix/nix.access-tokens.conf` (root, mode `0600`), `!include`d by `nix.custom.conf` |
 
 Dropped by user decision during the 5.1 audit: `pythong5k`
 (`~/.python-grid5000.yaml`), `mail.inria.password`
@@ -31,13 +32,23 @@ should be re-encrypted into the vault — `ansible/roles/secrets`'s
 intentionally only has one entry (`envvars`) for exactly this reason.
 
 `hashed-password` is dropped too (Nobara sets the password at install, not
-via a secrets file). `access-token` (used by `modules/nixos/common-nix-
-settings.nix` for a Nix-config-level GitHub token, not a `$HOME` dotfile
-like the three above) is **not** handled by `ansible/roles/secrets` — it
-wasn't in PLAN.MD task 5.2's explicit path list, and its Ansible home (most
-likely `roles/nix`, since it's a `nix.conf` concern) hasn't been decided.
-Flagged here rather than guessed at; confirm its disposition against
-`docs/migration/secret-audit.md` before deciding where it goes.
+via a secrets file).
+
+`access-token` **is kept** (user decision, phase 5). It is a `nix.conf`
+concern rather than a `$HOME` dotfile, so `roles/nix` owns it, not
+`roles/secrets`: it writes the fragment to `/etc/nix/nix.access-tokens.conf`
+(root, `0600`) and `nix.custom.conf` pulls it in with `!include`. The value
+is the same nix.conf fragment agenix served, i.e. a line of the form
+`access-tokens = github.com=<token>` — paste it verbatim, not just the bare
+token. Without it, GitHub flake/tarball fetches fall back to the
+unauthenticated 60-requests/hour limit.
+
+`cachix-token` **stays in agenix** and is not migrated. `home-server` still
+runs the `cachix-push` post-build-hook that consumes it
+(`modules/nixos/common-nix-settings.nix:49,66-70,106`), and leaving that
+module untouched is strictly less work than surgically removing the hook.
+The migrated hosts simply never get the hook, because `roles/nix` writes
+only `nix.custom.conf` and never touches `extraOptions`.
 
 `hetzner-token`, `hetzner-data-encryption-key`, `samba-user-password`,
 `tailscale-k8s-operator`, `fizzy-env`, `rss-password`, and the
@@ -112,6 +123,9 @@ ragenix -d tailscale-authkey.age
 # envvars -> vault_envvars (this one is a multi-line shell script; use a
 # YAML block scalar so newlines survive)
 ragenix -d envvars.age
+
+# access-token -> vault_access_token (a nix.conf fragment, keep it whole)
+ragenix -d access-token.age
 ```
 
 Then, in a second shell, paste each value into the vault. `ansible-vault
@@ -126,10 +140,22 @@ ansible-vault edit --vault-password-file ~/.config/ansible/vault-pass \
 
 ```yaml
 # add/update, inside that editor session:
-vault_tailscale_authkey: "<paste the decrypted value here>"
+vault_tailscale_authkey: "<a FRESH key from the tailnet admin console — see below>"
 vault_envvars: |
   <paste each decrypted line here, indented to match>
+vault_access_token: |
+  <paste the decrypted nix.conf fragment here, e.g. access-tokens = github.com=...>
 ```
+
+**`tailscale-authkey` is not a migration.** The audit
+(`docs/migration/secret-audit.md`) found its only consumer is
+`modules/nixos/caddy.nix:20`, caddy's `environmentFile` for the
+caddy-tailscale plugin, on msi only — and caddy is dropped. `vpn.nix` never
+used it; tailscale was always enrolled interactively. So the old `.age` file
+is an env-file (`TS_AUTHKEY=...`) for a service that no longer exists, and
+auth keys expire anyway. Generate a **new** key at
+<https://login.tailscale.com/admin/settings/keys> and put that in
+`vault_tailscale_authkey`; do not decrypt the old one.
 
 `ansible-vault edit` re-encrypts the whole file on save, so it's safe to run
 it once per secret rather than trying to batch everything into a single

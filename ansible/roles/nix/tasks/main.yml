@@ -90,6 +90,35 @@
         mode: "0644"
       become: true
 
+    # The GitHub access token, kept out of the 0644 nix.custom.conf above
+    # and written to its own 0600 fragment that nix.custom.conf !includes.
+    # copy + content (never template) and no_log, matching roles/secrets:
+    # the content IS the secret, so it must never be rendered through Jinja
+    # on disk or echoed in a changed-diff. Skipped cleanly while the vault
+    # is empty — `!include` tolerates the missing file, so a half-applied
+    # state is harmless rather than a broken nix.conf.
+    - name: Write the Nix GitHub access-token fragment
+      ansible.builtin.copy:
+        content: "{{ nix_access_tokens }}"
+        dest: "{{ nix_access_tokens_path }}"
+        owner: root
+        group: "{{ root_group }}"
+        mode: "0600"
+      become: true
+      no_log: true
+      when: nix_access_tokens | length > 0
+
+    - name: Nix access token not yet in the vault, skipping
+      ansible.builtin.debug:
+        msg: >-
+          vault_access_token is undefined or empty, so
+          {{ nix_access_tokens_path }} was not written. nix.custom.conf
+          !includes it regardless, which Nix tolerates when the file is
+          absent; GitHub fetches just fall back to the unauthenticated
+          60/hour rate limit until the vault is populated (see
+          docs/migration/vault-setup.md).
+      when: nix_access_tokens | length == 0
+
     # nix-direnv half of PHASE-2 item 4: make sure a real nix-direnv exists
     # again in the managed user's Nix profile. The other half — repointing
     # direnv's global direnvrc away from the broken, hardcoded-store-path

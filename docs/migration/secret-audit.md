@@ -165,3 +165,54 @@ evaluation on every host, home-server included.
    (discrepancy 2 above), please confirm the Phase 6 darwin work also needs
    to (a) remove the cachix-push post-build-hook there when `cachix-token`
    is dropped, and (b) get `access-token` from vault, not just msi.
+
+---
+
+## Decisions (user, phase 5)
+
+All four open questions above were answered. This section is authoritative
+where it contradicts the table.
+
+| Secret | Final disposition |
+| --- | --- |
+| `ssh-remote-builder`, `ssh-remote-builder-pub` | **DROP** — confirmed dead |
+| `rss-password` | **DROP** — confirmed dead |
+| `access-token` | **VAULT**, kept |
+| `cachix-token` | **home-server only — leave in agenix**, not dropped |
+| `pythong5k`, `mail.inria.password` | DROP (decided earlier) |
+| `hashed-password` | home-server only |
+| `envvars` | VAULT |
+| `tailscale-authkey` | **DROP** — see below; the vault gets a *new* key, not this one |
+| `hetzner-token`, `hetzner-data-encryption-key`, `samba-user-password`, `fizzy-env`, `tailscale-k8s-operator` | home-server only |
+
+1. **`ssh-remote-builder{,-pub}` and `rss-password` are dead.** Confirmed:
+   no out-of-repo config depends on them. They go in the phase-7 deletion
+   batch — attribute removed from `secrets/nixos.nix` and `.age` file
+   deleted in the same commit, then the rule-1 `nix eval` on `home-server`.
+
+2. **`access-token` is kept.** Implemented in `roles/nix`, not
+   `roles/secrets`, because it is a `nix.conf` concern rather than a `$HOME`
+   dotfile: the fragment is written to `/etc/nix/nix.access-tokens.conf`
+   (root, `0600`) from `vault_access_token`, and `nix.custom.conf` pulls it
+   in with `!include`. `!include` is the tolerant form — Nix ignores a
+   missing file instead of erroring — so the reference is emitted
+   unconditionally and the whole thing degrades gracefully while the vault
+   is empty. It stays in agenix as well, for `home-server`.
+
+3. **`cachix-token` is NOT dropped after all** — the cheaper path. It stays
+   in agenix and `modules/nixos/common-nix-settings.nix` is left completely
+   alone, so `home-server` keeps its `cachix-push` post-build-hook working.
+   The migrated hosts never inherit the hook, because `roles/nix` writes
+   only `nix.custom.conf` and never touches `nix.extraOptions`. This avoids
+   the module surgery the table assumed, and avoids the risk of breaking
+   `home-server`'s builds. Revisit only in phase 7, if at all.
+
+4. **`home-lab.nix` is fully deprecated** — replaced by k3s
+   (`modules/nixos/kubernetes.nix`, which is what actually consumes
+   `fizzy-env` on `home-server`). It goes in the phase-7 decommission batch
+   along with its dead references. Nothing in it needs porting.
+
+5. **`tailscale-authkey` is dropped, not migrated.** Its only consumer was
+   caddy on msi (discrepancy 1) and caddy is gone. `roles/vpn` needs a
+   freshly generated key from the tailnet admin console instead — see
+   `docs/migration/vault-setup.md`.
