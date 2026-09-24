@@ -8,3 +8,13 @@
 # undefined variable if group_vars is ever skipped (e.g. ansible-playbook
 # run with --limit against a stray inventory).
 font_packages: []
+
+# Comic Code Ligatures — licensed, paid font. User decision (2026-09-24):
+# option (a) — stays under transcrypt in the repo, Ansible installs it to
+# ~/.local/share/fonts at apply time. Never copied into the chezmoi source
+# tree. Read from the CONTROL NODE, so playbook_dir is the right anchor.
+comic_code_src_dir: "{{ playbook_dir }}/../../persistent/home/volodia/.local/share/fonts/comicode"
+comic_code_dest_dir: "{{ home_dir }}/.local/share/fonts"
+# Set false only to deliberately apply on a control node where the repo is
+# transcrypt-locked; the monospace fontconfig default will not resolve.
+comic_code_required: true

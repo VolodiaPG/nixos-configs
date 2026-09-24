@@ -946,19 +946,16 @@ installer on the mac before nix-darwin is removed.
 
 Hard blockers (each must be closed before the phase named):
 
-1. **Comic Code Ligatures is not installed by anything.** The 5 `.otf` files
-   sit at `persistent/home/volodia/.local/share/fonts/comicode/`, transcrypt-
-   encrypted, and are currently *decrypted plaintext* in the working copy.
-   They were deliberately NOT copied into `chezmoi/` — that would put a paid
-   font in the repo in the clear. Note `.gitattributes` matches them by bare
-   basename, so a copy anywhere in the repo would also hit transcrypt's
-   filter; that is accidental, not a mechanism, and must not be relied on.
-   Until this is resolved `fonts.conf` names a monospace family that does not
-   exist and every terminal falls back to the fontconfig default.
-   Options: (a) leave them under transcrypt and have Ansible install them
-   into `~/.local/share/fonts` at apply time, never touching the chezmoi
-   tree; (b) migrate to chezmoi's native `encrypted_` + age once phase 5
-   stands up a backend. **Owner: phase 5.**
+1. ~~Comic Code Ligatures~~ — **RESOLVED 2026-09-24, option (a).** The font
+   stays parked under transcrypt at
+   `persistent/home/volodia/.local/share/fonts/comicode/`; Ansible copies it
+   to `~/.local/share/fonts` at apply time
+   (`roles/desktop_linux/tasks/fonts.yml`). It is never placed in the chezmoi
+   source tree. The copy reads from the **control node**, so that checkout
+   must be transcrypt-unlocked or the target gets ciphertext — an assert on
+   the OpenType magic (`OTTO`) fails the play loudly rather than installing
+   five unusable files. macOS already has them in `~/Library/Fonts`,
+   hand-installed and untouched by Nix, so it needs nothing.
 2. **`chezmoi_modify_manager` PATH wiring is not done.** `roles/pkgs` installs
    the binary to `~/.local/bin` and exports the location as
    `chezmoi_modify_manager_install_dir`, but the `modify_` scripts' shebang
@@ -971,19 +968,21 @@ Hard blockers (each must be closed before the phase named):
 
 Degradations accepted for now:
 
-4. **`/etc/nix/nix.custom.conf` loses ~17 settings.** PLAN's task 3.4 only
-   specified carrying the substituters, so `roles/nix` templates exactly
+4. **`/etc/nix/nix.custom.conf` loses ~17 settings. Accepted — do not port
+   (user decision, 2026-09-24).** `roles/nix` templates only
    `extra-substituters`, `trusted-public-keys` and `trusted-users`. The live
-   nix-darwin file also sets `sandbox = false`, `fallback`, `keep-derivations`,
-   `keep-env-derivations`, `accept-flake-config`, `warn-dirty`, `nix-path`,
-   `connect-timeout`, `http-connections`, the narinfo TTLs and a
-   `post-build-hook` pointing at a `/nix/store` cachix push hook. The hook is
-   a store path and dies at cutover: local builds stop being pushed to
-   `volodiapg.cachix.org` while still being read from it.
-5. **`FREETYPE_PROPERTIES` is not ported.** `modules/nixos/desktop.nix` sets
-   `cff:no-stem-darkening=0 autofitter:no-stem-darkening=0` as a session-wide
-   env var for font rendering. `.zshenv` cannot carry it (GUI apps never read
-   it); on Fedora it belongs in `/etc/environment`. **Owner: task 4.4.**
+   nix-darwin file also sets `sandbox = false`, `fallback`,
+   `keep-derivations`, `keep-env-derivations`, `accept-flake-config`,
+   `warn-dirty`, `nix-path`, `connect-timeout`, `http-connections`, the
+   narinfo TTLs, and a `post-build-hook` pointing at a `/nix/store` cachix
+   push hook. Consequence knowingly accepted: after cutover, local builds are
+   no longer pushed to `volodiapg.cachix.org`, though it is still read from.
+   Revisit if a build starts failing for want of `sandbox = false`.
+5. ~~`FREETYPE_PROPERTIES`~~ — **ABANDONED (user decision, 2026-09-24).**
+   The `cff:no-stem-darkening=0 autofitter:no-stem-darkening=0` tweak in
+   `modules/nixos/desktop.nix` was for noctalia and is reportedly already
+   Nobara's default. Do not port it. If font rendering looks wrong after the
+   Nobara install, this is the first thing to re-check.
 6. **`corefonts` is dropped.** No Fedora or RPM Fusion package exists; it
    would need `cabextract` plus the Microsoft installer. Web pages specifying
    Arial/Times New Roman will substitute.
@@ -999,11 +998,13 @@ Unverified / needs a real machine:
    idempotency by substring-matching that command's output; its exact format
    was never checked against a live Determinate Nix profile. This is the most
    likely task to report spurious changes on a second run.
-9. **`vmnet-helper` + the `nirs/vmnet-helper` tap are unaccounted for.**
-   Both are in `modules/darwin/common-darwin.nix` (lines 43, 60) and appear
-   nowhere in `docs/migration/package-map.md`, not even in its drop list —
-   a genuine gap in task 0.3. Left out of `brew_formulae`/`brew_taps` rather
-   than guessed. Likely needed by `podman machine`.
+9. ~~`vmnet-helper` + the `nirs/vmnet-helper` tap~~ — **DROPPED (user
+   decision, 2026-09-24).** Present in `modules/darwin/common-darwin.nix`
+   (lines 43, 60) and absent from `docs/migration/package-map.md` entirely —
+   a genuine gap in task 0.3, not a deliberate omission. The original reason
+   for installing it is no longer remembered, so it is not carried over. If
+   `podman machine` networking misbehaves on macOS after cutover, this is the
+   likely cause.
 
 Corrections to this plan found while executing phase 3 (the plan text above
 has NOT been rewritten; these are the facts):
@@ -1311,8 +1312,8 @@ State these to the user if they come up; do not pretend otherwise.
 | 2.11 | neovim packages | ☑ | **blocker found**: `init.lua` plugin list is commented out |
 | 3.1 | `roles/pkgs` | ☑ | dnf 71 / rpmfusion 2 / copr 3 / nix 21; brew 13 casks + 52 formulae |
 | 3.2 | flatpak | ☑ | 6 app IDs, GTK override ported |
-| 3.3 | fonts | ◐ | fontconfig + 4 font RPMs done; Comic Code unresolved |
-| 3.4 | Determinate Nix | ◐ | role done; nix.custom.conf carries only 3 of ~20 settings |
+| 3.3 | fonts | ☑ | fontconfig, 4 font RPMs, Comic Code via Ansible (option a) |
+| 3.4 | Determinate Nix | ☑ | extra nix.conf settings deliberately not ported |
 | 4.1 | scripts → `dot_local/bin` | ☐ | |
 | 4.2 | base + users | ☐ | |
 | 4.3 | audio | ☐ | |

@@ -1,0 +1,6 @@
+---
+# Run once at the end of the play, however many font tasks notified it.
+- name: refresh font cache
+  ansible.builtin.command:
+    cmd: fc-cache -f
+  changed_when: true

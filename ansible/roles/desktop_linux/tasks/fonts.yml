@@ -19,26 +19,90 @@
 # The fontconfig defaults themselves are shipped as a plain (non-templated)
 # chezmoi file at chezmoi/dot_config/fontconfig/fonts.conf, not applied here.
 #
-# Comic Code Ligatures (the monospace default) is NOT installed by this
-# file. It is a licensed, transcrypt-encrypted, per-user asset currently
-# living under persistent/home/volodia/.local/share/fonts/comicode/ —
-# how it should reach ~/.local/share/fonts via chezmoi is unresolved; see
-# the migration report for options. Do not add tasks here that copy it
-# until that's decided.
+# Comic Code Ligatures (the monospace default) is a licensed, paid font.
+# User decision (2026-09-24): option (a) — it stays parked under transcrypt
+# at persistent/home/volodia/.local/share/fonts/comicode/ and Ansible copies
+# it to ~/.local/share/fonts at apply time. It is deliberately NOT placed in
+# the chezmoi source tree: that would put paid font bytes in the repo in the
+# clear, and .gitattributes only matches them by bare basename, which is
+# accidental protection rather than a mechanism.
+#
+# This reads from the CONTROL NODE (ansible.builtin.copy), so the repo must
+# be transcrypt-unlocked there or the target receives ciphertext. The assert
+# below fails loudly instead of silently installing unusable files.
+#
+# macOS already has these five files in ~/Library/Fonts, installed by hand
+# and untouched by Nix, so they survive cutover without Ansible's help.
 
 - name: "Fonts | install dnf font packages"
   become: true
   ansible.builtin.dnf:
     name: "{{ font_packages }}"
     state: present
+  notify: refresh font cache
   when:
     - ansible_facts['os_family'] == "RedHat"
     - font_packages | length > 0
 
-- name: "Fonts | refresh font cache"
-  ansible.builtin.command:
-    cmd: fc-cache -f
-  register: _fonts_fc_cache
-  changed_when: false
-  when:
-    - ansible_facts['os_family'] == "RedHat"
+# --- Comic Code Ligatures (licensed, transcrypt-held) --------------------
+
+- name: "Fonts | Comic Code"
+  when: ansible_facts['os_family'] == "RedHat"
+  block:
+    - name: "Fonts | Comic Code | locate source files on the control node"
+      ansible.builtin.find:
+        paths: "{{ comic_code_src_dir }}"
+        patterns: "*.otf"
+      delegate_to: localhost
+      become: false
+      register: _comic_code_src
+
+    # A transcrypt-LOCKED checkout keeps the .otf filenames but holds
+    # ciphertext, so the extension proves nothing. Check the actual magic
+    # instead. slurp returns base64; the first 4 base64 chars encode the
+    # first 3 bytes, and every OpenType/CFF font starts 'OTTO', which
+    # base64-encodes to 'T1RU...'. Comparing the base64 prefix avoids
+    # b64decode, which raises on non-UTF-8 binary.
+    - name: "Fonts | Comic Code | read magic bytes of one source file"
+      ansible.builtin.slurp:
+        src: "{{ _comic_code_src.files[0].path }}"
+      delegate_to: localhost
+      become: false
+      register: _comic_code_magic
+      when: _comic_code_src.files | length > 0
+
+    - name: "Fonts | Comic Code | refuse to install ciphertext"
+      ansible.builtin.assert:
+        that:
+          - _comic_code_src.files | length > 0
+          - _comic_code_magic.content[:4] == 'T1RU'
+        fail_msg: >-
+          {{ comic_code_src_dir }} holds no readable OpenType data. The repo
+          is almost certainly transcrypt-LOCKED on the control node: locked
+          files keep their .otf names but contain ciphertext, so copying
+          them would install five unusable files and leave the fontconfig
+          monospace default unresolvable. Unlock with `transcrypt` on the
+          control node and re-run.
+      when: comic_code_required | bool
+
+    - name: "Fonts | Comic Code | ensure the user font directory exists"
+      ansible.builtin.file:
+        path: "{{ comic_code_dest_dir }}"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "0755"
+      become: true
+
+    - name: "Fonts | Comic Code | install into the user font directory"
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ comic_code_dest_dir }}/{{ item.path | basename }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "0644"
+      become: true
+      loop: "{{ _comic_code_src.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+      notify: refresh font cache
