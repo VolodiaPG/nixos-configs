@@ -39,8 +39,10 @@ base_fail2ban_maxretry: 5
 base_fail2ban_ignoreip:
   - "127.0.0.0/8"
   - "10.0.0.0/8"
-  - "192.168.1.0/16" # ported verbatim from base.nix - looks like it was
-  # meant to be /24; not "fixed" here, see task report.
+  # base.nix:80 had "192.168.1.0/16", a malformed CIDR that normalizes to
+  # 192.168.0.0/16 (whitelisting every 192.168.x.x). Corrected to /24 on
+  # the user's explicit instruction.
+  - "192.168.1.0/24"
 
 # services.earlyoom
 # Original NixOS --avoid list protected the compositor (Hyprland) and the

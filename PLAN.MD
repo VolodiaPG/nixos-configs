@@ -1141,29 +1141,17 @@ task 2.7). SDDM config if needed.
 Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
 `ansible-playbook --syntax-check`. Open items, in the order they matter:
 
-1. **`modules/nixos/kernel.nix` — ACTIVE on msi, not ported.** msi sets
-   `kernel.enable = true`, `cachyDesktop = true`, `lowLatencyNetworking = true`.
-   Breakdown:
-   - CachyOS kernel package — **drop**. Nobara ships its own patched kernel;
-     that is the whole point of picking Nobara.
-   - `zramSwap`: `lz4`, `memoryPercent = 50`, `priority = 100`. Nobara ships
-     zram via `zram-generator` with different defaults (`zstd`, ~half RAM
-     capped). Genuine delta; portable as `/etc/systemd/zram-generator.conf`.
-   - `lowLatencyNetworking` sysctls: `net.core.default_qdisc = fq_codel`,
-     `net.ipv4.tcp_congestion_control = cubic`, `vm.swappiness = 10`.
-     Portable as a `roles/base` sysctl drop-in.
-   - `powerManagement.powertop.enable` — desktop machine, no battery. Drop.
-   - `serverNetworking` branch (`tcp_bbr`, `fq`, `somaxconn`) — not enabled on
-     msi. Drop.
-2. **`modules/nixos/betterSleep.nix` — ACTIVE on msi, not ported.** Saves the
-   CPU governor to `/run/cpu-governor-before-sleep`, forces `powersave` on
-   suspend, restores it on resume. Portable verbatim as a
-   `/usr/lib/systemd/system-sleep/` hook. ~20 lines of shell.
-3. **`modules/nixos/ananicy.nix` — ACTIVE on msi, not ported.** 410 lines:
-   `ananicy-cpp` + `ananicy-rules-cachyos` + a repo-specific set of
-   `extraTypes`/`extraRules`. Porting means installing `ananicy-cpp` (COPR)
-   and translating every custom type/rule into `/etc/ananicy.d/*.types` and
-   `*.rules`. Largest single piece of unported phase-4 work.
+1. **`modules/nixos/kernel.nix` — DROPPED** (user decision). Active on msi
+   today (`cachyDesktop`, `lowLatencyNetworking`), but the CachyOS kernel is
+   the thing Nobara's own patched kernel replaces, and the remainder
+   (`zramSwap` lz4/50%, the `fq_codel`/`cubic`/`swappiness=10` sysctls,
+   `powertop`) is left to Nobara's defaults. Not ported.
+2. **`modules/nixos/betterSleep.nix` — DROPPED** (user decision). The
+   powersave-governor-on-suspend hook is not carried over; Nobara/Plasma
+   power management stands.
+3. **`modules/nixos/ananicy.nix` — DROPPED** (user decision). The 410-line
+   `ananicy-cpp` + cachyos ruleset is not ported. Nobara ships its own
+   ananicy-cpp configuration.
 4. **Not ported, deliberately, because disabled on msi or already dropped:**
    `impermanence.nix` (NixOS-only concept; the Nobara install is an ordinary
    install), `hyperhdr.nix` (§0: dead), `caddy.nix`/`home-lab.nix`/
@@ -1193,12 +1181,23 @@ Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
    `multi-user.target`; on Nobara `akmod-nvidia`/dracut own that timing. If
    `nvidia-smi` reports "No devices found" in `systemctl status`, add
    `After=nvidia-persistenced.service`.
-10. **`roles/base` fail2ban `ignoreIP = "192.168.1.0/16"`** ported verbatim
-    from `modules/nixos/base.nix:80`. It is a malformed CIDR that normalizes
-    to `192.168.0.0/16`. Recommend `192.168.1.0/24`. **Decision pending.**
-11. **`chezmoi/dot_config/kdeglobals.src.ini`** `[KDE]` names look-and-feel
-    packages (`Custom moccha`, `Custom latte`, `light`) that match no `Id`
-    under `dot_local/share/plasma/look-and-feel/`. **Decision pending.**
+10. **`roles/base` fail2ban `ignoreIP` — RESOLVED.** `base.nix:80`'s
+    `192.168.1.0/16` is a malformed CIDR that normalizes to `192.168.0.0/16`.
+    Corrected to `192.168.1.0/24` in `roles/base/defaults/main.yml`.
+11. **`kdeglobals.src.ini` look-and-feel names — RESOLVED.** `Custom moccha`
+    / `Custom latte` / `light` matched no `Id` under
+    `dot_local/share/plasma/look-and-feel/`. Repointed at the repo's own
+    day/night pair, `Custom dark` / `Custom light` (`LookAndFeelPackage` to
+    `Custom light`). Those two are the self-contained ones: stock Breeze
+    widgets, decorations and window/desktop switchers, with only the
+    Catppuccin *color scheme* layered on. The `Catppuccin-*-Mauve` packages
+    were not used because they additionally pull in aurorae decorations,
+    cursor themes and splash screens that ship nowhere in this migration.
+    Two known-missing pieces remain, both already recorded in
+    `docs/migration/package-map.md`: `Fluent-purple-dark` (icon theme,
+    packaged nowhere — theme gap 3) and the `CatppuccinLatteMauve` color
+    scheme (only `CatppuccinMochaMauve.colors` is in
+    `dot_local/share/color-schemes/`). Plasma falls back silently on both.
 12. **Role order.** `playbooks/linux.yml` runs `base`, `users` before `pkgs`.
     `roles/{audio,virtualization,vpn}` each guard on `package_facts` and
     degrade to a skip-with-message if their package is not installed yet, so
@@ -1390,7 +1389,7 @@ State these to the user if they come up; do not pretend otherwise.
 | 4.3 | audio | ☑ | kernelParams (`threadirqs`, `usbcore.autosuspend=-1`) deliberately not ported |
 | 4.4 | desktop_linux | ☑ | kanata, XKB console keymap, i2c, firewalld |
 | 4.5 | nvidia | ☑ | no driver install (Nobara ships it); blacklist + clock lock only |
-| 4.6 | gaming/virt/vpn/net | ◐ | roles written; `kernel.nix`/`ananicy.nix`/`betterSleep.nix` still undecided |
+| 4.6 | gaming/virt/vpn/net | ☑ | `kernel.nix`/`ananicy.nix`/`betterSleep.nix` dropped by decision |
 | 4.7 | kde | ☑ | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty |
 | 5.1 | secret audit | ☐ | STOP before deleting |
 | 5.2 | ansible-vault | ☐ | |
