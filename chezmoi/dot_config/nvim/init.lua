@@ -71,7 +71,7 @@ lze.load {
 local socket_path = '/tmp/nvim_' .. vim.loop.os_getpid()
 vim.fn.serverstart(socket_path)
 
--- Fire and forget: non-blocking, ignores output and return codes
-vim.uv.spawn('theme-switcher', {
-  detached = true,
-})
+-- NOT PORTED: a fire-and-forget `vim.uv.spawn('theme-switcher', ...)` used
+-- to sit here, unguarded. packages/theme-switcher is dropped (PLAN.MD task
+-- 4.1) now that Plasma handles light/dark natively (task 2.7), so this was
+-- spawning a binary that no longer exists.

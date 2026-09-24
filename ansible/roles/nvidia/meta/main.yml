@@ -1,3 +1,6 @@
 ---
-# nvidia: msi only - verify Nobara own setup first
+# nvidia: msi-only NVIDIA remainder (PLAN.MD task 4.5) -- nouveau/
+# iTCO_wdt blacklist + nvidia-frequency clock-ramp workaround. No driver
+# install (Nobara's NVIDIA edition ships it). Linux-only, and a no-op on
+# any host without a PCI NVIDIA device (see tasks/main.yml guard).
 dependencies: []

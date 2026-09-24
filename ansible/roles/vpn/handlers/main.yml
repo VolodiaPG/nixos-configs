@@ -1,0 +1,4 @@
+---
+# No handlers needed — tailscaled is enabled/started directly in
+# tasks/main.yml and `tailscale up` is a one-shot command, not a
+# managed-file change that needs a restart handler.

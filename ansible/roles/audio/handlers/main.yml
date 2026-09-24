@@ -1,0 +1,35 @@
+---
+# PipeWire/WirePlumber run as user services under the primary user's
+# systemd --user instance, not as root system services, so they can't be
+# restarted with a normal `become: true` systemd call (that has no
+# D-Bus session/XDG_RUNTIME_DIR to talk to). `su - <user> -c` gives a
+# real login shell where systemd sets those up itself. Lingering is
+# already enabled for {{ username }} per docs/migration/msi-facts.md, so
+# the user unit exists even without an active graphical login, but on a
+# machine with no session at all yet this can still legitimately fail to
+# find the units -- best-effort only. failed_when: false so a handler
+# failure here never fails the play; the conf.d files are correct either
+# way and get picked up on the next natural PipeWire/WirePlumber start
+# (login, or reboot) if this restart doesn't fire.
+- name: reload pipewire and wireplumber
+  become: true
+  ansible.builtin.command:
+    cmd: >-
+      su - {{ username }} -c
+      "systemctl --user restart pipewire.service pipewire-pulse.service wireplumber.service"
+  changed_when: true
+  failed_when: false
+  listen: "reload pipewire and wireplumber"
+
+- name: reload udev rules
+  become: true
+  ansible.builtin.command:
+    cmd: udevadm control --reload-rules
+  changed_when: true
+  notify: trigger udev
+
+- name: trigger udev
+  become: true
+  ansible.builtin.command:
+    cmd: udevadm trigger --subsystem-match=usb
+  changed_when: true

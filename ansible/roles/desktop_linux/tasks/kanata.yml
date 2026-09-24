@@ -1,0 +1,137 @@
+---
+# kanata (task 4.4, PLAN.MD ~line 1063-1066, 1075-1082).
+#
+# kanata itself is installed via nix_profile_packages (inventory/group_vars/
+# nobara.yml -> roles/pkgs/tasks/nix.yml, `nix profile install
+# nixpkgs#kanata`) — not this role's job. This file: ships the config,
+# writes the user unit, and grants uinput access.
+#
+# The uinput recipe is ported from the old dotfiles repo's
+# run_once_kanata.sh.tmpl (found at /tmp/dotfiles-vpg/ and
+# ~/Documents/dotfiles/run_once_kanata.sh.tmpl). Its actual contents:
+#   sudo groupdel uinput 2>/dev/null   # (unconditional teardown, not ported —
+#                                        Ansible's group module is already
+#                                        idempotent, no delete-then-recreate
+#                                        needed)
+#   sudo groupadd --system uinput
+#   sudo usermod -aG input $USER
+#   sudo usermod -aG uinput $USER
+#   sudo tee /etc/udev/rules.d/99-input.rules > /dev/null <<EOF
+#   KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+#   EOF
+#   sudo udevadm control --reload && udevadm trigger --verbose --sysname-match=uniput
+#   sudo modprobe uinput
+#   systemctl --user daemon-reload
+#   systemctl --user enable kanata.service
+#   systemctl --user start kanata.service
+# Bug fixed per task instructions: `--sysname-match=uniput` -> `uinput`.
+
+- name: "Kanata | ensure uinput group exists"
+  become: true
+  ansible.builtin.group:
+    name: uinput
+    state: present
+    system: true
+
+- name: "Kanata | add {{ username }} to input and uinput groups"
+  become: true
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups:
+      - input
+      - uinput
+    append: true
+
+- name: "Kanata | udev rule for /dev/uinput group access"
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/99-input.rules
+    content: |
+      KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload udev rules
+
+- name: "Kanata | load uinput kernel module (now + on boot)"
+  become: true
+  community.general.modprobe:
+    name: uinput
+    state: present
+    persistent: present
+
+- name: "Kanata | ensure ~/.config/kanata exists"
+  become: true
+  ansible.builtin.file:
+    path: "{{ kanata_config_path | dirname }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+
+- name: "Kanata | deploy config from static/kanata.lisp"
+  become: true
+  ansible.builtin.copy:
+    src: "{{ kanata_config_src }}"
+    dest: "{{ kanata_config_path }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+
+# The repo's static/kanata.lisp ships this line commented out (it was
+# normally supplied by the NixOS kanata module's `extraDefCfg`, which this
+# migration drops). Enable it on the DEPLOYED copy only — static/kanata.lisp
+# in the repo is left untouched; this is not this role's file to edit.
+- name: "Kanata | enable concurrent-tap-hold in the deployed config"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "{{ kanata_config_path }}"
+    regexp: '^;;\s*\(defcfg concurrent-tap-hold yes\)\s*$'
+    line: "(defcfg concurrent-tap-hold yes)"
+
+- name: "Kanata | write user unit"
+  become: true
+  ansible.builtin.file:
+    path: "{{ kanata_unit_path | dirname }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+
+- name: "Kanata | deploy user unit"
+  become: true
+  ansible.builtin.template:
+    src: kanata.service.j2
+    dest: "{{ kanata_unit_path }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  register: _desktop_linux_kanata_unit
+
+- name: "Kanata | user unit | look up {{ username }}'s uid"
+  ansible.builtin.command: "id -u {{ username }}"
+  register: _desktop_linux_kanata_uid
+  changed_when: false
+  check_mode: false
+  become: true
+
+# systemctl --user needs a session bus; XDG_RUNTIME_DIR points it at the
+# user's (lingering) manager instance rather than root's. This assumes
+# `loginctl enable-linger {{ username }}` is already in effect (msi-facts.md
+# records lingering enabled on the source machine) so /run/user/<uid> and
+# the user manager exist even outside an interactive login. Group
+# membership for input/uinput above does NOT take effect for a systemd
+# --user manager instance that was already running before this play — that
+# needs a re-login or reboot regardless of what this task reports. Flagging
+# as a first-boot verification item; cannot be exercised from here.
+- name: "Kanata | user unit | daemon-reload, enable, start"
+  become: true
+  become_user: "{{ username }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ _desktop_linux_kanata_uid.stdout }}"
+  ansible.builtin.systemd:
+    name: kanata.service
+    scope: user
+    daemon_reload: true
+    enabled: true
+    state: "{{ 'restarted' if _desktop_linux_kanata_unit.changed else 'started' }}"

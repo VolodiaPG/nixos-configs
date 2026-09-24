@@ -1,6 +1,73 @@
 ---
-# chezmoi: install chezmoi + chezmoi_modify_manager, init repo, apply
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | chezmoi role is not implemented yet"
+# chezmoi: install chezmoi + chezmoi_modify_manager, init repo, apply.
+#
+# STILL SCAFFOLD — everything except the PATH wiring below: repo init
+# (`chezmoi init`) and the actual `chezmoi apply` are phase 6 (cutover)
+# work. This migration's hard rules forbid running a mutating
+# `chezmoi apply` from an agent, and there is no live Plasma anywhere to
+# verify it against yet — see PLAN.MD task 4.7's brief and
+# docs/migration/kde-cutover.md ("Applying, without Plasma fighting back")
+# for what phase 6 still has to do here: run the first apply with Plasma
+# not running (TTY/SSH, session exit rewrites these files), watch
+# `plasma-org.kde.plasma.desktop-appletsrc` merge behaviour, and only then
+# add the `chezmoi init`/`chezmoi apply` tasks themselves.
+#
+# IMPLEMENTED HERE (task 4.7, phase-3 carry-forward hard blocker 2 — see
+# PLAN.MD "PHASE 3 — what it leaves behind", item 2, owner "task 4.7 /
+# roles/chezmoi"):
+#
+#   The six `modify_*` scripts under chezmoi/dot_config/ start with
+#   `#!/usr/bin/env chezmoi_modify_manager`. That shebang is chezmoi_modify_
+#   manager's documented "path" style: chezmoi executes the script and the
+#   kernel resolves the interpreter from the PATH of the process running
+#   `chezmoi apply`, not from any chezmoi-internal config. `roles/pkgs`
+#   (roles/pkgs/tasks/dnf.yml) installs the binary to
+#   `chezmoi_modify_manager_install_dir` (~/.local/bin) and exports that
+#   variable name for exactly this purpose (see that role's
+#   defaults/main.yml), but nothing consumed it — kde-cutover.md is
+#   explicit that `~/.zshrc` prepending ~/.local/bin only helps an
+#   *interactive* shell, so if the first `chezmoi apply` runs from this
+#   Ansible role (a non-interactive process), it must put that directory
+#   on PATH itself rather than rely on the shell.
+#
+#   Below: an `environment` block prepending
+#   chezmoi_modify_manager_install_dir to PATH for the whole role (so
+#   phase 6's `chezmoi init`/`chezmoi apply` tasks inherit it automatically
+#   without having to remember to do it again), plus a preflight check that
+#   `chezmoi_modify_manager --version` actually resolves on that PATH —
+#   run now, before any apply task exists, so a broken/missing cmm install
+#   fails loudly here instead of mid-apply in phase 6.
+#
+#   Linux-only: cmm and the six modify_* scripts are all KDE/Plasma
+#   config, excluded from macOS by .chezmoiignore (kde-cutover.md), and
+#   `roles/pkgs` never installs chezmoi_modify_manager on Darwin — so there
+#   is nothing to preflight there.
+
+- name: chezmoi | Linux — chezmoi_modify_manager PATH wiring + preflight
+  when: ansible_system == 'Linux'
+  environment:
+    PATH: "{{ chezmoi_modify_manager_install_dir }}:{{ ansible_env.PATH }}"
+  block:
+    - name: chezmoi_modify_manager | preflight — must resolve on PATH before any apply
+      ansible.builtin.command: chezmoi_modify_manager --version
+      register: _cmm_preflight
+      changed_when: false
+      check_mode: false
+      failed_when: _cmm_preflight.rc != 0
+      # No custom fail message override here (Ansible already reports the
+      # non-zero rc/stderr) — but if this fails, the cause per phase-3
+      # blocker 2 is that `roles/pkgs` hasn't installed
+      # chezmoi_modify_manager to chezmoi_modify_manager_install_dir yet
+      # (task/play ordering), or that variable has drifted from what
+      # `roles/pkgs` actually installed into.
+
+    - name: chezmoi_modify_manager | resolved version
+      ansible.builtin.debug:
+        msg: "chezmoi_modify_manager resolved on PATH: {{ _cmm_preflight.stdout }}"
+
+- name: "Placeholder | chezmoi repo init / apply is not implemented yet (phase 6)"
   ansible.builtin.debug:
-    msg: "role 'chezmoi' is a scaffold; see PLAN.MD"
+    msg: >-
+      role 'chezmoi': chezmoi_modify_manager PATH wiring + preflight is
+      implemented (task 4.7). `chezmoi init` and `chezmoi apply` remain
+      phase 6 work — see PLAN.MD and docs/migration/kde-cutover.md.

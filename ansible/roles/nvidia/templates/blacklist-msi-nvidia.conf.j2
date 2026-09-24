@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+# Ported from configurations/nixos/msi/configuration.nix,
+# boot.blacklistedKernelModules (PLAN.MD task 4.5).
+#
+# nouveau: must stay off the NVIDIA GPU that the proprietary driver owns.
+# iTCO_wdt: msi's Intel TCO watchdog timer; blacklisted on NixOS too.
+{% for module in nvidia_blacklist_modules %}
+blacklist {{ module }}
+{% endfor %}

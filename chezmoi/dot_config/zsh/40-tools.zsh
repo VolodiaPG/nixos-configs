@@ -32,13 +32,11 @@ if (( $+commands[keychain] )); then
 fi
 
 if [[ -o interactive ]]; then
-  # theme-switcher is packages/theme-switcher, reinstalled to ~/.local/bin by
-  # PLAN.MD task 4.1. Backgrounded and disowned (&|) exactly as before so it
-  # never delays the first prompt.
-  if (( $+commands[theme-switcher] )); then
-    theme-switcher -t tmux,kitty &> /dev/null &|
-  fi
-
+  # NOT PORTED: the `theme-switcher -t tmux,kitty` call that used to live
+  # here. packages/theme-switcher is dropped (PLAN.MD task 4.1) because
+  # Plasma switches light/dark natively (task 2.7), so the binary no longer
+  # exists and the guard was dead weight. The comment that once claimed
+  # task 4.1 would reinstall it contradicted 4.1's own table.
   (( $+commands[starship] )) && eval "$(starship init zsh)"
 fi
 

@@ -1,0 +1,34 @@
+---
+# modprobe.d blacklist entries only take effect for modules not already
+# loaded, AND (more importantly for nouveau/iTCO_wdt, which dracut may
+# pull into the initramfs) they need the initramfs regenerated so the
+# early-boot environment itself stops loading the blacklisted module
+# before modprobe.d on the root filesystem is even consulted. Only fires
+# when the blacklist file actually changed, so this is not a "run every
+# playbook execution" cost. --force overwrites the initramfs for the
+# currently-running kernel in place; --regenerate-all would cover every
+# installed kernel, but that's a bigger/slower operation than this
+# specific config change needs, and NixOS's own equivalent (nixos-rebuild)
+# also only ever regenerated the entry actually being switched to.
+- name: regenerate dracut initramfs
+  become: true
+  ansible.builtin.command:
+    cmd: dracut --force
+  changed_when: true
+  listen: "regenerate dracut initramfs"
+
+- name: reload systemd units
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  listen: "reload systemd units"
+
+- name: restart nvidia-frequency
+  become: true
+  ansible.builtin.systemd_service:
+    name: nvidia-frequency.service
+    state: restarted
+  listen: "restart nvidia-frequency"
+  # Re-running `nvidia-smi -lmc/-lgc` with the same values is itself
+  # idempotent at the hardware level; restarting on every unit-file change
+  # just re-asserts the clock lock, it does not "flap" anything.

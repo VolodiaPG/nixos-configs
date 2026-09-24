@@ -1,0 +1,36 @@
+---
+# i2c for ddcutil (task 4.4, PLAN.MD ~line 1066-1069). ddcutil itself is a
+# dnf package (docs/migration/nobara.yml `dnf_packages: i2c-tools`,
+# installed by roles/pkgs) — this file only wires up kernel/udev/group
+# access to /dev/i2c-*.
+
+- name: "i2c | load i2c-dev kernel module (now + on boot)"
+  become: true
+  community.general.modprobe:
+    name: i2c-dev
+    state: present
+    persistent: present
+
+- name: "i2c | udev rule for /dev/i2c-* group access"
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/60-i2c.rules
+    content: |
+      KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload udev rules
+
+- name: "i2c | ensure i2c group exists"
+  become: true
+  ansible.builtin.group:
+    name: i2c
+    state: present
+
+- name: "i2c | add {{ username }} to i2c group"
+  become: true
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: i2c
+    append: true

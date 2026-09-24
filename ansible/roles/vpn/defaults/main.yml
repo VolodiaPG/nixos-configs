@@ -1,3 +1,74 @@
 ---
 # Defaults for the vpn role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/vpn.nix (63 lines, PLAN.MD task 4.6):
+#   services.tailscale.enable = true;
+#   services.tailscale.extraUpFlags = [ "--advertise-tags=tag:server" "--advertise-exit-node" ];
+#   networking.nameservers = cfg.nameservers;  # default [ "1.1.1.1" "1.0.0.1" ]
+#   networking.firewall.trustedInterfaces = [ "tailscale0" ];
+#   networking.firewall.checkReversePath = "loose";
+#   networking.firewall.allowedUDPPorts = [ 41641 ];
+#   networking.firewall.allowedTCPPorts = [ 22 ];
+#   environment.systemPackages = [ pkgs.tailscale ];
+#
+# What was ported and what wasn't:
+#
+# - tailscale package: already installed by roles/pkgs
+#   (inventory/group_vars/nobara.yml `dnf_packages`). PLAN.MD (line ~1116)
+#   says "Tailscale on Fedora comes from a dedicated repo, not the main
+#   repos — check docs/migration/package-map.md for how it was resolved
+#   before adding a repo definition." That check was done:
+#   docs/migration/package-map.md line 98 says the opposite — a container
+#   `dnf repoquery @fedora:43` for `tailscale` resolved from the plain
+#   `fedora` repo, with the note "Tailscale's own repo is not required".
+#   inventory/group_vars/nobara.yml already lists `tailscale` in the plain
+#   `dnf_packages` list (task 3.1), not in a separate repo file. This role
+#   therefore does NOT add Tailscale's RPM repo — doing so would
+#   contradict the already-verified package map and duplicate what
+#   roles/pkgs does. Flagged as a PLAN.MD discrepancy in the task report.
+#
+# - services.tailscale.enable -> tailscaled systemd service, enabled here
+#   unconditionally (no secret involved in just starting the daemon).
+#
+# - `tailscale up` -> only run when an authkey is available (see
+#   tailscale_authkey below); this is the one piece that touches the
+#   vault, per the hard rule against ever inventing/hardcoding a key.
+#
+# - extraUpFlags (`--advertise-tags=tag:server --advertise-exit-node`):
+#   NOT ported verbatim. Reading vpn.nix's own comments
+#   ("Let's make tailscale binary available all users", exit-node
+#   advertisement, `tag:server`) shows this module was written for a
+#   server/router role. msi is a gaming desktop, not a server — advertising
+#   it as an exit node needs matching ACL grants in the tailnet's admin
+#   console, and tagging it tag:server requires the authkey itself to be
+#   pre-authorized for that tag. Guessing this from here (no
+#   vault/tailnet-admin access) risks `tailscale up` failing the whole
+#   play, which the hard rules explicitly forbid. Default is therefore an
+#   empty list; override tailscale_up_extra_args in group_vars/host_vars
+#   if/when the tag:server + exit-node intent for msi is confirmed. Judged
+#   as a deliberate scope decision — flagged in the task report.
+#
+# - networking.nameservers (global DNS override to 1.1.1.1/1.0.0.1): NOT
+#   ported. Nobara's default is NetworkManager-managed DNS from DHCP;
+#   forcing /etc/resolv.conf to 1.1.1.1/1.0.0.1 system-wide fights with
+#   NetworkManager on a desktop (unlike the presumably-headless/server
+#   host this module was written for) and isn't really part of "the VPN"
+#   — it's a separate global default-resolver decision. Left out as a
+#   deliberate scope decision — flagged in the task report.
+#
+# - networking.firewall.* (trustedInterfaces, checkReversePath,
+#   allowedUDPPorts, allowedTCPPorts): firewalld is owned by task 4.4
+#   (roles/desktop_linux), not this role. Not implemented here — the UDP
+#   41641 requirement (Tailscale's WireGuard port) is reported to that
+#   task instead of added here.
+
+# Tailscale authkey. Expected to arrive from the vault as
+# `vault_tailscale_authkey` once phase 5 populates
+# inventory/group_vars/all/vault.yml (currently empty). This role never
+# hardcodes a key and skips the `tailscale up` step cleanly when it is
+# undefined/empty — see tasks/main.yml.
+tailscale_authkey: "{{ vault_tailscale_authkey | default('') }}"
+
+# See the extraUpFlags note above — left empty deliberately.
+tailscale_up_extra_args: []

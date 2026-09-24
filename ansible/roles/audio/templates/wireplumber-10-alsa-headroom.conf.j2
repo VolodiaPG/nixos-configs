@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, wireplumber.extraConfig."10-alsa-headroom".
+#
+# Headroom on ALSA outputs to avoid underruns; harmless for any device
+# since it's a buffer size hint, not a rate/channel override.
+#
+# NEEDS FIRST-BOOT VERIFICATION: this is WirePlumber 0.5 SPA-JSON conf.d
+# syntax, ported verbatim from the NixOS module. It could not be checked
+# against Nobara's actual shipped WirePlumber version/config schema
+# (msi is unreachable). Verify with `wpctl status` and
+# `pw-metadata -n settings | grep xrun` after first boot.
+
+monitor.alsa.rules = [
+    {
+        matches = [
+            { node.name = "~alsa_output.*" }
+        ]
+        actions = {
+            update-props = {
+                api.alsa.headroom = {{ audio_alsa_headroom }}
+            }
+        }
+    }
+]

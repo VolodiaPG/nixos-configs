@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+# Ported from configurations/nixos/msi/configuration.nix,
+# systemd.services.nvidia-frequency (PLAN.MD task 4.5).
+#
+# msi's NVIDIA GPU is slow to ramp clocks up from idle, which causes
+# stutter when scrolling. Lock the memory/graphics clocks to fixed
+# ranges instead of leaving them on the driver's default auto-boost
+# behaviour.
+#
+# NEEDS FIRST-BOOT VERIFICATION: the NixOS unit only declared
+# WantedBy=multi-user.target with no explicit ordering against the
+# driver itself, because on NixOS the nvidia kernel module is guaranteed
+# loaded before multi-user.target. On Nobara, akmod-nvidia/dracut own
+# that timing instead -- if this unit races the driver at boot (nvidia-smi
+# fails with "NVIDIA-SMI has failed... No devices were found" in
+# `systemctl status nvidia-frequency`), add
+# `After=nvidia-persistenced.service` or similar and re-test; not added
+# here since it could not be confirmed necessary on real Nobara.
+[Unit]
+Description=Lock NVIDIA GPU memory/graphics clocks (msi clock-ramp workaround)
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart={{ nvidia_smi_bin }} -lmc {{ nvidia_lock_memory_clock }}
+ExecStart={{ nvidia_smi_bin }} -lgc {{ nvidia_lock_graphics_clock }}
+
+[Install]
+WantedBy=multi-user.target

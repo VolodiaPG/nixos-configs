@@ -4,3 +4,17 @@
   ansible.builtin.command:
     cmd: fc-cache -f
   changed_when: true
+
+# Task 4.4 — used by the i2c and uinput udev rule tasks.
+- name: reload udev rules
+  become: true
+  ansible.builtin.command:
+    cmd: udevadm control --reload
+  changed_when: true
+  notify: trigger udev
+
+- name: trigger udev
+  become: true
+  ansible.builtin.command:
+    cmd: udevadm trigger
+  changed_when: true

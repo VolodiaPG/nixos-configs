@@ -1,6 +1,48 @@
 ---
-# kde: Plasma settings that need root
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | kde role is not implemented yet"
+# kde: Plasma-level settings needing root, plus Catppuccin global-theme
+# asset discovery and SDDM config (PLAN.MD task 4.7).
+#
+# Linux-only: this role is only ever included from playbooks/linux.yml (not
+# macos.yml), but guard explicitly anyway per the task's design constraints
+# — a stray include (e.g. `ansible-playbook site.yml --tags kde` against the
+# wrong limit) must still no-op cleanly on Darwin rather than fail.
+#
+# What this role deliberately does NOT do, and why:
+#
+#   - Native day/night colour-scheme switching (the replacement for
+#     modules/home/theme-daemon.nix / task 2.7) is NOT implemented here.
+#     Plasma 6.5+'s "Switch to Dark Mode at Night" toggle is a single
+#     boolean, `[KDE] AutomaticLookAndFeel=true` (plus
+#     `LookAndFeelPackageDay=`/`LookAndFeelPackageNight=` naming the two
+#     Global Themes to switch between), written into `~/.config/kdeglobals`
+#     — a per-user file. That file is already one of the 17 chezmoi-managed
+#     KDE files (`chezmoi/dot_config/kdeglobals.src.ini`, edited through
+#     `modify_kdeglobals`), which is off-limits to this agent and belongs
+#     to chezmoi, not this root-level role. See PLAN.MD task 4.7's report
+#     for the full writeup; nothing is written here for it.
+#
+#   - `private_kded5rc` vs `kded6rc` (Plasma 5 vs 6 filename, phase-2 leaves
+#     it item 7) is not resolved here either: that chezmoi source file has
+#     not been applied yet at the point this role runs in playbooks/linux.yml
+#     (`kde` runs before `chezmoi`), so there is nothing on disk yet to
+#     detect or rename. This has to be a first-boot / phase-6 check, done
+#     after `chezmoi apply` has actually put a `kded*rc` on disk. See
+#     docs/migration/kde-cutover.md.
+#
+#   - SDDM: see sddm.yml — nothing in the old NixOS config (Hyprland+greetd)
+#     configured a display manager theme, so there is nothing to port. Left
+#     as an explicit empty/documented section rather than inventing tasks.
+
+- name: kde | Catppuccin theme + cursor discovery, SDDM
+  when: ansible_system == 'Linux'
+  block:
+    - name: kde | make nix-profile-installed theme/cursor assets discoverable
+      ansible.builtin.include_tasks: xdg_data_dirs.yml
+
+    - name: kde | SDDM
+      ansible.builtin.include_tasks: sddm.yml
+
+- name: kde | Darwin — no-op, role only applies to Plasma/Linux
   ansible.builtin.debug:
-    msg: "role 'kde' is a scaffold; see PLAN.MD"
+    msg: "kde role is a no-op on Darwin; see PLAN.MD task 4.7"
+  when: ansible_system == 'Darwin'

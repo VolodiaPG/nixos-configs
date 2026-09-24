@@ -1,6 +1,106 @@
 ---
-# virtualization: podman, distrobox
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | virtualization role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'virtualization' is a scaffold; see PLAN.MD"
+# virtualization: ported from modules/nixos/virtualization.nix (PLAN.MD
+# task 4.6). See defaults/main.yml for what was and wasn't ported and why.
+#
+# libvirt is skipped entirely — msi sets
+# `my.virtualization.libvirt.enable = false` and configuration.nix carries
+# no libvirt bits of its own, confirmed by reading both files.
+
+- name: virtualization | Linux only
+  when: ansible_system == 'Linux'
+  block:
+    - name: virtualization | gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    # --- docker (moby-engine) ------------------------------------------
+    # Guarded on the package already being installed: roles/pkgs runs
+    # before this role in playbooks/linux.yml and owns installing
+    # moby-engine/docker-compose (inventory/group_vars/nobara.yml), so in
+    # a normal full run this is always true. The guard just keeps this
+    # role safe to run standalone (e.g. `--tags virtualization`) before
+    # pkgs has ever run, matching the defensive pattern roles/base uses
+    # for fail2ban/earlyoom.
+    - name: virtualization | docker
+      when: "'moby-engine' in ansible_facts.packages"
+      become: true
+      block:
+        - name: virtualization | ensure docker group exists
+          ansible.builtin.group:
+            name: "{{ virtualization_docker_group }}"
+            state: present
+
+        # Ported from the old dotfiles repo's run_once_docker.sh.tmpl
+        # (`groupadd docker` + `usermod -aG docker $USER`) — needs root,
+        # so it becomes an Ansible task rather than a chezmoi run_once
+        # script. `append: true` mirrors `usermod -aG` (add to the group
+        # without dropping existing group membership).
+        - name: virtualization | add {{ username }} to the docker group
+          ansible.builtin.user:
+            name: "{{ username }}"
+            groups: "{{ virtualization_docker_group }}"
+            append: true
+
+        - name: virtualization | docker daemon.json (cgroupdriver + bip)
+          ansible.builtin.template:
+            src: daemon.json.j2
+            dest: "{{ virtualization_docker_daemon_json_path }}"
+            owner: root
+            group: root
+            mode: "0644"
+          notify: Restart docker
+
+        - name: virtualization | enable/start docker
+          ansible.builtin.systemd:
+            name: docker
+            enabled: true
+            state: started
+
+        - name: virtualization | weekly docker prune — service unit
+          ansible.builtin.template:
+            src: docker-prune.service.j2
+            dest: /etc/systemd/system/docker-prune.service
+            owner: root
+            group: root
+            mode: "0644"
+          notify: Reload systemd
+
+        - name: virtualization | weekly docker prune — timer unit
+          ansible.builtin.template:
+            src: docker-prune.timer.j2
+            dest: /etc/systemd/system/docker-prune.timer
+            owner: root
+            group: root
+            mode: "0644"
+          notify: Reload systemd
+
+        - name: virtualization | flush handlers before enabling the timer
+          ansible.builtin.meta: flush_handlers
+
+        - name: virtualization | enable/start docker-prune.timer
+          ansible.builtin.systemd:
+            name: docker-prune.timer
+            enabled: true
+            state: started
+
+    - name: virtualization | docker package not yet installed, skipping docker config
+      when: "'moby-engine' not in ansible_facts.packages"
+      ansible.builtin.debug:
+        msg: >-
+          moby-engine is not installed yet (roles/pkgs owns it); skipping
+          docker group/daemon.json/service/prune-timer setup, will apply
+          next run.
+
+    # --- podman + distrobox ---------------------------------------------
+    # virtualization.nix has no configuration for podman/distrobox beyond
+    # installing the packages, which roles/pkgs already does (`podman`,
+    # `podman-compose`, `distrobox` in inventory/group_vars/nobara.yml).
+    # Rootless podman needs no group membership (unlike docker's daemon
+    # socket). Nothing further to do here.
+    - name: virtualization | podman/distrobox — no additional config ported
+      ansible.builtin.debug:
+        msg: >-
+          podman, podman-compose and distrobox are installed by roles/pkgs
+          and need no further configuration beyond that (virtualization.nix
+          carries none). docker and podman are intentionally left
+          coexisting on msi.

@@ -1,0 +1,23 @@
+---
+# Task 4.7 — SDDM config.
+#
+# PLAN.MD: "SDDM config if needed." It is not needed, as far as this
+# migration's source material shows:
+#
+#   - `msi`'s old NixOS config used Hyprland + greetd as the login/session
+#     manager (docs/migration/msi-facts.md), never SDDM. There is no
+#     `services.displayManager.sddm` block, no SDDM theme package, and no
+#     `/etc/sddm.conf.d/` fragment anywhere in `modules/` to port.
+#   - `docs/migration/package-map.md` confirms `sddm` is a Nobara/Plasma
+#     package with "no Ansible task needs [it]" — i.e. it ships and is
+#     enabled by the Nobara install itself; nothing here needs to install
+#     or enable it.
+#   - No Catppuccin SDDM theme is referenced anywhere in the old dotfiles
+#     repo or this repo's chezmoi tree (only the Plasma-internal
+#     look-and-feel/colour-scheme/aurorae assets are), so there is no theme
+#     asset to wire up a `[Theme] Current=` for.
+#
+# Deliberately left empty rather than inventing an SDDM theme/autologin/etc.
+# task that has no source to port from. If a real requirement surfaces at
+# first boot (e.g. the user wants Catppuccin on the login screen too), add
+# it here — this file is the intended home for it.

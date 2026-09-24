@@ -1,0 +1,13 @@
+[Unit]
+Description=kanata keyboard remapper
+Documentation=https://github.com/jtroo/kanata
+After=graphical-session-pre.target
+
+[Service]
+Type=simple
+ExecStart={{ kanata_bin_path }} -c {{ kanata_config_path }}
+Restart=always
+RestartSec=1s
+
+[Install]
+WantedBy=default.target

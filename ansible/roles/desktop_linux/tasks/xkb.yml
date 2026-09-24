@@ -1,0 +1,39 @@
+---
+# Console/TTY keymap only (task 4.4, PLAN.MD ~line 1066-1071).
+#
+# The Nix source (modules/nixos/desktop.nix) sets `services.xserver.xkb`,
+# which is an X11/session-level setting. On the migrated host the X11/
+# Plasma session layout is already covered by chezmoi's
+# dot_config/private_kxkbrc (task 2.9, already committed) — duplicating it
+# here via `localectl set-x11-keymap` would fight that file (and would also
+# rewrite /etc/X11/xorg.conf.d/00-keyboard.conf, which nothing here should
+# touch). So this role's job is narrower: the virtual-console (TTY) keymap
+# only, via `localectl set-keymap`, which touches /etc/vconsole.conf alone.
+#
+# Layout+variant: `fr-oss` is the console (kbd package) keymap matching X11
+# `fr`/`oss` — it carries the AltGr+E Euro-sign binding the `oss` variant is
+# for, satisfying `eurosign:e`.
+#
+# `ctrl:swapcaps` is deliberately NOT reproduced here. docs/migration/
+# msi-facts.md flags an overlap between this XKB option and kanata, and
+# static/kanata.lisp settles it: the default layer already remaps the
+# `caps` key to `lctl` (defsrc row 3 / deflayer default row 3), i.e. kanata
+# performs the caps<->ctrl swap itself at the evdev/uinput level, which
+# applies system-wide (TTY included) once the kanata user unit is running —
+# see kanata.yml. No console keymap can express `ctrl:swapcaps` directly
+# (console keymaps are plain kbd keymap names, not XKB option strings); a
+# custom kbd keymap file would be the only way to hand-roll it, and would be
+# redundant with kanata. This is a discrepancy from PLAN.MD's literal
+# option list — reported, not silently worked around.
+
+- name: "XKB | console keymap | read current vconsole state"
+  ansible.builtin.command: localectl status
+  register: _desktop_linux_localectl_status
+  changed_when: false
+  check_mode: false
+  become: true
+
+- name: "XKB | console keymap | set fr-oss (TTY only; Plasma session is chezmoi's private_kxkbrc)"
+  ansible.builtin.command: localectl set-keymap fr-oss
+  become: true
+  when: "'VC Keymap: fr-oss' not in _desktop_linux_localectl_status.stdout"

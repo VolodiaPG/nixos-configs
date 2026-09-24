@@ -1,0 +1,36 @@
+---
+# Handlers run in the order they are defined here (not the order they were
+# notified) whenever a single task notifies more than one of them, which is
+# what the sshd drop-in task below relies on: validate the *live* merged
+# config with `sshd -t` before ever reloading the daemon, so a bad drop-in
+# is written to disk but never actually loaded - it cannot lock us out of
+# the running sshd.
+
+- name: Validate sshd config
+  ansible.builtin.command: sshd -t
+  changed_when: false
+  become: true
+
+- name: Reload sshd
+  ansible.builtin.systemd:
+    name: sshd
+    state: reloaded
+  become: true
+
+- name: Restart fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: restarted
+  become: true
+
+- name: Restart earlyoom
+  ansible.builtin.systemd:
+    name: earlyoom
+    state: restarted
+  become: true
+
+- name: Restart systemd-journald
+  ansible.builtin.systemd:
+    name: systemd-journald
+    state: restarted
+  become: true

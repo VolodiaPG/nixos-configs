@@ -5,6 +5,22 @@
 - name: "Fonts | include font tasks"
   ansible.builtin.include_tasks: fonts.yml
 # END task-3.3-fonts
-- name: "Placeholder | desktop_linux role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'desktop_linux' is a scaffold; see PLAN.MD"
+
+# Task 4.4 — kanata, console/TTY xkb, i2c/ddcutil, firewalld. Linux-only;
+# guarded here rather than per-file since none of it makes sense on Darwin
+# and the playbook already restricts this role to the `linux` group, but
+# the role could in principle be pulled in elsewhere.
+- name: "desktop_linux | Linux-only tasks"
+  when: ansible_system == 'Linux'
+  block:
+    - name: "Kanata | include kanata tasks"
+      ansible.builtin.include_tasks: kanata.yml
+
+    - name: "XKB | include console keymap tasks"
+      ansible.builtin.include_tasks: xkb.yml
+
+    - name: "i2c | include i2c/ddcutil tasks"
+      ansible.builtin.include_tasks: i2c.yml
+
+    - name: "Firewall | include firewalld tasks"
+      ansible.builtin.include_tasks: firewall.yml

@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, extraConfig.pipewire."13-resample-quality".
+#
+# Slightly better resampling for the (rare) case a client's rate doesn't
+# match the sink and PipeWire actually has to resample. Channel maps and
+# downmix/upmix are left at PipeWire's own defaults so multichannel
+# sources (e.g. a movie's 5.1 track) route to however many channels the
+# sink actually has.
+
+stream.properties = {
+    resample.quality = {{ audio_resample_quality }}
+    resample.window = {{ audio_resample_window }}
+}

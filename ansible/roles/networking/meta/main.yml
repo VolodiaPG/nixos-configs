@@ -1,3 +1,6 @@
 ---
-# networking: NetworkManager tweaks, firewalld ports
+# networking: near-empty by design. modules/nixos/networking.nix's actual
+# content (sysctls, ip6table_filter) is gated by `my.networking.enable`,
+# which is false on msi — not currently active, so not ported. See
+# defaults/main.yml.
 dependencies: []

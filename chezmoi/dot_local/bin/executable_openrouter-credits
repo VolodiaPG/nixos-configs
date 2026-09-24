@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Prints remaining OpenRouter credits, cached for REFRESH_INTERVAL seconds
+# (shortened to 10s right after a change is observed) to stay cheap when
+# called from a shell prompt/statusline on every render.
+#
+# Ported from packages/openrouter-credits (PLAN.MD task 4.1). Nix wrapped
+# this with `bash` + `coreutils` + `jq`; `curl` was pulled in transitively
+# via the wrapper's PATH. Resolve all of them from PATH instead — `date +%s`
+# is POSIX and behaves the same under GNU and BSD date, so no divergence
+# there.
+
+set -euo pipefail
+
+for tool in curl jq date; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "openrouter-credits: missing required tool '$tool' on PATH" >&2
+    exit 127
+  fi
+done
+
+if [[ -z "${OPENROUTER_API_KEY:-}" ]]; then
+  echo "Openrouter API key not found, please put it in OPENROUTER_API_KEY environment variable" >&2
+  exit 1
+fi
+
+CACHE_FILE="${TMPDIR:-/tmp}/openrouter-credits.cache"
+NOW=$(date +%s)
+
+# Default: refresh every 60 seconds
+REFRESH_INTERVAL=60
+
+LAST_UPDATE=""
+LAST_CREDITS=""
+LAST_CHANGED=""
+
+# Read cache if it exists
+if [[ -f "$CACHE_FILE" ]]; then
+  read -r LAST_UPDATE LAST_CREDITS LAST_CHANGED < "$CACHE_FILE" 2>/dev/null || true
+
+  # If credits changed recently, use shorter interval (10s)
+  if [[ "$LAST_CHANGED" == "1" ]]; then
+    REFRESH_INTERVAL=10
+  fi
+
+  # Calculate time since last update
+  TIME_SINCE_UPDATE=$((NOW - LAST_UPDATE))
+
+  # If not enough time passed, return cached value
+  if [[ $TIME_SINCE_UPDATE -lt $REFRESH_INTERVAL ]]; then
+    echo "$LAST_CREDITS"
+    exit 0
+  fi
+fi
+
+# Time to fetch fresh data. `|| true`: under `set -eo pipefail` a curl/jq
+# failure here must fall through to the "no valid credits" branch below
+# (which serves the cache or errors cleanly) instead of killing the script.
+credits=$(curl -s -m 5 https://openrouter.ai/api/v1/credits -H "Authorization: Bearer $OPENROUTER_API_KEY" 2>/dev/null | jq '.data.total_credits - .data.total_usage' 2>/dev/null) || true
+
+# Validate we got a number
+if [[ -z "$credits" ]] || [[ "$credits" == "null" ]]; then
+  # Return cached value if available, otherwise error
+  if [[ -n "$LAST_CREDITS" ]]; then
+    echo "$LAST_CREDITS"
+    # Mark as not changed since we failed to get new data
+    echo "$NOW $LAST_CREDITS 0" > "$CACHE_FILE"
+    exit 0
+  fi
+  echo "Error fetching credits" >&2
+  exit 1
+fi
+
+credits_formatted=$(printf "\$%.2f" "$credits")
+
+# Detect if credits changed
+CHANGED=0
+if [[ -n "$LAST_CREDITS" ]] && [[ "$credits_formatted" != "$LAST_CREDITS" ]]; then
+  CHANGED=1
+fi
+
+# Save to cache: timestamp credits changed_flag
+echo "$NOW $credits_formatted $CHANGED" > "$CACHE_FILE"
+
+echo "$credits_formatted"

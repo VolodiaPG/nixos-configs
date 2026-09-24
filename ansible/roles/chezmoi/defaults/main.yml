@@ -1,3 +1,15 @@
 ---
 # Defaults for the chezmoi role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+
+# Safety-net fallback only (same convention as roles/desktop_linux's
+# font_packages default) — the real value is `roles/pkgs`'s
+# chezmoi_modify_manager_install_dir (roles/pkgs/defaults/main.yml),
+# exported for exactly this consumer per that file's own comment. Role
+# defaults from every role present in the play are merged regardless of
+# execution order, so in a normal `playbooks/linux.yml` run this is never
+# actually used — it only matters if `chezmoi` is ever run standalone
+# (e.g. `--tags chezmoi` / a stray `--limit`) without `pkgs` in the same
+# play, in which case it must still resolve to the same path `pkgs` would
+# have installed into rather than fail with an undefined variable.
+chezmoi_modify_manager_install_dir: "{{ home_dir }}/.local/bin"

@@ -1136,6 +1136,77 @@ task 2.7). SDDM config if needed.
 
 ---
 
+### PHASE 4 — what it leaves behind
+
+Seven roles written; `playbooks/{linux,macos,site,bootstrap}.yml` all pass
+`ansible-playbook --syntax-check`. Open items, in the order they matter:
+
+1. **`modules/nixos/kernel.nix` — ACTIVE on msi, not ported.** msi sets
+   `kernel.enable = true`, `cachyDesktop = true`, `lowLatencyNetworking = true`.
+   Breakdown:
+   - CachyOS kernel package — **drop**. Nobara ships its own patched kernel;
+     that is the whole point of picking Nobara.
+   - `zramSwap`: `lz4`, `memoryPercent = 50`, `priority = 100`. Nobara ships
+     zram via `zram-generator` with different defaults (`zstd`, ~half RAM
+     capped). Genuine delta; portable as `/etc/systemd/zram-generator.conf`.
+   - `lowLatencyNetworking` sysctls: `net.core.default_qdisc = fq_codel`,
+     `net.ipv4.tcp_congestion_control = cubic`, `vm.swappiness = 10`.
+     Portable as a `roles/base` sysctl drop-in.
+   - `powerManagement.powertop.enable` — desktop machine, no battery. Drop.
+   - `serverNetworking` branch (`tcp_bbr`, `fq`, `somaxconn`) — not enabled on
+     msi. Drop.
+2. **`modules/nixos/betterSleep.nix` — ACTIVE on msi, not ported.** Saves the
+   CPU governor to `/run/cpu-governor-before-sleep`, forces `powersave` on
+   suspend, restores it on resume. Portable verbatim as a
+   `/usr/lib/systemd/system-sleep/` hook. ~20 lines of shell.
+3. **`modules/nixos/ananicy.nix` — ACTIVE on msi, not ported.** 410 lines:
+   `ananicy-cpp` + `ananicy-rules-cachyos` + a repo-specific set of
+   `extraTypes`/`extraRules`. Porting means installing `ananicy-cpp` (COPR)
+   and translating every custom type/rule into `/etc/ananicy.d/*.types` and
+   `*.rules`. Largest single piece of unported phase-4 work.
+4. **Not ported, deliberately, because disabled on msi or already dropped:**
+   `impermanence.nix` (NixOS-only concept; the Nobara install is an ordinary
+   install), `hyperhdr.nix` (§0: dead), `caddy.nix`/`home-lab.nix`/
+   `immich-ml.nix`/`elegant-boot.nix`/`backlight-off.nix`/`networking.nix`/
+   libvirt (all `false` on msi or §0-dropped), `run_once_governor.tmpl`
+   (already dropped in `docs/migration/dotfiles-merge.md:152`).
+5. **`roles/audio`: `boot.kernelParams` not ported** — `threadirqs` and
+   `usbcore.autosuspend=-1` are kernel command-line edits (`grubby` on
+   Fedora), out of scope for a conf.d/udev role. If dropouts persist after
+   first boot, that is the next thing to try.
+6. **`roles/vpn`: `tailscale up` is gated on `vault_tailscale_authkey`**,
+   which does not exist until phase 5. `tailscaled` is enabled and started
+   regardless; the host simply is not logged into the tailnet yet.
+   `extraUpFlags` (`--advertise-tags=tag:server --advertise-exit-node`)
+   deliberately **not** ported — msi is a desktop, and both flags need
+   matching tailnet ACL/tag grants that cannot be verified from here.
+7. **`roles/networking` is near-empty by design.** `networking.nix` is gated
+   by `my.networking.enable`, which is `false` on msi — porting its sysctls
+   would add new behaviour, not migrate existing behaviour. The role only
+   masks `NetworkManager-wait-online.service`, which PLAN.MD named directly
+   and which is not sourced from any Nix module.
+8. **`roles/gaming` has no tasks.** Every package `gaming.nix` installs is
+   already in `inventory/group_vars/nobara.yml`, and no other knob in that
+   module is turned on. Kept as a documented placeholder.
+9. **`roles/nvidia`: `nvidia-frequency.service` ordering needs first-boot
+   verification.** On NixOS the nvidia module is guaranteed loaded before
+   `multi-user.target`; on Nobara `akmod-nvidia`/dracut own that timing. If
+   `nvidia-smi` reports "No devices found" in `systemctl status`, add
+   `After=nvidia-persistenced.service`.
+10. **`roles/base` fail2ban `ignoreIP = "192.168.1.0/16"`** ported verbatim
+    from `modules/nixos/base.nix:80`. It is a malformed CIDR that normalizes
+    to `192.168.0.0/16`. Recommend `192.168.1.0/24`. **Decision pending.**
+11. **`chezmoi/dot_config/kdeglobals.src.ini`** `[KDE]` names look-and-feel
+    packages (`Custom moccha`, `Custom latte`, `light`) that match no `Id`
+    under `dot_local/share/plasma/look-and-feel/`. **Decision pending.**
+12. **Role order.** `playbooks/linux.yml` runs `base`, `users` before `pkgs`.
+    `roles/{audio,virtualization,vpn}` each guard on `package_facts` and
+    degrade to a skip-with-message if their package is not installed yet, so
+    a first run is safe but incomplete for those roles. Consider moving
+    `pkgs` ahead of `base`.
+
+---
+
 ## PHASE 5 — Secrets
 
 ### Task 5.1 — Audit and prune
@@ -1314,13 +1385,13 @@ State these to the user if they come up; do not pretend otherwise.
 | 3.2 | flatpak | ☑ | 6 app IDs, GTK override ported |
 | 3.3 | fonts | ☑ | fontconfig, 4 font RPMs, Comic Code via Ansible (option a) |
 | 3.4 | Determinate Nix | ☑ | extra nix.conf settings deliberately not ported |
-| 4.1 | scripts → `dot_local/bin` | ☐ | |
-| 4.2 | base + users | ☐ | |
-| 4.3 | audio | ☐ | |
-| 4.4 | desktop_linux | ☐ | |
-| 4.5 | nvidia | ☐ | |
-| 4.6 | gaming/virt/vpn/net | ☐ | |
-| 4.7 | kde | ☐ | |
+| 4.1 | scripts → `dot_local/bin` | ☑ | `tmux-session-color`, `openrouter-credits` ported with dep preflights; `xinstall`/`xmount` in `scripts/` |
+| 4.2 | base + users | ☑ | `ignoreIP` CIDR ported verbatim — see §"what it leaves behind" |
+| 4.3 | audio | ☑ | kernelParams (`threadirqs`, `usbcore.autosuspend=-1`) deliberately not ported |
+| 4.4 | desktop_linux | ☑ | kanata, XKB console keymap, i2c, firewalld |
+| 4.5 | nvidia | ☑ | no driver install (Nobara ships it); blacklist + clock lock only |
+| 4.6 | gaming/virt/vpn/net | ◐ | roles written; `kernel.nix`/`ananicy.nix`/`betterSleep.nix` still undecided |
+| 4.7 | kde | ☑ | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty |
 | 5.1 | secret audit | ☐ | STOP before deleting |
 | 5.2 | ansible-vault | ☐ | |
 | 6.1 | macOS cutover | ☐ | STOP before uninstalling nix-darwin |

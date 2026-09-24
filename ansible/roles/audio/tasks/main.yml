@@ -1,6 +1,177 @@
 ---
-# audio: ex-hifi.nix: pipewire, realtime limits
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | audio role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'audio' is a scaffold; see PLAN.MD"
+# audio: ex-hifi.nix — realtime group/limits + custom PipeWire/WirePlumber
+# config (PLAN.MD task 4.3). See defaults/main.yml for the per-item
+# "genuine delta vs Nobara default" reasoning; this file only orders and
+# applies them.
+#
+# Nobara ships PipeWire (+ WirePlumber + rtkit) fully configured already,
+# so this role deliberately does NOT: install pipewire/wireplumber/rtkit
+# packages (Nobara has them), touch the shipped pipewire.conf/
+# wireplumber.conf directly (drop-ins only, per the task's hard rule),
+# enable/configure avahi (already enabled on msi per
+# docs/migration/msi-facts.md unit list -- "NetworkManager, avahi-daemon,
+# ..."), or install pavucontrol/qpwgraph/alsa-utils/easyeffects (already
+# in inventory/group_vars/nobara.yml dnf_packages, owned by roles/pkgs).
+#
+# NOT ported from hifi.nix at all: boot.kernelParams ("threadirqs",
+# "usbcore.autosuspend=-1"). Those are kernel command-line edits (grubby
+# on Fedora), which is a materially bigger and riskier change than a
+# conf.d drop-in or a udev rule, and PLAN.MD's own task description for
+# 4.3 scopes this role to "realtime group/limits" + "custom PipeWire/
+# WirePlumber config" only. Left undone -- see report. If dropouts
+# persist after this role's changes, threadirqs/usbcore.autosuspend=-1
+# via grubby is the next thing to try.
+
+- name: "Guard | audio role is Linux-only"
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] == 'Linux'
+    fail_msg: "roles/audio is Linux-only (PipeWire/rtkit/udev); this host is {{ ansible_facts['system'] }}."
+  when: ansible_facts['system'] is defined
+
+- name: "Audio | apply Nobara/Fedora config"
+  become: true
+  when: ansible_facts['system'] == 'Linux'
+  block:
+    # --- realtime group/limits ------------------------------------------
+    - name: "Realtime | ensure rtkit is installed"
+      ansible.builtin.dnf:
+        name: rtkit
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+      # Could not verify on msi whether Fedora's pipewire RPM already
+      # pulls this in as a hard dependency -- installing it idempotently
+      # either way is a no-op if it's already present.
+
+    - name: "Realtime | ensure rtkit service is enabled and running"
+      ansible.builtin.systemd_service:
+        name: rtkit-daemon.service
+        enabled: true
+        state: started
+      when: ansible_facts['os_family'] == "RedHat"
+      failed_when: false
+      # failed_when: false -- some rtkit packagings socket-activate this
+      # instead of enabling it directly; do not fail the play over unit
+      # naming that could not be confirmed live.
+
+    - name: "Realtime | ensure {{ audio_realtime_group }} group exists"
+      ansible.builtin.group:
+        name: "{{ audio_realtime_group }}"
+        state: present
+
+    - name: "Realtime | add {{ username }} to {{ audio_realtime_group }}"
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: "{{ audio_realtime_group }}"
+        append: true
+
+    - name: "Realtime | write pam_limits drop-in for {{ audio_realtime_group }}"
+      ansible.builtin.template:
+        src: 90-audio-rt.conf.j2
+        dest: "{{ audio_limits_conf_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    # --- PipeWire drop-ins -----------------------------------------------
+    - name: "PipeWire | ensure pipewire.conf.d exists"
+      ansible.builtin.file:
+        path: "{{ audio_pipewire_confd }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "PipeWire | ensure pipewire-pulse.conf.d exists"
+      ansible.builtin.file:
+        path: "{{ audio_pipewire_pulse_confd }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "PipeWire | ensure wireplumber.conf.d exists"
+      ansible.builtin.file:
+        path: "{{ audio_wireplumber_confd }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "PipeWire | clock-rate drop-in"
+      ansible.builtin.template:
+        src: pipewire-10-clock-rate.conf.j2
+        dest: "{{ audio_pipewire_confd }}/10-clock-rate.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+
+    - name: "PipeWire | resample-quality drop-in"
+      ansible.builtin.template:
+        src: pipewire-13-resample-quality.conf.j2
+        dest: "{{ audio_pipewire_confd }}/13-resample-quality.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+
+    - name: "PipeWire | raop-discover (AirPlay) drop-in"
+      ansible.builtin.template:
+        src: pipewire-50-raop-discover.conf.j2
+        dest: "{{ audio_pipewire_confd }}/50-raop-discover.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+      when: audio_raop_discover_enable | bool
+
+    - name: "PipeWire | pulse low-latency drop-in"
+      ansible.builtin.template:
+        src: pipewire-pulse-92-lowlatency.conf.j2
+        dest: "{{ audio_pipewire_pulse_confd }}/92-lowlatency.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+
+    # --- WirePlumber drop-ins ---------------------------------------------
+    - name: "WirePlumber | ALSA headroom drop-in"
+      ansible.builtin.template:
+        src: wireplumber-10-alsa-headroom.conf.j2
+        dest: "{{ audio_wireplumber_confd }}/10-alsa-headroom.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+
+    - name: "WirePlumber | Bluetooth codec quality drop-in"
+      ansible.builtin.template:
+        src: wireplumber-20-bluetooth-quality.conf.j2
+        dest: "{{ audio_wireplumber_confd }}/20-bluetooth-quality.conf"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload pipewire and wireplumber"
+
+    # --- USB audio autosuspend (see defaults/main.yml for scope note) ----
+    - name: "USB audio | disable autosuspend udev rule"
+      ansible.builtin.template:
+        src: 90-usb-audio-autosuspend.rules.j2
+        dest: "{{ audio_usb_autosuspend_rules_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "reload udev rules"
+
+    # --- AirPlay firewall ports (pairs with raop-discover) ----------------
+    - name: "Firewall | open AirPlay/mDNS UDP ports"
+      ansible.posix.firewalld:
+        port: "{{ item }}/udp"
+        permanent: true
+        immediate: true
+        state: enabled
+      loop: "{{ audio_firewall_udp_ports }}"
+      when: audio_raop_discover_enable | bool
+      # ansible.posix.firewalld is idempotent by construction (checks
+      # current state before changing it); no changed_when needed.

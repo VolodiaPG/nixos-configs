@@ -1,3 +1,26 @@
 ---
 # Defaults for the kde role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+
+# Task 4.7 — Catppuccin theme discovery (see tasks/xdg_data_dirs.yml).
+#
+# `roles/pkgs` installs catppuccin-kde, catppuccin-cursors,
+# catppuccin-papirus-folders and graphite-cursors (inventory/group_vars/
+# nobara.yml `nix_profile_packages`) with `nix profile install`, which
+# lands their files under this per-user profile share directory. It is
+# NOT on the default XDG_DATA_DIRS search path for a graphical session
+# started by SDDM/systemd-logind, so Plasma silently fails to list the
+# look-and-feel/cursor/icon assets those packages ship — see this role's
+# xdg_data_dirs.yml for the fix and docs/migration/kde-cutover.md for the
+# writeup. `%h` is a systemd environment.d specifier (expands per-session
+# to the invoking user's home directory), not Jinja — do not template it.
+kde_nix_profile_share_glob: "%h/.nix-profile/share"
+
+# /etc/environment.d/*.conf files are read by every user's `systemd --user`
+# instance at session start (via 30-systemd-environment-d-generator, part of
+# the pam_systemd login path SDDM uses) and are combined in filename sort
+# order, later files overriding earlier assignments of the *same* key
+# wholesale (no appending). "90-" sorts after the distro/Plasma-shipped
+# defaults under /usr/lib/environment.d/, if any exist, so this is expected
+# to win — unverified on a live Nobara install (see PLAN.MD task 4.7 report).
+kde_xdg_data_dirs_conf_name: "90-nix-profile-xdg-data-dirs.conf"

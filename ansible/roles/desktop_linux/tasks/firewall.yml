@@ -1,0 +1,69 @@
+---
+# Firewall (task 4.4, PLAN.MD ~line 1072-1074). NixOS's networking.firewall
+# -> firewalld (Fedora's default; the `firewalld` dnf package itself is
+# installed by roles/pkgs per inventory/group_vars/nobara.yml).
+#
+# Service-vs-port choice, per the task's own instruction to prefer
+# ("ssh", "kdeconnect", "mdns") where a built-in firewalld service exists
+# and covers the same range:
+#   - ssh (tcp 22)              -> built-in service "ssh". Universally
+#     shipped with firewalld; safest of the three to assume present.
+#   - KDE Connect (tcp+udp 1714-1764) -> built-in service "kdeconnect".
+#     Shipped by the kde-connect RPM (already a dnf_packages entry) as a
+#     firewalld service file; assumed to cover the full 1714-1764 range.
+#     UNVERIFIED here (no firewalld on the control node to run
+#     `firewall-cmd --get-services` / inspect the service's XML) — confirm
+#     on Nobara with `firewall-cmd --info-service=kdeconnect` and fall back
+#     to the raw port range below (commented) if the name or range is off.
+#   - mDNS (udp 5353) -> built-in service "mdns".
+#   - RDP (tcp 3389, udp 3389) -> raw ports. firewalld does not reliably ship
+#     a service covering both tcp+udp 3389 under one name across
+#     distros/versions (candidates like "ms-wbt-server" exist on some
+#     builds but were not in the task's suggested list and could not be
+#     confirmed here) — using explicit ports avoids a hard failure from
+#     guessing a service name that doesn't exist on this firewalld version.
+#   - Torrents (tcp 6881-6999) -> raw port range; no built-in service for an
+#     arbitrary torrent client port range exists.
+
+- name: "Firewall | ensure firewalld is running and enabled"
+  become: true
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: true
+    state: started
+
+- name: "Firewall | allow built-in services"
+  become: true
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - ssh
+    - kdeconnect
+    - mdns
+
+- name: "Firewall | allow RDP (tcp/3389)"
+  become: true
+  ansible.posix.firewalld:
+    port: 3389/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: "Firewall | allow RDP (udp/3389)"
+  become: true
+  ansible.posix.firewalld:
+    port: 3389/udp
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: "Firewall | allow torrent client port range (tcp/6881-6999)"
+  become: true
+  ansible.posix.firewalld:
+    port: 6881-6999/tcp
+    permanent: true
+    immediate: true
+    state: enabled

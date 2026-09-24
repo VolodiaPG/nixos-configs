@@ -1,0 +1,4 @@
+{{ ansible_managed | default('Managed by ansible - roles/base. Do not edit by hand.') }}
+{% for key, value in base_locale_conf.items() %}
+{{ key }}={{ value }}
+{% endfor %}

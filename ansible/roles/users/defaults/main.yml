@@ -1,3 +1,37 @@
 ---
 # Defaults for the users role. Do not duplicate anything from
-# group_vars/all/main.yml here.
+# group_vars/all/main.yml here (username, full_name, home_dir, ssh_keys
+# come from inventory/group_vars/all/main.yml and are consumed, not
+# redefined).
+#
+# Ported from the `users.users.${me.username}` stanza of
+# modules/nixos/base.nix (task 4.2).
+
+# Secondary groups. In base.nix these are a base list plus two entries
+# added conditionally (networkmanager/docker only when those
+# services/units are enabled on the host). There is currently exactly one
+# Linux target (msi) and it always has NetworkManager + docker
+# (moby-engine), so that conditional is collapsed to "always present"
+# here rather than re-implemented with a feature-flag var - see the task
+# report.
+users_groups:
+  - wheel
+  - video
+  - render
+  - audio
+  - realtime
+  - disk
+  - libvirtd
+  - usb
+  - dialout
+  - plugdev
+  - networkmanager
+  - docker
+
+users_shell: /usr/bin/zsh
+
+# msi does not need a managed password: Nobara sets it at install time
+# (see PLAN.MD task 5.1, "hashed-password ... msi: not needed"). This is
+# left undefined by default so the corresponding task below is a no-op
+# until/unless a future host supplies it via vault.
+# vault_hashed_password: ""

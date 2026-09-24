@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, extraConfig.pipewire."50-raop-discover".
+#
+# AirPlay (RAOP) receiver discovery/streaming. Pairs with the firewalld
+# UDP ports this role opens (5353 mDNS, 6001-6002 AirPlay RTSP/RTP).
+
+context.modules = [
+    { name = libpipewire-module-raop-discover }
+]

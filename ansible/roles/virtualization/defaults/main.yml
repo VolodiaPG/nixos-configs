@@ -1,3 +1,60 @@
 ---
 # Defaults for the virtualization role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/virtualization.nix (PLAN.MD task 4.6).
+#
+# libvirt: msi sets `my.virtualization.libvirt.enable = false`
+# (configurations/nixos/msi/default.nix) and configuration.nix has no
+# libvirt bits of its own — confirmed by reading both files directly.
+# libvirt is skipped entirely; this role has no libvirt tasks.
+#
+# containers: msi sets `my.virtualization.containers.enable = true`, whose
+# NixOS config is:
+#   virtualisation.oci-containers.backend = "docker";   # Nix-only concept, N/A here
+#   virtualisation.docker.enable = true;
+#   virtualisation.docker.extraOptions =
+#     (btrfs storage-driver iff impermanence.fsType == "btrfs") +
+#     "--exec-opt native.cgroupdriver=systemd --bip=192.168.234.1/24";
+#   virtualisation.docker.autoPrune = { enable = true; dates = "weekly"; };
+#   environment.systemPackages = [ pkgs.docker-compose ];
+#
+# msi's `my.impermanence.fsType` is "ext4", not "btrfs", so the
+# btrfs-storage-driver branch never applied on msi — not ported.
+# docs/migration/msi-network.txt (`ip -j addr`, captured on the live host)
+# shows `docker0` already at 192.168.234.1/24 today, confirming the bip
+# value below matches what's actually running.
+#
+# docker-compose is already installed by roles/pkgs
+# (inventory/group_vars/nobara.yml `dnf_packages`), as is moby-engine
+# (Fedora's docker package — see docs/migration/package-map.md, "name
+# differs"), podman/podman-compose and distrobox. roles/pkgs runs before
+# this role in playbooks/linux.yml. The genuine gaps ported here are:
+#   1. docker daemon.json (cgroupdriver + bip, to match the extraOptions
+#      above)
+#   2. docker service enabled/started (nothing else in this migration
+#      turns the service on)
+#   3. weekly docker image/container prune (systemd timer, replacing
+#      NixOS's autoPrune)
+#   4. docker group + user membership — this is the old dotfiles repo's
+#      run_once_docker.sh.tmpl (`groupadd docker` + `usermod -aG docker`),
+#      ported to Ansible because it needs root
+#      (docs/migration/dotfiles-merge.md line 144).
+#
+# podman + distrobox have no additional NixOS-side configuration in
+# virtualization.nix beyond package installation, so nothing further is
+# ported for them — rootless podman needs no group membership. Per the
+# user's explicit confirmation, docker and podman are meant to coexist on
+# msi; this role does not disable or remove either.
+
+virtualization_docker_group: "docker"
+virtualization_docker_daemon_json_path: "/etc/docker/daemon.json"
+virtualization_docker_cgroupdriver: "systemd"
+virtualization_docker_bip: "192.168.234.1/24"
+
+# Weekly prune, matching NixOS's `virtualisation.docker.autoPrune.dates =
+# "weekly"`. `docker system prune -f` only removes stopped containers,
+# dangling images, unused networks and build cache — it does not touch
+# named/anonymous volumes, matching Docker's own `--all` default being off
+# (NixOS's autoPrune uses the same flags, no `--all`, no `--volumes`).
+virtualization_docker_prune_on_calendar: "weekly"

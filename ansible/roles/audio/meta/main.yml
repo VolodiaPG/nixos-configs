@@ -1,3 +1,4 @@
 ---
-# audio: ex-hifi.nix: pipewire, realtime limits
+# audio: ex-hifi.nix (PLAN.MD task 4.3): PipeWire/WirePlumber conf.d
+# drop-ins + realtime group/limits. Linux-only; no-op on Darwin.
 dependencies: []

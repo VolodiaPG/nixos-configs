@@ -1,0 +1,9 @@
+[Unit]
+Description=Weekly docker prune (managed by ansible, roles/virtualization)
+
+[Timer]
+OnCalendar={{ virtualization_docker_prune_on_calendar }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,3 +1,5 @@
 ---
-# base: locale fr_FR, timezone Europe/Paris, sysctl, sudo, sshd
+# base: locale fr_FR, timezone Europe/Paris, sysctl, sshd, fail2ban,
+# earlyoom, journald caps. Ported from modules/nixos/base.nix (task 4.2).
+# User/group/authorized_keys/shell live in roles/users instead.
 dependencies: []

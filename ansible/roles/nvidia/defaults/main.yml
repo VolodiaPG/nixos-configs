@@ -1,3 +1,31 @@
 ---
 # Defaults for the nvidia role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from configurations/nixos/msi/configuration.nix (PLAN.MD task
+# 4.5). Nobara's NVIDIA edition ships the proprietary driver already, so
+# this role installs no driver -- only the msi-specific remainder:
+# nouveau/iTCO_wdt blacklisting and the nvidia-frequency clock-ramp
+# workaround. modules/nixos/nvidia.nix's CUDA/docker-CDI/nvidia-container-
+# toolkit content is intentionally NOT ported -- see the role's tasks/
+# main.yml header and the report for the grep that confirmed nothing on
+# msi still needs CUDA.
+
+# --- modprobe blacklist -----------------------------------------------
+# configuration.nix: boot.blacklistedKernelModules = [ "nouveau" "iTCO_wdt" ]
+nvidia_blacklist_modules:
+  - nouveau
+  - iTCO_wdt
+nvidia_blacklist_conf_path: "/etc/modprobe.d/blacklist-msi-nvidia.conf"
+
+# --- clock-ramp workaround ------------------------------------------
+# configuration.nix systemd.services.nvidia-frequency, verified verbatim
+# against the live module (2026-09-24): `nvidia-smi -lmc 1620,2100` then
+# `-lgc 210,3105`. This matches what PLAN.MD 4.5 itself states. The old
+# dotfiles repo's nvidia-clock-lock.service uses "-lmc 1620,21002" (a
+# trailing-2 typo per PLAN.MD) -- do NOT use that value; it is not used
+# anywhere in this role.
+nvidia_lock_memory_clock: "1620,2100"
+nvidia_lock_graphics_clock: "210,3105"
+nvidia_frequency_unit_path: "/etc/systemd/system/nvidia-frequency.service"
+nvidia_smi_bin: "/usr/bin/nvidia-smi"

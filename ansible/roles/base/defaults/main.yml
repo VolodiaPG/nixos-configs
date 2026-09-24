@@ -1,3 +1,61 @@
 ---
 # Defaults for the base role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/base.nix (task 4.2). Values are the ones
+# literally in that module, not PLAN.MD's summary of it.
+
+base_timezone: "Europe/Paris"
+base_console_keymap: "fr"
+
+# i18n.defaultLocale + i18n.extraLocaleSettings. The Nix module sets LC_ALL
+# *and* every individual LC_* to the same value, which makes the individual
+# ones redundant (LC_ALL wins over them all) - that redundancy is preserved
+# here verbatim rather than "fixed", since it was already there upstream.
+base_locale_conf:
+  LANG: "fr_FR.UTF-8"
+  LANGUAGE: "fr_FR.UTF-8"
+  LC_ALL: "fr_FR.UTF-8"
+  LC_MONETARY: "fr_FR.UTF-8"
+  LC_PAPER: "fr_FR.UTF-8"
+  LC_MEASUREMENT: "fr_FR.UTF-8"
+  LC_TIME: "fr_FR.UTF-8"
+  LC_NUMERIC: "fr_FR.UTF-8"
+
+# boot.kernel.sysctl
+base_sysctl:
+  vm.max_map_count: 6000000
+  fs.file-max: 2097152
+  kernel.threads-max: 2000000
+base_sysctl_file: /etc/sysctl.d/99-base.conf
+
+# services.openssh
+base_sshd_dropin_path: /etc/ssh/sshd_config.d/10-base.conf
+base_sshd_permit_root_login: "prohibit-password"
+base_sshd_sftp_subsystem_path: "/usr/libexec/openssh/sftp-server"
+
+# services.fail2ban
+base_fail2ban_maxretry: 5
+base_fail2ban_ignoreip:
+  - "127.0.0.0/8"
+  - "10.0.0.0/8"
+  - "192.168.1.0/16" # ported verbatim from base.nix - looks like it was
+  # meant to be /24; not "fixed" here, see task report.
+
+# services.earlyoom
+# Original NixOS --avoid list protected the compositor (Hyprland) and the
+# Wayland shell/bar (noctalia) from ever being killed, plus kanata (losing
+# the keyboard remapper mid-session is dangerous: keys can get stuck
+# swapped). On Nobara/KDE those roles are filled by kwin_wayland
+# (compositor) and plasmashell (shell/panels/desktop) - kanata is unchanged.
+base_earlyoom_free_mem_threshold: 5
+base_earlyoom_free_swap_threshold: 5
+base_earlyoom_prefer: '^(zotero|high-tide|legcord|signal|brave|nvim)$'
+base_earlyoom_avoid: '^(plasmashell|kwin_wayland|kanata)$'
+base_earlyoom_sysconfig_path: /etc/sysconfig/earlyoom
+
+# services.journald.extraConfig
+base_journald_system_max_use: "200M"
+base_journald_runtime_max_use: "50M"
+base_journald_dropin_dir: /etc/systemd/journald.conf.d
+base_journald_dropin_path: /etc/systemd/journald.conf.d/99-base.conf

@@ -1,6 +1,89 @@
 ---
-# nvidia: msi only - verify Nobara own setup first
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | nvidia role is not implemented yet"
+# nvidia: msi-only NVIDIA remainder (PLAN.MD task 4.5). Nobara's NVIDIA
+# edition ships the proprietary driver already -- this role does NOT
+# install/build any driver. It only ports what's genuinely msi-specific
+# from configurations/nixos/msi/configuration.nix: the nouveau/iTCO_wdt
+# blacklist and the nvidia-frequency clock-ramp workaround.
+#
+# NOT ported (from modules/nixos/nvidia.nix): cudaSupport/CUDA nixpkgs
+# variant, virtualisation.docker CDI settings, nvidia-container-toolkit,
+# hardware.graphics extraPackages (vaapi/vdpau/mesa -- those are Nobara/
+# Fedora graphics-stack defaults, not msi deltas). CUDA in particular was
+# grepped for across the whole Nix tree before dropping it: the only two
+# consumers found were
+#   - immich-ml.nix, gated by `my.immich-ml.enable`, which is `false` on
+#     msi (configurations/nixos/msi/default.nix:65) -- matches PLAN.MD.
+#   - packages/mpv-rife (RIFE/VapourSynth/TensorRT via cudaPackages),
+#     which PLAN.MD itself drops in the mpv/task-2.8 section ("Dropped.
+#     Keep mpv.conf/input.conf; drop the RIFE/VapourSynth/TensorRT
+#     stack.").
+# With both gone, nothing on the migrated host needs the CUDA nixpkgs
+# variant, so it is not represented in this role at all. See the report
+# for the exact grep.
+
+- name: "Guard | nvidia role is Linux-only"
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] == 'Linux'
+    fail_msg: "roles/nvidia is Linux-only (modprobe.d/dracut/systemd); this host is {{ ansible_facts['system'] }}."
+  when: ansible_facts['system'] is defined
+
+# --- GPU presence guard: no-op on a host with no NVIDIA GPU ---------------
+# PCI-based, not driver-state-based, so it is correct even if the
+# proprietary driver somehow isn't loaded yet (e.g. right after a fresh
+# blacklist change but before a reboot).
+- name: "Detect | probe PCI bus for an NVIDIA (vendor 10de) device"
+  ansible.builtin.command:
+    cmd: "lspci -d 10de: -n"
+  register: _nvidia_pci
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: ansible_facts['system'] == 'Linux'
+
+- name: "Detect | set nvidia_present fact"
+  ansible.builtin.set_fact:
+    nvidia_present: "{{ (_nvidia_pci.rc | default(1)) == 0 and (_nvidia_pci.stdout | default('') | trim | length > 0) }}"
+
+- name: "Skip | no NVIDIA GPU detected on this host"
   ansible.builtin.debug:
-    msg: "role 'nvidia' is a scaffold; see PLAN.MD"
+    msg: >-
+      Skipping roles/nvidia: no PCI device with vendor ID 10de (NVIDIA)
+      was found. This role is a no-op here.
+  when: not nvidia_present
+
+- name: "NVIDIA | apply msi-specific remainder"
+  become: true
+  when:
+    - ansible_facts['system'] == 'Linux'
+    - nvidia_present
+  block:
+    # --- blacklist nouveau + iTCO_wdt -------------------------------------
+    - name: "Blacklist | write modprobe.d drop-in (nouveau, iTCO_wdt)"
+      ansible.builtin.template:
+        src: blacklist-msi-nvidia.conf.j2
+        dest: "{{ nvidia_blacklist_conf_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: "regenerate dracut initramfs"
+
+    # --- clock-ramp workaround ---------------------------------------------
+    - name: "Clock lock | write nvidia-frequency.service unit"
+      ansible.builtin.template:
+        src: nvidia-frequency.service.j2
+        dest: "{{ nvidia_frequency_unit_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      register: _nvidia_frequency_unit
+      notify:
+        - "reload systemd units"
+        - "restart nvidia-frequency"
+
+    - name: "Clock lock | enable and start nvidia-frequency.service"
+      ansible.builtin.systemd_service:
+        name: nvidia-frequency.service
+        enabled: true
+        state: started
+        daemon_reload: "{{ _nvidia_frequency_unit.changed }}"

@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, security.pam.loginLimits.
+#
+# Belt-and-braces RT scheduling headroom for the {{ audio_realtime_group }}
+# group, for clients that request RT priority directly instead of going
+# through rtkit. Written as a separate, distinctly-named file so it is
+# additive to (not a replacement of) anything Fedora/Nobara's pipewire/
+# rtkit packaging may already ship in limits.d — that could NOT be
+# verified (msi is unreachable). If Nobara already ships an equivalent
+# file, this is a harmless duplicate; pam_limits applies the most
+# permissive matching value.
+@{{ audio_realtime_group }}   -   rtprio      99
+@{{ audio_realtime_group }}   -   memlock     unlimited
+@{{ audio_realtime_group }}   -   nice        -20

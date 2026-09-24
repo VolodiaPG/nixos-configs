@@ -1,3 +1,4 @@
 ---
-# vpn: tailscale
+# vpn: ported from modules/nixos/vpn.nix (tailscaled service + `tailscale
+# up`, gated on a vault-supplied authkey that doesn't exist yet — phase 5).
 dependencies: []

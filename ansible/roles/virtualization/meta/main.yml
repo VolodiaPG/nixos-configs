@@ -1,3 +1,6 @@
 ---
-# virtualization: podman, distrobox
+# virtualization: ported from modules/nixos/virtualization.nix (docker
+# daemon config, docker group, weekly prune). libvirt is skipped (disabled
+# on msi). podman/distrobox need no extra configuration beyond the
+# packages roles/pkgs already installs.
 dependencies: []

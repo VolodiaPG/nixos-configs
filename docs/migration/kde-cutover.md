@@ -151,3 +151,75 @@ shipped and there is no live Plasma to check against. At first boot, verify
 which file Plasma actually reads and rename the chezmoi source entry to match
 (`private_kded6rc`) if needed — otherwise the setting is inert and removable
 media will auto-mount.
+
+`ansible/roles/kde` (task 4.7) runs *before* `roles/chezmoi` in
+`playbooks/linux.yml`, so there is no `kded*rc` on disk yet at the point the
+`kde` role executes — this can only be checked after the first
+`chezmoi apply`, i.e. at the same first-boot moment as the paragraph above,
+not by anything in `roles/kde` itself.
+
+## Task 4.7 addendum — day/night colour switch and Catppuccin asset discovery
+
+Two findings from implementing `ansible/roles/kde` (task 4.7), the
+replacement for `modules/home/theme-daemon.nix` / task 2.7's `darkman` +
+`theme-switcher` daemon:
+
+### The native day/night switch is per-user config, not `roles/kde`'s job
+
+Plasma 6.5 (merged 2025-08, released 21 Oct 2025) added a built-in
+"Switch to Dark Mode at Night" toggle under Global Theme settings, scheduled
+in sync with Night Light. It is a single boolean:
+
+```ini
+[KDE]
+AutomaticLookAndFeel=true
+LookAndFeelPackageDay=<Global Theme id>
+LookAndFeelPackageNight=<Global Theme id>
+```
+
+written into **`~/.config/kdeglobals`**, which is a per-user file — and one
+of the 17 files already managed by chezmoi
+(`chezmoi/dot_config/kdeglobals.src.ini`, edited through `modify_kdeglobals`).
+That makes it chezmoi's responsibility, not `ansible/roles/kde`'s: nothing
+was written into the Ansible role for it. Whoever owns the chezmoi side next
+needs to add `AutomaticLookAndFeel=true` plus the two `LookAndFeelPackage{Day,
+Night}` keys (values = the `X-KDE-PluginInfo-Name`/`Id` of the two Global
+Theme packages to alternate between, e.g. `Catppuccin-Latte-Mauve` /
+`Catppuccin-Mocha-Mauve` under `chezmoi/dot_local/share/plasma/look-and-feel/`)
+to `kdeglobals.src.ini`.
+
+Caveat, not yet independently verified: it requires the feature actually
+being present in whatever Plasma version Nobara 43 ships (unconfirmed here —
+check `plasmashell --version` at first boot; if it predates 6.5, this
+feature does not exist yet and a scheduler like `kshift` or the `Day/Night
+Switcher` Plasma widget would be the fallback). There is also an open KDE
+upstream report (nix-community/plasma-manager#562) that enabling
+`AutomaticLookAndFeel` makes the cursor/icon theme selection non-persistent
+across logins — worth checking for at first boot given this repo also relies
+on `catppuccin-cursors`/`graphite-cursors`/`catppuccin-papirus-folders`.
+
+Separately: `kdeglobals.src.ini`'s existing `[KDE]` block currently reads
+`DefaultDarkLookAndFeel=Custom moccha` / `DefaultLightLookAndFeel=Custom
+latte` / `LookAndFeelPackage=light`, none of which match any `Id` actually
+shipped under `dot_local/share/plasma/look-and-feel/` (`Custom dark`,
+`Custom light`, `Catppuccin-Latte-Mauve`, `Catppuccin-Mocha-Mauve`) — flagged
+here as an observation while reading that file for this task, not fixed
+(out of this agent's file-ownership scope; see PLAN.MD task 4.7's report).
+
+### Catppuccin theme/cursor assets may be undiscoverable at first boot
+
+`inventory/group_vars/nobara.yml`'s `nix_profile_packages` installs
+`catppuccin-kde`, `catppuccin-cursors`, `catppuccin-papirus-folders` and
+`graphite-cursors` via `nix profile install`, which places them under
+`~/.nix-profile/share/...`. A graphical session started by SDDM does not put
+that path on `$XDG_DATA_DIRS` by default, so Plasma (and libXcursor's
+theme lookup, which also walks `XDG_DATA_DIRS/icons`) may not see those
+packages' look-and-feel/colour-scheme/cursor/icon-theme assets at all —
+the chezmoi-managed `ColorScheme=CatppuccinLatteMauve` etc. would silently
+fail to resolve and fall back to Breeze. `ansible/roles/kde`
+(`tasks/xdg_data_dirs.yml`) now installs a system-wide
+`/etc/environment.d/90-nix-profile-xdg-data-dirs.conf` drop-in (read by every
+user's `systemd --user` session at login, the same path SDDM's login goes
+through) setting `XDG_DATA_DIRS=%h/.nix-profile/share:/usr/local/share:/usr/share`.
+Unverified against a live session — flag at first boot if theme/cursor
+assets still don't appear in System Settings after a fresh login.

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# NixOS installer helper: mount one of this repo's `nixosConfigurations`
+# disko layouts at /mnt without wiping/formatting anything (rescue / chroot
+# access to an already-installed system).
+#
+# Ported from packages/xmount (PLAN.MD task 4.1). Same deal as scripts/xinstall
+# next to it: run by hand from a NixOS environment with `nix` on PATH, kept
+# alive for `msi` until its Nobara wipe. Not installed by chezmoi.
+
+set -euo pipefail
+
+for tool in nix git jq gum sudo mktemp; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "xmount: missing required tool '$tool' on PATH" >&2
+    exit 127
+  fi
+done
+
+REPO_URL="https://github.com/volodiapg/nixos-configs"
+# ponytail: XOS_REPO points at a local checkout to skip the clone (testing / reinstall from an existing repo)
+REPO="${XOS_REPO:-}"
+
+if [ -z "$REPO" ]; then
+  REPO=$(mktemp -d)
+  trap 'rm -rf "$REPO"' EXIT
+  echo Cloning "$REPO_URL"...
+  git clone --depth=1 "$REPO_URL" "$REPO"
+fi
+
+TARGET=$(
+  nix eval --json "$REPO"#nixosConfigurations --apply 'cfg: builtins.attrNames cfg' 2>/dev/null |
+    jq -r '.[] | select(. != "installer")' |
+    gum choose --header "Select which configuration to mount:"
+)
+
+if [ "$(nix eval --json "$REPO"#nixosConfigurations.\""$TARGET"\".config.services.impermanence.disko)" != "true" ]; then
+  echo "disko mount is disabled because services.impermanence.disko is false for $TARGET." >&2
+  exit 1
+fi
+
+gum confirm --default=false "This will mount the $TARGET system to /mnt:"
+
+echo building disko mount script for "$TARGET"...
+MOUNT=$(nix build "$REPO"#nixosConfigurations.\""$TARGET"\".config.system.build.mount --no-link --print-out-paths)
+
+exec sudo "$(echo "$MOUNT"/bin/*)"

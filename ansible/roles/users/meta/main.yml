@@ -1,3 +1,7 @@
 ---
-# users: user account, groups, authorized_keys
+# users: user account, secondary groups, authorized_keys (user + root),
+# lingering, zsh login shell. Ported from modules/nixos/base.nix (task
+# 4.2). Runs standalone from playbooks/bootstrap.yml against a fresh host
+# (before site.yml), and again as part of playbooks/linux.yml - must not
+# depend on anything roles/base, roles/pkgs, etc. set up.
 dependencies: []

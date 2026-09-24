@@ -1,3 +1,29 @@
 ---
 # Defaults for the gaming role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/gaming.nix (33 lines, PLAN.MD task 4.6). The
+# module's entire content is:
+#   - programs.steam.enable = true  (+ package = pkgs-unstable.steam)
+#   - environment.systemPackages: faugus-launcher, gamemode
+#     (obs-studio* and zoom-us are commented out in the source — dead code,
+#     not ported)
+#
+# All of that is already covered elsewhere in this migration, verified by
+# reading the actual list files rather than assuming "Nobara ships it":
+#   - steam            -> inventory/group_vars/nobara.yml `rpmfusion_packages`
+#                          (roles/pkgs, RPM Fusion nonfree)
+#   - gamemode          -> inventory/group_vars/nobara.yml `dnf_packages`
+#   - faugus-launcher   -> inventory/group_vars/nobara.yml `flatpak_packages`
+#                          (io.github.Faugus.faugus-launcher)
+# roles/pkgs runs before this role in playbooks/linux.yml, so by the time
+# this role executes those packages are already present.
+#
+# NixOS's `programs.steam.enable` also does a few things beyond installing
+# the package (e.g. can open firewall ports for Remote Play/local network
+# game transfers, pulls in 32-bit graphics libs) — none of those extra
+# knobs are turned on in this repo's module (no openFirewall flags set),
+# so there is nothing further to port for them either.
+#
+# Net result: no genuine gap was found. This role intentionally has no
+# tasks beyond a documentation placeholder — see tasks/main.yml.

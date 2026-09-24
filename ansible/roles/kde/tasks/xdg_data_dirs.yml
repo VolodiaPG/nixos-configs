@@ -1,0 +1,73 @@
+---
+# Task 4.7 — Catppuccin global theme / cursors / icon-folder recolour
+# discovery.
+#
+# `inventory/group_vars/nobara.yml`'s `nix_profile_packages` (verified,
+# task 3.1) lists `catppuccin-kde`, `catppuccin-cursors`,
+# `catppuccin-papirus-folders` and `graphite-cursors`. `roles/pkgs`
+# installs all four with `nix profile install nixpkgs#<name>`
+# (roles/pkgs/tasks/nix.yml), which places their `share/` payloads under
+# the single-user Nix profile — `~/.nix-profile/share/...` — not under
+# `/usr/share` or `~/.local/share`.
+#
+# Plasma (and every other XDG-spec app: cursor-theme lookup via libXcursor
+# since 1.1.15 also walks `$dir/icons` for each `$dir` in XDG_DATA_DIRS)
+# discovers look-and-feel packages, colour schemes and icon/cursor themes
+# by searching `$XDG_DATA_DIRS`, which a graphical session started by SDDM
+# via systemd-logind does NOT populate with the Nix profile path by
+# default. Nothing crashes — the theme/cursor entries just silently do not
+# appear in System Settings and the selections baked into the chezmoi-
+# managed kdeglobals/kwinrc (`ColorScheme=CatppuccinLatteMauve`,
+# `LookAndFeelPackage=...`) fail to resolve, falling back to Breeze. This
+# is assessed as the most likely reason the Catppuccin theming silently
+# fails at first boot.
+#
+# Fix: a system-wide systemd environment.d(5) drop-in. Files under
+# /etc/environment.d/*.conf are read by every user's own `systemd --user`
+# instance at session start (the same mechanism SDDM's pam_systemd login
+# goes through), so this is a legitimate ROOT-owned fix for a
+# discovery/session-environment problem, even though the packages
+# themselves are user-profile installs. `%h` is expanded per-session to
+# the *invoking* user's home directory by systemd itself, so one file
+# here covers any user, not just the migration's single-user assumption.
+#
+# Caveats (flagged, not guessed away):
+#   - environment.d assignments do not append to an existing XDG_DATA_DIRS
+#     set by another file of the same/later sort order — they replace it
+#     outright for that key. This file therefore spells out the usual
+#     /usr/local/share:/usr/share fallback explicitly rather than relying
+#     on inheriting it. If Nobara or Flatpak/xdg-desktop-portal ships its
+#     own /usr/lib/environment.d/*.conf that also sets XDG_DATA_DIRS and
+#     sorts after "90-", it will win instead of this file — unverified,
+#     first-boot check.
+#   - Takes effect on the next login/session start, not the current one —
+#     there is no running Plasma session to reload here.
+#   - Does not, by itself, select the Catppuccin theme; that is the
+#     chezmoi-managed kdeglobals'/kwinrc's job. This only makes the assets
+#     those files reference resolvable.
+
+- name: "kde | XDG_DATA_DIRS | ensure /etc/environment.d exists"
+  ansible.builtin.file:
+    path: /etc/environment.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: "kde | XDG_DATA_DIRS | expose ~/.nix-profile/share to every graphical session"
+  ansible.builtin.copy:
+    dest: "/etc/environment.d/{{ kde_xdg_data_dirs_conf_name }}"
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Managed by Ansible (roles/kde, PLAN.MD task 4.7). Do not edit by hand.
+      #
+      # Makes nix-profile-installed XDG data (Catppuccin KDE global theme,
+      # catppuccin-cursors, catppuccin-papirus-folders, graphite-cursors —
+      # inventory/group_vars/nobara.yml nix_profile_packages) discoverable
+      # by Plasma and any other XDG-spec app. See
+      # ansible/roles/kde/tasks/xdg_data_dirs.yml for the full writeup.
+      XDG_DATA_DIRS={{ kde_nix_profile_share_glob }}:/usr/local/share:/usr/share
+  become: true

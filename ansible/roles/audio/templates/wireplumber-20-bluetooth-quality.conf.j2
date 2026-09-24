@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, wireplumber.extraConfig.bluetooth-monitor.
+#
+# NEEDS FIRST-BOOT VERIFICATION: the Nix module wrote this as a bare
+# top-level "properties" section (not "monitor.bluez.properties", which is
+# the key used by upstream WirePlumber's own shipped 50-bluez-config.conf).
+# Ported verbatim rather than "corrected" against a schema that could not
+# be checked live. If `bluetoothctl`/`wpctl` show these codec preferences
+# NOT taking effect on real Nobara, rename the top-level key here to
+# "monitor.bluez.properties" and re-test.
+
+properties = {
+    bluez5.enable-sbc-xq = {{ audio_bt_sbc_xq | lower }}
+    bluez5.enable-msbc = {{ audio_bt_msbc | lower }}
+    bluez5.enable-hw-volume = {{ audio_bt_hw_volume | lower }}
+    bluez5.codec.ldac.quality = {{ audio_bt_ldac_quality }}
+    bluez5.codec.aac.bitrate = {{ audio_bt_aac_bitrate }}
+}

@@ -18,3 +18,19 @@ comic_code_dest_dir: "{{ home_dir }}/.local/share/fonts"
 # Set false only to deliberately apply on a control node where the repo is
 # transcrypt-locked; the monospace fontconfig default will not resolve.
 comic_code_required: true
+
+# Task 4.4 (kanata, ex modules/nixos/desktop.nix `services.kanata`). Config
+# source lives at the repo root (not under ansible/), shipped to the host
+# as-is; see tasks/kanata.yml for why concurrent-tap-hold is enabled on the
+# deployed copy rather than in the repo file.
+kanata_config_src: "{{ playbook_dir }}/../../static/kanata.lisp"
+kanata_config_path: "{{ home_dir }}/.config/kanata/kanata.lisp"
+kanata_unit_path: "{{ home_dir }}/.config/systemd/user/kanata.service"
+# `nix profile install` (Determinate Nix / new-style `nix profile`, see
+# roles/nix and roles/pkgs/tasks/nix.yml) symlinks installed packages'
+# binaries under ~/.nix-profile for compatibility; %h is systemd's own
+# specifier for the unit's home directory, resolved at the user-manager
+# level so it doesn't need an Ansible fact. UNVERIFIED against a real
+# `nix profile install nixpkgs#kanata` — flag on first boot if kanata.service
+# fails to start with "command not found".
+kanata_bin_path: "%h/.nix-profile/bin/kanata"

@@ -1,6 +1,22 @@
 ---
-# gaming: steam, gamemode, mangohud
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | gaming role is not implemented yet"
+# gaming: ported from modules/nixos/gaming.nix (PLAN.MD task 4.6).
+#
+# Nobara is a gaming-oriented distro and ships Steam, gamemode and
+# mangohud; roles/pkgs (which runs earlier in playbooks/linux.yml) already
+# installs everything gaming.nix lists (steam, gamemode, faugus-launcher —
+# see defaults/main.yml for exactly where each one comes from). Reading
+# gaming.nix line by line found no additional service, group, udev rule or
+# config file beyond package installation and `programs.steam.enable`
+# itself, which has no extra behaviour turned on in this repo's config.
+#
+# Deliberately left as a documentation placeholder rather than padded with
+# tasks that would just reinstall packages roles/pkgs already owns.
+
+- name: "gaming | no gap ported — see roles/gaming/defaults/main.yml"
   ansible.builtin.debug:
-    msg: "role 'gaming' is a scaffold; see PLAN.MD"
+    msg: >-
+      gaming.nix (steam, gamemode, faugus-launcher) is fully covered by
+      roles/pkgs (dnf/rpmfusion/flatpak package lists in
+      inventory/group_vars/nobara.yml). No additional configuration to
+      apply.
+  when: ansible_system == 'Linux'

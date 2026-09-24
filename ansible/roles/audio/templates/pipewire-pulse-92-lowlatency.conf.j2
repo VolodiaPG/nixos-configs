@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, extraConfig.pipewire-pulse."92-lowlatency".
+#
+# Reasonable low-latency default for AV sync (~10ms), without forcing a
+# channel map or quality setting onto every client.
+
+pulse.properties = {
+    pulse.min.req = {{ audio_pulse_min_req }}
+    pulse.default.req = {{ audio_pulse_default_req }}
+    pulse.min.frag = {{ audio_pulse_min_frag }}
+    pulse.default.frag = {{ audio_pulse_default_frag }}
+    pulse.default.tlength = {{ audio_pulse_default_tlength }}
+    pulse.min.quantum = {{ audio_pulse_min_quantum }}
+}

@@ -1,3 +1,40 @@
 ---
 # Defaults for the networking role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/networking.nix (PLAN.MD task 4.6). Reading
+# that module found it sets:
+#   boot.kernelModules = [ "ip6table_filter" ];
+#   boot.kernel.sysctl = {
+#     net.ipv6.conf.all.disable_ipv6 = 0;
+#     net.ipv4.conf.all.forwarding = 1;
+#     net.ipv6.conf.all.forwarding = 1;
+#     net.ipv6.conf.all.accept_ra_rt_info_max_plen = 64;
+#     net.ipv6.conf.all.accept_ra = 2;
+#   };
+#   networking.{useNetworkd,useDHCP,hostFiles,extraHosts} — all commented
+#   out in the source; dead code, nothing to port.
+#
+# PLAN.MD discrepancy (report this, do not silently "fix" it): msi's
+# configurations/nixos/msi/default.nix sets `my.networking.enable = false`
+# — the module above is NOT currently active on msi. NetworkManager itself
+# is turned on directly in msi's own configuration.nix
+# (`networking.networkmanager.enable = true`), independent of the
+# `my.networking` module. So:
+#   - none of the sysctls/kernel module above are actually running on msi
+#     today. Porting them into this role would be *adding new behaviour*,
+#     not porting a genuine gap against the current system — the opposite
+#     of what task 4.6 asks for. Not ported.
+#   - PLAN.MD's own text for this task ("NetworkManager-wait-online
+#     disabled, etc.") is not sourced from networking.nix at all — grepped
+#     the whole repo for "wait-online"/"NetworkManager-wait" and found no
+#     match anywhere. It reads as a generic Nobara/Fedora boot-speed tip
+#     PLAN.MD names directly, not something ported from an existing
+#     module. Implemented anyway (see tasks/main.yml) because it's a safe,
+#     idempotent, commonly-recommended default and PLAN.MD names it
+#     explicitly by unit name — but flagged here as not module-sourced.
+#
+# Net result: this role is near-empty by design — one masked unit, nothing
+# else. See the task report for the full discrepancy write-up.
+
+networking_wait_online_unit: "NetworkManager-wait-online.service"

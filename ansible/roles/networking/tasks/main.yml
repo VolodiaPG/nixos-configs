@@ -1,6 +1,41 @@
 ---
-# networking: NetworkManager tweaks, firewalld ports
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | networking role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'networking' is a scaffold; see PLAN.MD"
+# networking: ported from modules/nixos/networking.nix (PLAN.MD task 4.6).
+# See defaults/main.yml for the full discrepancy write-up: `my.networking`
+# is disabled on msi today, so this role does not port that module's
+# sysctls/kernel module — doing so would add new behaviour, not port an
+# existing gap. NetworkManager itself is Nobara's default and is not
+# touched here.
+
+- name: networking | Linux only
+  when: ansible_system == 'Linux'
+  become: true
+  block:
+    # ansible.builtin.systemd's `masked: true` is idempotent on its own
+    # (queries unit state first), and Fedora/Nobara ship
+    # NetworkManager-wait-online.service by default alongside
+    # NetworkManager itself, so no package-facts guard is needed here.
+    - name: "networking | disable {{ networking_wait_online_unit }}"
+      ansible.builtin.systemd:
+        name: "{{ networking_wait_online_unit }}"
+        masked: true
+        enabled: false
+      failed_when: false
+      register: networking_wait_online_result
+
+    - name: networking | note if the unit could not be found
+      ansible.builtin.debug:
+        msg: >-
+          {{ networking_wait_online_unit }} was not found on this host
+          (systemd reported an error masking it) — nothing to disable,
+          or the unit name differs from what was guessed here. Needs
+          first-boot confirmation.
+      when: networking_wait_online_result is failed
+
+    - name: "networking | no other gaps ported — see defaults/main.yml"
+      ansible.builtin.debug:
+        msg: >-
+          modules/nixos/networking.nix's sysctls/kernel module are gated
+          by `my.networking.enable`, which is false on msi
+          (configurations/nixos/msi/default.nix) — not currently active,
+          so not ported here. NetworkManager is Nobara's default and is
+          left untouched.

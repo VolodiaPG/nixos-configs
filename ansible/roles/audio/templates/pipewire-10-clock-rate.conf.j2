@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, extraConfig.pipewire."10-clock-rate".
+#
+# Let the graph match its rate to the source instead of always resampling
+# to 48kHz, so playback stays bit-perfect when the sink supports the
+# source's rate.
+
+context.properties = {
+    default.clock.rate = {{ audio_clock_rate }}
+    default.clock.allowed-rates = [ {{ audio_clock_allowed_rates | join(' ') }} ]
+    default.clock.force-rate = 0
+}

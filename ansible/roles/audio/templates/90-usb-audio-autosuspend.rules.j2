@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+# Ported from modules/nixos/hifi.nix, services.udev.extraRules.
+#
+# Disable USB autosuspend for all USB audio-class devices (interface
+# class 0x01). msi's DAC is USB (docs/migration/msi-hardware.txt: card2
+# "Qudelix-5K USB DAC" at usb-0000:00:14.0-3.1) — autosuspend on that
+# path is the most common cause of crackling/dropouts this rule exists
+# to prevent.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{bInterfaceClass}=="01", ATTR{power/autosuspend}="-1", ATTR{power/control}="on"

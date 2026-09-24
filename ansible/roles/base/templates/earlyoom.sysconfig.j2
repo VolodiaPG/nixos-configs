@@ -1,0 +1,8 @@
+# Managed by ansible (roles/base). Do not edit by hand.
+# NOTE: path/variable name (/etc/sysconfig/earlyoom, EARLYOOM_ARGS) follows
+# the RHEL/Fedora EnvironmentFile convention used by most Fedora service
+# RPMs; not verified against the actual earlyoom.service unit shipped by
+# Nobara (msi cannot be reached for this task - see task report). Confirm
+# with `rpm -ql earlyoom` / `systemctl cat earlyoom` once installed and
+# adjust this template if the unit expects a different file or var name.
+EARLYOOM_ARGS="-m {{ base_earlyoom_free_mem_threshold }} -s {{ base_earlyoom_free_swap_threshold }} -g -n --prefer '{{ base_earlyoom_prefer }}' --avoid '{{ base_earlyoom_avoid }}'"

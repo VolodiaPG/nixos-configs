@@ -1,6 +1,75 @@
 ---
-# vpn: tailscale
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | vpn role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'vpn' is a scaffold; see PLAN.MD"
+# vpn: ported from modules/nixos/vpn.nix (PLAN.MD task 4.6). See
+# defaults/main.yml for the full list of what was/wasn't ported and why.
+
+- name: vpn | Linux only
+  when: ansible_system == 'Linux'
+  block:
+    - name: vpn | gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: vpn | tailscale
+      when: "'tailscale' in ansible_facts.packages"
+      become: true
+      block:
+        - name: vpn | enable/start tailscaled
+          ansible.builtin.systemd:
+            name: tailscaled
+            enabled: true
+            state: started
+
+        # Idempotency: `tailscale status --json`'s BackendState is
+        # "Running" once logged in and up; anything else (notably
+        # "NeedsLogin" on a fresh install) means `tailscale up` still
+        # needs to run. This keeps a second run a no-op instead of
+        # unconditionally re-issuing `tailscale up` (which would also be
+        # harmless, but would show as "changed" every run).
+        - name: vpn | check tailscale backend state
+          ansible.builtin.command: tailscale status --json
+          register: vpn_tailscale_status
+          changed_when: false
+          failed_when: false
+          check_mode: false
+
+        # Only runs when tailscale_authkey resolves to a non-empty value.
+        # The hard rule here: never invent a key, never fail the play when
+        # the vault var is absent — this task is skipped cleanly instead.
+        # no_log avoids ever printing the authkey to the console/log.
+        - name: vpn | tailscale up (first-time auth only)
+          ansible.builtin.command:
+            cmd: >-
+              tailscale up --authkey={{ tailscale_authkey }}
+              {{ tailscale_up_extra_args | join(' ') }}
+          when:
+            - tailscale_authkey | length > 0
+            - >-
+              vpn_tailscale_status.rc != 0 or
+              (vpn_tailscale_status.stdout | default('{}') | from_json).BackendState | default('') != 'Running'
+          changed_when: true
+          no_log: true
+
+        - name: vpn | authkey not set, skipping `tailscale up`
+          ansible.builtin.debug:
+            msg: >-
+              tailscale_authkey is empty (vault_tailscale_authkey is not
+              yet defined — phase 5). tailscaled is enabled and running,
+              but this host will not be logged into the tailnet until the
+              vault is populated and this role runs again.
+          when: tailscale_authkey | length == 0
+
+    - name: vpn | tailscale package not yet installed, skipping
+      when: "'tailscale' not in ansible_facts.packages"
+      ansible.builtin.debug:
+        msg: >-
+          tailscale is not installed yet (roles/pkgs owns it); skipping
+          tailscaled enable/start and `tailscale up`, will apply next run.
+
+    - name: vpn | firewall reminder (not this role's job — task 4.4)
+      ansible.builtin.debug:
+        msg: >-
+          Tailscale needs UDP/41641 reachable for direct connections
+          (falls back to DERP relay otherwise, so this is a
+          performance/NAT-traversal concern, not a hard requirement).
+          firewalld is owned by roles/desktop_linux (task 4.4); this role
+          does not open any ports. Reported, not implemented here.

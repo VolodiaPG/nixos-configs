@@ -1,3 +1,94 @@
 ---
 # Defaults for the audio role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# Ported from modules/nixos/hifi.nix (PLAN.MD task 4.3). Nobara ships
+# PipeWire fully configured already; only the genuine deltas from that
+# module are represented below. See tasks/main.yml for the per-item
+# "why this is a delta, not a Nobara default" reasoning.
+
+# --- realtime group/limits --------------------------------------------
+# NixOS's security.rtkit.enable + security.pam.loginLimits for "@audio".
+# Fedora/Nobara's pipewire RPM pulls in rtkit as a dependency already
+# (rtkit grants RT scheduling per-request over D-Bus, which is how
+# PipeWire itself gets RT priority today) — that part is NOT re-created
+# here. What NixOS additionally set was pam_limits values for the
+# @audio group (rtprio/memlock/nice), which is a belt-and-braces path
+# some JACK/exclusive-mode clients still rely on instead of going
+# through rtkit. Whether Fedora's pipewire/rtkit packaging already ships
+# an equivalent /etc/security/limits.d/*.conf could NOT be checked (msi
+# is unreachable — see role header). This role writes its own,
+# separately-named file so it is additive rather than overwriting
+# anything Nobara may already provide; if Nobara turns out to ship the
+# same limits, this is a harmless duplicate (pam_limits takes the most
+# permissive value across all matching files).
+audio_realtime_group: "audio"
+audio_limits_conf_path: "/etc/security/limits.d/90-audio-rt.conf"
+
+# --- PipeWire drop-ins ---------------------------------------------------
+# NixOS's services.pipewire.extraConfig.pipewire.* entries become drop-in
+# files under /etc/pipewire/pipewire.conf.d/, named the same as the Nix
+# attribute keys were (so the ordering prefixes match the source).
+audio_pipewire_confd: "/etc/pipewire/pipewire.conf.d"
+audio_pipewire_pulse_confd: "/etc/pipewire/pipewire-pulse.conf.d"
+audio_wireplumber_confd: "/etc/wireplumber/wireplumber.conf.d"
+
+# 10-clock-rate.conf: let the graph match its rate to the source instead
+# of always resampling to 48kHz.
+audio_clock_rate: 48000
+audio_clock_allowed_rates:
+  - 44100
+  - 48000
+  - 88200
+  - 96000
+  - 176400
+  - 192000
+
+# 13-resample-quality.conf: slightly better resampling for the rare case
+# PipeWire actually has to resample.
+audio_resample_quality: 7
+audio_resample_window: "kaiser"
+
+# 50-raop-discover.conf: AirPlay receiver discovery/streaming via PipeWire.
+audio_raop_discover_enable: true
+
+# 92-lowlatency.conf (pipewire-pulse.conf.d): ~10ms low-latency default
+# for AV sync, without forcing a channel map/quality onto every client.
+audio_pulse_min_req: "256/48000"
+audio_pulse_default_req: "512/48000"
+audio_pulse_min_frag: "256/48000"
+audio_pulse_default_frag: "512/48000"
+audio_pulse_default_tlength: "512/48000"
+audio_pulse_min_quantum: "256/48000"
+
+# --- WirePlumber drop-ins -------------------------------------------------
+# 10-alsa-headroom.conf: buffer-size hint on ALSA outputs to avoid
+# underruns; harmless for any device (not a rate/channel override).
+audio_alsa_headroom: 1024
+
+# 20-bluetooth-quality.conf: prefer the best codec/quality each BT device
+# negotiates supports.
+audio_bt_sbc_xq: true
+audio_bt_msbc: true
+audio_bt_hw_volume: true
+audio_bt_ldac_quality: "hq"
+audio_bt_aac_bitrate: 320000
+
+# --- USB audio autosuspend -------------------------------------------
+# NixOS's services.udev.extraRules. This is a genuine delta (goes beyond
+# the "realtime group/limits" + "PipeWire/WirePlumber config" pair called
+# out in PLAN.MD 4.3) that this role adds anyway: msi's DAC is USB
+# (docs/migration/msi-hardware.txt: card2 "Qudelix-5K USB DAC"), and
+# leaving USB autosuspend enabled is the single most common cause of the
+# crackling/dropout symptoms hifi.nix exists to prevent. See the report
+# for this call-out. NOT ported: boot.kernelParams (threadirqs,
+# usbcore.autosuspend=-1) — those are kernel command-line edits (grubby),
+# out of scope for this role; flagged as left undone.
+audio_usb_autosuspend_rules_path: "/etc/udev/rules.d/90-usb-audio-autosuspend.rules"
+
+# --- AirPlay firewall ports (pairs with 50-raop-discover.conf) -----------
+# Only needed if the raop-discover module above is enabled.
+audio_firewall_udp_ports:
+  - 5353 # mDNS
+  - 6001 # AirPlay RTSP/RTP
+  - 6002 # AirPlay RTSP/RTP

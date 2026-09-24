@@ -1,0 +1,7 @@
+# Managed by ansible (roles/base). Do not edit by hand.
+# Drop-in rather than editing /etc/ssh/sshd_config directly: Fedora's
+# packaged sshd_config already has "Include /etc/ssh/sshd_config.d/*.conf"
+# near the top, and drop-ins win because sshd uses the first value it sees
+# for each keyword.
+PermitRootLogin {{ base_sshd_permit_root_login }}
+Subsystem sftp {{ base_sshd_sftp_subsystem_path }}

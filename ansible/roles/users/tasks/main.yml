@@ -1,6 +1,102 @@
 ---
-# users: user account, groups, authorized_keys
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | users role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'users' is a scaffold; see PLAN.MD"
+# users: user account, groups, authorized_keys. Ported from
+# modules/nixos/base.nix's `users.users` stanza (task 4.2).
+#
+# ASSUMPTION (bootstrap): this role also runs from
+# playbooks/bootstrap.yml with `hosts: all` against a *fresh* host,
+# before {{ username }} exists, using whatever admin/root account and
+# `become` credentials the inventory/CLI supply out-of-band (e.g. -u/-K,
+# or an installer-created admin account with passwordless sudo) - this
+# role does not create or assume any specific connection user, it only
+# needs `become: true` to reach root. That is why every task below is
+# written to require nothing about {{ username }} pre-existing.
+#
+# HARD RULE: bootstrap.yml's `hosts: all` also includes the Darwin
+# host (macbook). Nothing in this role may run there, hence the
+# top-level Linux guard.
+- name: users | Linux-only role
+  when: ansible_system == 'Linux'
+  become: true
+  block:
+    # Groups referenced below (realtime, libvirtd, plugdev, usb, docker,
+    # ...) are normally created by the packages/roles that actually use
+    # them (roles/audio, roles/virtualization, roles/pkgs' moby-engine,
+    # udev rules in roles/desktop_linux - none of which have run yet the
+    # first time bootstrap.yml or linux.yml executes). ansible.builtin.user
+    # hard-fails if an unknown group is requested, so create every group
+    # this role needs up front. Pre-creating an empty system group is
+    # harmless and idempotent even before the owning package is
+    # installed - most RPM post-install scripts do the equivalent of
+    # `getent group X || groupadd X` and no-op if it already exists.
+    - name: users | ensure required secondary groups exist
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+        system: true
+      loop: "{{ users_groups }}"
+
+    # Declarative full replacement of secondary groups (append is not
+    # set, so it defaults to false) to match NixOS's users.extraGroups
+    # semantics: the given list is authoritative, not additive. Any
+    # secondary group membership added by hand outside of this list will
+    # be removed on the next run - that is intentional parity with the
+    # source module, not an oversight.
+    # NOTE (ordering): zsh itself is installed by roles/pkgs, which runs
+    # after roles/users in playbooks/linux.yml - same root cause as the
+    # glibc-langpack-fr/locale note in roles/base. Setting shell to a path
+    # that doesn't exist yet does not fail (usermod does not validate the
+    # target, only interactive chsh does); it is resolved by the time the
+    # same playbook run finishes installing zsh via roles/pkgs.
+    - name: users | create primary user account
+      ansible.builtin.user:
+        name: "{{ username }}"
+        comment: "{{ full_name }}"
+        shell: "{{ users_shell }}"
+        groups: "{{ users_groups }}"
+        append: false
+        create_home: true
+        state: present
+
+    # Phase 5's problem: msi does not need a managed password (Nobara
+    # sets it at install time - PLAN.MD task 5.1). This stays a no-op
+    # (vault_hashed_password undefined) until a future host's vault
+    # supplies one. no_log so a defined value never lands in job output.
+    - name: users | set hashed password (only if supplied via vault)
+      ansible.builtin.user:
+        name: "{{ username }}"
+        password: "{{ vault_hashed_password }}"
+      when: vault_hashed_password is defined
+      no_log: true
+
+    # linger = true in base.nix: keeps the user's systemd --user instance
+    # (and anything running in it, e.g. syncthing) alive without an
+    # active login session. No dedicated ansible.posix module for this;
+    # loginctl is the standard tool and this is written idempotently by
+    # checking the marker file it creates first.
+    - name: users | check whether lingering is already enabled
+      ansible.builtin.stat:
+        path: "/var/lib/systemd/linger/{{ username }}"
+      register: users_linger
+
+    - name: users | enable lingering for {{ username }}
+      ansible.builtin.command: "loginctl enable-linger {{ username }}"
+      when: not users_linger.stat.exists
+      changed_when: true
+
+    # openssh.authorizedKeys.keys for both the primary user and root in
+    # base.nix. exclusive: true matches NixOS's fully-declarative
+    # semantics - the list in group_vars/all/main.yml is the whole set,
+    # replacing anything added by hand.
+    - name: users | authorized_keys for {{ username }}
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        key: "{{ ssh_keys | join('\n') }}"
+        exclusive: true
+        state: present
+
+    - name: users | authorized_keys for root
+      ansible.posix.authorized_key:
+        user: root
+        key: "{{ ssh_keys | join('\n') }}"
+        exclusive: true
+        state: present

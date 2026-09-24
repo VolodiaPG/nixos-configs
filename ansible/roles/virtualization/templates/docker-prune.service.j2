@@ -1,0 +1,6 @@
+[Unit]
+Description=Prune unused docker data (managed by ansible, roles/virtualization)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker system prune -f

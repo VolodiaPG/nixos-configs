@@ -1,6 +1,167 @@
 ---
-# base: locale fr_FR, timezone Europe/Paris, sysctl, sudo, sshd
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | base role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'base' is a scaffold; see PLAN.MD"
+# base: locale fr_FR, timezone Europe/Paris, sysctl, sshd, fail2ban,
+# earlyoom, journald caps. Ported from modules/nixos/base.nix (task 4.2).
+#
+# state: present everywhere, never latest. fail2ban/earlyoom are only
+# configured+enabled when their package is already installed (see the
+# package_facts gate below) - see the task report for why that gate exists
+# and is not a bug.
+- name: base | Linux-only role
+  when: ansible_system == 'Linux'
+  become: true
+  block:
+    - name: base | gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    # --- locale / keymap / timezone -----------------------------------
+    # NOTE (ordering): fr_FR.UTF-8 needs glibc-langpack-fr, which is a dnf
+    # package installed by roles/pkgs. In playbooks/linux.yml roles run
+    # base, users, nix, pkgs, ... - i.e. base (this role) executes BEFORE
+    # pkgs installs the langpack. Writing /etc/locale.conf here doesn't
+    # fail even if the locale isn't generated yet (it's just a text file),
+    # but any command run in the same play that evaluates the locale
+    # before pkgs completes may warn "Cannot set LC_ALL to default
+    # locale". This resolves itself by the end of the same playbook run
+    # (pkgs runs later in the same play) and is fully correct from the
+    # second playbook run onward. Not fixed here per instructions - not
+    # reordering playbooks/linux.yml; flagged in the task report.
+    - name: base | write /etc/locale.conf (fr_FR.UTF-8)
+      ansible.builtin.template:
+        src: locale.conf.j2
+        dest: /etc/locale.conf
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: base | set console keymap (vconsole)
+      ansible.builtin.lineinfile:
+        path: /etc/vconsole.conf
+        regexp: '^KEYMAP='
+        line: "KEYMAP={{ base_console_keymap }}"
+        create: true
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: base | set timezone
+      community.general.timezone:
+        name: "{{ base_timezone }}"
+
+    # --- sysctl ----------------------------------------------------------
+    - name: base | apply sysctl parameters
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value | string }}"
+        state: present
+        sysctl_file: "{{ base_sysctl_file }}"
+        reload: true
+      loop: "{{ base_sysctl | dict2items }}"
+
+    # --- sshd --------------------------------------------------------------
+    - name: base | sshd drop-in (PermitRootLogin, SFTP)
+      ansible.builtin.template:
+        src: sshd-base.conf.j2
+        dest: "{{ base_sshd_dropin_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Validate sshd config
+        - Reload sshd
+
+    # --- fail2ban ----------------------------------------------------------
+    # Gated on the package already being present: fail2ban is installed by
+    # roles/pkgs, which runs after this role in playbooks/linux.yml (see
+    # locale note above - same root cause). Enabling a systemd unit that
+    # doesn't exist yet is a hard failure, not just a warning, so this
+    # skips cleanly on a from-scratch first run and self-heals on the next
+    # playbook run once roles/pkgs has installed the package.
+    - name: base | fail2ban
+      when: "'fail2ban' in ansible_facts.packages"
+      block:
+        - name: base | fail2ban jail.local
+          ansible.builtin.template:
+            src: fail2ban-jail.local.j2
+            dest: /etc/fail2ban/jail.local
+            owner: root
+            group: root
+            mode: "0644"
+          notify: Restart fail2ban
+
+        - name: base | enable/start fail2ban
+          ansible.builtin.systemd:
+            name: fail2ban
+            enabled: true
+            state: started
+
+    - name: base | fail2ban package not yet installed, skipping config
+      when: "'fail2ban' not in ansible_facts.packages"
+      ansible.builtin.debug:
+        msg: >-
+          fail2ban is not installed yet (roles/pkgs runs after roles/base);
+          skipping jail.local + enable this run, will apply next run.
+
+    # --- earlyoom ------------------------------------------------------
+    - name: base | earlyoom
+      when: "'earlyoom' in ansible_facts.packages"
+      block:
+        - name: base | earlyoom sysconfig
+          ansible.builtin.template:
+            src: earlyoom.sysconfig.j2
+            dest: "{{ base_earlyoom_sysconfig_path }}"
+            owner: root
+            group: root
+            mode: "0644"
+          notify: Restart earlyoom
+
+        - name: base | enable/start earlyoom
+          ansible.builtin.systemd:
+            name: earlyoom
+            enabled: true
+            state: started
+
+    - name: base | earlyoom package not yet installed, skipping config
+      when: "'earlyoom' not in ansible_facts.packages"
+      ansible.builtin.debug:
+        msg: >-
+          earlyoom is not installed yet (roles/pkgs runs after roles/base);
+          skipping sysconfig + enable this run, will apply next run.
+
+    # --- journald caps -----------------------------------------------------
+    - name: base | ensure journald drop-in dir exists
+      ansible.builtin.file:
+        path: "{{ base_journald_dropin_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: base | journald size caps
+      ansible.builtin.template:
+        src: journald-base.conf.j2
+        dest: "{{ base_journald_dropin_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart systemd-journald
+
+    # --- disable the competing OOM daemon -----------------------------
+    # Not mentioned in PLAN.MD's task 4.2 summary, but present in
+    # base.nix (systemd.oomd.enable = false) right next to the earlyoom
+    # block, with the comment "Disable competing default OOM daemon" -
+    # i.e. it's part of the earlyoom setup, not a standalone thing. Fedora
+    # Workstation/Nobara likely doesn't ship systemd-oomd at all (that's
+    # more of an Ubuntu default), hence the existence check instead of an
+    # unconditional systemd task that would hard-fail on a missing unit.
+    - name: base | check whether systemd-oomd unit exists
+      ansible.builtin.stat:
+        path: /usr/lib/systemd/system/systemd-oomd.service
+      register: base_oomd_unit
+
+    - name: base | disable systemd-oomd (earlyoom is the OOM killer here)
+      ansible.builtin.systemd:
+        name: systemd-oomd
+        enabled: false
+        state: stopped
+      when: base_oomd_unit.stat.exists
