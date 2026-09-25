@@ -1,0 +1,9 @@
+vault-edit:
+    #!/usr/bin/env bash
+    cd {{ justfile_dir() }}
+    ansible-vault edit --vault-password-file ~/.config/ansible/vault-pass inventory/group_vars/all/vault.yml
+
+vault-encrypt:
+    #!/usr/bin/env bash
+    cd {{ justfile_dir() }}
+    ansible-vault encrypt --vault-password-file ~/.config/ansible/vault-pass inventory/group_vars/all/vault.yml

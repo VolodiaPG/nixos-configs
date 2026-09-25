@@ -14,3 +14,4 @@ nohup.out
 .aider*
 .env
 .slim/deepwork/
+.vault_password*
