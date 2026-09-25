@@ -38,9 +38,12 @@ via a secrets file).
 concern rather than a `$HOME` dotfile, so `roles/nix` owns it, not
 `roles/secrets`: it writes the fragment to `/etc/nix/nix.access-tokens.conf`
 (root, `0600`) and `nix.custom.conf` pulls it in with `!include`. The value
-is the same nix.conf fragment agenix served, i.e. a line of the form
-`access-tokens = github.com=<token>` — paste it verbatim, not just the bare
-token. Without it, GitHub flake/tarball fetches fall back to the
+is the token entry, `github.com=<token>`. `roles/nix` adds the
+`access-tokens = ` key itself. A full `access-tokens = github.com=<token>`
+line, as agenix served it, is also accepted: the role strips the key and
+re-adds it. (This doc originally required the full line. The vault then
+held the bare value, the role wrote it verbatim, and nix-daemon
+crash-looped. That is why the role owns the syntax now.) Without it, GitHub flake/tarball fetches fall back to the
 unauthenticated 60-requests/hour limit.
 
 `cachix-token` **stays in agenix** and is not migrated. `home-server` still
@@ -143,8 +146,7 @@ ansible-vault edit --vault-password-file ~/.config/ansible/vault-pass \
 vault_tailscale_authkey: "<a FRESH key from the tailnet admin console — see below>"
 vault_envvars: |
   <paste each decrypted line here, indented to match>
-vault_access_token: |
-  <paste the decrypted nix.conf fragment here, e.g. access-tokens = github.com=...>
+vault_access_token: "github.com=<token>"
 ```
 
 **`tailscale-authkey` is not a migration.** The audit

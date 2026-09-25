@@ -44,7 +44,19 @@ nix_trusted_users:
 # `NIX_CONFIG=... nix config show` against a nonexistent path. So the
 # reference in nix.custom.conf is safe to emit unconditionally.
 # default('', true) so a null vault value skips cleanly, as in roles/secrets.
-nix_access_tokens: "{{ vault_access_token | default('', true) }}"
+#
+# The role owns the nix.conf syntax. The vault holds only the VALUE
+# (`github.com=<token>`), and tasks/main.yml writes the
+# `access-tokens = ` key itself. A value that already starts with
+# `access-tokens =`, the form vault-setup.md originally asked for, is
+# accepted too: the key is stripped and re-added. This is load-bearing.
+# On 2026-09-25 the vault held the bare value, the role wrote it
+# verbatim, and nix-daemon rejected the file ("syntax error in
+# configuration line"). determinate-nixd then respawned it about 10
+# times a second. Every Nix command hung, and each respawn logged the
+# token in plaintext to the world-readable
+# /var/log/determinate-nix-daemon.log.
+nix_access_tokens: "{{ vault_access_token | default('', true) | regex_replace('^\\s*access-tokens\\s*=\\s*', '') | trim }}"
 nix_access_tokens_path: "/etc/nix/nix.access-tokens.conf"
 
 # nix-direnv: PLAN.MD "PHASE 2 — what it leaves behind" item 4.

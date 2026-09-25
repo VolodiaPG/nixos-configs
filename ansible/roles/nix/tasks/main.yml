@@ -122,7 +122,7 @@
     # state is harmless rather than a broken nix.conf.
     - name: Write the Nix GitHub access-token fragment
       ansible.builtin.copy:
-        content: "{{ nix_access_tokens }}"
+        content: "access-tokens = {{ nix_access_tokens }}\n"
         dest: "{{ nix_access_tokens_path }}"
         owner: root
         group: "{{ root_group }}"
