@@ -110,11 +110,27 @@ brew_formulae:
   - syncthing
   - terminal-notifier
   - fswatch
+  # Home Manager's zsh plugins (~/.zsh/plugins/, store symlinks). chezmoi's
+  # ~/.config/zsh/20-completion.zsh already sources them from
+  # /opt/homebrew/share, but nothing installed them there — missed in the
+  # original package port because programs.zsh plugins are not packages in
+  # home.packages. Found in phase 6.1 while scripting the HM removal.
+  - zsh-autosuggestions
+  - zsh-completions
   - podman
   - podman-compose
   - texinfo
   - bc
   - findutils
+  # Required by this repo's own commit hook: .git/crypt/transcrypt calls
+  # `nproc`, which macOS lacks. GNU coreutils used to reach PATH through
+  # nix-darwin's system profile, undeclared anywhere, so the dependency
+  # stayed invisible until darwin-uninstaller removed it and every commit
+  # failed with "nproc: command not found". Homebrew installs commands macOS
+  # does not ship (nproc among them) unprefixed in /opt/homebrew/bin, and
+  # the ones macOS does ship only as g-prefixed names, so this adds nproc
+  # without shadowing BSD stat/ls/date. Do not add gnubin to PATH.
+  - coreutils
 
 # §10a — the fixed cask set: 8-way intersection + steam/calibre (§0.2
 # explicit keeps) + kitty (carried regardless, not a §0.2 dispute) + zed

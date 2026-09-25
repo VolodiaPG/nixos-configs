@@ -1,0 +1,43 @@
+---
+# Defaults for the syncthing role. Do not duplicate anything from
+# group_vars/all/main.yml here.
+#
+# The package itself comes from roles/homebrew (darwin.yml) and roles/pkgs
+# (nobara.yml). This role only runs it.
+#
+# Command line copied from the syncthing-wrapper Home Manager generated on
+# the macbook, not guessed (docs/migration/home-services-spec.md):
+#   --gui-address=0.0.0.0:8384  guiAddress in syncthing.nix. All interfaces
+#                               on purpose: the GUI is reached over Tailscale.
+#   --allow-newer-config        syncthing.nix extraOptions.
+#   --no-upgrade                the package manager owns updates.
+#
+# No --home: both platforms keep Syncthing's default data directory, so the
+# existing device identity is picked up as-is (macOS: ~/Library/Application
+# Support/Syncthing; Linux 2.x: ~/.local/state/syncthing).
+#
+# syncthing.nix set overrideDevices/overrideFolders = false, so Home
+# Manager never wrote config.xml. Neither does this role. Peers and folders
+# are configured by hand. That also makes HM's syncthing-init agent
+# (merge-syncthing-config) pointless, so it has no successor.
+syncthing_serve_args:
+  - serve
+  - --no-browser
+  - --no-restart
+  - --no-upgrade
+  - --gui-address=0.0.0.0:8384
+  - --allow-newer-config
+
+# macOS. The opt/ link, not Cellar/<version>/, so the plist survives
+# `brew upgrade`. Homebrew's own `brew services` plist is not used: it
+# lacks --gui-address, --no-upgrade and --allow-newer-config.
+syncthing_darwin_bin: /opt/homebrew/opt/syncthing/bin/syncthing
+syncthing_darwin_label: com.ansible.syncthing
+syncthing_darwin_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ syncthing_darwin_label }}.plist"
+syncthing_darwin_log_dir: "{{ home_dir }}/Library/Logs/Syncthing"
+
+# Linux. Fedora's RPM ships /usr/lib/systemd/user/syncthing.service; a
+# drop-in replaces only its ExecStart. .config/systemd is in
+# chezmoi/.chezmoiignore, so writing it here does not fight chezmoi.
+syncthing_linux_bin: /usr/bin/syncthing
+syncthing_linux_dropin_path: "{{ home_dir }}/.config/systemd/user/syncthing.service.d/override.conf"

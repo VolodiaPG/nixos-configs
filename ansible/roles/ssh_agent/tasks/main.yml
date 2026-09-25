@@ -1,0 +1,30 @@
+---
+# ssh_agent: launchd agent for the per-user ssh-agent on macOS. See
+# defaults/main.yml for why Linux needs nothing.
+
+- name: ssh_agent | macOS only
+  when: ansible_system == 'Darwin'
+  block:
+    - name: ssh_agent | write LaunchAgent plist
+      ansible.builtin.template:
+        src: ssh-agent.plist.j2
+        dest: "{{ ssh_agent_plist_path }}"
+        mode: "0644"
+      notify: Unload ssh-agent LaunchAgent
+
+    # Unload a changed job before the check below, so one code path loads it
+    # on every run: first install, changed plist, or unloaded by hand.
+    - name: ssh_agent | apply pending unload
+      ansible.builtin.meta: flush_handlers
+
+    - name: ssh_agent | check whether the job is loaded
+      ansible.builtin.command: "launchctl print gui/{{ ansible_user_uid }}/{{ ssh_agent_label }}"
+      register: _ssh_agent_loaded
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: ssh_agent | load the job
+      ansible.builtin.command: "launchctl bootstrap gui/{{ ansible_user_uid }} {{ ssh_agent_plist_path }}"
+      when: _ssh_agent_loaded.rc != 0
+      changed_when: true

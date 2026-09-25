@@ -1,0 +1,61 @@
+---
+# Ports, as firewalld's built-in services: "syncthing" is 22000/tcp+udp and
+# 21027/udp (sync + local discovery), "syncthing-gui" is 8384/tcp. The GUI
+# listens on 0.0.0.0 on purpose (see defaults). NixOS opened all of these
+# (msi-facts.md); roles/desktop_linux's firewall does not, so they are
+# opened here, next to the service that needs them.
+- name: syncthing | allow Syncthing through firewalld
+  become: true
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - syncthing
+    - syncthing-gui
+
+- name: syncthing | ensure drop-in directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ syncthing_linux_dropin_path | dirname }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ user_group }}"
+    mode: "0755"
+
+# The empty ExecStart= clears the RPM unit's own before setting ours;
+# systemd rejects a second ExecStart on a non-oneshot service otherwise.
+- name: syncthing | override ExecStart with the ported command line
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ syncthing_linux_dropin_path }}"
+    content: |
+      # Managed by Ansible (roles/syncthing). Do not edit by hand.
+      [Service]
+      ExecStart=
+      ExecStart={{ syncthing_linux_bin }} {{ syncthing_serve_args | join(' ') }}
+    owner: "{{ username }}"
+    group: "{{ user_group }}"
+    mode: "0644"
+  register: _syncthing_dropin
+
+- name: syncthing | look up {{ username }}'s uid
+  ansible.builtin.command: "id -u {{ username }}"
+  register: _syncthing_uid
+  changed_when: false
+  check_mode: false
+
+# Same user-manager pattern as roles/desktop_linux/tasks/kanata.yml. Relies
+# on roles/users having enabled lingering, so the unit runs without a login.
+- name: syncthing | daemon-reload, enable, start
+  become: true
+  become_user: "{{ username }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ _syncthing_uid.stdout }}"
+  ansible.builtin.systemd_service:
+    name: syncthing.service
+    scope: user
+    daemon_reload: true
+    enabled: true
+    state: "{{ 'restarted' if _syncthing_dropin.changed else 'started' }}"

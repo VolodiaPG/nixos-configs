@@ -1344,6 +1344,14 @@ No bootloader, no reinstall, and nix-darwin uninstalls cleanly. Order:
    *after* step 2. See the collision table in
    `docs/migration/darwin-cutover.md`.
 
+   **Step 2 progress (2026-09-25):** `darwin-uninstaller` has been run.
+   Home Manager was a nix-darwin module, so there is no `home-manager
+   uninstall`; its leftovers (5 launch agents, 23 `$HOME` symlinks, a GC
+   root) are removed by hand, after Ansible-managed replacements for the
+   two live services exist: `roles/ssh_agent` (macOS launchd agent on the
+   socket chezmoi's `~/.zshenv` exports; Linux keeps keychain) and
+   `roles/syncthing`. `chezmoi apply` runs in the same pass.
+
    Status as of 2026-09-25: `roles/homebrew` converged (52/52 formulae,
    16/16 casks, `changed=0` on a second run) against a Homebrew that has
    been adopted away from `nix-homebrew`; the `/usr/local` nix-homebrew
@@ -1490,7 +1498,7 @@ State these to the user if they come up; do not pretend otherwise.
 | 2.7  | theme → Plasma native                  | ☑      | 4 live look-and-feels only; latte colour scheme now an external                                                      |
 | 2.8  | mpv (strip RIFE)                       | ☑      | spec wrong twice — see commit cf72736                                                                                |
 | 2.9  | KDE Plasma config                      | ☑      | all 17 files byte-identical to old repo; **untested — no host runs Plasma yet**, see `docs/migration/kde-cutover.md` |
-| 2.10 | browser/claude/gui/syncthing           | ☑      | Flatpak policy path corrected; specs in `docs/migration/`                                                            |
+| 2.10 | browser/claude/gui/syncthing           | ☑      | Flatpak policy path corrected; specs in `docs/migration/`. Was ticked with only the spec written — the Syncthing unit itself landed in phase 6.1 as `roles/syncthing` (launchd + systemd user unit + firewalld) |
 | 2.11 | neovim packages                        | ☑      | **blocker found**: `init.lua` plugin list is commented out                                                           |
 | 3.1  | `roles/pkgs`                           | ☑      | dnf 71 / rpmfusion 2 / copr 3 / nix 21; brew 13 casks + 52 formulae                                                  |
 | 3.2  | flatpak                                | ☑      | 6 app IDs, GTK override ported                                                                                       |

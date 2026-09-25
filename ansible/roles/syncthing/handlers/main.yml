@@ -1,0 +1,8 @@
+---
+# Unload so tasks/darwin.yml's ensure-loaded step re-bootstraps from the
+# changed plist; launchd never re-reads a plist for a loaded job. Fails
+# harmlessly when the job was not loaded yet (first run).
+- name: Unload syncthing LaunchAgent
+  ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ syncthing_darwin_label }}"
+  changed_when: true
+  failed_when: false

@@ -1,0 +1,35 @@
+{# Managed by Ansible (roles/ssh_agent). Do not edit by hand. #}
+{# Replaces Home Manager's org.nix-community.home.ssh-agent. Same shape #}
+{# (RunAtLoad, restart on crash, Background) and the same socket path, but #}
+{# Apple's /usr/bin/ssh-agent instead of a /nix/store openssh, so it #}
+{# survives the removal of Nix. #}
+{#                                                                        #}
+{# The rm -f clears a socket left behind by a crashed agent: ssh-agent -a #}
+{# refuses to bind over an existing file, which under KeepAlive would #}
+{# turn one crash into a restart loop. launchd runs exactly one instance #}
+{# of this label, so there is never a live agent on the path to remove. #}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>{{ ssh_agent_label }}</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/sh</string>
+		<string>-c</string>
+		<string>sock="$(/usr/bin/getconf DARWIN_USER_TEMP_DIR)/ssh-agent"; rm -f "$sock"; exec /usr/bin/ssh-agent -D -a "$sock"</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<dict>
+		<key>Crashed</key>
+		<true/>
+		<key>SuccessfulExit</key>
+		<false/>
+	</dict>
+	<key>ProcessType</key>
+	<string>Background</string>
+</dict>
+</plist>

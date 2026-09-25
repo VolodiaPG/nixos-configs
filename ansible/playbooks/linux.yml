@@ -11,6 +11,8 @@
     - pkgs
     - base
     - users
+    # After users: the syncthing user unit relies on lingering being enabled.
+    - syncthing
     - shell
     - networking
     - vpn

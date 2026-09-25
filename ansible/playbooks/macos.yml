@@ -5,6 +5,9 @@
   roles:
     - nix
     - homebrew
+    # After homebrew: roles/syncthing runs the Homebrew syncthing binary.
+    - ssh_agent
+    - syncthing
     - pkgs
     - shell
     - darwin_defaults

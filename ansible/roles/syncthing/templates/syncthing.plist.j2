@@ -1,0 +1,34 @@
+{# Managed by Ansible (roles/syncthing). Do not edit by hand. #}
+{# Replaces Home Manager's org.nix-community.home.syncthing. Same shape: #}
+{# restart on crash only (--no-restart means a clean exit is deliberate), #}
+{# Background, logs under ~/Library/Logs/Syncthing. #}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>{{ syncthing_darwin_label }}</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>{{ syncthing_darwin_bin }}</string>
+{% for arg in syncthing_serve_args %}
+		<string>{{ arg }}</string>
+{% endfor %}
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<dict>
+		<key>Crashed</key>
+		<true/>
+		<key>SuccessfulExit</key>
+		<false/>
+	</dict>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>StandardOutPath</key>
+	<string>{{ syncthing_darwin_log_dir }}/syncthing-stdout.log</string>
+	<key>StandardErrorPath</key>
+	<string>{{ syncthing_darwin_log_dir }}/syncthing-stderr.log</string>
+</dict>
+</plist>

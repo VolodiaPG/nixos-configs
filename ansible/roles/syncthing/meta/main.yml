@@ -1,0 +1,4 @@
+---
+# syncthing: native Syncthing service (PLAN.MD §0, task 2.10). Ported from
+# modules/home/syncthing.nix; spec in docs/migration/home-services-spec.md.
+dependencies: []

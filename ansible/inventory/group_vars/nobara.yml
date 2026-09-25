@@ -90,6 +90,9 @@ dnf_packages:
   - zathura-plugins-all # pairs with zathura
   - zoxide
   - zsh
+  # Sourced by chezmoi's ~/.config/zsh/20-completion.zsh from /usr/share.
+  # zsh-completions has no Fedora 43 package; zsh's own completions cover it.
+  - zsh-autosuggestions
 
 # §2 rpmfusion. `roles/pkgs` enables the free+nonfree repos idempotently
 # before these are installed.

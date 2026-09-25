@@ -1,0 +1,30 @@
+---
+- name: syncthing | ensure log directory exists
+  ansible.builtin.file:
+    path: "{{ syncthing_darwin_log_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: syncthing | write LaunchAgent plist
+  ansible.builtin.template:
+    src: syncthing.plist.j2
+    dest: "{{ syncthing_darwin_plist_path }}"
+    mode: "0644"
+  notify: Unload syncthing LaunchAgent
+
+# Unload a changed job before the check below, so one code path loads it on
+# every run: first install, changed plist, or unloaded by hand.
+- name: syncthing | apply pending unload
+  ansible.builtin.meta: flush_handlers
+
+- name: syncthing | check whether the job is loaded
+  ansible.builtin.command: "launchctl print gui/{{ ansible_user_uid }}/{{ syncthing_darwin_label }}"
+  register: _syncthing_loaded
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: syncthing | load the job
+  ansible.builtin.command: "launchctl bootstrap gui/{{ ansible_user_uid }} {{ syncthing_darwin_plist_path }}"
+  when: _syncthing_loaded.rc != 0
+  changed_when: true

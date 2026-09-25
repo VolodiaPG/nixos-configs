@@ -110,6 +110,7 @@ Sources in the `source` column: `fedora`, `rpmfusion`, `copr:<repo>`,
 | --- | --- | --- | --- | --- | --- |
 | *(n/a)* `earlyoom` | msi | fedora | `earlyoom` | `dnf repoquery @fedora:43` | `base.nix` enabled it as a NixOS service (task 4.2) |
 | *(n/a)* `firewalld` | msi | fedora | `firewalld` | `dnf repoquery @fedora:43` | replaces `networking.firewall` (task 4.4) |
+| `zsh-autosuggestions` | msi | fedora | `zsh-autosuggestions` | mdapi f43 (0.7.1), 2026-09-25 | **Added phase 6.1.** A `programs.zsh` plugin, not a `home.packages` entry, so the original inventory never saw it. `chezmoi/dot_config/zsh/20-completion.zsh` sources it. `zsh-completions` has **no** Fedora 43 package (mdapi: not found); zsh's bundled completions stand in. |
 | *(n/a)* `i2c-tools` | msi | fedora | `i2c-tools` | `dnf repoquery @fedora:43` | ddcutil prerequisite + `i2c` group/udev rule (task 4.4) |
 | *(n/a)* `glibc-langpack-fr` | msi | fedora | `glibc-langpack-fr` | `dnf repoquery @fedora:43` | replaces `glibc-locales` for `fr_FR.UTF-8` (task 4.2) |
 | `gnupg` | msi | fedora | `gnupg2` + `pinentry-tty` | `dnf repoquery @fedora:43` | `desktop.nix` ran the gpg agent with `pinentry-tty` |
@@ -439,6 +440,9 @@ and the formulae `nushell`, `carapace`, `aider`, `docker`, `skhd`.
 | `syncthing` | homebrew | `syncthing` | `brew info` OK — §0: launchd agent / `brew services` |
 | `terminal-notifier` | homebrew | `terminal-notifier` | `brew info` OK |
 | `fswatch` | homebrew | `fswatch` | `brew info` OK |
+| `zsh-autosuggestions` | homebrew | `zsh-autosuggestions` | `brew info` OK (0.7.1) — **added phase 6.1**: HM `programs.zsh` plugin, missed because plugins are not `home.packages` |
+| `coreutils` | homebrew | `coreutils` | `brew info` OK (9.12) — **added phase 6.1**: transcrypt's commit hook needs `nproc`. Came implicitly from nix-darwin's system profile before; declared nowhere. Unprefixed only for commands macOS lacks, so BSD tools are not shadowed |
+| `zsh-completions` | homebrew | `zsh-completions` | `brew info` OK (0.36.0) — **added phase 6.1**, same reason |
 | `podman` | homebrew | `podman` | `brew info` OK |
 | `podman-compose` | homebrew | `podman-compose` | `brew info` OK |
 | `texinfo-interactive` | homebrew | `texinfo` | `brew info` OK |

@@ -1,0 +1,14 @@
+---
+# Defaults for the ssh_agent role. Do not duplicate anything from
+# group_vars/all/main.yml here.
+#
+# macOS only. On Linux there is nothing to replace: keychain (sourced from
+# chezmoi's ~/.config/zsh/40-tools.zsh) starts and reuses the agent itself
+# and exports SSH_AUTH_SOCK, exactly as it did under Home Manager.
+#
+# On macOS the socket path is fixed by chezmoi's ~/.zshenv, which exports
+# SSH_AUTH_SOCK="$(getconf DARWIN_USER_TEMP_DIR)/ssh-agent". This role is
+# what makes that socket exist. The two must agree, which is why the
+# template spells the path with the same expression rather than a variable.
+ssh_agent_label: com.ansible.ssh-agent
+ssh_agent_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ ssh_agent_label }}.plist"

@@ -1,0 +1,11 @@
+---
+# syncthing: run Syncthing as a per-user service. launchd agent on macOS,
+# systemd user unit on Linux (split rule: user units are Ansible's).
+
+- name: syncthing | macOS
+  ansible.builtin.include_tasks: darwin.yml
+  when: ansible_system == 'Darwin'
+
+- name: syncthing | Linux
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_system == 'Linux'
