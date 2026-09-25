@@ -5,3 +5,12 @@ skip_list:
   # SSH public keys and cache substituter keys are single unbreakable tokens
   # well past 160 chars. Nothing is gained by wrapping them.
   - yaml[line-length]
+  # House style: task names are "role | lowercase description", matching
+  # the role's own name. Not a typo to fix task-by-task.
+  - name[casing]
+  # House style: names like "role | do X for {{ username }}" read fine with
+  # the template in the middle.
+  - name[template]
+  # Role-local vars intentionally share a common prefix per subsystem
+  # (e.g. tailscale_*), not the role name.
+  - var-naming[no-role-prefix]

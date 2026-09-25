@@ -24,6 +24,16 @@ jobs:
       - name: Install ansible
         run: pipx install ansible-core && pipx install ansible-lint
 
+      - name: Create dummy vault password file
+        # ansible.cfg sets vault_password_file. Ansible hard-fails every
+        # command, even --syntax-check, when that path doesn't exist — CI
+        # doesn't need real secrets, just a file to point at; wrong content
+        # is fine since neither syntax-check nor lint decrypts the vault.
+        run: |
+          mkdir -p ~/.config/ansible
+          echo "ci-dummy-password" > ~/.config/ansible/vault-pass
+          chmod 0600 ~/.config/ansible/vault-pass
+
       - name: Syntax check
         working-directory: ansible
         run: |
