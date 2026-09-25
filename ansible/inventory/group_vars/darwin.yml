@@ -18,6 +18,12 @@ brew_taps: []
 # (task 3.1 requires chezmoi on macOS too; it becomes the replacement for
 # the nix-darwin-provided chezmoi once nix-darwin is removed in task 6.1).
 brew_formulae:
+  # pam-reattach restores TouchID sudo inside tmux/screen. common-darwin.nix
+  # got this from nix-darwin's pam module, which baked an absolute /nix/store
+  # path into /etc/pam.d/sudo_local; that path rots the moment the derivation
+  # is GC'd. Homebrew gives a stable prefix instead. roles/darwin_defaults
+  # references it as {{ darwin_defaults_pam_reattach_path }}.
+  - pam-reattach
   - ripgrep
   - fzf
   - direnv
@@ -88,3 +94,11 @@ brew_casks:
   - qbittorrent
   - kitty
   - zed
+  # Installed on the macbook but absent from this list until now (found by
+  # diffing `brew list --cask` against it during phase 6.1). Adopted on the
+  # user's explicit instruction. `mouseless` was deliberately NOT adopted —
+  # it is installed today but is being dropped.
+  - brave-browser
+  - docker-desktop
+  - claudeusagebar
+  - legcord

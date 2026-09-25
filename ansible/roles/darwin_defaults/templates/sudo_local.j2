@@ -1,6 +1,16 @@
 {# Managed by Ansible (roles/darwin_defaults). Do not edit by hand. #}
 {# Ported from common-darwin.nix's security.pam.services.sudo_local #}
-{# (touchIdAuth = true; reattach = true;), trimmed to Apple's own #}
-{# macOS 26 idiom -- see defaults/main.yml for why pam_reattach.so #}
-{# is deliberately dropped. #}
+{# (touchIdAuth = true; reattach = true;). #}
+{# #}
+{# pam_reattach makes the TouchID prompt reach sessions re-attached #}
+{# under tmux/screen. nix-darwin hardcoded an absolute /nix/store path #}
+{# here, which rots once that derivation is garbage-collected; we point #}
+{# at the Homebrew prefix instead (formula `pam-reattach`, listed in #}
+{# inventory/group_vars/darwin.yml). #}
+{# #}
+{# `optional`, not `required`: if the module is missing or fails to #}
+{# load, PAM logs it and continues to pam_tid.so and then to the #}
+{# password prompt inherited from Apple's /etc/pam.d/sudo. A broken or #}
+{# absent pam_reattach can therefore never lock you out of sudo. #}
+auth       optional       {{ darwin_defaults_pam_reattach_path }}
 auth       sufficient     pam_tid.so

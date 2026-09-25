@@ -1,3 +1,18 @@
+!!! WARNING — THE DEVICE LETTERS BELOW ARE NOT STABLE AND ARE NOW WRONG !!!
+
+This capture (2026-09-23) shows sda = Samsung 840 EVO (NixOS) and
+sdb = Crucial BX500 (/Games). A `ls -l /dev/disk/by-id` on 2026-09-25
+shows them REVERSED: the Crucial is sda and the Samsung is sdb. The LVM
+PV UUID vmyRUe-qCC1-UJh1-bNUT-OKlm-nxWL-VHG6fa appears on sda2 below and
+on sdb2 today — same partition, different letter.
+
+Never act on a letter from this file. Identify disks by serial:
+  INSTALL TARGET : ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D
+  DO NOT TOUCH   : ata-CT480BX500SSD1_2512E9B1E868   (/Games)
+See docs/migration/msi-cutover.md section 2.
+
+--------------------------------------------------------------------------
+
 === lsblk -f ===
 NAME                   FSTYPE      FSVER            LABEL           UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
 sda                                                                                                                       

@@ -165,6 +165,7 @@ darwin_defaults_osx_defaults:
 # silently depending on an absolute /nix/store path that will rot the
 # moment that derivation is garbage-collected.
 darwin_defaults_pam_sudo_local_path: /etc/pam.d/sudo_local
+darwin_defaults_pam_reattach_path: /opt/homebrew/lib/pam/pam_reattach.so
 
 # Off until nix-darwin is uninstalled (PLAN.MD task 6.1 step 2). While
 # nix-darwin is live it owns /etc/pam.d/sudo_local as a symlink into

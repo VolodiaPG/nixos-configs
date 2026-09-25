@@ -199,7 +199,10 @@ Verified against the live filesystem, not assumed:
   superseded by `ansible/inventory/group_vars/darwin.yml`'s
   `brew_taps/brew_formulae/brew_casks` (spot-checked: all installed casks
   above already appear in `brew_casks` except `brave-browser`, `docker-desktop`,
-  `claudeusagebar`, `legcord`, `mouseless` — see Open Questions).
+  `claudeusagebar`, `legcord`, `mouseless`). **RESOLVED (user, phase 6):**
+  `brave-browser`, `docker-desktop`, `claudeusagebar` and `legcord` are now
+  listed in `inventory/group_vars/darwin.yml`; `mouseless` is deliberately
+  not adopted and will lapse when nix-homebrew goes away.
 
 **What must change for `roles/homebrew` to work standalone:** the
 `/opt/homebrew/bin/brew` and `/opt/homebrew/Library/Homebrew` symlinks must
@@ -222,17 +225,31 @@ is still in `/nix/var/nix/profiles` until step 2" — is real and currently
 holds ~49 generations of rollback material.
 
 **Time Machine: `tmutil destinationinfo` reports "No destinations
-configured."** There is currently no Time Machine backup destination set
-up on this host at all. PLAN.MD's "take a Time Machine snapshot before
-step 2 regardless" cannot be satisfied as written until a destination
-(external disk or network share) is configured — this is a blocking
-prerequisite, not a formality, on a laptop with no other backup of `$HOME`.
+configured."** There is no Time Machine backup destination on this host.
+
+**DECIDED (user, phase 6): proceed without a backup.** PLAN.MD's "take a
+Time Machine snapshot before step 2 regardless" is therefore waived. That
+is the user's call and it stands — but it changes what the rest of this
+document has to guarantee, because there is now no undo:
+
+- Every one of the 11 collision paths is a symlink into `/nix/store` or a
+  tmpfs, so the cutover itself destroys no user data. The exposure is not
+  `$HOME` contents; it is **losing a working system** — shells that can't
+  find Nix, a `brew` that no longer exists, sudo without TouchID.
+- The compensating control is therefore ordering, not recovery. Two steps
+  below are one-way doors and must not be reordered or skipped:
+  **adopt Homebrew before anything garbage-collects the Nix store**, and
+  **do not begin step 2 until the Determinate installer is downloaded and
+  present on disk**, so a machine mid-cutover is never dependent on a
+  network that may not come back up without a working shell.
+- `/nix/var/nix/profiles/system` (49 generations) remains the only
+  rollback for the nix-darwin side, and it covers nothing about Homebrew.
 
 ## Ordered cutover procedure
 
-1. **(safe)** Configure a Time Machine destination and let a full backup
-   complete. Do not proceed past step 6 without this — there is currently
-   zero backup coverage for this host.
+1. **(waived by the user)** No backup is being taken. See the Time Machine
+   note above for what this does and does not put at risk, and for the two
+   ordering constraints that replace it. Proceeding to step 2.
 2. **(safe)** Fix chezmoi's own config: either (a) delete the HM-owned
    `~/.config/chezmoi/chezmoi.json` symlink and let `chezmoi init` run from
    `chezmoi/.chezmoi.toml.tmpl` to produce a real `chezmoi.toml` with the
@@ -286,8 +303,12 @@ prerequisite, not a formality, on a laptop with no other backup of `$HOME`.
 9. **STOP — confirm with the user before proceeding.** This is PLAN.MD's
    explicit gate before step 2 (uninstall nix-darwin/Home Manager). Do not
    proceed past this point without the user's go-ahead, even if steps 1-8
-   all look clean. Re-verify the Time Machine backup from step 1 completed
-   successfully immediately before continuing.
+   all look clean. There is no backup to fall back on (step 1, waived), so
+   instead verify immediately before continuing that: the Determinate
+   installer is already downloaded to disk, `/opt/homebrew` has been
+   adopted by the official Homebrew installer and `brew --version` works
+   without any `/nix/store` path in it, and you have a second device to
+   read this document from once this machine's shell is mid-migration.
 10. **(destructive)** Uninstall nix-darwin and Home Manager per their own
     uninstallers. Immediately after, verify `/opt/homebrew/bin/brew` and
     `/opt/homebrew/Library/Homebrew` — they will now be dangling symlinks
@@ -305,11 +326,10 @@ prerequisite, not a formality, on a laptop with no other backup of `$HOME`.
 
 ## Open questions for the user
 
-1. **No Time Machine destination is configured on this host at all**
-   (`tmutil destinationinfo` → "No destinations configured"). PLAN.MD
-   requires a snapshot before step 2 "regardless" — what destination
-   should be used, and is there time to let a full initial backup complete
-   before the STOP gate?
+1. ~~No Time Machine destination.~~ **RESOLVED (user, phase 6): no backup,
+   proceed anyway.** PLAN.MD's "snapshot regardless" is waived. See the
+   Time Machine section above for the two ordering constraints that
+   replace it.
 2. **`~/.config/chezmoi/chezmoi.json` is itself HM-managed and has no
    `[data]` section**, which means `chezmoi diff`/`chezmoi apply` cannot
    render `.config/git/config.tmpl` or `private_dot_ssh/
@@ -326,20 +346,26 @@ prerequisite, not a formality, on a laptop with no other backup of `$HOME`.
    (before file-by-file migration), or is the intent to leave it running
    until step 2 and accept that `chezmoi diff` truly can't go to zero
    until then?
-4. **`/etc/pam.d/sudo_local` will be rewritten by both nix-darwin
-   (`security.pam.services.sudo_local`) and the new `darwin_defaults` role
-   with slightly different content** (`pam_reattach.so` + `pam_tid.so` live
-   vs. `pam_tid.so`-only in the Ansible template). Is dropping
-   `pam_reattach.so` (used for tmux/screen session TouchID reattachment)
-   an intentional behavior change, or should the Ansible template match
-   the live file exactly for step 1, with the trim deferred to step 2?
-5. **`brew_casks` in `ansible/inventory/group_vars/darwin.yml` doesn't
-   include several casks that are currently installed and real on disk**:
-   `brave-browser`, `docker-desktop`, `claudeusagebar`, `legcord`,
-   `mouseless` (verified via `ls /opt/homebrew/Caskroom`). PLAN.MD §0.2
-   says "carry nothing else that appears in only one source" — were these
-   five deliberately excluded (e.g. manually installed outside Nix,
-   already slated for removal), or is `darwin.yml` missing them?
+4. ~~`/etc/pam.d/sudo_local` content mismatch / dropped `pam_reattach.so`.~~
+   **RESOLVED (user, phase 6): restore it via Homebrew.** The formula
+   `pam-reattach` is now in `brew_formulae`, and the template emits
+   `auth optional /opt/homebrew/lib/pam/pam_reattach.so` ahead of
+   `pam_tid.so` — same behaviour as nix-darwin, but off a stable prefix
+   instead of a GC-able `/nix/store` path. `optional` means a missing
+   module can never lock you out of sudo.
+
+   The path collision is separately handled: the whole task is gated
+   behind `darwin_defaults_manage_pam_sudo_local`, default `false`,
+   because `/etc/pam.d/sudo_local` is today a symlink into
+   `/etc/static/pam.d` that nix-darwin owns. Flip it to `true` after
+   step 2, and note that `pam-reattach` must be installed by
+   `roles/homebrew` *before* that first run or TouchID-in-tmux silently
+   no-ops until the next converge.
+5. ~~Five installed-but-unlisted casks.~~ **RESOLVED (user, phase 6):**
+   `brave-browser`, `docker-desktop`, `claudeusagebar` and `legcord` are
+   adopted into `brew_casks`. `mouseless` is explicitly **not** adopted —
+   it stays installed for now but Ansible will not manage or reinstall it,
+   so it lapses whenever `/opt/homebrew` is next rebuilt.
 6. **`/etc/zshenv` (symlink into the nix-darwin store path that seeds every
    login shell's `PATH` with Nix) has no owner between step 2 (nix-darwin
    uninstall) and step 3 (Determinate reinstall).** Is there a plan for

@@ -258,7 +258,9 @@ these.
 
 ### 1.6 `/Games` — do not touch, see section 2
 
-Do **not** back up `/Games` (`sdb5`, 120 G). It is on a physically separate
+Do **not** back up `/Games` (the 166 G ext4 `Games` partition on the
+Crucial `ata-CT480BX500SSD1_2512E9B1E868`, 120 G used). It is on a
+physically separate
 disk from the one being wiped; section 2 explains why it survives with zero
 copying as long as the installer is pointed at the right disk.
 
@@ -266,53 +268,69 @@ copying as long as the installer is pointed at the right disk.
 
 ## 2. Disk identification
 
-**Install to `sda` ONLY** (PLAN.MD 6.2 step 2). Per
-`docs/migration/msi-hardware.txt` (`lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS,MODEL`,
-captured 2026-09-23):
+> **The device letters in `msi-hardware.txt` are STALE AND REVERSED.**
+> That file (captured 2026-09-23) records `sda` = Samsung = install target
+> and `sdb5` = `/Games`. A `ls -l /dev/disk/by-id` taken on 2026-09-25
+> shows the opposite: the Crucial is `sda` and the Samsung is `sdb`.
+> **Following "install to `sda`" would erase the 120 G Steam library and
+> leave NixOS untouched.** Ignore letters entirely. Use the serials below.
 
-| Device | Model | Size | Contents |
+Proof the letters moved, not the disks: the LVM physical-volume UUID
+`vmyRUe-qCC1-UJh1-bNUT-OKlm-nxWL-VHG6fa` is recorded against `sda2` in
+`msi-hardware.txt` line 5, and resolves to `sdb2` in the 2026-09-25
+`by-id` listing. Same partition, same UUID, different letter. This is
+exactly the hazard this section was written to guard against, and it has
+already materialised once.
+
+### The only identifiers to trust
+
+| Role | Serial (`/dev/disk/by-id`) | `wwn` alias | Model / size |
 | --- | --- | --- | --- |
-| `sda` | **Samsung SSD 840 EVO 250GB** | 232.9 G | The entire NixOS install: `sda1` 499 M vfat `/boot`, `sda2` LVM (`root_vg-{root,nix,persistent}`). **Install target.** |
-| `sdb` | **CT480BX500SSD1** (Crucial BX500) | 447.1 G | `sdb5` (166 G ext4, label `Games`) → `/Games`, 120 G used, plus old Windows partitions (`sdb1`-`sdb4`). **Do not touch.** |
-| `sdc` | SanDisk Cruzer Slice | 7.5 G | Old NixOS installer USB stick, was still plugged in at capture time — irrelevant, will differ on the day. |
+| **INSTALL TARGET — erase this one** | `ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D` | `wwn-0x50025388a07a2321` | Samsung SSD 840 EVO 250GB, 232.9 G |
+| **DO NOT TOUCH — this is `/Games`** | `ata-CT480BX500SSD1_2512E9B1E868` | `wwn-0x500a0751e9b1e868` | Crucial CT480BX500SSD1, 447.1 G |
 
-`/Games/SteamLibrary` (120 G Steam content) and
-`/Games/SteamLibrary/steamapps/compatdata` (~2 G Proton saves) live entirely
-on `sdb5`. Pointing the Nobara installer at `sda` only, and leaving `sdb`
-completely untouched by the partitioner, preserves all of it with zero
-copying — the single highest-value action in this whole procedure.
+The install target is the disk whose `-part2` carries LVM PV
+`vmyRUe-qCC1-UJh1-bNUT-OKlm-nxWL-VHG6fa`, feeding
+`root_vg-{root,nix,persistent}` — i.e. the current NixOS root. The disk
+to preserve is the one with five partitions, whose `-part5` is the
+166 G ext4 volume labelled `Games` (120 G used), alongside old Windows
+partitions on `-part1`..`-part4`.
 
-**Linux device names (`sda`/`sdb`/`sdc`) are not stable across boots or
-across the NixOS-install → Nobara-installer-boot transition.** Do not trust
-the letters above by themselves on the day. Re-verify by **model string and
-size**, which are stable, using the Nobara installer's own disk chooser (GUI
-partitioner and `gparted`/`lsblk` both show device model), or from a
-terminal in the live environment:
+A SanDisk Cruzer Slice USB stick
+(`usb-SanDisk_Cruzer_Slice_4C532010051109104472-0:0`) was also present.
+Expect the Nobara installer stick to appear similarly — never select a
+`usb-*` device as the target either.
+
+### Re-verify on the day, before partitioning
 
 ```sh
-lsblk -o NAME,SIZE,MODEL,SERIAL
-# or, for the most stable identifiers (survive relabeling):
-ls -l /dev/disk/by-id/
+# Authoritative. Letters on the right-hand side WILL differ; ignore them.
+ls -l /dev/disk/by-id/ | grep -v part
+
+# Confirm which disk currently holds the NixOS LVM PV:
+sudo pvs -o +uuid
+
+# Confirm which disk currently holds /Games:
+lsblk -o NAME,SIZE,MODEL,SERIAL,LABEL,MOUNTPOINTS
 ```
 
-Match the disk that will be reformatted against **"Samsung SSD 840 EVO
-250GB", ~233 G** — not against whatever letter it happens to enumerate as
-this boot. Match the disk to leave alone against **"CT480BX500SSD1"
-(Crucial BX500), ~447 G**. No disk serial numbers or `/dev/disk/by-id`
-paths were captured in the original inventory (`msi-hardware.txt` only has
-`lsblk -f`/`lsblk -o ...MODEL` output, no `by-id`/`wwn`/serial columns), so
-the model-string match above is what's on record — if the installer's
-`by-id` listing shows two similarly-sized disks with ambiguous models,
-**stop and re-verify with `smartctl -i /dev/sdX` (serial number) before
-partitioning**, do not guess.
+- [ ] `ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D` is the **only**
+      disk selected in the installer.
+- [ ] `ata-CT480BX500SSD1_2512E9B1E868` is **not** selected, not
+      initialised, not reformatted, not assigned a mount point.
+- [ ] The installer's summary screen names the Samsung serial (or its
+      current letter, cross-checked against `by-id` in the same session)
+      before you confirm.
+- [ ] If the installer shows only letters and no serials, drop to a
+      terminal and re-run `ls -l /dev/disk/by-id` **in that same boot** —
+      letters are stable within a boot, just not across boots.
+- [ ] If anything is ambiguous, **stop** and run
+      `sudo smartctl -i /dev/sdX` to read the serial directly. Do not
+      guess.
 
-- [ ] Confirm the Nobara installer targets the Samsung 840 EVO (`sda`-sized
-      disk, ~233 G) only.
-- [ ] Confirm the Crucial BX500 (~447 G) is not selected, not initialized,
-      not touched by the partitioner in any way.
-- [ ] Decide separately whether to keep or drop the old Windows install on
-      `sdb3`/`sdb1` — out of scope for this migration either way, just
-      don't let the installer touch it by accident.
+Old Windows partitions live on the Crucial (`-part1`..`-part4`);
+keeping or dropping them is out of scope, but the installer must not
+touch that disk at all either way.
 
 ---
 
@@ -321,20 +339,22 @@ partitioning**, do not guess.
 1. Boot the official **Nobara KDE** ISO (the old `installer` ISO and
    `disko` config are **not ported** to this migration — PLAN.MD 6.2 step 4
    — partitioning here is manual/guided through the stock Nobara installer).
-2. Partition `sda` manually/guided. Suggested layout, cheapest rollback
+2. Partition **the Samsung** (`ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D`)
+   manually/guided. Suggested layout, cheapest rollback
    first:
    - **If space allows, keep the existing NixOS install bootable on a
      separate partition** (PLAN.MD 6.2 step 5) — the cheapest possible
      rollback path, cheaper than reinstalling NixOS from the flake. This
-     means *not* wiping the whole of `sda` outright; shrink/repartition
+     means *not* wiping the whole of the Samsung outright; shrink/repartition
      instead of a full-disk erase if the installer supports it. If the
      installer only supports full-disk erase, skip this and rely on the
      flake-reinstall rollback in section 6 instead — do not fight the
      installer for it.
-   - Otherwise, straightforward guided partitioning of `sda` for Nobara KDE
+   - Otherwise, straightforward guided partitioning of the Samsung for Nobara KDE
      (ESP + root, no separate `/home` needed — Ansible/chezmoi will recreate
      `$HOME` structure).
-   - Do **not** touch `sdb` (section 2) or `sdc`/any USB media.
+   - Do **not** touch the Crucial `ata-CT480BX500SSD1_2512E9B1E868`
+     (section 2) or any `usb-*` device.
 3. Create the initial Nobara admin account through the installer's own
    user-setup screen — this account (with sudo) is what bootstrap.yml
    connects as for the very first run, before `volodia` exists (see
@@ -488,7 +508,7 @@ command's output actually confirms it — not on the claim alone.
 - [ ] **Steam runs a game.** On msi: launch Steam, confirm
       `/Games/SteamLibrary` is recognized as a library
       (Steam → Settings → Storage), launch any installed title, confirm it
-      runs. This is the payoff of section 2's "install to `sda` only."
+      runs. This is the payoff of section 2's "erase the Samsung only."
 - [ ] **`nix develop` works in a devenv project.**
       `ssh msi 'cd <some-devenv-project> && nix develop --command echo ok'`
       — prints `ok`. (This agent did not run `nix develop` anywhere per its
