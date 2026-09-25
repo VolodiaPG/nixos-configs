@@ -1362,12 +1362,22 @@ until step 2. Take a Time Machine snapshot before step 2 regardless.
    backed up today** — restic is enabled only on `home-server`, and msi's
    Syncthing has no peers and no configured folders. There is no safety net
    but the checklist. Treat it as the gate it is.
-2. **Install to `sda` only.** `/Games` lives on a physically separate disk
-   (`sdb5`, 120 G of Steam content plus ~2 G of Proton saves in
-   `compatdata`); the OS is entirely on `sda`. Pointing the Nobara installer
-   at `sda` preserves all of it with zero copying. Confirm the disk
-   identifiers against `docs/migration/msi-hardware.txt` on the day — device
-   names are not stable.
+2. **Install to the Samsung 840 EVO only — identify it by SERIAL, never by
+   letter.** Target `ata-Samsung_SSD_840_EVO_250GB_S1DBNSCFA01973D`
+   (`wwn-0x50025388a07a2321`); preserve
+   `ata-CT480BX500SSD1_2512E9B1E868` (`wwn-0x500a0751e9b1e868`), which
+   holds `/Games` — 120 G of Steam content plus ~2 G of Proton saves in
+   `compatdata`. Pointing the installer at the Samsung preserves all of it
+   with zero copying.
+
+   This step used to read "install to `sda` only", and that was wrong:
+   `msi-hardware.txt` was captured when the Samsung was `sda`, but a
+   2026-09-25 `by-id` listing shows the letters **reversed** — the Crucial
+   is `sda` now. The LVM PV UUID `vmyRUe-qCC1-UJh1-bNUT-OKlm-nxWL-VHG6fa`
+   is recorded on `sda2` and resolves to `sdb2` today, same partition.
+   Following the old wording would have erased the Steam library and left
+   NixOS untouched. Device names are not stable; serials are. See
+   `docs/migration/msi-cutover.md` section 2.
 3. **Read `/etc/NetworkManager/system-connections/` as root before the wipe.**
    It holds the Wi-Fi PSKs and was unreadable during task 0.2 (msi has no
    passwordless sudo). Losing it means re-entering every network by hand.
@@ -1466,10 +1476,10 @@ State these to the user if they come up; do not pretend otherwise.
 | 4.5  | nvidia                                 | ☑      | no driver install (Nobara ships it); blacklist + clock lock only                                                     |
 | 4.6  | gaming/virt/vpn/net                    | ☑      | `kernel.nix`/`ananicy.nix`/`betterSleep.nix` dropped by decision                                                     |
 | 4.7  | kde                                    | ☑      | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty                                                                    |
-| 5.1  | secret audit                           | ◐      | `docs/migration/secret-audit.md` written; dispositions await sign-off, nothing deleted                               |
-| 5.2  | ansible-vault                          | ◐      | `roles/secrets` + `docs/migration/vault-setup.md` built; vault itself is still empty (human step)                    |
-| 6.1  | macOS cutover                          | ☐      | STOP before uninstalling nix-darwin                                                                                  |
-| 6.2  | msi Nobara install                     | ☐      | STOP before touching disks                                                                                           |
+| 5.1  | secret audit                           | ☑      | `docs/migration/secret-audit.md` written, dispositions decided; deletions deferred to phase 7                        |
+| 5.2  | ansible-vault                          | ☑      | vault populated by the user; `vault_password_file` re-enabled in `ansible.cfg`                                       |
+| 6.1  | macOS cutover                          | ◐      | prep done: `roles/darwin_defaults` built, `docs/migration/darwin-cutover.md` written. STOP before uninstalling nix-darwin |
+| 6.2  | msi Nobara install                     | ◐      | prep done: `bootstrap.yml` + `docs/migration/msi-cutover.md` written, disk identity corrected. STOP before touching disks |
 | 7    | Decommission                           | ☐      |                                                                                                                      |
 
 ---
