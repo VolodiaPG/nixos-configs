@@ -37,4 +37,14 @@
         name: "{{ brew_casks }}"
         state: present
         path: "{{ homebrew_bin }}"
+        # --adopt lets Homebrew take ownership of an app already sitting in
+        # /Applications instead of hard-failing with "It seems there is
+        # already an App at ...". That failure is fatal and aborts every
+        # remaining cask, so without this one manually-installed app blocks
+        # the whole list. Hit during the phase 6.1 migration with Zed, which
+        # had been installed by its own updater. Homebrew only adopts when
+        # the existing artifact matches what the cask would install, so this
+        # cannot silently clobber an unrelated app. Harmless on a clean
+        # machine, where there is nothing to adopt.
+        install_options: "{{ homebrew_cask_install_options }}"
       when: brew_casks | length > 0

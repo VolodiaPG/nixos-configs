@@ -78,7 +78,18 @@ brew_formulae:
   - jq
   - htop
   - nmap
-  - parallel
+  # GNU parallel is deliberately absent on macOS: Homebrew declares
+  # "parallel Conflicts with: moreutils (because both install a `parallel`
+  # executable)", and the two cannot be installed together. moreutils wins
+  # because it is load-bearing — modules/home/tmux.nix:14 pulls it in
+  # explicitly for `sponge`, which tmux.nix:81 uses in a tmux-resurrect
+  # post-save hook. pkgs.parallel (common-home.nix:119) has no user
+  # anywhere in the repo. Nix could ship both (separate store paths);
+  # Homebrew cannot. Fedora packages moreutils' copy as
+  # parallel-moreutils, so Linux keeps both — this is a macOS-only removal.
+  # If GNU parallel is ever wanted here, install it and run
+  # `brew link --overwrite parallel`: that takes the `parallel` name while
+  # leaving moreutils' sponge/ts/chronic/vipe linked.
   - wget
   - moreutils
   - bottom
@@ -109,7 +120,16 @@ brew_casks:
   - parsec
   - steam
   - calibre
-  - qbittorrent
+  # - qbittorrent
+  #   BLOCKED UPSTREAM, not a config error. Homebrew disabled this cask on
+  #   2026-09-01: "Cask 'qbittorrent' has been disabled because it does not
+  #   pass the macOS Gatekeeper check!" A disabled cask is a hard error, so
+  #   leaving it declared fails the whole homebrew role and every cask after
+  #   it. Commented out to unblock; NEEDS A USER DECISION (see
+  #   docs/migration/darwin-cutover.md). Options: the `c0re100-qbittorrent`
+  #   fork cask, a different client (transmission/deluge), or a direct .dmg
+  #   outside Ansible. Nothing else is affected — msi installs qbittorrent
+  #   from Fedora and is untouched by this.
   - kitty
   - zed
   # Installed on the macbook but absent from this list until now (found by

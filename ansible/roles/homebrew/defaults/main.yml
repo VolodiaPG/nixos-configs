@@ -25,3 +25,7 @@ homebrew_update: false
 # Apple Silicon uses /opt/homebrew; an Intel Mac would need /usr/local here.
 homebrew_prefix: /opt/homebrew
 homebrew_bin: "{{ homebrew_prefix }}/bin"
+
+# Passed to `brew install --cask` as `--adopt`. See tasks/main.yml.
+homebrew_cask_install_options:
+  - adopt

@@ -428,7 +428,7 @@ and the formulae `nushell`, `carapace`, `aider`, `docker`, `skhd`.
 | `jq` | homebrew | `jq` | `brew info` OK |
 | `htop` | homebrew | `htop` | `brew info` OK |
 | `nmap` | homebrew | `nmap` | `brew info` OK |
-| `parallel` | homebrew | `parallel` | `brew info` OK |
+| `parallel` | homebrew | *(none on macOS — conflicts with `moreutils`)* | **CORRECTED phase 6.1:** `brew info parallel` succeeds, but Homebrew declares `Conflicts with: moreutils (because both install a `parallel` executable)`. `brew info` alone cannot surface that. moreutils is kept (tmux.nix needs `sponge`); GNU parallel is dropped on macOS only. Linux is unaffected — Fedora ships moreutils' copy as `parallel-moreutils`. |
 | `wget` | homebrew | `wget` | `brew info` OK |
 | `moreutils` | homebrew | `moreutils` | `brew info` OK |
 | `bottom` | homebrew | `bottom` | `brew info` OK |
