@@ -1522,7 +1522,7 @@ State these to the user if they come up; do not pretend otherwise.
 | 4.7  | kde                                    | ☑      | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty                                                                    |
 | 5.1  | secret audit                           | ☑      | `docs/migration/secret-audit.md` written, dispositions decided; deletions deferred to phase 7                        |
 | 5.2  | ansible-vault                          | ☑      | vault populated by the user; `vault_password_file` re-enabled in `ansible.cfg`                                       |
-| 6.1  | macOS cutover                          | ◐      | step 1 done — Homebrew adopted and `roles/homebrew` converged (`changed=0`), `chezmoi init`/`diff` working, `roles/darwin_defaults` built, `docs/migration/darwin-cutover.md` written. `$HOME` untouched. **STOP at step 2** (uninstall nix-darwin + HM) — user only; `chezmoi apply` comes after it, not before |
+| 6.1  | macOS cutover                          | ☑      | done 2026-09-25: nix-darwin + HM removed; `macos.yml` converges with `-K` (failed=0). Kept: Determinate Nix (no reinstall needed). Open: `vault_envvars` empty, so no `~/.envvars.sh`. The 52 `system-*-link` generations are the only rollback; GC them only on sign-off |
 | 6.2  | msi Nobara install                     | ◐      | prep done: `bootstrap.yml` + `docs/migration/msi-cutover.md` written, disk identity corrected. STOP before touching disks |
 | 7    | Decommission                           | ☐      |                                                                                                                      |
 
