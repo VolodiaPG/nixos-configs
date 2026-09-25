@@ -5,6 +5,6 @@
 #
 # NOTE: HM also wrote ~/.config/direnv/lib/hm-nix-direnv.sh (nix-direnv,
 # resholved against /nix/store paths). That is deliberately NOT vendored
-# here; installing nix-direnv and sourcing its direnvrc belongs to the `nix`
-# role (PLAN.MD task 3.4).
+# here. roles/nix installs nix-direnv into the Nix user profile, and
+# lib/nix-direnv.sh (next to this file) sources it.
 export DIRENV_LOG_FORMAT=""

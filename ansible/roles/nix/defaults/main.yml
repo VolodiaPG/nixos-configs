@@ -43,7 +43,8 @@ nix_trusted_users:
 # silently ignores a missing file rather than erroring, verified with
 # `NIX_CONFIG=... nix config show` against a nonexistent path. So the
 # reference in nix.custom.conf is safe to emit unconditionally.
-nix_access_tokens: "{{ vault_access_token | default('') }}"
+# default('', true) so a null vault value skips cleanly, as in roles/secrets.
+nix_access_tokens: "{{ vault_access_token | default('', true) }}"
 nix_access_tokens_path: "/etc/nix/nix.access-tokens.conf"
 
 # nix-direnv: PLAN.MD "PHASE 2 — what it leaves behind" item 4.

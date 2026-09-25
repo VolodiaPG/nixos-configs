@@ -59,9 +59,14 @@ darwin_defaults_osx_defaults:
     notify: [Restart Dock]
 
   # Original: defaults write com.apple.dock autohide-delay -int 0
+  # Declared float, not int: nix-darwin (system.defaults.dock) later
+  # rewrote this key as a float, and osx_defaults refuses to change an
+  # existing key's type ("Type mismatch. Type in defaults: float") rather
+  # than converting it. Dock reads the number either way, and float is
+  # also the type autohide-time-modifier above uses.
   - domain: com.apple.dock
     key: autohide-delay
-    type: int
+    type: float
     value: 0
     comment: "make the dock appear instantly (no hover delay before autohide reveals it)"
     notify: [Restart Dock]
@@ -167,13 +172,14 @@ darwin_defaults_osx_defaults:
 darwin_defaults_pam_sudo_local_path: /etc/pam.d/sudo_local
 darwin_defaults_pam_reattach_path: /opt/homebrew/lib/pam/pam_reattach.so
 
-# Off until nix-darwin is uninstalled (PLAN.MD task 6.1 step 2). While
-# nix-darwin is live it owns /etc/pam.d/sudo_local as a symlink into
-# /etc/static/pam.d; replacing that symlink with an Ansible-managed file
-# breaks the next `darwin-rebuild switch`. Set to true once step 2 is
-# done -- at which point the symlink is gone and TouchID sudo stops
-# working until this task runs, so do not forget it.
-darwin_defaults_manage_pam_sudo_local: false
+# Was false while nix-darwin was live: it owned /etc/pam.d/sudo_local as a
+# symlink into /etc/static/pam.d, and replacing that symlink would have
+# broken the next `darwin-rebuild switch`. nix-darwin was uninstalled on
+# 2026-09-25 (PLAN.MD 6.1 step 2), which removed /etc/static and with it
+# sudo_local — TouchID sudo stays broken until this task runs. Kept as a
+# switch rather than deleted only so the role still works on a mac where
+# nix-darwin has not been removed yet.
+darwin_defaults_manage_pam_sudo_local: true
 
 # --- limit-maxfiles launchd daemon (common-darwin.nix: launchd.daemons.limit-maxfiles) ---
 # Read the live nix-darwin-installed

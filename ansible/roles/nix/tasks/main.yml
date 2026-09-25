@@ -14,6 +14,11 @@
   register: nix_darwin_rebuild_check
   changed_when: false
   failed_when: false
+  # Read-only probe, so it runs in check mode too. Without this, --check
+  # skips the command, and ansible-core still registers rc=0 for the
+  # skipped task. The guard then reports nix-darwin present on a host
+  # where it is gone, and the whole role is skipped in every dry run.
+  check_mode: false
   when: ansible_system == 'Darwin'
 
 - name: "Nix-darwin guard | check whether /run/current-system is a nix-darwin generation"
@@ -44,12 +49,6 @@
 - name: Install and configure Determinate Nix
   when: not (nix_darwin_present | default(false))
   block:
-    - name: Check whether Nix is already installed
-      ansible.builtin.command: command -v nix
-      register: nix_present_check
-      changed_when: false
-      failed_when: false
-
     # Verified against the live install.determinate.systems/nix shell
     # wrapper (2026-09-24): the wrapper only downloads and execs the
     # `nix-installer` binary with "$@" — it does not interpret any flags
@@ -64,8 +63,32 @@
         curl -fsSL {{ nix_installer_url }} | sh -s -- install --no-confirm --determinate
       args:
         executable: /bin/sh
+        # `creates` alone is the installed-check. It used to be paired with
+        # `command -v nix`, which asks the wrong question: whether nix is on
+        # *Ansible's* PATH. On the macbook after darwin-uninstaller, Nix is
+        # installed but not on PATH (see the /etc/zshrc task below), and
+        # that check would have re-run the installer over a live install.
         creates: "{{ nix_marker_bin }}"
-      when: nix_present_check.rc != 0
+
+    # The installer puts this exact block (same markers, same body — copied
+    # from /nix/receipt.json's configure_shell_profile action) into
+    # /etc/zshrc. nix-darwin then took /etc/zshrc over, and
+    # darwin-uninstaller restored the pristine macOS file WITHOUT it — so
+    # after 6.1 step 2 no local zsh had nix on PATH. /etc/zshenv still
+    # carries the installer's SSH-only hook, which is why it looked fine
+    # over ssh. Managing it here also makes a fresh install idempotent: the
+    # markers match what the installer writes, so this is a no-op there.
+    - name: Ensure zsh sources nix-daemon.sh (/etc/zshrc)
+      ansible.builtin.blockinfile:
+        path: /etc/zshrc
+        marker: "# {mark}"
+        marker_begin: Nix
+        marker_end: End Nix
+        block: |
+          if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+              . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+          fi
+      become: true
 
     - name: Ensure /etc/nix exists
       ansible.builtin.file:
@@ -123,10 +146,12 @@
     # again in the managed user's Nix profile. The other half — repointing
     # direnv's global direnvrc away from the broken, hardcoded-store-path
     # ~/.config/direnv/lib/hm-nix-direnv.sh at ~/.nix-profile/share/nix-direnv/direnvrc
-    # — is a chezmoi source-tree edit (outside roles/nix) and is NOT done
-    # here; report it to the chezmoi role owner.
+    # — is chezmoi's: chezmoi/dot_config/direnv/lib/nix-direnv.sh sources
+    # what this installs.
     - name: Check whether nix-direnv is already in {{ username }}'s Nix profile
-      ansible.builtin.command: nix profile list
+      # Absolute path: become's environment does not source nix-daemon.sh,
+      # so a bare `nix` is not on PATH there on either platform.
+      ansible.builtin.command: "{{ nix_marker_bin }} profile list"
       become: true
       become_user: "{{ username }}"
       register: nix_profile_list
@@ -135,7 +160,7 @@
       when: nix_install_nix_direnv | default(true)
 
     - name: Install nix-direnv into {{ username }}'s Nix profile
-      ansible.builtin.command: "nix profile install {{ nix_direnv_package }}"
+      ansible.builtin.command: "{{ nix_marker_bin }} profile install {{ nix_direnv_package }}"
       become: true
       become_user: "{{ username }}"
       when: >-

@@ -1363,6 +1363,15 @@ No bootloader, no reinstall, and nix-darwin uninstalls cleanly. Order:
    `nix-homebrew`, and Homebrew must survive and be adopted by
    `roles/homebrew`.
 3. Reinstall Nix via the Determinate installer (task 3.4).
+   **Not needed on the macbook, verified 2026-09-25:** Nix there was
+   already Determinate Nix 3.22.4 (`/nix/receipt.json` dated Apr 28;
+   nix-darwin only managed it), and it survived `darwin-uninstaller`
+   intact. What did not survive was the shell hook: the uninstaller
+   restored a pristine macOS `/etc/zshrc` without the installer's `# Nix`
+   block, so no local zsh had `nix` on PATH (ssh sessions still did, via
+   `/etc/zshenv`). `roles/nix` now manages that block. It also writes
+   `/etc/nix/nix.custom.conf`, which the uninstall left missing. Both land
+   on the next `ansible-playbook -K playbooks/macos.yml`.
 4. Port `modules/darwin/common-darwin.nix` (210 lines): TouchID sudo
    (`security.pam.services.sudo_local` → `/etc/pam.d/sudo_local`),
    `limit-maxfiles` launchd daemon (524288) + the `ulimit -n` shell init,
