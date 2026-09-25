@@ -59,7 +59,12 @@ brew_formulae:
   - gopls
   - rust
   - ruff
-  - rustfmt
+  # rustfmt is deliberately absent: Homebrew lists it as an *oldname* of the
+  # `rust` formula, not a formula of its own, so declaring both makes
+  # community.general.homebrew fail with "Package names for rust are missing
+  # or ambiguous: rust, rustfmt". `rust` above already provides the rustfmt
+  # binary. (Fedora does ship a separate rustfmt package — see
+  # docs/migration/package-map.md line 95 — so this is a macOS-only removal.)
   - stylua
   - shfmt
   - shellcheck

@@ -414,7 +414,7 @@ and the formulae `nushell`, `carapace`, `aider`, `docker`, `skhd`.
 | `gopls` | homebrew | `gopls` | `brew info` OK |
 | `cargo` | homebrew | `rust` | `brew info` OK |
 | `ruff` | homebrew | `ruff` | `brew info` OK |
-| `rustfmt` | homebrew | `rustfmt` | `brew info` OK |
+| `rustfmt` | homebrew | *(none — use `rust`)* | **CORRECTED phase 6.1:** `brew info rustfmt` succeeds but resolves to the `rust` formula, for which `rustfmt` is an `oldnames` entry, not a formula of its own. Declaring both `rust` and `rustfmt` makes `community.general.homebrew` fail with "Package names for rust are missing or ambiguous". Dropped from `brew_formulae`; `rust` provides the binary. |
 | `stylua` | homebrew | `stylua` | `brew info` OK |
 | `shfmt` | homebrew | `shfmt` | `brew info` OK |
 | `ShellCheck` | homebrew | `shellcheck` | `brew info` OK (**lowercase on brew**, capital on Fedora) |
