@@ -1329,8 +1329,27 @@ runbook. Open items:
 No bootloader, no reinstall, and nix-darwin uninstalls cleanly. Order:
 
 1. Ansible + chezmoi run **alongside** the existing nix-darwin setup;
-   resolve every conflict (chezmoi and HM both wanting a file) until
-   `chezmoi diff` is empty and `darwin-rebuild` is a no-op.
+   resolve every conflict (chezmoi and HM both wanting a file).
+
+   **Done, with one correction to this step's own wording.** "Until
+   `chezmoi diff` is empty" is not reachable before step 2 and never was:
+   Home Manager owns these paths as `/nix/store` symlinks while chezmoi
+   wants real files, so the two cannot agree on the same path by
+   construction. Emptying the diff *requires* `chezmoi apply`, which
+   replaces HM's symlinks, which makes the next HM activation fail — and
+   that contradicts the other half of the same sentence, that
+   `darwin-rebuild` stay a no-op. The reachable precondition, and the one
+   actually met, is: `chezmoi diff` **runs clean** (exit 0, no template
+   errors) and every collision is understood. `chezmoi apply` belongs
+   *after* step 2. See the collision table in
+   `docs/migration/darwin-cutover.md`.
+
+   Status as of 2026-09-25: `roles/homebrew` converged (52/52 formulae,
+   16/16 casks, `changed=0` on a second run) against a Homebrew that has
+   been adopted away from `nix-homebrew`; the `/usr/local` nix-homebrew
+   scaffold is removed. `chezmoi init` works and `chezmoi diff` exits 0
+   with 679 files managed and 628 pending — all of them HM-owned paths,
+   as expected. `$HOME` is untouched.
 2. **STOP — confirm with the user before this step.** Uninstall nix-darwin
    and Home Manager. Preserve `/opt/homebrew`: it is currently owned by
    `nix-homebrew`, and Homebrew must survive and be adopted by
@@ -1350,9 +1369,17 @@ No bootloader, no reinstall, and nix-darwin uninstalls cleanly. Order:
 6. Build `group_vars/darwin.yml` per §0.2 — the 8-cask intersection plus the
    3 explicit keeps (`steam`, `calibre`, `qbittorrent`), plus the CLI tooling
    from task 3.1. Carry nothing else that appears in only one source.
+   **Done.** Three deviations, all forced and all recorded in-file: the
+   `qbittorrent` cask was disabled upstream on 2026-09-01 and is dropped on
+   macOS with no replacement; `parallel` conflicts with `moreutils`, which
+   wins because `tmux.nix` needs `sponge`; and `rustfmt` is an oldname of
+   `rust`, not a formula. `ansible` was added — the tool that applies the
+   config has to be in it.
 
 **Rollback:** the nix-darwin generation is still in `/nix/var/nix/profiles`
-until step 2. Take a Time Machine snapshot before step 2 regardless.
+until step 2. The Time Machine snapshot that used to be required here was
+explicitly waived by the user — there is no backup before step 2, so the
+profile generation is the only rollback path. Do not remove it.
 
 ### Task 6.2 — msi: Nobara install
 
@@ -1478,7 +1505,7 @@ State these to the user if they come up; do not pretend otherwise.
 | 4.7  | kde                                    | ☑      | `XDG_DATA_DIRS` drop-in; SDDM intentionally empty                                                                    |
 | 5.1  | secret audit                           | ☑      | `docs/migration/secret-audit.md` written, dispositions decided; deletions deferred to phase 7                        |
 | 5.2  | ansible-vault                          | ☑      | vault populated by the user; `vault_password_file` re-enabled in `ansible.cfg`                                       |
-| 6.1  | macOS cutover                          | ◐      | prep done: `roles/darwin_defaults` built, `docs/migration/darwin-cutover.md` written. STOP before uninstalling nix-darwin |
+| 6.1  | macOS cutover                          | ◐      | step 1 done — Homebrew adopted and `roles/homebrew` converged (`changed=0`), `chezmoi init`/`diff` working, `roles/darwin_defaults` built, `docs/migration/darwin-cutover.md` written. `$HOME` untouched. **STOP at step 2** (uninstall nix-darwin + HM) — user only; `chezmoi apply` comes after it, not before |
 | 6.2  | msi Nobara install                     | ◐      | prep done: `bootstrap.yml` + `docs/migration/msi-cutover.md` written, disk identity corrected. STOP before touching disks |
 | 7    | Decommission                           | ☐      |                                                                                                                      |
 
