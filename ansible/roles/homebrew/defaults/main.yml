@@ -10,3 +10,18 @@
 # runs stay fast and idempotent; set to true (e.g. -e homebrew_update=true)
 # when you deliberately want fresh formula/cask definitions.
 homebrew_update: false
+
+# Where brew lives, passed as every task's `path:`. NOT left to the module
+# default, which is "/usr/local/bin:/opt/homebrew/bin:..." — note
+# /usr/local/bin comes FIRST, and the module takes the first brew it finds.
+#
+# That bit us on 2026-09-25: nix-homebrew had also planted an Intel-prefix
+# shim at /usr/local/bin/brew -> /nix/store/igl7ai804...-brew (separate from
+# the /opt/homebrew one), so the module picked the Intel brew on an ARM Mac
+# and every install died with "Cannot install in Homebrew on ARM processor
+# in Intel default prefix (/usr/local)!". Pinning the prefix makes the role
+# independent of whatever else is on the box.
+#
+# Apple Silicon uses /opt/homebrew; an Intel Mac would need /usr/local here.
+homebrew_prefix: /opt/homebrew
+homebrew_bin: "{{ homebrew_prefix }}/bin"

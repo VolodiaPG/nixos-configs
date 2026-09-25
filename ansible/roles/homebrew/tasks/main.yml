@@ -14,12 +14,14 @@
     - name: "homebrew | opt-in brew update (only when homebrew_update=true)"
       community.general.homebrew:
         update_homebrew: true
+        path: "{{ homebrew_bin }}"
       when: homebrew_update | bool
 
     - name: "homebrew | tap external repositories"
       community.general.homebrew_tap:
         name: "{{ brew_taps }}"
         state: present
+        path: "{{ homebrew_bin }}"
       when: brew_taps | length > 0
 
     - name: "homebrew | install formulae"
@@ -27,10 +29,12 @@
         name: "{{ brew_formulae }}"
         state: present
         update_homebrew: false
+        path: "{{ homebrew_bin }}"
       when: brew_formulae | length > 0
 
     - name: "homebrew | install casks"
       community.general.homebrew_cask:
         name: "{{ brew_casks }}"
         state: present
+        path: "{{ homebrew_bin }}"
       when: brew_casks | length > 0
