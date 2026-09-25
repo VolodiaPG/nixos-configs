@@ -32,7 +32,9 @@ listen_on unix:/tmp/kitty
 macos_hide_titlebar no
 mouse_hide_wait -3.0
 scrollback_lines 2000
-shell /etc/profiles/per-user/volodia/bin/zsh
+{{/* Was hardcoded to /etc/profiles/per-user/volodia/bin/zsh, a nix profile
+     path that disappears when nix-darwin is uninstalled. */}}
+shell {{ .shell }}
 tab_bar_margin_width 4
 tab_bar_style fade
 tab_fade 1 1 1
