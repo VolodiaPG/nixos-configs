@@ -1,3 +1,8 @@
 ---
-# darwin_defaults: osx_defaults, TouchID sudo, maxfiles, launchd
+# darwin_defaults: TouchID sudo (/etc/pam.d/sudo_local), the
+# limit-maxfiles LaunchDaemon, NSWindowResizeTime, a Rosetta 2 presence
+# check, and every `defaults write` from the old dotfiles repo's
+# run_once_defaults.tmpl. Ported per PLAN.MD task 6.1 steps 4-5. Requires
+# community.general (osx_defaults) -- see ansible/requirements.yml /
+# ansible.cfg for the collection install, not this role's concern.
 dependencies: []

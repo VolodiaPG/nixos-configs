@@ -1,0 +1,50 @@
+---
+# darwin_defaults handlers. Each `killall` is notified only by the tasks
+# whose settings actually need that process restarted to take effect --
+# deliberately not a blanket "restart everything" at the end. See
+# defaults/main.yml's `notify:` field on each osx_defaults entry for the
+# domain -> handler mapping:
+#
+#   com.apple.dock (autohide-time-modifier, autohide-delay)  -> Dock
+#   com.apple.finder (AppleShowAllFiles, _FXSortFoldersFirst,
+#     FXDefaultSearchScope, FXEnableExtensionChangeWarning)  -> Finder
+#   com.apple.screencapture (include-date, location)          -> SystemUIServer
+#     (screencapture's settings are read by SystemUIServer, which owns
+#     the screenshot-taking machinery, not by Finder or Dock)
+#
+# NSGlobalDomain (NSWindowShouldDragOnGesture, com.apple.mouse.linear),
+# com.apple.LaunchServices (LSQuarantine) and
+# com.apple.AppleMultitouchTrackpad (FirstClickThreshold) are read fresh by
+# every process / the next relevant syscall, so no killall is notified for
+# them, matching the original run_once_defaults.tmpl which only killed
+# Finder/Dock/SystemUIServer once at the very end regardless -- we improve
+# on that by wiring each killall to only the settings that need it.
+- name: Restart Dock
+  ansible.builtin.command: killall Dock
+  changed_when: true
+  failed_when: false
+
+- name: Restart Finder
+  ansible.builtin.command: killall Finder
+  changed_when: true
+  failed_when: false
+
+- name: Restart SystemUIServer
+  ansible.builtin.command: killall SystemUIServer
+  changed_when: true
+  failed_when: false
+
+# Picks up the new/changed plist without a full reboot. Best-effort: bootout
+# fails harmlessly (failed_when: false) the first time the daemon has never
+# been loaded, e.g. right after this role installs it for the first time.
+- name: Reload limit-maxfiles daemon
+  become: true
+  ansible.builtin.command: "launchctl bootout system/{{ darwin_defaults_maxfiles_label }}"
+  changed_when: true
+  failed_when: false
+  notify: Bootstrap limit-maxfiles daemon
+
+- name: Bootstrap limit-maxfiles daemon
+  become: true
+  ansible.builtin.command: "launchctl bootstrap system {{ darwin_defaults_maxfiles_plist_path }}"
+  changed_when: true

@@ -1,3 +1,194 @@
 ---
 # Defaults for the darwin_defaults role. Do not duplicate anything from
 # group_vars/all/main.yml here.
+#
+# PLAN.MD task 6.1, steps 4-5. Two sources feed this role:
+#
+#   Source 1: modules/darwin/common-darwin.nix (210 lines). Most of that
+#   file is commented-out yabai/skhd (never enabled — `services.yabai.enable
+#   = lib.mkForce false`) and is NOT ported. `homebrew.enable = false` there
+#   too (roles/homebrew owns Homebrew per PLAN.MD task 6.1 step 2/6). Only
+#   four things are ported from it: TouchID sudo, the limit-maxfiles launchd
+#   daemon, NSWindowResizeTime, and a Rosetta presence check. The
+#   `environment.shellInit = "ulimit -n 524288"` in the same file is shell
+#   init, not a defaults/launchd concern — left to roles/shell, out of
+#   scope for this role.
+#
+#   Source 2: the old dotfiles repo's run_once_defaults.tmpl (chezmoi
+#   template, darwin-gated). Read in full at
+#   /private/tmp/dotfiles-vpg/run_once_defaults.tmpl before that clone could
+#   be deleted; every active `defaults write` line is transcribed below with
+#   its original line as a comment. PLAN.MD flags this file as MORE
+#   COMPLETE than the Nix module, and that's true here: Finder hidden
+#   files/sort/search-scope, instant Dock autohide, dated screenshots,
+#   LSQuarantine off, trackpad click threshold, CMD-drag, linear mouse are
+#   all only in this source, not in common-darwin.nix.
+#
+#   The commented-out Spaces block in run_once_defaults.tmpl
+#   (`com.apple.dock mru-spaces`, `com.apple.spaces spans-displays`) was
+#   dead code in the source (never uncommented) — seen, deliberately NOT
+#   ported.
+
+# --- NSWindowResizeTime (common-darwin.nix: system.defaults.NSGlobalDomain.NSWindowResizeTime) ---
+# "Specifies the duration of a smooth frame-size change" (comment preserved
+# from the Nix source). Fast/near-instant window resize animation.
+darwin_defaults_nswindow_resize_time: 0.001
+
+# --- run_once_defaults.tmpl settings, in the order they appeared there ---
+# Each entry becomes one community.general.osx_defaults task. `type` is
+# derived from the `-bool` / `-int` / `-float` / `-string` flag in the
+# original `defaults write` invocation. `notify` names the handler(s) that
+# make the change visible without a logout — see tasks/main.yml and
+# handlers/main.yml for the domain -> handler mapping rationale.
+darwin_defaults_osx_defaults:
+  # Original: defaults write -g NSWindowShouldDragOnGesture -bool true # CMD and hold to drag
+  # `-g` and `NSGlobalDomain` are the same domain; using the canonical name.
+  - domain: NSGlobalDomain
+    key: NSWindowShouldDragOnGesture
+    type: bool
+    value: true
+    comment: "CMD and hold to drag windows from anywhere in the window body"
+    notify: []
+
+  # Original: defaults write com.apple.dock autohide-time-modifier -float 0
+  - domain: com.apple.dock
+    key: autohide-time-modifier
+    type: float
+    value: 0
+    comment: "make the dock appear instantly (animation duration = 0)"
+    notify: [Restart Dock]
+
+  # Original: defaults write com.apple.dock autohide-delay -int 0
+  - domain: com.apple.dock
+    key: autohide-delay
+    type: int
+    value: 0
+    comment: "make the dock appear instantly (no hover delay before autohide reveals it)"
+    notify: [Restart Dock]
+
+  # Original: defaults write com.apple.screencapture "include-date" -bool "true"
+  - domain: com.apple.screencapture
+    key: include-date
+    type: bool
+    value: true
+    comment: "date for screenshots"
+    notify: [Restart SystemUIServer]
+
+  # Original: defaults write com.apple.screencapture "location" -string "~/Downloads"
+  # Deliberately expanded to {{ home_dir }}/Downloads rather than kept as
+  # the literal string "~/Downloads": `defaults write ... -string` stores
+  # exactly the bytes given, and macOS's screencapture does NOT expand a
+  # leading "~" itself for this key on every macOS version — it has been
+  # observed to work when the value happens to be interpreted by a
+  # tilde-aware layer, but relying on that is fragile. home_dir is already
+  # computed correctly per-platform in group_vars/all/main.yml, so we get
+  # an unambiguous absolute path for free with no behavioural risk.
+  - domain: com.apple.screencapture
+    key: location
+    type: string
+    value: "{{ home_dir }}/Downloads"
+    comment: "Save screenshots to Downloads"
+    notify: [Restart SystemUIServer]
+
+  # Original: defaults write com.apple.finder "AppleShowAllFiles" -bool "true"
+  - domain: com.apple.finder
+    key: AppleShowAllFiles
+    type: bool
+    value: true
+    comment: "Finder: show hidden files"
+    notify: [Restart Finder]
+
+  # Original: defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
+  - domain: com.apple.finder
+    key: _FXSortFoldersFirst
+    type: bool
+    value: true
+    comment: "Finder: sort folders before files"
+    notify: [Restart Finder]
+
+  # Original: defaults write com.apple.finder "FXDefaultSearchScope" -string "SCcf"
+  - domain: com.apple.finder
+    key: FXDefaultSearchScope
+    type: string
+    value: "SCcf"
+    comment: "Finder: default search scope = current folder"
+    notify: [Restart Finder]
+
+  # Original: defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool "false"
+  - domain: com.apple.finder
+    key: FXEnableExtensionChangeWarning
+    type: bool
+    value: false
+    comment: "Finder: no warning when changing a file extension"
+    notify: [Restart Finder]
+
+  # Original: defaults write NSGlobalDomain com.apple.mouse.linear -bool "true"
+  - domain: NSGlobalDomain
+    key: com.apple.mouse.linear
+    type: bool
+    value: true
+    comment: "Mouse acceleration off (linear tracking). Original comment: apply after restart"
+    notify: []
+
+  # Original: defaults write com.apple.LaunchServices "LSQuarantine" -bool "false"
+  - domain: com.apple.LaunchServices
+    key: LSQuarantine
+    type: bool
+    value: false
+    comment: "No quarantine messages ('are you sure you want to open this downloaded file?')"
+    notify: []
+
+  # Original: defaults write com.apple.AppleMultitouchTrackpad "FirstClickThreshold" -int "0"
+  - domain: com.apple.AppleMultitouchTrackpad
+    key: FirstClickThreshold
+    type: int
+    value: 0
+    comment: "Trackpad: lightest click force required (0 = light)"
+    notify: []
+
+# --- TouchID sudo (common-darwin.nix: security.pam.services.sudo_local) ---
+# nix-darwin's pam module renders touchIdAuth+reattach into a
+# /etc/pam.d/sudo_local containing pam_reattach.so (works around TouchID
+# prompts not reaching tmux/screen re-attached sessions) followed by
+# pam_tid.so. Confirmed by reading the live file on this host:
+#   auth  optional   .../pam_reattach.so
+#   auth  sufficient pam_tid.so
+# Apple's own supported idiom on macOS 26 (confirmed by reading the live
+# /etc/pam.d/sudo, which Apple ships with `auth include sudo_local` as its
+# first line — Apple has owned this include point since Sonoma) is a
+# sudo_local file whose sole required line is `auth sufficient pam_tid.so`.
+# We drop the pam_reattach.so line: it depends on a package
+# (pam_reattach, from nix-darwin/Determinate Nix's pam-reattach input) that
+# this role has no business assuming is installed once nix-darwin is gone
+# (PLAN.MD 6.1 step 2), and tmux-reattach TouchID is a nice-to-have, not a
+# requirement -- shipping the minimal Apple-documented line is safer than
+# silently depending on an absolute /nix/store path that will rot the
+# moment that derivation is garbage-collected.
+darwin_defaults_pam_sudo_local_path: /etc/pam.d/sudo_local
+
+# Off until nix-darwin is uninstalled (PLAN.MD task 6.1 step 2). While
+# nix-darwin is live it owns /etc/pam.d/sudo_local as a symlink into
+# /etc/static/pam.d; replacing that symlink with an Ansible-managed file
+# breaks the next `darwin-rebuild switch`. Set to true once step 2 is
+# done -- at which point the symlink is gone and TouchID sudo stops
+# working until this task runs, so do not forget it.
+darwin_defaults_manage_pam_sudo_local: false
+
+# --- limit-maxfiles launchd daemon (common-darwin.nix: launchd.daemons.limit-maxfiles) ---
+# Read the live nix-darwin-installed
+# /Library/LaunchDaemons/org.nixos.limit-maxfiles.plist on this host to get
+# the exact shape (RunAtLoad true, KeepAlive false, same log path). We
+# reimplement the *behaviour* (`launchctl limit maxfiles 524288 524288` at
+# boot, fixing "too many open files") directly rather than the nix-darwin
+# plist's `ProgramArguments` verbatim, because that plist execs an absolute
+# /nix/store path (.../limit-maxfiles-start) that only exists while
+# nix-darwin's generation is alive — copying it verbatim would silently
+# break the moment that store path is GC'd. Label/filename are
+# deliberately distinct from nix-darwin's org.nixos.* so the two daemons
+# coexist without fighting over the same Label while both are installed
+# (PLAN.MD task 6.1 step 1 requires them to run alongside each other until
+# cutover); nix-darwin's copy is removed in step 2 (gated on the user).
+darwin_defaults_maxfiles_label: com.ansible.limit-maxfiles
+darwin_defaults_maxfiles_value: 524288
+darwin_defaults_maxfiles_plist_path: "/Library/LaunchDaemons/{{ darwin_defaults_maxfiles_label }}.plist"
+darwin_defaults_maxfiles_log_path: /var/log/limit-maxfiles-ansible.log

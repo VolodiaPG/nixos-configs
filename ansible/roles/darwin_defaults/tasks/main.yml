@@ -1,6 +1,135 @@
 ---
-# darwin_defaults: osx_defaults, TouchID sudo, maxfiles, launchd
-# Scaffold only - populated in a later phase. See PLAN.MD.
-- name: "Placeholder | darwin_defaults role is not implemented yet"
-  ansible.builtin.debug:
-    msg: "role 'darwin_defaults' is a scaffold; see PLAN.MD"
+# darwin_defaults: TouchID sudo, limit-maxfiles launchd daemon,
+# NSWindowResizeTime, Rosetta presence check, and every `defaults write`
+# from the old dotfiles repo's run_once_defaults.tmpl. See defaults/main.yml
+# for the full provenance of every setting and the reasoning behind each
+# become/no-become and notify decision.
+#
+# PLAN.MD task 6.1, steps 4-5. This role sits in playbooks/macos.yml, which
+# is also imported (via linux.yml + macos.yml) by playbooks/site.yml, so
+# every task below is gated on Darwin to keep the role a clean no-op on
+# Linux hosts running site.yml.
+- name: darwin_defaults | Darwin only
+  when: ansible_system == 'Darwin'
+  block:
+    # ------------------------------------------------------------------
+    # 1. TouchID for sudo
+    # ------------------------------------------------------------------
+    # /etc/pam.d/sudo_local is a file Apple explicitly designed for local
+    # overrides (see the live /etc/pam.d/sudo on this host: its first
+    # active line is `auth include sudo_local`, i.e. Apple already
+    # includes this file and owns nothing in it). We only ever write
+    # sudo_local itself -- /etc/pam.d/sudo is never touched.
+    - name: darwin_defaults | TouchID sudo | template /etc/pam.d/sudo_local
+      become: true
+      ansible.builtin.template:
+        src: sudo_local.j2
+        dest: "{{ darwin_defaults_pam_sudo_local_path }}"
+        owner: root
+        group: "{{ root_group }}"
+        mode: "0444"
+      # No handler: PAM re-reads its config on every authentication
+      # attempt, there is no daemon to restart for this to take effect.
+      #
+      # Skipped while nix-darwin is still installed. On this host today
+      # /etc/pam.d/sudo_local is a symlink into /etc/static/pam.d (i.e.
+      # nix-darwin owns the path, not just the contents). `template` does
+      # not follow destination symlinks by default, so it would replace
+      # the symlink with a real file -- and nix-darwin's etc activation
+      # then refuses to relink a path it does not own, breaking
+      # `darwin-rebuild switch`. PLAN.MD task 6.1 step 1 requires running
+      # Ansible alongside nix-darwin until darwin-rebuild is a no-op, so
+      # this one task has to wait for step 2 (nix-darwin removed). Flip
+      # the flag in defaults/main.yml then; every other task in this role
+      # coexists with nix-darwin safely.
+      when: darwin_defaults_manage_pam_sudo_local | bool
+
+    # ------------------------------------------------------------------
+    # 2. limit-maxfiles launchd daemon (524288)
+    # ------------------------------------------------------------------
+    - name: darwin_defaults | limit-maxfiles | template LaunchDaemon plist
+      become: true
+      ansible.builtin.template:
+        src: limit-maxfiles.plist.j2
+        dest: "{{ darwin_defaults_maxfiles_plist_path }}"
+        owner: root
+        group: "{{ root_group }}"
+        mode: "0644"
+      notify: Reload limit-maxfiles daemon
+
+    # ------------------------------------------------------------------
+    # 3. NSWindowResizeTime
+    # ------------------------------------------------------------------
+    # This is a per-user default (NSGlobalDomain in the invoking user's
+    # own defaults database), NOT a root/system-wide setting despite
+    # living under `system.defaults` on the Nix side -- nix-darwin's
+    # `system.defaults` writes into the *primary user's* domains, not
+    # root's. become MUST be omitted here: with become: true this would
+    # write to root's NSGlobalDomain instead of the real user's, and the
+    # setting would silently appear to "work" (task succeeds, no error)
+    # while having zero effect for the human logging in.
+    - name: darwin_defaults | NSWindowResizeTime (fast window resize animation)
+      community.general.osx_defaults:
+        domain: NSGlobalDomain
+        key: NSWindowResizeTime
+        type: float
+        value: "{{ darwin_defaults_nswindow_resize_time }}"
+        state: present
+      # No handler: read live by AppKit on next resize, no relaunch needed.
+
+    # ------------------------------------------------------------------
+    # 4. Rosetta 2 presence check (report only, never auto-install)
+    # ------------------------------------------------------------------
+    # common-darwin.nix silently ran the installer unconditionally
+    # (`pgrep -q oahd || softwareupdate --install-rosetta
+    # --agree-to-license`). That is deliberately NOT ported: running an
+    # installer as a side effect of a defaults role is a surprise, and
+    # the task brief for this role explicitly requires a check, not an
+    # install. We use `pkgutil --pkg-info` on the Rosetta update package
+    # rather than `pgrep -q oahd` (what the Nix module checked): oahd is
+    # Rosetta's translation daemon and is started on demand the first
+    # time an x86_64 binary actually runs, so checking for the *process*
+    # produces false negatives on an Apple Silicon Mac that has Rosetta
+    # installed but simply hasn't launched an Intel binary yet since
+    # boot. The package receipt is a durable, install-time signal instead
+    # of a runtime one.
+    - name: darwin_defaults | Rosetta 2 | check package receipt
+      ansible.builtin.command: pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto
+      register: darwin_defaults_rosetta_check
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: darwin_defaults | Rosetta 2 | not installed, reporting only
+      ansible.builtin.debug:
+        msg: >-
+          Rosetta 2 does not appear to be installed on this host
+          (pkgutil found no receipt for com.apple.pkg.RosettaUpdateAuto).
+          This role does not install it automatically -- run
+          `softwareupdate --install-rosetta --agree-to-license` by hand
+          if x86_64 binaries (Homebrew Intel casks, Steam, etc.) are
+          needed on this Apple Silicon Mac.
+      when: darwin_defaults_rosetta_check.rc != 0
+
+    # ------------------------------------------------------------------
+    # 5. Everything from run_once_defaults.tmpl (community.general.osx_defaults)
+    # ------------------------------------------------------------------
+    # All of these write into the invoking user's own per-user defaults
+    # domains (com.apple.dock, com.apple.finder, com.apple.screencapture,
+    # com.apple.LaunchServices, com.apple.AppleMultitouchTrackpad,
+    # NSGlobalDomain) exactly like the original `defaults write` (no sudo)
+    # in run_once_defaults.tmpl did. become is deliberately omitted for
+    # the same reason as NSWindowResizeTime above: these are user
+    # preferences, not system-wide state, and becoming root would write
+    # them into the wrong home directory's defaults database.
+    - name: darwin_defaults | user defaults (run_once_defaults.tmpl)
+      community.general.osx_defaults:
+        domain: "{{ item.domain }}"
+        key: "{{ item.key }}"
+        type: "{{ item.type }}"
+        value: "{{ item.value }}"
+        state: present
+      loop: "{{ darwin_defaults_osx_defaults }}"
+      loop_control:
+        label: "{{ item.domain }}.{{ item.key }}"
+      notify: "{{ item.notify }}"

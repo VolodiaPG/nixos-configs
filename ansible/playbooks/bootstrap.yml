@@ -1,8 +1,101 @@
 ---
-# Run once against a freshly installed host, before site.yml. Creates the
-# user and installs the minimum needed for the main playbooks to connect.
+# Run once against a freshly installed host, before playbooks/site.yml.
+# Creates the user and installs the minimum needed for site.yml to connect
+# and for chezmoi's first apply to be safe. See PLAN.MD task 6.2 step 6 and
+# docs/migration/msi-cutover.md for the full runbook this feeds into.
+#
+# Scope, deliberately kept narrow — everything below is either a one-shot
+# that must run exactly once before other machinery touches the host, or an
+# existing role that is already safe to run standalone against a fresh
+# machine. Nothing here duplicates what site.yml's roles/pkgs, roles/base,
+# roles/desktop_linux, roles/kde, roles/nvidia, etc. do — those still run,
+# unmodified, when site.yml runs next.
+#
+# What is deliberately NOT here:
+#   - The vault password (~/.config/ansible/vault-pass). It lives on the
+#     CONTROL node (this Mac), never on the target, so there is no task
+#     that could put it there — it is a human prerequisite, checked before
+#     this playbook is even run. See docs/migration/msi-cutover.md.
+#   - Package installation (including tailscale itself). That is
+#     roles/pkgs' job (playbooks/linux.yml), not bootstrap's. roles/vpn
+#     below already no-ops cleanly (see its own tasks/main.yml) if
+#     tailscale is not installed yet — the first site.yml run is what
+#     actually installs and authenticates it. The cutover runbook covers
+#     connecting to msi by LAN IP for that first bootstrap+site.yml pair,
+#     before msi has a tailnet identity to be reached by.
+#   - Everything chezmoi/roles/kde/etc. own — those are site.yml's job.
 - name: Bootstrap a new host
-  hosts: all
+  # `linux`, not `all`: bootstrap exists to bring a freshly installed Nobara
+  # box up to the point site.yml can take over. Every role and task below
+  # already self-guards to Linux, so `all` was harmless — but it made the
+  # play prompt for sudo on the macbook to do nothing at all.
+  hosts: linux
   gather_facts: true
   roles:
+    # users: creates {{ username }}, sets up groups/lingering, and installs
+    # authorized_keys for both {{ username }} and root — see
+    # roles/users/tasks/main.yml's own header comment for why it is safe
+    # to run here, standalone, against a host where {{ username }} does
+    # not yet exist (it only needs `become: true` to reach root, not a
+    # pre-existing user). Self-guards to Linux only, so this is a no-op on
+    # macbook.
     - users
+    # vpn: enables/starts tailscaled and runs `tailscale up` once
+    # tailscale itself is installed and vault_tailscale_authkey is
+    # populated. Included here (rather than left solely to site.yml) so a
+    # bootstrap+site.yml pair against a fresh host gets msi onto the
+    # tailnet as early as possible; harmlessly no-ops via its own
+    # package_facts guard if tailscale is not installed yet (first run,
+    # before roles/pkgs has had a chance) — see roles/vpn/tasks/main.yml.
+    - vpn
+
+  tasks:
+    # PLAN.MD task 2.9 / 6.2 step 6: chezmoi's
+    # `modify_plasma-org.kde.plasma.desktop-appletsrc` merges chezmoi's
+    # managed values into whatever Plasma already has on disk. Panel
+    # containment/applet IDs in that file are auto-generated per machine,
+    # so a stale/foreign appletsrc on a host that has never been through
+    # this merge before produces duplicate containments. The fix, per the
+    # upstream chezmoi_modify_manager README that PLAN.MD cites, is to
+    # delete the file once, before the very first `chezmoi apply` — never
+    # again after that, or every subsequent run would throw away real
+    # Plasma state the user has since accumulated.
+    #
+    # Idempotency: a marker file, not a `creates:`/`removes:` check on the
+    # appletsrc path itself. The appletsrc file is expected to exist again
+    # immediately after the first `chezmoi apply` (that is the whole point
+    # of the merge), so "does the target file exist" cannot distinguish
+    # "never removed" from "removed once, then legitimately recreated by
+    # chezmoi." A dedicated marker can.
+    - name: bootstrap | Linux-only one-shot tasks
+      when: ansible_system == 'Linux'
+      become: true
+      block:
+        - name: bootstrap | check whether the one-shot Plasma appletsrc reset already ran
+          ansible.builtin.stat:
+            path: "{{ home_dir }}/.local/state/ansible-bootstrap/plasma-appletsrc-reset-done"
+          register: bootstrap_appletsrc_marker
+
+        - name: bootstrap | pre-chezmoi one-shot reset
+          when: not bootstrap_appletsrc_marker.stat.exists
+          block:
+            - name: "bootstrap | remove plasma-org.kde.plasma.desktop-appletsrc before first chezmoi apply (PLAN.MD task 2.9)"
+              ansible.builtin.file:
+                path: "{{ home_dir }}/.config/plasma-org.kde.plasma.desktop-appletsrc"
+                state: absent
+
+            - name: bootstrap | ensure marker directory exists
+              ansible.builtin.file:
+                path: "{{ home_dir }}/.local/state/ansible-bootstrap"
+                state: directory
+                owner: "{{ username }}"
+                group: "{{ user_group }}"
+                mode: "0755"
+
+            - name: bootstrap | record that the one-shot Plasma appletsrc reset ran
+              ansible.builtin.file:
+                path: "{{ home_dir }}/.local/state/ansible-bootstrap/plasma-appletsrc-reset-done"
+                state: touch
+                owner: "{{ username }}"
+                group: "{{ user_group }}"
+                mode: "0644"

@@ -1,0 +1,6 @@
+{# Managed by Ansible (roles/darwin_defaults). Do not edit by hand. #}
+{# Ported from common-darwin.nix's security.pam.services.sudo_local #}
+{# (touchIdAuth = true; reattach = true;), trimmed to Apple's own #}
+{# macOS 26 idiom -- see defaults/main.yml for why pam_reattach.so #}
+{# is deliberately dropped. #}
+auth       sufficient     pam_tid.so

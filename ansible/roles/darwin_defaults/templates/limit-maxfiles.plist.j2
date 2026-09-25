@@ -1,0 +1,31 @@
+{# Managed by Ansible (roles/darwin_defaults). Do not edit by hand. #}
+{# Ported from common-darwin.nix's launchd.daemons.limit-maxfiles. #}
+{# Shape (RunAtLoad/KeepAlive/log paths) mirrors the live #}
+{# /Library/LaunchDaemons/org.nixos.limit-maxfiles.plist installed by #}
+{# nix-darwin on this host, but ProgramArguments is reimplemented as a #}
+{# plain launchctl invocation instead of an absolute /nix/store path so #}
+{# it keeps working after nix-darwin is uninstalled (PLAN.MD 6.1 step 2). #}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>{{ darwin_defaults_maxfiles_label }}</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/launchctl</string>
+		<string>limit</string>
+		<string>maxfiles</string>
+		<string>{{ darwin_defaults_maxfiles_value }}</string>
+		<string>{{ darwin_defaults_maxfiles_value }}</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<false/>
+	<key>StandardOutPath</key>
+	<string>{{ darwin_defaults_maxfiles_log_path }}</string>
+	<key>StandardErrorPath</key>
+	<string>{{ darwin_defaults_maxfiles_log_path }}</string>
+</dict>
+</plist>
