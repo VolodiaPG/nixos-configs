@@ -12,7 +12,20 @@
 # map's own note), plus zed (added by §0). The map's own "12 entries"
 # header undercounts its table by one (it forgets to count zed, which is
 # "listed separately below" in the same paragraph). 13 is correct.
-brew_taps: []
+# Third-party taps. roles/homebrew taps these before installing, which
+# matters: claudeusagebar does not exist in homebrew/cask, so without this
+# the cask install fails on a fresh machine with "No available cask".
+# Verified against the live prefix during the phase 6.1 Homebrew adoption
+# (`brew list --full-name` shows exactly two non-core packages):
+#   artzainnn/tap      -> claudeusagebar  (managed, in brew_casks below)
+#   nirs/vmnet-helper  -> vmnet-helper    (NOT declared: phase 3 abandoned
+#                                          vmnet-helper; the tap is left
+#                                          installed but unmanaged so it
+#                                          lapses rather than being restored)
+# jurplel/tap is also tapped on the macbook but provides nothing that is
+# actually installed — a dead tap, deliberately not carried over.
+brew_taps:
+  - artzainnn/tap
 
 # §10b — the CLI tooling Home Manager provided. chezmoi is included here
 # (task 3.1 requires chezmoi on macOS too; it becomes the replacement for

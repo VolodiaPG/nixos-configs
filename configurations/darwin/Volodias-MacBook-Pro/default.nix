@@ -23,7 +23,7 @@ in
     my = {
       commonHome.enable = true;
       interactive.enable = true;
-      chezmoi.enable = true;
+      chezmoi.enable = false;
       claude.enable = true;
       gui.enable = true;
       neovim.enable = true;

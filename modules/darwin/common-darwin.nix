@@ -16,7 +16,7 @@ in
     };
   };
 
-  imports = [ flake.inputs.nix-homebrew.darwinModules.nix-homebrew ];
+  # imports = [ flake.inputs.nix-homebrew.darwinModules.nix-homebrew ];
 
   config = mkIf cfg.enable {
     users.users."${flake.config.me.username}" = {
@@ -25,41 +25,41 @@ in
       shell = pkgs.zsh;
     };
 
-    nix-homebrew = {
-      # Install Homebrew under the default prefix
-      enable = true;
+    #     nix-homebrew = {
+    #       # Install Homebrew under the default prefix
+    #       enable = ;
+    #
+    #       # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+    #       enableRosetta = true;
+    #
+    #       # User owning the Homebrew prefix
+    #       user = flake.config.me.username;
+    #     };
 
-      # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
-      enableRosetta = true;
-
-      # User owning the Homebrew prefix
-      user = flake.config.me.username;
-    };
-
-    homebrew = {
-      enable = false;
-      brews = [
-        "mpv"
-        "vmnet-helper"
-      ];
-      casks = [
-        "hiddenbar"
-        "karabiner-elements"
-        "tg-pro"
-        "bettermouse"
-        "alt-tab"
-        "tidal"
-        "parsec"
-        "signal"
-        "vlc"
-        "calibre"
-        "steam"
-        "betterdisplay"
-      ];
-      taps = [
-        "nirs/vmnet-helper"
-      ];
-    };
+    # homebrew = {
+    #   enable = false;
+    #   brews = [
+    #     "mpv"
+    #     "vmnet-helper"
+    #   ];
+    #   casks = [
+    #     "hiddenbar"
+    #     "karabiner-elements"
+    #     "tg-pro"
+    #     "bettermouse"
+    #     "alt-tab"
+    #     "tidal"
+    #     "parsec"
+    #     "signal"
+    #     "vlc"
+    #     "calibre"
+    #     "steam"
+    #     "betterdisplay"
+    #   ];
+    #   taps = [
+    #     "nirs/vmnet-helper"
+    #   ];
+    # };
 
     # programs = {
     #   zsh.enable = true;
