@@ -36,7 +36,7 @@
 # site-functions/_just`. Every package manager above ships `_just` into one of
 # the site-functions dirs already on fpath, so the hardcoded source is gone
 # rather than reimplemented.
-autoload -U compinit && compinit
+autoload -U compinit && compinit -i
 
 # zsh-autosuggestions. Strategy list is ours (zsh.nix autosuggestion.strategy).
 () {
