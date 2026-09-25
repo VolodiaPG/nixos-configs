@@ -31,6 +31,16 @@ brew_taps:
 # (task 3.1 requires chezmoi on macOS too; it becomes the replacement for
 # the nix-darwin-provided chezmoi once nix-darwin is removed in task 6.1).
 brew_formulae:
+  # ansible drives this entire migration, so the tool that applies the
+  # config has to be part of the config — otherwise a rebuilt macbook
+  # cannot run the playbook that rebuilds it. Already installed here;
+  # declared in phase 6.1 after `brew leaves` turned it up as undeclared.
+  - ansible
+  # Also undeclared and deliberately left that way, from the same
+  # `brew leaves` diff: mole, ollama, and nirs/vmnet-helper/vmnet-helper.
+  # Same treatment as the casks above — installed here, never installed or
+  # removed by Ansible, so they lapse on a rebuild. vmnet-helper was already
+  # covered by the phase 3 note on its tap further up.
   # pam-reattach restores TouchID sudo inside tmux/screen. common-darwin.nix
   # got this from nix-darwin's pam module, which baked an absolute /nix/store
   # path into /etc/pam.d/sudo_local; that path rots the moment the derivation
@@ -106,9 +116,10 @@ brew_formulae:
   - bc
   - findutils
 
-# §10a — the fixed cask set: 8-way intersection + steam/calibre/qbittorrent
-# (§0.2 explicit keeps) + kitty (carried regardless, not a §0.2 dispute) +
-# zed (added by §0). 13 entries total.
+# §10a — the fixed cask set: 8-way intersection + steam/calibre (§0.2
+# explicit keeps) + kitty (carried regardless, not a §0.2 dispute) + zed
+# (added by §0). The map's §10a table lists 13, but qbittorrent is one of
+# them and is unavailable on macOS (see below), so 12 are installable.
 brew_casks:
   - karabiner-elements
   - tg-pro
@@ -125,18 +136,24 @@ brew_casks:
   #   2026-09-01: "Cask 'qbittorrent' has been disabled because it does not
   #   pass the macOS Gatekeeper check!" A disabled cask is a hard error, so
   #   leaving it declared fails the whole homebrew role and every cask after
-  #   it. Commented out to unblock; NEEDS A USER DECISION (see
-  #   docs/migration/darwin-cutover.md). Options: the `c0re100-qbittorrent`
-  #   fork cask, a different client (transmission/deluge), or a direct .dmg
-  #   outside Ansible. Nothing else is affected — msi installs qbittorrent
-  #   from Fedora and is untouched by this.
+  #   it. DECIDED phase 6.1: leave it out on macOS. No replacement, no
+  #   c0re100-qbittorrent fork cask, no out-of-band .dmg. Kept as a comment
+  #   rather than deleted so the reason survives and nobody re-adds it from
+  #   the §10a table below. msi is unaffected and still installs qbittorrent
+  #   from Fedora.
   - kitty
   - zed
   # Installed on the macbook but absent from this list until now (found by
   # diffing `brew list --cask` against it during phase 6.1). Adopted on the
-  # user's explicit instruction. `mouseless` was deliberately NOT adopted —
-  # it is installed today but is being dropped.
+  # user's explicit instruction.
   - brave-browser
   - docker-desktop
   - claudeusagebar
   - legcord
+  # DELIBERATELY NOT DECLARED, decided phase 6.1 from the same
+  # `brew list --cask` diff: alt-tab and hiddenbar. Both are installed on
+  # the macbook and are being left UNMANAGED rather than uninstalled —
+  # roles/homebrew only ever installs, never removes, so they survive here
+  # and simply do not come back on a rebuilt machine. mouseless was in this
+  # group too and has since been uninstalled by hand, outside Ansible.
+  # Listed only so the next diff does not read as an oversight.

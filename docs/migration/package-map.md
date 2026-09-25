@@ -379,7 +379,7 @@ separately below.
 | *(nix-darwin homebrew block)* | mac | homebrew | `parsec` | `brew info` OK | intersection. No Flathub ID for Parsec (`tv.parsec.www` 404s) — macOS only |
 | `steam` | mac | homebrew | `steam` | `brew info` OK | §0.2 explicit keep |
 | *(nix-darwin only)* | mac | homebrew | `calibre` | `brew info` OK | §0.2 explicit keep |
-| `qbittorrent` | mac | homebrew | `qbittorrent` | `brew info` OK | §0.2 explicit keep |
+| `qbittorrent` | mac | ~~homebrew~~ **none** | *(dropped on macOS)* | **CORRECTED phase 6.1** | `brew info` passed on 2026-09-23, but Homebrew disabled the cask on 2026-09-01 for failing the macOS Gatekeeper check, and a disabled cask is a hard error that aborts every cask after it. Decided: left out on macOS with no replacement and no fork cask. The §0.2 keep still holds on msi, which installs it from Fedora. |
 | `kitty` | mac | homebrew | `kitty` | `brew info` OK (cask; **not** a formula) | in both Nix lists, not a §0.2 dispute |
 | *(n/a)* `zed` | mac | homebrew | `zed` | `brew info` OK | §0 — install Zed on both hosts |
 
