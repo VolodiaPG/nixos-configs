@@ -173,6 +173,19 @@ Flathub is already configured on Nobara — check before adding the remote
 
 ## 5. `nix` — Determinate Nix (`nix profile install`)
 
+> **Native-first policy (user decision, 2026-09-26).** Prefer the OS package
+> manager (dnf/terra on Nobara, Homebrew on macOS) wherever it packages the
+> tool, and use Nix only where nothing native exists. Checked on the
+> installed msi (Nobara 44) and the macbook:
+> * **msi:** `kanata`, `t3code` and `typstyle` moved to terra `dnf_packages`,
+>   and kanata's unit now runs `/usr/bin/kanata`. terra also has
+>   `lua-language-server`, but only under `/usr/libexec` with nothing on
+>   PATH, so it stays here.
+> * **mac:** `rtk` and `nixfmt` are now declared in `brew_formulae`.
+>
+> Still undecided: the rows below that no native package covers on
+> Nobara. See PLAN.MD.
+
 Everything here was verified by evaluating the **exact attribute currently
 installed**, so these are guaranteed like-for-like.
 

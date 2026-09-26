@@ -94,6 +94,11 @@ dnf_packages:
   # rpmfusion_packages and copr_repos below for why.
   - mpv
   - steam
+  # terra, moved from nix_profile_packages under the native-first policy.
+  # kanata's user unit points at /usr/bin/kanata (roles/desktop_linux).
+  - kanata
+  - t3code
+  - typstyle
   - bottom
   - starship
   # Sourced by chezmoi's ~/.config/zsh/20-completion.zsh from /usr/share.
@@ -140,6 +145,11 @@ flatpak_packages:
 # §5 nix — Determinate Nix profile installs, only where no RPM exists.
 # Excludes com.brave.Browser (see above) and the determinate-nix/nixd
 # installer rows (task 3.4, not a profile package).
+# Policy (user decision, 2026-09-26): native packages first. Anything that
+# a Nobara repo (fedora/nobara/terra) packages is in dnf_packages, not
+# here. kanata, t3code and typstyle moved out on that basis. What remains
+# has no usable Nobara package. lua-language-server is in terra, but only
+# under /usr/libexec with nothing on PATH.
 nix_profile_packages:
   - catppuccin-cursors
   - catppuccin-kde
@@ -149,7 +159,6 @@ nix_profile_packages:
   - devenv
   - distrobox-tui
   - graphite-cursors
-  - kanata
   - lua-language-server
   - nixd
   - nixfmt-rfc-style
@@ -158,10 +167,8 @@ nix_profile_packages:
   - rtk
   - shellharden
   - stylua
-  - t3code
   - texlab
   - tinymist
-  - typstyle
 
 # chezmoi_modify_manager (map §6 `upstream`) is not a dnf/copr/flatpak/nix
 # package — it is installed from a GitHub release tarball by `roles/pkgs`

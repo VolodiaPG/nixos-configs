@@ -36,6 +36,11 @@ brew_formulae:
   # cannot run the playbook that rebuilds it. Already installed here;
   # declared in phase 6.1 after `brew leaves` turned it up as undeclared.
   - ansible
+  # Native-first policy (user decision, 2026-09-26). Both had come from Home
+  # Manager and lapsed with it. rtk was later reinstalled from brew by hand
+  # but never declared; nixfmt had not come back at all.
+  - rtk
+  - nixfmt
   # Also undeclared and deliberately left that way, from the same
   # `brew leaves` diff: mole, ollama, and nirs/vmnet-helper/vmnet-helper.
   # Same treatment as the casks above — installed here, never installed or
