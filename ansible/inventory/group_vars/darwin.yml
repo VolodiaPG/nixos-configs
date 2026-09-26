@@ -67,7 +67,6 @@ brew_formulae:
   - grc
   - mosh
   - just
-  - keychain
   - tmux
   - neovim
   - git
@@ -180,6 +179,10 @@ brew_casks:
   # and Homebrew refuses `claude-code` alongside it ("Cask 'claude-code'
   # conflicts with 'claude-code@latest'").
   - claude-code@latest
+  # Serves SSH keys (roles/ssh_agent, ~/.zshenv). The Homebrew cask is the
+  # .dmg build, whose agent socket is ~/.bitwarden-ssh-agent.sock. The App
+  # Store build would use a sandbox container path instead.
+  - bitwarden
   # DELIBERATELY NOT DECLARED, decided phase 6.1 from the same
   # `brew list --cask` diff: alt-tab and hiddenbar. Both are installed on
   # the macbook and are being left UNMANAGED rather than uninstalled —

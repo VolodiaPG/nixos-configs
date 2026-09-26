@@ -2,13 +2,18 @@
 # Defaults for the ssh_agent role. Do not duplicate anything from
 # group_vars/all/main.yml here.
 #
-# macOS only. On Linux there is nothing to replace: keychain (sourced from
-# chezmoi's ~/.config/zsh/40-tools.zsh) starts and reuses the agent itself
-# and exports SSH_AUTH_SOCK, exactly as it did under Home Manager.
-#
-# On macOS the socket path is fixed by chezmoi's ~/.zshenv, which exports
-# SSH_AUTH_SOCK="$(getconf DARWIN_USER_TEMP_DIR)/ssh-agent". This role is
-# what makes that socket exist. The two must agree, which is why the
-# template spells the path with the same expression rather than a variable.
-ssh_agent_label: com.ansible.ssh-agent
+# macOS only. SSH keys come from the Bitwarden desktop app's agent (the
+# `bitwarden` cask, .dmg build). Shells get SSH_AUTH_SOCK from chezmoi's
+# ~/.zshenv, but apps launched from Finder/Dock inherit launchd's
+# environment instead, which points at Apple's own ssh-agent. This role runs
+# `launchctl setenv` at every login so those apps use Bitwarden too. Linux
+# needs no role: chezmoi's ~/.config/plasma-workspace/env/ssh-agent.sh does
+# the same for the Plasma session.
+ssh_agent_socket: "{{ home_dir }}/.bitwarden-ssh-agent.sock"
+ssh_agent_label: com.ansible.ssh-auth-sock
 ssh_agent_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ ssh_agent_label }}.plist"
+
+# The job this role used to install: a standalone /usr/bin/ssh-agent,
+# replaced by Bitwarden's. Removed on every run until it is gone.
+ssh_agent_old_label: com.ansible.ssh-agent
+ssh_agent_old_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ ssh_agent_old_label }}.plist"

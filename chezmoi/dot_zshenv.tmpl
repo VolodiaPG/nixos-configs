@@ -63,16 +63,23 @@ export ELECTRON_OZONE_PLATFORM_HINT="auto"
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
 export ELECTRON_OZONE_PLATFORM_HINT="auto"
-
-# ── ssh-agent (macOS) ────────────────────────────────────────────────────
-# macOS has no user systemd; the agent socket lives in the per-user temp dir.
-# On Linux this is exported by keychain instead (see 40-tools.zsh), so the
-# block is darwin-only. Guard matches the generated file: leave an inherited
-# socket from an ssh connection alone.
-if [ -z "$SSH_AUTH_SOCK" ] || [ -z "$SSH_CONNECTION" ]; then
-  export SSH_AUTH_SOCK="$(getconf DARWIN_USER_TEMP_DIR)/ssh-agent"
-fi
 {{- end }}
+
+# ── ssh-agent: Bitwarden desktop ─────────────────────────────────────────
+# Keys are served by the Bitwarden desktop app's SSH agent (Settings →
+# "Enable SSH agent"). Socket paths are Bitwarden's documented ones
+# (bitwarden.com/help/ssh-agent): the Homebrew/.dmg build on macOS, and the
+# Flatpak on Linux. GUI sessions get the same value from
+# ansible/roles/ssh_agent (macOS launchd) and
+# ~/.config/plasma-workspace/env/ssh-agent.sh (Plasma). The guard leaves a
+# socket forwarded over an ssh connection alone.
+if [ -z "$SSH_AUTH_SOCK" ] || [ -z "$SSH_CONNECTION" ]; then
+{{- if eq .chezmoi.os "darwin" }}
+  export SSH_AUTH_SOCK="$HOME/.bitwarden-ssh-agent.sock"
+{{- else }}
+  export SSH_AUTH_SOCK="$HOME/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock"
+{{- end }}
+fi
 
 # ── secrets ──────────────────────────────────────────────────────────────
 # Was an agenix secret decrypted to ~/.envvars.sh. agenix is gone; PLAN.MD

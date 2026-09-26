@@ -1,19 +1,35 @@
 ---
-# ssh_agent: launchd agent for the per-user ssh-agent on macOS. See
-# defaults/main.yml for why Linux needs nothing.
+# ssh_agent: macOS GUI apps -> Bitwarden desktop SSH agent. See
+# defaults/main.yml for why Linux needs nothing here.
 
 - name: ssh_agent | macOS only
   when: ansible_system == 'Darwin'
   block:
+    # --- retire the standalone ssh-agent this role used to run ----------
+    - name: ssh_agent | check for the old ssh-agent job
+      ansible.builtin.stat:
+        path: "{{ ssh_agent_old_plist_path }}"
+      register: _ssh_agent_old
+
+    - name: ssh_agent | stop the old ssh-agent job
+      ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ ssh_agent_old_label }}"
+      when: _ssh_agent_old.stat.exists
+      changed_when: true
+      failed_when: false
+
+    - name: ssh_agent | remove the old ssh-agent plist
+      ansible.builtin.file:
+        path: "{{ ssh_agent_old_plist_path }}"
+        state: absent
+
+    # --- publish the Bitwarden socket to launchd ------------------------
     - name: ssh_agent | write LaunchAgent plist
       ansible.builtin.template:
-        src: ssh-agent.plist.j2
+        src: ssh-auth-sock.plist.j2
         dest: "{{ ssh_agent_plist_path }}"
         mode: "0644"
-      notify: Unload ssh-agent LaunchAgent
+      notify: Unload ssh-auth-sock LaunchAgent
 
-    # Unload a changed job before the check below, so one code path loads it
-    # on every run: first install, changed plist, or unloaded by hand.
     - name: ssh_agent | apply pending unload
       ansible.builtin.meta: flush_handlers
 
@@ -24,6 +40,8 @@
       failed_when: false
       check_mode: false
 
+    # Loading runs it (RunAtLoad), so SSH_AUTH_SOCK is set from now on,
+    # not only after the next login.
     - name: ssh_agent | load the job
       ansible.builtin.command: "launchctl bootstrap gui/{{ ansible_user_uid }} {{ ssh_agent_plist_path }}"
       when: _ssh_agent_loaded.rc != 0

@@ -1,4 +1,3 @@
 ---
-# ssh_agent: the per-user ssh-agent that Home Manager's
-# services.ssh-agent used to run as a launchd agent on macOS.
+# ssh_agent: point macOS GUI apps at the Bitwarden desktop SSH agent.
 dependencies: []

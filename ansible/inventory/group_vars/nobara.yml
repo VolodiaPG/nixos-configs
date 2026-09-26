@@ -52,7 +52,6 @@ dnf_packages:
   - just
   - kde-connect # name differs from nixpkgs `kdeconnect-kde`
   - kernel-tools # name differs from nixpkgs `cpupower` — cpupower ships in kernel-tools
-  - keychain
   - kitty
   - libgtop2 # name differs from nixpkgs `libgtop`
   - libnotify
@@ -182,6 +181,7 @@ flatpak_packages:
   - io.github.Faugus.faugus-launcher
   - io.github.nokse22.high-tide
   - org.signal.Signal
+  - com.bitwarden.desktop
 
 # §5 nix — Determinate Nix profile installs, only where no RPM exists.
 # Excludes com.brave.Browser (see above) and the determinate-nix/nixd
@@ -212,7 +212,6 @@ nix_profile_packages:
   - prettierd # no Fedora/terra package, no COPR
   - shellharden # no Fedora/terra package, no COPR
   - distrobox-tui # no Fedora/terra package, no COPR
-
 
 # Official upstream install scripts, run as the user by roles/pkgs
 # (tasks/upstream.yml). Each is skipped once its `creates` path exists; the

@@ -1,0 +1,20 @@
+{# Managed by Ansible (roles/ssh_agent). Do not edit by hand. #}
+{# Runs once per login: publishes the Bitwarden agent socket in launchd's #}
+{# user environment, so apps launched after it inherit SSH_AUTH_SOCK. #}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>{{ ssh_agent_label }}</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/launchctl</string>
+		<string>setenv</string>
+		<string>SSH_AUTH_SOCK</string>
+		<string>{{ ssh_agent_socket }}</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+</dict>
+</plist>

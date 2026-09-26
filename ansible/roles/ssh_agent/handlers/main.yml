@@ -1,8 +1,7 @@
 ---
-# Unload so the ensure-loaded task in tasks/main.yml re-bootstraps from the
-# changed plist; launchd never re-reads a plist for a loaded job. Fails
-# harmlessly when the job was not loaded yet (first run).
-- name: Unload ssh-agent LaunchAgent
+# Re-run the job so a changed socket path takes effect without a re-login.
+# bootout fails harmlessly when the job was not loaded yet (first run).
+- name: Unload ssh-auth-sock LaunchAgent
   ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ ssh_agent_label }}"
   changed_when: true
   failed_when: false

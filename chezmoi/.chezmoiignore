@@ -29,6 +29,7 @@
 .config/dolphinrc
 .config/plasmashellrc
 .config/plasmanotifyrc
+.config/plasma-workspace
 .config/plasma-org.kde.plasma.desktop-appletsrc
 .local/share/plasma
 .local/share/color-schemes
