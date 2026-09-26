@@ -31,3 +31,7 @@ chezmoi_modify_manager_url: "https://github.com/VorpalBlade/chezmoi_modify_manag
 # section. This role only installs the binary; wiring PATH for the apply
 # itself is roles/chezmoi's job, coordinated by this variable name.
 chezmoi_modify_manager_install_dir: "{{ home_dir }}/.local/bin"
+
+# The Determinate installer's system-wide nix. Must match roles/nix's
+# nix_marker_bin, which is the path that role installs.
+pkgs_nix_bin: /nix/var/nix/profiles/default/bin/nix

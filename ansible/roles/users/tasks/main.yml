@@ -46,6 +46,18 @@
     # by the time this task sets it. Even if it did not, usermod does not
     # validate the target (only interactive chsh does), so this is safe to
     # run standalone as well.
+    # The login shell must exist before the account points at it. sshd
+    # refuses any user whose shell is missing ("User volodia not allowed
+    # because shell /usr/bin/zsh does not exist"), and client-side that
+    # looks like an ordinary publickey denial. Console and desktop logins
+    # fail too. bootstrap.yml runs this role before roles/pkgs, the usual
+    # home of zsh, so the fresh Nobara install was locked out. Recovery
+    # needed root's key login.
+    - name: users | install the login shell before assigning it
+      ansible.builtin.package:
+        name: "{{ users_shell_package }}"
+        state: present
+
     - name: users | create primary user account
       ansible.builtin.user:
         name: "{{ username }}"

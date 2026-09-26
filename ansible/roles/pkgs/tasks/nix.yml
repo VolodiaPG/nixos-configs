@@ -15,26 +15,26 @@
 # has not been exercised against a real profile — flag this if the second
 # run does not come back clean.
 
+# By absolute path, not `command -v nix`. Ansible's non-login shell never
+# sources /etc/profile.d/nix.sh, so nix is not on its PATH even when Nix is
+# installed. The PATH check therefore skipped every package below, silently.
+# roles/nix hit the same bug.
 - name: Check for a nix binary
-  ansible.builtin.shell: command -v nix
+  ansible.builtin.stat:
+    path: "{{ pkgs_nix_bin }}"
   register: nix_bin_check
-  changed_when: false
-  failed_when: false
-  check_mode: false
-  args:
-    executable: /bin/sh
 
 - name: List currently installed nix-profile packages
-  ansible.builtin.command: nix profile list
+  ansible.builtin.command: "{{ pkgs_nix_bin }} profile list"
   register: nix_profile_list
   changed_when: false
   failed_when: false
   check_mode: false
-  when: nix_bin_check.rc == 0
+  when: nix_bin_check.stat.exists
 
 - name: Install nix-profile packages
-  ansible.builtin.command: "nix profile install nixpkgs#{{ item }}"
+  ansible.builtin.command: "{{ pkgs_nix_bin }} profile install nixpkgs#{{ item }}"
   loop: "{{ nix_profile_packages | default([]) }}"
   when:
-    - nix_bin_check.rc == 0
+    - nix_bin_check.stat.exists
     - item not in (nix_profile_list.stdout | default(''))

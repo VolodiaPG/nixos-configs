@@ -29,6 +29,9 @@ users_groups:
   - docker
 
 users_shell: /usr/bin/zsh
+# Package that provides users_shell. Installed by this role itself; see
+# tasks/main.yml.
+users_shell_package: zsh
 
 # msi does not need a managed password: Nobara sets it at install time
 # (see PLAN.MD task 5.1, "hashed-password ... msi: not needed"). This is

@@ -57,7 +57,13 @@
     #   --no-confirm   required for non-interactive runs; PLAN.MD's command
     #                  as written omits it and would hang waiting on a TTY
     #                  prompt under Ansible.
+    # become: the installer must run as root. Without it, nix-installer
+    # tries to escalate by itself via `sudo`, which cannot prompt under
+    # Ansible ("sudo: a terminal is required to read the password"). Found
+    # on the first run against the fresh Nobara install; the macbook never
+    # reached this task because Nix was already present there.
     - name: Install Nix via the Determinate installer
+      become: true
       ansible.builtin.shell: |
         set -o pipefail
         curl -fsSL {{ nix_installer_url }} | sh -s -- install --no-confirm --determinate
