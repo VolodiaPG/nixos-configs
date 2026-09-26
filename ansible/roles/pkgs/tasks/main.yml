@@ -6,8 +6,8 @@
 # nix-profile -> flatpak. Ordered so a repo/COPR is always enabled before
 # anything from it is installed.
 #
-# Darwin: no-op. roles/homebrew (task 3.1/6.1) owns package installation
-# there — see inventory/group_vars/darwin.yml.
+# Darwin: nix-profile packages and upstream installers only. roles/homebrew
+# owns everything Homebrew packages (inventory/group_vars/darwin.yml).
 #
 # Package name lists themselves live in inventory/group_vars/nobara.yml,
 # not here — see that file's header for provenance (docs/migration/
@@ -34,7 +34,16 @@
     - name: pkgs | flatpak remotes, packages and GTK override (task 3.2)
       ansible.builtin.include_tasks: flatpak.yml
 
-- name: pkgs | Darwin — no-op, roles/homebrew owns package installation
-  ansible.builtin.debug:
-    msg: "pkgs role is a no-op on Darwin; see roles/homebrew"
+    - name: pkgs | upstream installers (claude-code, codegraph, rtk)
+      ansible.builtin.include_tasks: upstream.yml
+
+# roles/homebrew owns everything Homebrew packages. What it does not
+# (Nix-native tools, upstream installers) is installed here, as on Linux.
+- name: pkgs | Darwin — Nix-native tools and upstream installers
   when: ansible_system == 'Darwin'
+  block:
+    - name: pkgs | nix-profile packages
+      ansible.builtin.include_tasks: nix.yml
+
+    - name: pkgs | upstream installers
+      ansible.builtin.include_tasks: upstream.yml

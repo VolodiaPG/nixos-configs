@@ -123,12 +123,37 @@ rpmfusion_packages: []
 # dnf_packages. A COPR copy would only compete with terra's. lazygit is in
 # no enabled repo, so its COPR stays; atim/lazygit has a fedora-44-x86_64
 # build (copr API, 2026-09-26).
+#
+# Native-first (user decision, 2026-09-26): COPR is also used where it
+# replaces a nix-profile package. Each project below was checked for a
+# fedora-44-x86_64 build of the exact package, read from the project's own
+# repodata. roles/pkgs enables every COPR with includepkgs set to that
+# project's list here, so a multi-package COPR such as nyk/tools cannot
+# shadow Fedora or Nobara packages on a later upgrade. These are personal
+# COPRs, i.e. third-party builds.
 copr_repos:
   - atim/lazygit
+  - nyk/tools
+  - ecomaikgolf/typst
+  - sfaulken/Catppuccin
 
 copr_packages:
   "atim/lazygit":
     - lazygit
+  "nyk/tools":
+    - texlab # 5.26.0, /usr/bin/texlab
+  "ecomaikgolf/typst":
+    - tinymist # 0.15.2, /usr/bin/tinymist
+  # Mauve cursors for the chezmoi look-and-feels
+  # (dot_local/share/plasma/look-and-feel/Catppuccin-*-Mauve), which name
+  # these theme dirs. Upstream catppuccin/cursors 2.0.0 lower-cased them to
+  # catppuccin-<flavor>-mauve-cursors. The same COPR also has
+  # catppuccin-*-splash-theme, deliberately NOT installed: it ships
+  # look-and-feel IDs identical to chezmoi's, and those already contain
+  # their own splash.
+  "sfaulken/Catppuccin":
+    - catppuccin-latte-cursors-mauve
+    - catppuccin-mocha-cursors-mauve
 
 # §4 flatpak. Consumed by the flatpak-role agent's flatpak.yml.
 flatpak_remotes:
@@ -148,27 +173,39 @@ flatpak_packages:
 # Policy (user decision, 2026-09-26): native packages first. Anything that
 # a Nobara repo (fedora/nobara/terra) packages is in dnf_packages, not
 # here. kanata, t3code and typstyle moved out on that basis. What remains
-# has no usable Nobara package. lua-language-server is in terra, but only
-# under /usr/libexec with nothing on PATH.
+# has no usable Nobara package or COPR (see the comment on each entry).
+# Moved out:
+#   kanata, t3code, typstyle -> dnf_packages (terra)
+#   texlab, tinymist, catppuccin cursors -> copr_packages
+#   claude-code, codegraph, rtk -> upstream_installers (their official
+#     install scripts)
+# Dropped:
+#   notify-desktop -> libnotify's notify-send covers it
+#   catppuccin-kde -> never provided the Mauve assets as declared (the
+#     package defaults to Frappe/Blue). The colour schemes, aurorae and
+#     look-and-feels (with their own splash) come from chezmoi.
+#   catppuccin-papirus-folders -> nothing references Papirus (the icon
+#     themes are Fluent-purple-dark / breeze-dark)
+#   graphite-cursors -> referenced only by the dropped Hyprland modules
 nix_profile_packages:
-  - catppuccin-cursors
-  - catppuccin-kde
-  - catppuccin-papirus-folders
+  - devenv # Nix-native; the reason Nix is kept (§0)
+  - nixd # Nix-native
+  - nixfmt-rfc-style # Nix-native
+  - lua-language-server # terra's is not on PATH (/usr/libexec only)
+  - stylua # no Fedora/terra package, no COPR with a Fedora 44 build
+  - prettierd # no Fedora/terra package, no COPR
+  - shellharden # no Fedora/terra package, no COPR
+  - distrobox-tui # no Fedora/terra package, no COPR
+
+
+# Official upstream install scripts, run as the user by roles/pkgs
+# (tasks/upstream.yml). Each is skipped once its `creates` path exists; the
+# tools then update themselves. Used where no Nobara package exists and the
+# project publishes its own installer.
+upstream_installers:
   - claude-code
   - codegraph
-  - devenv
-  - distrobox-tui
-  - graphite-cursors
-  - lua-language-server
-  - nixd
-  - nixfmt-rfc-style
-  - notify-desktop # "consider dropping" per the map (libnotify's notify-send overlaps) — kept, not our call to drop
-  - prettierd
   - rtk
-  - shellharden
-  - stylua
-  - texlab
-  - tinymist
 
 # chezmoi_modify_manager (map §6 `upstream`) is not a dnf/copr/flatpak/nix
 # package — it is installed from a GitHub release tarball by `roles/pkgs`

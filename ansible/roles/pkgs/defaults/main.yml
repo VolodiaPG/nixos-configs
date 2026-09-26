@@ -40,3 +40,23 @@ pkgs_nix_bin: /nix/var/nix/profiles/default/bin/nix
 # the Fedora chroot of the same release is the right one. On plain Fedora
 # this is exactly what the module picks by itself.
 pkgs_copr_chroot: "fedora-{{ ansible_facts['distribution_major_version'] }}-{{ ansible_facts['architecture'] }}"
+
+
+# Upstream installers known to roles/pkgs (tasks/upstream.yml). URLs were
+# checked to return 200 and read through on 2026-09-26: all three install
+# under $HOME and do not prompt.
+pkgs_upstream_installers:
+  claude-code:
+    url: https://claude.ai/install.sh
+    shell: bash
+    creates: "{{ home_dir }}/.local/share/claude/versions"
+  codegraph:
+    url: https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh
+    shell: sh
+    creates: "{{ home_dir }}/.codegraph/current"
+  rtk:
+    url: https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh
+    shell: sh
+    creates: "{{ home_dir }}/.local/bin/rtk"
+    env:
+      RTK_TELEMETRY_DISABLED: "1"

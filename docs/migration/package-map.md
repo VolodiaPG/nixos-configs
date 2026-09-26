@@ -183,8 +183,26 @@ Flathub is already configured on Nobara — check before adding the remote
 >   PATH, so it stays here.
 > * **mac:** `rtk` and `nixfmt` are now declared in `brew_formulae`.
 >
-> Still undecided: the rows below that no native package covers on
-> Nobara. See PLAN.MD.
+> **Resolved the same day.** The rest of this section is historical. Current
+> sources:
+> * **Upstream installers** (roles/pkgs `upstream_installers`):
+>   `claude-code`, `codegraph`, `rtk` on msi, and `codegraph` on the mac.
+>   The mac gets Claude Code from the `claude-code@latest` cask and rtk
+>   from brew.
+> * **COPR** (restricted with includepkgs): `texlab` (nyk/tools),
+>   `tinymist` (ecomaikgolf/typst), and
+>   `catppuccin-{latte,mocha}-cursors-mauve` (sfaulken/Catppuccin). Each
+>   has a Fedora 44 build, checked in the project's repodata.
+> * **Still Nix** (no native package and no COPR): `devenv`, `nixd`,
+>   `nixfmt-rfc-style`, `lua-language-server`, `stylua`, `prettierd`,
+>   `shellharden`, `distrobox-tui`. On the mac: `devenv`, `nixd`.
+> * **Dropped:**
+>   * `notify-desktop` (use `notify-send`).
+>   * `catppuccin-papirus-folders` (nothing references Papirus).
+>   * `graphite-cursors` (Hyprland-only).
+>   * `catppuccin-kde`: it defaults to Frappe/Blue, so as declared it never
+>     provided the Mauve assets. The look-and-feels were repointed at the
+>     cursor names the RPMs ship and at their own built-in splash.
 
 Everything here was verified by evaluating the **exact attribute currently
 installed**, so these are guaranteed like-for-like.

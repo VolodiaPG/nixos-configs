@@ -171,6 +171,12 @@ brew_casks:
   - docker-desktop
   - claudeusagebar
   - legcord
+  # Native-first (user decision, 2026-09-26): Claude Code from Homebrew.
+  # The chezmoi wrapper ~/.local/bin/claude finds it on PATH. It is the
+  # @latest channel because that is what was already installed by hand,
+  # and Homebrew refuses `claude-code` alongside it ("Cask 'claude-code'
+  # conflicts with 'claude-code@latest'").
+  - claude-code@latest
   # DELIBERATELY NOT DECLARED, decided phase 6.1 from the same
   # `brew list --cask` diff: alt-tab and hiddenbar. Both are installed on
   # the macbook and are being left UNMANAGED rather than uninstalled —
@@ -178,3 +184,16 @@ brew_casks:
   # and simply do not come back on a rebuilt machine. mouseless was in this
   # group too and has since been uninstalled by hand, outside Ansible.
   # Listed only so the next diff does not read as an oversight.
+
+# Nix-native tools with no Homebrew formula (native-first policy,
+# 2026-09-26). roles/pkgs installs them with `nix profile add`. Both came
+# from Home Manager and have been missing since it was removed.
+nix_profile_packages:
+  - devenv
+  - nixd
+
+# Official upstream installer where Homebrew has nothing. codegraph was
+# already installed by hand with this same script; declaring it makes a
+# rebuilt macbook get it too.
+upstream_installers:
+  - codegraph

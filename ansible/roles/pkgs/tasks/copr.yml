@@ -13,6 +13,9 @@
     # ("Chroot nobara-44-x86_64 does not exist in atim/lazygit"). See
     # pkgs_copr_chroot in defaults/main.yml.
     chroot: "{{ pkgs_copr_chroot }}"
+    # Only the packages this repo declares for the project. Nothing else
+    # from a COPR can replace a Fedora or Nobara package on upgrade.
+    includepkgs: "{{ copr_packages[item] }}"
     state: enabled
   become: true
   loop: "{{ copr_repos | default([]) }}"

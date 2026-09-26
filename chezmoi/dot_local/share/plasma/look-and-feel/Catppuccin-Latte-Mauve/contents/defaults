@@ -2,7 +2,7 @@
 ColorScheme=CatppuccinLatteMauve
 
 [kcminputrc][Mouse]
-cursorTheme=Catppuccin-Latte-Mauve-Cursors
+cursorTheme=catppuccin-latte-mauve-cursors
 
 [kwinrc][org.kde.kdecoration2]
 ButtonsOnLeft=
@@ -14,4 +14,4 @@ theme=__aurorae__svg__CatppuccinLatte-Modern
 name=default
 
 [KSplash]
-Theme=Catppuccin-Latte-Mauve-splash
+Theme=Catppuccin-Latte-Mauve

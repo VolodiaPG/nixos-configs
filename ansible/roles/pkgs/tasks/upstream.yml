@@ -1,0 +1,25 @@
+---
+# Official upstream install scripts, for tools with no native package
+# (native-first policy, docs/migration/package-map.md §5). Driven by
+# `upstream_installers` in group_vars. Each script:
+#   * runs as the connecting user, without become, since all three install
+#     under $HOME;
+#   * does not prompt;
+#   * is skipped once its `creates` path exists. After that the tool
+#     updates itself, as the upstream projects intend.
+#
+# claude-code: its installer also runs `claude install`, which points
+# ~/.local/bin/claude at the new binary. chezmoi owns that path (the
+# headroom wrapper), so the next `chezmoi apply` puts the wrapper back. The
+# wrapper then finds the binary under ~/.local/share/claude/versions. The
+# macbook uses the same layout.
+
+- name: pkgs | run upstream installer for {{ item }}
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL {{ pkgs_upstream_installers[item].url }} | {{ pkgs_upstream_installers[item].shell }}
+  args:
+    executable: /bin/bash
+    creates: "{{ pkgs_upstream_installers[item].creates }}"
+  environment: "{{ pkgs_upstream_installers[item].env | default({}) }}"
+  loop: "{{ upstream_installers | default([]) }}"
