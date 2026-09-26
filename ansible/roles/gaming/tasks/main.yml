@@ -9,14 +9,22 @@
 # config file beyond package installation and `programs.steam.enable`
 # itself, which has no extra behaviour turned on in this repo's config.
 #
-# Deliberately left as a documentation placeholder rather than padded with
-# tasks that would just reinstall packages roles/pkgs already owns.
+# The one gap is the Steam library disk. /Games came from
+# configurations/nixos/msi/hardware-configuration.nix, not gaming.nix, so
+# the line-by-line read above missed it. It is the 166 G ext4 partition
+# labelled `Games` on the Crucial SSD, which the reinstall preserved on
+# purpose (PLAN.MD 6.2).
 
-- name: "gaming | no gap ported — see roles/gaming/defaults/main.yml"
-  ansible.builtin.debug:
-    msg: >-
-      gaming.nix (steam, gamemode, faugus-launcher) is fully covered by
-      roles/pkgs (dnf/rpmfusion/flatpak package lists in
-      inventory/group_vars/nobara.yml). No additional configuration to
-      apply.
+# Same device spec as NixOS: by label, so it survives the sda/sdb letter
+# swaps documented in docs/migration/msi-cutover.md section 2. `nofail` is
+# new: without it a missing or dead Crucial drops boot into emergency mode
+# for a disk that only holds games.
+- name: "gaming | mount the Steam library disk at /Games"
+  become: true
+  ansible.posix.mount:
+    path: /Games
+    src: LABEL=Games
+    fstype: ext4
+    opts: defaults,nofail
+    state: mounted
   when: ansible_system == 'Linux'

@@ -1,6 +1,10 @@
 ---
 # Task 3.1 — RPM Fusion free + nonfree (map §2: mpv, steam).
 #
+# Skipped entirely while rpmfusion_packages is empty, which is the case on
+# Nobara: it ships its own builds of what RPM Fusion would provide. See
+# inventory/group_vars/nobara.yml.
+#
 # ansible.builtin.dnf installing a release RPM by URL is natively
 # idempotent: dnf resolves the package's NEVRA from the RPM header before
 # deciding whether anything needs changing, so re-running this with the
@@ -12,12 +16,14 @@
     name: "{{ rpmfusion_free_url }}"
     state: present
   become: true
+  when: (rpmfusion_packages | default([])) | length > 0
 
 - name: Enable RPM Fusion nonfree
   ansible.builtin.dnf:
     name: "{{ rpmfusion_nonfree_url }}"
     state: present
   become: true
+  when: (rpmfusion_packages | default([])) | length > 0
 
 - name: Install RPM Fusion packages
   ansible.builtin.dnf:

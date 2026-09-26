@@ -90,29 +90,40 @@ dnf_packages:
   - zathura-plugins-all # pairs with zathura
   - zoxide
   - zsh
+  # From Nobara's own repos, not RPM Fusion / COPR — see
+  # rpmfusion_packages and copr_repos below for why.
+  - mpv
+  - steam
+  - bottom
+  - starship
   # Sourced by chezmoi's ~/.config/zsh/20-completion.zsh from /usr/share.
   # zsh-completions has no Fedora 43 package; zsh's own completions cover it.
   - zsh-autosuggestions
 
 # §2 rpmfusion. `roles/pkgs` enables the free+nonfree repos idempotently
 # before these are installed.
-rpmfusion_packages:
-  - mpv # rpmfusion-free; RIFE/VapourSynth stack dropped per §0
-  - steam # rpmfusion-nonfree; Nobara ships Steam — verify before applying (task 4.6)
+# Empty on purpose. Verified on the installed msi (Nobara 44, 2026-09-26):
+# Nobara does not enable RPM Fusion, and its own repos already carry mpv
+# (nobara) and steam (terra), plus its own ffmpeg and mesa-*-freeworld
+# builds (nobara-pikaos-additional). Adding RPM Fusion would give those
+# packages a second source, and dnf could swap Nobara's builds for RPM
+# Fusion's on a later upgrade. mpv and steam are in dnf_packages instead.
+# roles/pkgs enables the RPM Fusion repos only when this list is
+# non-empty.
+rpmfusion_packages: []
 
-# §3 copr:<repo>. All three are atim/*, none are in Fedora main.
+# §3 copr:<repo>. The map chose atim/{bottom,lazygit,starship} because
+# none of the three is in Fedora main. On Nobara 44, bottom and starship
+# are already in terra, which Nobara enables by default, so they are in
+# dnf_packages. A COPR copy would only compete with terra's. lazygit is in
+# no enabled repo, so its COPR stays; atim/lazygit has a fedora-44-x86_64
+# build (copr API, 2026-09-26).
 copr_repos:
-  - atim/bottom
   - atim/lazygit
-  - atim/starship
 
 copr_packages:
-  "atim/starship":
-    - starship
   "atim/lazygit":
     - lazygit
-  "atim/bottom":
-    - bottom
 
 # §4 flatpak. Consumed by the flatpak-role agent's flatpak.yml.
 flatpak_remotes:
