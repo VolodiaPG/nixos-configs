@@ -1,6 +1,6 @@
 ---
-# claude_wrapper: install caveman and a system-wide `claude` that runs
-# Claude Code through it. Claude Code itself comes from roles/pkgs
+# claude_wrapper: install caveman and a system-wide `claude-custom` that
+# runs Claude Code through it. Claude Code itself comes from roles/pkgs
 # (upstream installer, Linux) or roles/homebrew (claude-code@latest, macOS).
 
 - name: claude_wrapper | install caveman globally from npm
@@ -18,7 +18,7 @@
 
 - name: claude_wrapper | install the wrapper as {{ claude_wrapper_path }}
   ansible.builtin.template:
-    src: claude.sh.j2
+    src: claude-custom.sh.j2
     dest: "{{ claude_wrapper_path }}"
     owner: root
     group: "{{ root_group }}"

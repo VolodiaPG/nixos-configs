@@ -1,0 +1,5 @@
+#!/bin/bash
+# Managed by Ansible (roles/claude_wrapper). Do not edit by hand.
+# `claude-custom ARGS` runs Claude Code through caveman. `claude` itself is
+# left untouched, and caveman finds it on PATH as usual.
+exec {{ claude_wrapper_caveman_bin }} claude "$@"

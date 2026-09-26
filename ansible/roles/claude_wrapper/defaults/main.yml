@@ -8,7 +8,9 @@ claude_wrapper_caveman_package: "@caveman-ai/cli"
 
 # Where the wrapper goes. Linux: /usr/bin (user request). macOS: /usr/bin
 # is read-only under System Integrity Protection, so /usr/local/bin.
-claude_wrapper_path: "{{ '/usr/local/bin/claude' if ansible_facts['system'] == 'Darwin' else '/usr/bin/claude' }}"
+# Named claude-custom, not claude (user decision), so the stock `claude` is
+# unchanged and there is no PATH recursion to guard against.
+claude_wrapper_path: "{{ '/usr/local/bin/claude-custom' if ansible_facts['system'] == 'Darwin' else '/usr/bin/claude-custom' }}"
 
 # Global npm needs root on Linux (prefix /usr/local). The Homebrew prefix
 # on macOS belongs to the user, and Homebrew refuses to be driven as root.
