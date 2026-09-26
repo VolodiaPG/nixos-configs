@@ -158,6 +158,13 @@ copr_packages:
   "sfaulken/Catppuccin":
     - catppuccin-latte-cursors-mauve
     - catppuccin-mocha-cursors-mauve
+    # Required by the -mauve subpackages ("requires
+    # catppuccin-<flavor>-cursors = 2.0.0-1.fc44"). They must be listed, or
+    # includepkgs hides them and dnf fails to resolve. They ship no theme
+    # directory of their own. No other COPR here has an in-repo dependency
+    # (checked in the repodata).
+    - catppuccin-latte-cursors
+    - catppuccin-mocha-cursors
 
 # §4 flatpak. Consumed by the flatpak-role agent's flatpak.yml.
 flatpak_remotes:
