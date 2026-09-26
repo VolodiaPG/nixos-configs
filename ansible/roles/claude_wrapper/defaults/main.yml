@@ -1,0 +1,15 @@
+---
+# Defaults for the claude_wrapper role. Do not duplicate anything from
+# group_vars/all/main.yml here.
+
+# caveman's CLI, from npm. Installed globally, so the wrapper works for any
+# caller, including GUI apps that do not load the shell's PATH.
+claude_wrapper_caveman_package: "@caveman-ai/cli"
+
+# Where the wrapper goes. Linux: /usr/bin (user request). macOS: /usr/bin
+# is read-only under System Integrity Protection, so /usr/local/bin.
+claude_wrapper_path: "{{ '/usr/local/bin/claude' if ansible_facts['system'] == 'Darwin' else '/usr/bin/claude' }}"
+
+# Global npm needs root on Linux (prefix /usr/local). The Homebrew prefix
+# on macOS belongs to the user, and Homebrew refuses to be driven as root.
+claude_wrapper_npm_become: "{{ ansible_facts['system'] != 'Darwin' }}"

@@ -1,0 +1,4 @@
+---
+# claude_wrapper: system-wide `claude` that runs Claude Code through
+# caveman (`caveman claude "$@"`), on both Linux and macOS.
+dependencies: []

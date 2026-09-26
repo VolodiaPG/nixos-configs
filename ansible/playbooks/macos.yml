@@ -8,6 +8,8 @@
     # After homebrew: roles/syncthing runs the Homebrew syncthing binary.
     - ssh_agent
     - syncthing
+    # After homebrew (node, claude-code@latest).
+    - claude_wrapper
     - pkgs
     - shell
     - darwin_defaults

@@ -9,6 +9,8 @@
   roles:
     - nix
     - pkgs
+    # After pkgs (nodejs-npm, and Claude Code's upstream installer).
+    - claude_wrapper
     - base
     - users
     # After users: the syncthing user unit relies on lingering being enabled.

@@ -48,11 +48,6 @@ export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazy
 export FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/catppuccin-mocha.rc"
 export GLAMOUR_STYLE="$XDG_CONFIG_HOME/glamour/catppuccin-mocha.json"
 
-# ── claude headroom ──────────────────────────────────────────────────────
-# From modules/home/claude.nix (headroom.enable). The wrapper script itself
-# is task 2.10's; this is only the port it listens on.
-export HEADROOM_PORT="8787"
-
 {{ if eq .chezmoi.os "linux" -}}
 # ── Wayland/Electron (Linux only) ────────────────────────────────────────
 # common-home.nix exported these on every platform, including macOS, where

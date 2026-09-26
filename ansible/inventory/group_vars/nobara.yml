@@ -97,6 +97,10 @@ dnf_packages:
   # terra, moved from nix_profile_packages under the native-first policy.
   # kanata's user unit points at /usr/bin/kanata (roles/desktop_linux).
   - kanata
+  # For caveman (roles/claude_wrapper installs it with npm). Before this,
+  # node was only on msi as a dependency of another package.
+  - nodejs
+  - nodejs-npm
   - t3code
   - typstyle
   - bottom
