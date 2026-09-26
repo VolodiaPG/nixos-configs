@@ -166,7 +166,7 @@
       when: nix_install_nix_direnv | default(true)
 
     - name: Install nix-direnv into {{ username }}'s Nix profile
-      ansible.builtin.command: "{{ nix_marker_bin }} profile install {{ nix_direnv_package }}"
+      ansible.builtin.command: "{{ nix_marker_bin }} profile add {{ nix_direnv_package }}"
       become: true
       become_user: "{{ username }}"
       when: >-

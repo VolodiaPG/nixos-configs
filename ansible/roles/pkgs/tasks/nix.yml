@@ -32,8 +32,15 @@
   check_mode: false
   when: nix_bin_check.stat.exists
 
+# NIXPKGS_ALLOW_UNFREE + --impure: nixpkgs refuses unfree packages
+# (claude-code) unless told otherwise, and a flake evaluation reads that
+# environment variable only when impure. This matches the old setup, where
+# lib/nixpkgs-config.nix set allowUnfree = true for every host. `add` is
+# the current name; `install` is a deprecated alias.
 - name: Install nix-profile packages
-  ansible.builtin.command: "{{ pkgs_nix_bin }} profile install nixpkgs#{{ item }}"
+  ansible.builtin.command: "{{ pkgs_nix_bin }} profile add --impure nixpkgs#{{ item }}"
+  environment:
+    NIXPKGS_ALLOW_UNFREE: "1"
   loop: "{{ nix_profile_packages | default([]) }}"
   when:
     - nix_bin_check.stat.exists
