@@ -8,6 +8,11 @@
 - name: Enable COPR repositories
   community.general.copr:
     name: "{{ item }}"
+    # Explicit, because the module derives the chroot from the distro fact.
+    # On Nobara that gives nobara-44-x86_64, and COPR has no such chroot
+    # ("Chroot nobara-44-x86_64 does not exist in atim/lazygit"). See
+    # pkgs_copr_chroot in defaults/main.yml.
+    chroot: "{{ pkgs_copr_chroot }}"
     state: enabled
   become: true
   loop: "{{ copr_repos | default([]) }}"

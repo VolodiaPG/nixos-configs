@@ -35,3 +35,8 @@ chezmoi_modify_manager_install_dir: "{{ home_dir }}/.local/bin"
 # The Determinate installer's system-wide nix. Must match roles/nix's
 # nix_marker_bin, which is the path that role installs.
 pkgs_nix_bin: /nix/var/nix/profiles/default/bin/nix
+
+# COPR builds for Fedora chroots only. Nobara N is Fedora N underneath, so
+# the Fedora chroot of the same release is the right one. On plain Fedora
+# this is exactly what the module picks by itself.
+pkgs_copr_chroot: "fedora-{{ ansible_facts['distribution_major_version'] }}-{{ ansible_facts['architecture'] }}"
