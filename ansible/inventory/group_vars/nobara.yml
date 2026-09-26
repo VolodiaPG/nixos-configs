@@ -99,8 +99,13 @@ dnf_packages:
   - kanata
   # For caveman (roles/claude_wrapper installs it with npm). Before this,
   # node was only on msi as a dependency of another package.
-  - nodejs
-  - nodejs-npm
+  # Fedora 44 ships node as versioned packages (nodejs22*); these are the
+  # ones already installed. Do NOT use `nodejs`/`nodejs-npm`: on Nobara they
+  # resolve to the nobara repo's fc43 build, whose files collide with
+  # nodejs22's ("file /usr/lib64/libnode.so.127 ... conflicts"), and that
+  # aborts the whole dnf transaction.
+  - nodejs22
+  - nodejs22-npm
   - t3code
   - typstyle
   - bottom
