@@ -181,6 +181,10 @@ darwin_defaults_pam_reattach_path: /opt/homebrew/lib/pam/pam_reattach.so
 # nix-darwin has not been removed yet.
 darwin_defaults_manage_pam_sudo_local: true
 
+# Whether sudo_local enables TouchID. playbooks/macos.yml sets it false in
+# pre_tasks and true in post_tasks; see tasks/sudo_local.yml.
+darwin_defaults_pam_touch_id: true
+
 # --- limit-maxfiles launchd daemon (common-darwin.nix: launchd.daemons.limit-maxfiles) ---
 # Read the live nix-darwin-installed
 # /Library/LaunchDaemons/org.nixos.limit-maxfiles.plist on this host to get

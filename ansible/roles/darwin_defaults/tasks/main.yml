@@ -15,34 +15,11 @@
     # ------------------------------------------------------------------
     # 1. TouchID for sudo
     # ------------------------------------------------------------------
-    # /etc/pam.d/sudo_local is a file Apple explicitly designed for local
-    # overrides (see the live /etc/pam.d/sudo on this host: its first
-    # active line is `auth include sudo_local`, i.e. Apple already
-    # includes this file and owns nothing in it). We only ever write
-    # sudo_local itself -- /etc/pam.d/sudo is never touched.
-    - name: darwin_defaults | TouchID sudo | template /etc/pam.d/sudo_local
-      become: true
-      ansible.builtin.template:
-        src: sudo_local.j2
-        dest: "{{ darwin_defaults_pam_sudo_local_path }}"
-        owner: root
-        group: "{{ root_group }}"
-        mode: "0444"
-      # No handler: PAM re-reads its config on every authentication
-      # attempt, there is no daemon to restart for this to take effect.
-      #
-      # Skipped while nix-darwin is still installed. On this host today
-      # /etc/pam.d/sudo_local is a symlink into /etc/static/pam.d (i.e.
-      # nix-darwin owns the path, not just the contents). `template` does
-      # not follow destination symlinks by default, so it would replace
-      # the symlink with a real file -- and nix-darwin's etc activation
-      # then refuses to relink a path it does not own, breaking
-      # `darwin-rebuild switch`. PLAN.MD task 6.1 step 1 requires running
-      # Ansible alongside nix-darwin until darwin-rebuild is a no-op, so
-      # this one task has to wait for step 2 (nix-darwin removed). Flip
-      # the flag in defaults/main.yml then; every other task in this role
-      # coexists with nix-darwin safely.
-      when: darwin_defaults_manage_pam_sudo_local | bool
+    # Lives in tasks/sudo_local.yml, not here: playbooks/macos.yml calls it
+    # from pre_tasks (TouchID off) and post_tasks (TouchID on) so the
+    # BECOME password, not a fingerprint, authenticates every task in
+    # between. Running it here mid-play would re-enable TouchID for the
+    # roles after this one.
 
     # ------------------------------------------------------------------
     # 2. limit-maxfiles launchd daemon (524288)

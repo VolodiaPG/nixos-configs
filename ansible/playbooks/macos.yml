@@ -2,6 +2,16 @@
 - name: Configure macOS hosts
   hosts: darwin
   gather_facts: true
+  # TouchID off for the run so the BECOME password authenticates every
+  # task instead of one fingerprint prompt per task. See
+  # roles/darwin_defaults/tasks/sudo_local.yml.
+  pre_tasks:
+    - name: Disable TouchID sudo for this run
+      ansible.builtin.include_role:
+        name: darwin_defaults
+        tasks_from: sudo_local
+      vars:
+        darwin_defaults_pam_touch_id: false
   roles:
     - nix
     - homebrew
@@ -15,3 +25,10 @@
     - darwin_defaults
     - secrets
     - chezmoi
+  post_tasks:
+    - name: Re-enable TouchID sudo
+      ansible.builtin.include_role:
+        name: darwin_defaults
+        tasks_from: sudo_local
+      vars:
+        darwin_defaults_pam_touch_id: true

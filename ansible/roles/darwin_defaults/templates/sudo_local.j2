@@ -13,4 +13,8 @@
 {# password prompt inherited from Apple's /etc/pam.d/sudo. A broken or #}
 {# absent pam_reattach can therefore never lock you out of sudo. #}
 auth       optional       {{ darwin_defaults_pam_reattach_path }}
+{# darwin_defaults_pam_touch_id is false only while a playbook run is in #}
+{# progress; see tasks/sudo_local.yml. #}
+{% if darwin_defaults_pam_touch_id | bool %}
 auth       sufficient     pam_tid.so
+{% endif %}

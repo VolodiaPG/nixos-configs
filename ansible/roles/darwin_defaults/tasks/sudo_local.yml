@@ -1,0 +1,34 @@
+---
+# TouchID for sudo via /etc/pam.d/sudo_local, the file Apple ships for
+# local overrides (its /etc/pam.d/sudo starts with `auth include
+# sudo_local` and owns nothing in it). /etc/pam.d/sudo is never touched.
+#
+# Called by playbooks/macos.yml, not tasks/main.yml, twice per run:
+#   * pre_tasks, darwin_defaults_pam_touch_id=false: drops pam_tid.so.
+#     Every become task opens a fresh pty, so sudo's tty-keyed credential
+#     cache never carries over between tasks and each one re-runs PAM.
+#     With pam_tid.so first and `sufficient`, that means one fingerprint
+#     prompt per task, and the BECOME password is only a fallback. Without
+#     pam_tid.so, PAM reaches pam_opendirectory and Ansible answers it
+#     with the BECOME password, silently. Only this first write can still
+#     ask for a fingerprint.
+#   * post_tasks, darwin_defaults_pam_touch_id=true: restores pam_tid.so.
+# A failed run skips post_tasks and leaves TouchID off. That fails safe:
+# sudo still works with the password, and the next complete run restores
+# TouchID.
+- name: darwin_defaults | TouchID sudo | template /etc/pam.d/sudo_local
+  become: true
+  ansible.builtin.template:
+    src: sudo_local.j2
+    dest: "{{ darwin_defaults_pam_sudo_local_path }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: "0444"
+  # No handler: PAM re-reads its config on every authentication attempt.
+  #
+  # darwin_defaults_manage_pam_sudo_local exists for macs still running
+  # nix-darwin, which owns sudo_local as a symlink into /etc/static/pam.d;
+  # replacing that symlink breaks the next `darwin-rebuild switch`.
+  when:
+    - ansible_system == 'Darwin'
+    - darwin_defaults_manage_pam_sudo_local | bool
