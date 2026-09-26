@@ -1,7 +1,14 @@
 profile=gpu-hq
 
 vo=gpu-next
+{{- if eq .chezmoi.os "linux" }}
+# SVP (ansible/roles/svp). SVPManager finds mpv through this socket, and
+# its VapourSynth filter needs decoded frames copied back to system memory.
+input-ipc-server=/tmp/mpvsocket
+hwdec=auto-copy
+{{- else }}
 hwdec=auto-safe
+{{- end }}
 
 hdr-compute-peak=no
 

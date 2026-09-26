@@ -23,6 +23,7 @@
     - desktop_linux
     - kde
     - nvidia
+    - svp
     - gaming
     - secrets
     - chezmoi

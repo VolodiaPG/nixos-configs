@@ -1,0 +1,120 @@
+---
+# svp: SmoothVideo Project 4 (SVPManager) with RIFE, msi only.
+#
+# The official installer (svp4-linux.run) is a Qt Installer Framework 3.1
+# GUI. That IFW version has no unattended `install` command. So this role
+# does what the installer does, from the same online repositories:
+# download each component's 7z archives (pinned in defaults/main.yml),
+# unpack them into one directory, then run core.full's add-menuitem.sh.
+# That is every operation in the components' install.js scripts, except
+# opt.mpv's mpv/initcfg.sh, which only copies a sample mpv.conf. chezmoi
+# owns ~/.config/mpv/mpv.conf, so it carries the one line SVP needs.
+#
+# The install is read-only for the user. That is fine: SVP keeps its
+# settings under $HOME, and its vsmlrt.py writes the TensorRT engines it
+# builds on first RIFE use to ~/.cache/trt-models.
+#
+# A changed archive list rebuilds the whole tree in a staging directory
+# and swaps it in, so an upgrade leaves no stale files, and a failed run
+# leaves the previous install in place.
+
+- name: "svp | install runtime dependencies"
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ svp_dnf_packages }}"
+    state: present
+
+- name: "svp | read the installed archive list"
+  ansible.builtin.slurp:
+    src: "{{ svp_install_dir }}/.ansible-archives"
+  register: _svp_installed
+  failed_when: false
+
+- name: "svp | (re)install from the pinned archives"
+  when: (_svp_installed.content | default('') | b64decode) != (svp_archives | to_nice_yaml)
+  become: true
+  vars:
+    _svp_staging: "{{ svp_install_dir }}.staging"
+    _svp_downloads: /var/tmp/svp-archives
+  block:
+    - name: "svp | create empty staging and download directories"
+      ansible.builtin.file:
+        path: "{{ item[1] }}"
+        state: "{{ item[0] }}"
+        mode: "0755"
+      loop:
+        - [absent, "{{ _svp_staging }}"]
+        - [directory, "{{ _svp_staging }}"]
+        - [directory, "{{ _svp_downloads }}"]
+
+    - name: "svp | download archives"
+      ansible.builtin.get_url:
+        url: "https://www.svp-team.com/files/repo/{{ item.repo }}/{{ item.component }}/{{ item.version }}{{ item.archive }}"
+        dest: "{{ _svp_downloads }}/{{ item.component }}-{{ item.version }}-{{ item.archive }}"
+        checksum: "sha1:{{ item.sha1 }}"
+        mode: "0644"
+      loop: "{{ svp_archives }}"
+      loop_control:
+        label: "{{ item.component }} {{ item.version }} {{ item.archive }}"
+
+    - name: "svp | unpack archives into the staging directory"
+      ansible.builtin.command:
+        argv:
+          - bsdtar
+          - -xf
+          - "{{ _svp_downloads }}/{{ item.component }}-{{ item.version }}-{{ item.archive }}"
+          - -C
+          - "{{ _svp_staging }}"
+      loop: "{{ svp_archives }}"
+      loop_control:
+        label: "{{ item.component }} {{ item.version }} {{ item.archive }}"
+      changed_when: true
+
+    - name: "svp | record the archive list"
+      ansible.builtin.copy:
+        content: "{{ svp_archives | to_nice_yaml }}"
+        dest: "{{ _svp_staging }}/.ansible-archives"
+        mode: "0644"
+
+    - name: "svp | swap the staging directory in"
+      ansible.builtin.shell: |
+        set -eu
+        rm -rf '{{ svp_install_dir }}.old'
+        if [ -e '{{ svp_install_dir }}' ]; then mv '{{ svp_install_dir }}' '{{ svp_install_dir }}.old'; fi
+        mv '{{ _svp_staging }}' '{{ svp_install_dir }}'
+        rm -rf '{{ svp_install_dir }}.old'
+      changed_when: true
+
+  always:
+    - name: "svp | remove downloads and leftover staging"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ _svp_downloads }}"
+        - "{{ _svp_staging }}"
+
+# Run as root, xdg-desktop-menu and xdg-icon-resource install system-wide
+# (/usr/share/applications, /usr/share/icons/hicolor). The entry points at
+# {{ svp_install_dir }}/SVPManager, which a reinstall does not move.
+- name: "svp | install the SVP 4 Pro menu entry and icons"
+  become: true
+  ansible.builtin.command:
+    cmd: "{{ svp_install_dir }}/add-menuitem.sh"
+    creates: /usr/share/applications/svp-manager4.desktop
+
+# SVP only works with its bundled mpv, which is built against the bundled
+# VapourSynth and Python 3.12 ("DO NOT install mpv via package manager",
+# wiki/SVP:Linux). /usr/local/bin comes before /usr/bin in PATH, so these
+# shadow Nobara's mpv for the shell and for mpv.desktop (Exec=mpv).
+# Nobara's mpv package stays installed for its desktop file and MIME
+# associations.
+- name: "svp | put SVPManager and SVP's mpv on PATH"
+  become: true
+  ansible.builtin.file:
+    src: "{{ svp_install_dir }}/{{ item.src }}"
+    dest: "/usr/local/bin/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: SVPManager, dest: SVPManager }
+    - { src: mpv/mpv, dest: mpv }

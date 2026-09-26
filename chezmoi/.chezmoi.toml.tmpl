@@ -1,8 +1,14 @@
 {{- /*
      chezmoi config template — task 2.1 of PLAN.MD.
 
-     Every value below has a default derived from `.chezmoi.os` /
-     `.chezmoi.hostname`, so an interactive `chezmoi init` is all Enter.
+     Every value below has a default, so an interactive `chezmoi init` is
+     all Enter.
+
+     Only data some template actually reads belongs here. `role`, `host`,
+     `flavor` and `home_dir` (PLAN.MD task 2.1) were removed on
+     2026-09-26 because no template read them: OS branches test
+     `.chezmoi.os` directly, and Plasma switches Catppuccin light/dark by
+     itself. Add a key back when a template needs it.
 
      For a non-interactive init, the flag is --promptDefaults:
 
@@ -29,10 +35,6 @@
 */ -}}
 {{- $isDarwin := eq .chezmoi.os "darwin" -}}
 
-{{- /* role: `mac` on Darwin, `desktop` on Linux. */ -}}
-{{- $defaultRole := "desktop" -}}
-{{- if $isDarwin }}{{ $defaultRole = "mac" }}{{ end -}}
-
 {{- /*
      Login shell, consumed by dot_config/kitty/kitty.conf.tmpl.
 
@@ -47,18 +49,7 @@
 {{- $defaultShell := "/usr/bin/zsh" -}}
 {{- if $isDarwin }}{{ $defaultShell = "/bin/zsh" }}{{ end -}}
 
-{{- /*
-     host must match the Ansible inventory host name, since the two configs
-     describe the same machine. On Linux .chezmoi.hostname already is that
-     name; on Darwin it is the Sharing-preferences computer name
-     ("Volodias-MacBook-Pro"), which is not it — hence the override.
-*/ -}}
-{{- $defaultHost := .chezmoi.hostname -}}
-{{- if $isDarwin }}{{ $defaultHost = "macbook" }}{{ end -}}
 
-{{- $host       := promptStringOnce . "host"        "Short host name"                        $defaultHost -}}
-{{- $role       := promptStringOnce . "role"        "Role (desktop|mac)"                     $defaultRole -}}
-{{- $flavor     := promptStringOnce . "flavor"      "Catppuccin flavor (mocha|latte)"        "mocha" -}}
 {{- $name       := promptStringOnce . "name"        "Full name"                              "Volodia P.G." -}}
 {{- $username   := promptStringOnce . "username"    "User name"                              .chezmoi.username -}}
 {{- $email      := promptStringOnce . "email"       "Email"                                  "volodia.parol-guarino@proton.me" -}}
@@ -80,12 +71,8 @@
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
-host = {{ $host | quote }}
-role = {{ $role | quote }}
-flavor = {{ $flavor | quote }}
 name = {{ $name | quote }}
 username = {{ $username | quote }}
 email = {{ $email | quote }}
 signing_key = {{ $signingKey | quote }}
 shell = {{ $shell | quote }}
-home_dir = {{ .chezmoi.homeDir | quote }}

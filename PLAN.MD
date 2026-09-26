@@ -557,6 +557,11 @@ Create `chezmoi/.chezmoi.toml.tmpl` exposing: `host`, `role`
 (`desktop`/`mac`), `flavor` (`mocha`/`latte`), `email`, `signing_key`,
 `home_dir`. Source values from prompts on first `chezmoi init`, defaults
 derived from `.chezmoi.os` / `.chezmoi.hostname`.
+**Revised 2026-09-26 (user decision):** `role`, `host`, `flavor` and
+`home_dir` were removed. No template ever read them: OS branches test
+`.chezmoi.os`, and Plasma switches Catppuccin light/dark natively. The
+template now exposes only what templates consume: `name`, `username`,
+`email` and `signing_key` (git config), plus `shell` (kitty).
 
 Create `.chezmoiignore`: mac excludes `dot_config/hypr`, `dot_config/noctalia`,
 `dot_config/OrcaSlicer`; Linux excludes `private_karabiner`. It must also

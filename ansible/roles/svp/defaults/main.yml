@@ -1,0 +1,56 @@
+---
+# Defaults for the svp role. Do not duplicate anything from
+# group_vars/all/main.yml here.
+
+svp_install_dir: /opt/svp
+
+# Runtime dependencies from https://www.svp-team.com/wiki/SVP:Linux.
+# SVP bundles its own Qt, Python 3.12, VapourSynth and mpv (the archives
+# below), so only these come from dnf. bsdtar unpacks the .7z archives.
+svp_dnf_packages:
+  - bsdtar
+  - lsof # SVPManager finds running mpv instances with it
+  - ocl-icd # OpenCL loader, for GPU-accelerated SVPflow
+  - xcb-util-cursor # libxcb-cursor0 in the upstream docs
+  - xdg-utils # add-menuitem.sh uses xdg-desktop-menu
+
+# The components the official installer (svp4-linux.run) picks for
+# "SVP + bundled mpv/VapourSynth + RIFE + TensorRT". Each one is a set of
+# 7z archives in the installer's online repositories:
+#   https://www.svp-team.com/files/repo/<repo>/<component>/<version><archive>
+# Versions and SHA-1s come from each repo's Updates.xml and the
+# <archive>.sha1 files next to the archives. To upgrade, re-read
+#   https://www.svp-team.com/files/repo/{full,common}-lin64/Updates.xml?full=main
+# and bump the matching rows. Order matters: later archives overwrite
+# earlier ones, as the installer does.
+#
+# Left out on purpose: core.vlc (VLC plugin), core.manual, the SVPtube/
+# SVPcode/SVPcast/SVPlight extensions, opt.ffmpeg and opt.mkvmerge.
+# core.maintenance is the installer binary itself; without it SVPManager's
+# built-in updater does nothing, and this list is the only upgrade path.
+#
+# opt.rife is RIFE on ncnn/Vulkan (any GPU). opt.rife_trt,
+# opt.rife_trt.models and opt.rife_trt_base (1.4 GB of TensorRT libraries)
+# are RIFE on TensorRT, which needs an NVIDIA RTX GPU (msi has an RTX 4070).
+svp_archives:
+  - { repo: full-lin64, component: core.full, version: "4.7.0.305-5", archive: libs.7z, sha1: 65097ac40c050335e601d3d5ce0beaf2268321c4 }
+  - { repo: full-lin64, component: core.full, version: "4.7.0.305-5", archive: licenses.7z, sha1: 4f1721a21c2a7cf630d2184c3d4b9d27e607efc8 }
+  - { repo: full-lin64, component: core.full, version: "4.7.0.305-5", archive: content.7z, sha1: 57a89f26134a436c67e9e2b676aa185d7a0c13ed }
+  - { repo: full-lin64, component: core.full.script, version: "4.7.0.302-1", archive: script.7z, sha1: 0e90107fa04dcd74ef18e32d1c7599ad2d1c6154 }
+  - { repo: full-lin64, component: core.flow, version: "4.7.0.321", archive: licenses.7z, sha1: 99f4aadd41bb8324e4b4af4ce86e270b2a89ffb8 }
+  - { repo: full-lin64, component: core.flow, version: "4.7.0.321", archive: plugins.7z, sha1: 5ad5d5832aabbf1e638913c63de02bf5f562d357 }
+  - { repo: full-lin64, component: core.i18n, version: "136-1", archive: i18n.7z, sha1: 1e0b88690687aaa338e24ed93e368a817d8f8064 }
+  - { repo: full-lin64, component: core.utils, version: "1.0.3-1", archive: licenses.7z, sha1: 009b89892afde6e6718147337fb5dda94394597a }
+  - { repo: full-lin64, component: core.utils, version: "1.0.3-1", archive: utils.7z, sha1: fe4a1a46bbf23d9a9a95410430528fa51e48aab2 }
+  - { repo: common-lin64, component: deps.qt, version: "6.8.3-1", archive: libs.7z, sha1: 2d437a1218a9e98f8dcb01a76dc7cb4ceca7ca9e }
+  - { repo: common-lin64, component: deps.qt, version: "6.8.3-1", archive: content.7z, sha1: cb650f5eda2f27fffe694466c2603994e6aa26f8 }
+  - { repo: common-lin64, component: deps.python, version: "3.12.11", archive: licenses.7z, sha1: a9d8696af9f80bdaf08f39b91eba359f086a89a0 }
+  - { repo: common-lin64, component: deps.python, version: "3.12.11", archive: python.7z, sha1: bf589c91f520ddde54d8ea6cbe31450b3dbf4260 }
+  - { repo: common-lin64, component: deps.vapoursynth, version: "72", archive: mpv.7z, sha1: a3725ba2e73697a7127cbae28a1567937fda1ea0 }
+  - { repo: common-lin64, component: deps.vapoursynth, version: "72", archive: utils.7z, sha1: 231d92669973ecb5118f259b4b9565fe96f4d2aa }
+  - { repo: common-lin64, component: opt.mpv, version: "0.41.0", archive: mpv.7z, sha1: 399d4df9a3a85c904a91f7f85529564aa8d39e34 }
+  - { repo: full-lin64, component: opt.rife, version: "4.0-3", archive: licenses.7z, sha1: 9d97e5576a3e02b039c5b20d4f0738e0ebd2c0bb }
+  - { repo: full-lin64, component: opt.rife, version: "4.0-3", archive: rife.7z, sha1: dbc7a5cf0acbd84f08d0de8e3087716d1bd98075 }
+  - { repo: full-lin64, component: opt.rife_trt, version: "15.8", archive: rife.7z, sha1: cfdcc61471b19e9389e5c99e9d3e017d32fff068 }
+  - { repo: full-lin64, component: opt.rife_trt.models, version: "4.25", archive: rife.7z, sha1: d52497d84ff66a78e53f7bea0b18898bc63f0a58 }
+  - { repo: common-lin64, component: opt.rife_trt_base, version: "10.13.0", archive: rife.7z, sha1: 328e78f5b88ef648eb9afc79563c248be28ebbba }
