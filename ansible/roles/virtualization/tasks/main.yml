@@ -41,6 +41,16 @@
             groups: "{{ virtualization_docker_group }}"
             append: true
 
+        # Fedora 44's moby-engine RPM does not ship /etc/docker (verified on
+        # msi), and the template module will not create parent directories.
+        - name: virtualization | ensure /etc/docker exists
+          ansible.builtin.file:
+            path: "{{ virtualization_docker_daemon_json_path | dirname }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+
         - name: virtualization | docker daemon.json (cgroupdriver + bip)
           ansible.builtin.template:
             src: daemon.json.j2
