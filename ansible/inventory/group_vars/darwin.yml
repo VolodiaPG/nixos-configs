@@ -138,6 +138,9 @@ brew_formulae:
   # the ones macOS does ship only as g-prefixed names, so this adds nproc
   # without shadowing BSD stat/ls/date. Do not add gnubin to PATH.
   - coreutils
+  - kubectl
+  - k9s
+  - helm
 
 # §10a — the fixed cask set: 8-way intersection + steam/calibre (§0.2
 # explicit keeps) + kitty (carried regardless, not a §0.2 dispute) + zed
