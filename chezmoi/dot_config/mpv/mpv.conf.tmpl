@@ -6,45 +6,40 @@ vo=gpu-next
 # its VapourSynth filter needs decoded frames copied back to system memory.
 input-ipc-server=/tmp/mpvsocket
 hwdec=auto-copy
+
+ao=alsa
+#ao=pipewire
+
+# SVP's bundled mpv has no ao=pipewire, so it plays through pipewire-pulse.
+# mpv's default pulse-latency-hacks=yes derives the delay from the stream's
+# write/read indexes, which PipeWire advances one graph quantum (here 2048
+# samples, ~43 ms) at a time: mpv's audio clock becomes a sawtooth and video
+# timed against it judders. PulseAudio's interpolated timing is smooth.
+# (ao=alsa is smooth too, but with the default audio-channels=auto-safe it
+# downmixes 5.1 to stereo.)
+pulse-latency-hacks=no
 {{- else }}
 hwdec=auto-safe
 {{- end }}
+
+audio-channels=auto
 
 hdr-compute-peak=no
 
 # wayland-disable-vsync=yes
 # video-sync=display-resample
 
-video-sync=audio
-
 # Enable VRR for Linux DRM/KMS outputs (if applicable)
 drm-vrr-enabled=yes
 
-interpolation=yes
-tscale=linear
+interpolation=no
 
 # osd-msg1="FPS: ${estimated-display-fps}"
 
 target-trc=srgb
 
 
-# hwdec=auto-safe
-# scale=ewa_lanczossharp
-# cscale=ewa_lanczossharp
-# video-sync=display-resample
-# interpolation
-# tscale=oversample
 ytdl-format=bestvideo[height<=?1080]+bestaudio/best
-# ytdl-format=bestvideo[height<=?1080][fps<=?60][vcodec!=?vp9]+bestaudio/best
-# ytdl-format=bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4
-#vo=gpup
-#ytdl-format=bestvideo[height<=?1080]+bestaudio/best
-#gpu-context=wayland
-# ytdl=yes
-
-# ytdl-format=399[fps<=30]+251/248+251/137+251/398+251/302+251/298+251/247+251/136+251/397+251/244+251/135+251/396+251/243+251/134+251/bestvideo+bestaudio/best
-# ytdl-format="best[vcodec!=vp9]"
-# ytdl-format="bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4"
 cache=yes
 cache-pause=yes
 cache-pause-wait=1
