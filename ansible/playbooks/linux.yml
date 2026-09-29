@@ -22,6 +22,7 @@
     - virtualization
     - desktop_linux
     - kde
+    - ssh_agent
     - nvidia
     - svp
     - gaming

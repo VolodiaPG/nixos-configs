@@ -1,6 +1,18 @@
 ---
-# ssh_agent: macOS GUI apps -> Bitwarden desktop SSH agent. See
-# defaults/main.yml for why Linux needs nothing here.
+# ssh_agent: GUI sessions -> Bitwarden desktop SSH agent. See
+# defaults/main.yml for what each OS needs.
+
+# --global writes /etc/systemd/user/<unit> -> /dev/null for every user, so
+# it needs no running user manager. An agent already running keeps going
+# until the next login.
+- name: ssh_agent | Linux | mask OpenSSH's user ssh-agent
+  when: ansible_system == 'Linux'
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    scope: global
+    masked: true
+  loop: "{{ ssh_agent_linux_units }}"
 
 - name: ssh_agent | macOS only
   when: ansible_system == 'Darwin'

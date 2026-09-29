@@ -25,7 +25,14 @@ nvidia_blacklist_conf_path: "/etc/modprobe.d/blacklist-msi-nvidia.conf"
 # dotfiles repo's nvidia-clock-lock.service uses "-lmc 1620,21002" (a
 # trailing-2 typo per PLAN.MD) -- do NOT use that value; it is not used
 # anywhere in this role.
-nvidia_lock_memory_clock: "1620,2100"
+#
+# The NixOS value "1620,2100" is NOT kept: on the RTX 4070 (driver 595)
+# the supported memory clocks are 405/810/5001/10251/10501 MHz, none of
+# which fall in 1620-2100, so the driver clamped memory to 5001 MHz even
+# under full load (half VRAM bandwidth -- RIFE interpolation dropped below
+# 60 fps). 5001,10501 keeps the anti-ramp floor and allows full speed.
+# Check with `nvidia-smi -q -d SUPPORTED_CLOCKS` after a GPU swap.
+nvidia_lock_memory_clock: "5001,10501"
 nvidia_lock_graphics_clock: "210,3105"
 nvidia_frequency_unit_path: "/etc/systemd/system/nvidia-frequency.service"
 nvidia_smi_bin: "/usr/bin/nvidia-smi"

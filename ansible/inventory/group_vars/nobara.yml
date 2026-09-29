@@ -112,9 +112,9 @@ dnf_packages:
   # Sourced by chezmoi's ~/.config/zsh/20-completion.zsh from /usr/share.
   # zsh-completions has no Fedora 43 package; zsh's own completions cover it.
   - zsh-autosuggestions
-  - kubectl
   - k9s
   - helm
+  - ansible
 
 # §2 rpmfusion. `roles/pkgs` enables the free+nonfree repos idempotently
 # before these are installed.
@@ -215,6 +215,7 @@ nix_profile_packages:
   - prettierd # no Fedora/terra package, no COPR
   - shellharden # no Fedora/terra package, no COPR
   - distrobox-tui # no Fedora/terra package, no COPR
+  - kubectl
 
 # Official upstream install scripts, run as the user by roles/pkgs
 # (tasks/upstream.yml). Each is skipped once its `creates` path exists; the
