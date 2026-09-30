@@ -69,21 +69,21 @@
       notify: "regenerate dracut initramfs"
 
     # --- clock-ramp workaround ---------------------------------------------
-    - name: "Clock lock | write nvidia-frequency.service unit"
-      ansible.builtin.template:
-        src: nvidia-frequency.service.j2
-        dest: "{{ nvidia_frequency_unit_path }}"
-        owner: root
-        group: root
-        mode: "0644"
-      register: _nvidia_frequency_unit
-      notify:
-        - "reload systemd units"
-        - "restart nvidia-frequency"
-
-    - name: "Clock lock | enable and start nvidia-frequency.service"
-      ansible.builtin.systemd_service:
-        name: nvidia-frequency.service
-        enabled: true
-        state: started
-        daemon_reload: "{{ _nvidia_frequency_unit.changed }}"
+#     - name: "Clock lock | write nvidia-frequency.service unit"
+#       ansible.builtin.template:
+#         src: nvidia-frequency.service.j2
+#         dest: "{{ nvidia_frequency_unit_path }}"
+#         owner: root
+#         group: root
+#         mode: "0644"
+#       register: _nvidia_frequency_unit
+#       notify:
+#         - "reload systemd units"
+#         - "restart nvidia-frequency"
+#
+#     - name: "Clock lock | enable and start nvidia-frequency.service"
+#       ansible.builtin.systemd_service:
+#         name: nvidia-frequency.service
+#         enabled: true
+#         state: started
+#         daemon_reload: "{{ _nvidia_frequency_unit.changed }}"
