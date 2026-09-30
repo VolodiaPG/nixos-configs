@@ -164,6 +164,18 @@
         mode: "0644"
       notify: "reload udev rules"
 
+    # --- HDMI surround profiles (see defaults/main.yml) ------------------
+    - name: "HDMI audio | don't cap HDMI PCMs to the ELD (static_hdmi_pcm)"
+      ansible.builtin.template:
+        src: modprobe-hdmi-audio.conf.j2
+        dest: "{{ audio_hdmi_modprobe_conf_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      # No handler: the option is read when the module loads, at boot.
+      # Reloading snd_hda_codec_hdmi, or restarting PipeWire to re-probe,
+      # would cut any playback in progress.
+
     # --- AirPlay firewall ports (pairs with raop-discover) ----------------
     - name: "Firewall | open AirPlay/mDNS UDP ports"
       ansible.posix.firewalld:

@@ -86,6 +86,20 @@ audio_bt_aac_bitrate: 320000
 # out of scope for this role; flagged as left undone.
 audio_usb_autosuspend_rules_path: "/etc/udev/rules.d/90-usb-audio-autosuspend.rules"
 
+# --- HDMI surround profiles ------------------------------------------
+# Not from hifi.nix; added for the Nobara msi. snd_hda_codec_hdmi caps each
+# HDMI PCM to the channels its sink's ELD advertises at that moment, and
+# PipeWire probes HDMI profiles only once, when it starts. NVIDIA also
+# reassigns HDMI PCM slots on hotplug. So when the Denon AVR is off, in
+# standby, or on another slot at login, its 5.1/7.1 profiles are missing
+# until PipeWire restarts, even after it advertises 8 channels.
+# static_hdmi_pcm=1 drops the cap, so every HDMI PCM probes with its
+# surround profiles. Stereo stays the default pick (higher profile
+# priority); surround is chosen in pavucontrol. Cost: the kernel no longer
+# rejects channel counts or rates a sink can't play, so a surround profile
+# or a high rate on a stereo-only monitor plays silence.
+audio_hdmi_modprobe_conf_path: "/etc/modprobe.d/hdmi-audio.conf"
+
 # --- AirPlay firewall ports (pairs with 50-raop-discover.conf) -----------
 # Only needed if the raop-discover module above is enabled.
 audio_firewall_udp_ports:

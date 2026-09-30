@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+# Don't cap HDMI PCMs to the channels/rates in the sink's current ELD.
+# PipeWire probes HDMI profiles once, at startup; with the cap, a receiver
+# that isn't advertising surround at that moment gets no 5.1/7.1 profile
+# until PipeWire restarts. See roles/audio/defaults/main.yml.
+options snd_hda_codec_hdmi static_hdmi_pcm=1
