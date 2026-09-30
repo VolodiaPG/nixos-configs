@@ -24,10 +24,12 @@ fi
   done
 }
 
-# No keychain: SSH keys come from the Bitwarden desktop agent (~/.zshenv).
-# keychain would start its own agent on Linux and export it over
-# SSH_AUTH_SOCK. On macOS it would try to ssh-add id_ed25519 into
-# Bitwarden's agent, which does not take added keys.
+# keychain: reuse one ssh-agent across shells and hold id_ed25519 unlocked.
+# On Linux this is what exports SSH_AUTH_SOCK; on macOS ~/.zshenv has already
+# pointed it at the per-user temp dir and keychain adopts that socket.
+if (( $+commands[keychain] )); then
+  eval "$(SHELL=zsh keychain --eval --quiet id_ed25519)"
+fi
 
 if [[ -o interactive ]]; then
   # NOT PORTED: the `theme-switcher -t tmux,kitty` call that used to live

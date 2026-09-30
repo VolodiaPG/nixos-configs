@@ -1,0 +1,122 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "diff_view_style": "unified",
+  "ui_font_weight": 400.0,
+  "buffer_line_height": "standard",
+  "buffer_font_weight": 400.0,
+  "ssh_connections": [
+    {
+      "host": "msi",
+      "username": "volodia",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/volodia/Documents/nixos-configs"
+          ]
+        },
+        {
+          "paths": [
+            "/home/volodia/Documents/sre"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "msi",
+      "args": [],
+      "projects": []
+    }
+  ],
+  "cli_default_open_behavior": "existing_window",
+  "format_on_save": "on",
+  "languages": {
+    "Nix": {
+      "language_servers": ["nixd", "!nil"],
+      "formatter": {
+        "external": {
+          "command": "nixfmt",
+        },
+      },
+    },
+    "Elixir": {
+      "language_servers": [
+        "!expert",
+        "!elixir-ls",
+        "dexter",
+        "!next-ls",
+        "!lexical",
+        "...",
+      ],
+    },
+    "EEx": {
+      "language_servers": [
+        "!expert",
+        "!elixir-ls",
+        "dexter",
+        "!next-ls",
+        "!lexical",
+        "...",
+      ],
+    },
+    "HEEx": {
+      "language_servers": [
+        "!expert",
+        "!elixir-ls",
+        "dexter",
+        "!next-ls",
+        "!lexical",
+        "...",
+      ],
+    },
+  },
+  "redact_private_values": true,
+  "edit_predictions": {
+    "ollama": {
+      "api_url": "http://localhost:11434",
+    },
+  },
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "opencode",
+      "model": "go/minimax-m2.7",
+      "enable_thinking": false,
+    },
+    "default_model": {
+      "provider": "lmstudio",
+      "model": "google/gemma-4-12b",
+      "enable_thinking": false,
+    },
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "language_models": {
+    "opencode": {
+      "show_free_models": true,
+      "show_go_models": true,
+    },
+  },
+  "proxy": "",
+  "ui_font_family": "Inter",
+  "buffer_font_family": "Comic Code Ligatures",
+  "icon_theme": "Material Icon Theme",
+  "terminal": {
+    "font_family": "Comic Code Ligatures",
+  },
+  "vim_mode": true,
+  "ui_font_size": 14.0,
+  "buffer_font_size": 14.0,
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Latte",
+    "dark": "Catppuccin Mocha",
+  },
+  "load_direnv": "shell_hook",
+}

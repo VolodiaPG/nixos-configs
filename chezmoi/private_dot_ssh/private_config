@@ -6,8 +6,18 @@
 # the FIRST value seen for each keyword, so the block below wins over the
 # second `Host *` for AddKeysToAgent / Compression / ForwardAgent.
 
-Include  ~/.ssh/config.d/*.conf 
- 
+Include ~/.ssh/config.d/*.conf
+
+# Alias for the gateway (not really needed, but convenient)
+Host *
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_ed25519
+    ForwardAgent yes
+    Compression yes
+    IgnoreUnknown UseKeychain
+    UseKeychain yes
+
+
 Host storagebox
     Hostname u593939.your-storagebox.de
     Port 23

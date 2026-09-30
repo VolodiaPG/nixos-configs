@@ -47,3 +47,13 @@ if command -v codegraph >/dev/null 2>&1; then
 else
   echo "claude-agent-tools: codegraph not on PATH, skipping MCP install" >&2
 fi
+
+# FreeCAD MCP server, user scope (~/.claude.json). `add-json` fails if the
+# server already exists, so remove first to stay idempotent.
+if command -v claude >/dev/null 2>&1 && command -v uvx >/dev/null 2>&1; then
+  claude mcp remove --scope user freecad >/dev/null 2>&1 || true
+  claude mcp add-json --scope user freecad \
+    '{"command":"uvx","args":["freecad-mcp"]}'
+else
+  echo "claude-agent-tools: claude or uvx not on PATH, skipping freecad MCP" >&2
+fi
