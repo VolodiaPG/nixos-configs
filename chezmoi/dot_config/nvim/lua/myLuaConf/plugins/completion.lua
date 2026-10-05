@@ -29,8 +29,12 @@ return {
       },
     },
     event = { 'InsertEnter', 'CmdlineEnter' },
+    before = function(_)
+      -- blink.cmp v2 requires blink.lib on the runtimepath
+      vim.cmd.packadd 'blink.lib'
+    end,
     after = function(_)
-      -- require('blink.cmp').build():wait(60000)
+      require('blink.cmp').build():pwait()
       require('blink.cmp').setup {
         keymap = {
           preset = 'default',
@@ -112,6 +116,17 @@ return {
             },
             snippets = {
               score_offset = 40,
+            },
+            omni = {
+              -- skip when omnifunc names a vimscript function that isn't loaded
+              -- (e.g. set by a ftplugin before its plugin is packadd'ed)
+              enabled = function()
+                local fn = vim.bo.omnifunc
+                if fn == '' or fn == 'v:lua.vim.lsp.omnifunc' then
+                  return false
+                end
+                return fn:match '^v:lua%.' ~= nil or vim.fn.exists('*' .. fn) == 1
+              end,
             },
             cmp_cmdline = {
               name = 'cmp_cmdline',
