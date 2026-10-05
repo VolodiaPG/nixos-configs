@@ -8,7 +8,8 @@ alias j='just'
 alias jl='just --list'
 alias journalctl-10min="journalctl --user -xe -b --since '10 min ago'"
 alias ll='ls -l'
-alias n='vim'
+alias n='nvim'
+alias k='kubectl'
 
 # NOT PORTED: `oc` and `opencode-agents`. opencode is dropped in PLAN.MD §0;
 # chezmoi/dot_config/opencode/ was deleted in commit bec7e34, so both aliases
