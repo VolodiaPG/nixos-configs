@@ -112,7 +112,7 @@
   },
   "vim_mode": true,
   "ui_font_size": 14.0,
-  "buffer_font_size": 14.0,
+  "buffer_font_size": 13.0,
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
