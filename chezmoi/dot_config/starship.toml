@@ -1,5 +1,5 @@
 add_newline = false
-format = "$directory$git_branch$git_status$cmd_duration$character"
+format = "$directory$git_branch$git_status$kubernetes$cmd_duration$character"
 palette = "catppuccin_mocha"
 scan_timeout = 10
 
@@ -9,6 +9,10 @@ success_symbol = "[➜](green)"
 
 [directory]
 format = "[$path]($style) "
+
+[kubernetes]
+format = "[$symbol$namespace]($style) "
+disabled = false
 
 [palettes.catppuccin_mocha]
 base = "#1e1e2e"
