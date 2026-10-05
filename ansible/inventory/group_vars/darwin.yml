@@ -76,6 +76,7 @@ brew_formulae:
   - gopls
   - rust
   - ruff
+  - blink
   # rustfmt is deliberately absent: Homebrew lists it as an *oldname* of the
   # `rust` formula, not a formula of its own, so declaring both makes
   # community.general.homebrew fail with "Package names for rust are missing
@@ -146,6 +147,7 @@ brew_formulae:
 # (added by §0). The map's §10a table lists 13, but qbittorrent is one of
 # them and is unavailable on macOS (see below), so 12 are installable.
 brew_casks:
+  - font-fontawesome
   - karabiner-elements
   - tg-pro
   - bettermouse
