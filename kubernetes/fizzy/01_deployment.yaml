@@ -5,6 +5,9 @@ metadata:
   namespace: fizzy
 spec:
   replicas: 1
+  # Downtime acceptable; RWO volume can't be mounted by two pods at once
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: fizzy
@@ -14,8 +17,8 @@ spec:
         app: fizzy
     spec:
       containers:
-        - name: commafeed
-          image: ghcr.io/basecamp/fizzy:main
+        - name: fizzy
+          image: ghcr.io/basecamp/fizzy:latest@sha256:a58edf0c0971430c5f36126643393fe576f6730e7c6631e59a58b1fd47917c75
           ports:
             - containerPort: 80
           volumeMounts:
@@ -23,10 +26,11 @@ spec:
               mountPath: /rails/storage
           resources:
             requests:
-              memory: 512Mi
-              cpu: 250m
+              memory: 600Mi
+              cpu: 400m
             limits:
-              memory: 1Gi
+              memory: 900Mi
+              cpu: 1000m
           env:
             - name: BASE_URL
               value: https://fizzy.goblin-alewife.ts.net
@@ -38,12 +42,24 @@ spec:
               value: smtp.gmail.com
             - name: SMTP_USERNAME
               value: bot.volodia@gmail.com
+            # Fewer glibc malloc arenas: less memory fragmentation
             - name: MALLOC_ARENA_MAX
-              value: "2"
+              value: "1"
+            # 1 forked workers: low memory and decouples processes
             - name: WEB_CONCURRENCY
-              value: "2"
+              value: "1"
+            # Threads are enough for 1-5 users and cheap
+            - name: RAILS_MAX_THREADS
+              value: "5"
+            # Run Solid Queue supervisor inside Puma: no separate jobs process
+            - name: SOLID_QUEUE_IN_PUMA
+              value: "true"
+            # Single job-processing thread/process
             - name: JOB_CONCURRENCY
-              value: "2"
+              value: "1"
+            # Enables faster Ruby with JIT
+            - name: RUBY_YJIT_ENABLE
+              value: "1"
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
