@@ -1,0 +1,7 @@
+---
+freecad_mcp_repo: "git@github.com:neka-nat/freecad-mcp.git"
+# FreeCAD's per-user data dir. Its Mod/ subdir is scanned for workbenches.
+freecad_data_dir: "{{ home_dir }}/{{ 'Library/Application Support/FreeCAD' if ansible_system == 'Darwin' else '.local/share/FreeCAD' }}"
+# The repo is not itself a workbench: the addon is its addon/FreeCADMCP
+# subdir, so clone outside Mod/ and link that subdir in.
+freecad_mcp_src_dir: "{{ freecad_data_dir }}/freecad-mcp"

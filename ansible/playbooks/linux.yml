@@ -21,6 +21,8 @@
     - audio
     - virtualization
     - desktop_linux
+    # After pkgs (freecad from dnf).
+    - freecad_mcp
     - kde
     - ssh_agent
     - nvidia

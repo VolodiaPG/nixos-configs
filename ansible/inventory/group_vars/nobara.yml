@@ -33,6 +33,7 @@ dnf_packages:
   - fail2ban
   - filezilla
   - firewalld # §1b — replaces networking.firewall, task 4.4
+  - freecad
   - fzf
   - gamemode # Nobara likely already ships this — verify before applying (task 4.6)
   - gcc

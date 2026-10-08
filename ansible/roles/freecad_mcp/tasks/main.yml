@@ -1,0 +1,19 @@
+---
+- name: freecad_mcp | ensure Mod directory exists
+  ansible.builtin.file:
+    path: "{{ freecad_data_dir }}/Mod"
+    state: directory
+    mode: "0755"
+
+- name: freecad_mcp | clone/update addon repo
+  ansible.builtin.git:
+    repo: "{{ freecad_mcp_repo }}"
+    dest: "{{ freecad_mcp_src_dir }}"
+    depth: 1
+    version: main
+
+- name: freecad_mcp | link addon into Mod
+  ansible.builtin.file:
+    src: "{{ freecad_mcp_src_dir }}/addon/FreeCADMCP"
+    dest: "{{ freecad_data_dir }}/Mod/FreeCADMCP"
+    state: link

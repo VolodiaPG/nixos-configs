@@ -21,6 +21,8 @@
     # After homebrew (node, claude-code@latest).
     - claude_wrapper
     - pkgs
+    # After homebrew (freecad cask).
+    - freecad_mcp
     - shell
     - darwin_defaults
     - secrets
