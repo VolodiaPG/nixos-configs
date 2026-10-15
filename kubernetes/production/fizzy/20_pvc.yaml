@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: commafeed-pv
+  name: fizzy-pv
+  namespace: production
 spec:
   capacity:
     storage: 10Gi
@@ -11,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: /home/volodia/Documents/volodia/commafeed/data
+    path: /home/volodia/Documents/services/fizzy
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -20,11 +21,15 @@ spec:
               operator: In
               values:
                 - home-server
+  claimRef:
+    namespace: production
+    name: fizzy-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: commafeed-pvc
+  name: fizzy-pvc
+  namespace: production
 spec:
   accessModes:
     - ReadWriteOnce

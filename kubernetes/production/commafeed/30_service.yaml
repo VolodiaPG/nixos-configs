@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fizzy-service
-  namespace: fizzy
+  name: commafeed-service
+  namespace: production
 spec:
   selector:
-    app: fizzy
+    app: commafeed
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 8082
   type: ClusterIP

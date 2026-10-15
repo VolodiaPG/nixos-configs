@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fizzy-network-policy
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: fizzy
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "tailscale-operator"
+          podSelector:
+            matchLabels:
+              "tailscale.com/parent-resource": "ingress-proxies"
+      ports:
+        - protocol: TCP
+          port: 80

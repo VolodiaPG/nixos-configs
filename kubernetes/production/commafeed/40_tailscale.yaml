@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: fizzy-ingress
-  namespace: fizzy
+  name: commafeed-ingress
+  namespace: production
   annotations:
     tailscale.com/proxy-group: ingress-proxies
     tailscale.com/tags: tag:k8s
@@ -10,9 +10,9 @@ spec:
   ingressClassName: tailscale
   tls:
     - hosts:
-        - fizzy
+        - rss
   defaultBackend:
     service:
-      name: fizzy-service
+      name: commafeed-service
       port:
         number: 80

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fizzy
-  namespace: fizzy
+  namespace: production
 spec:
   replicas: 1
   # Downtime acceptable; RWO volume can't be mounted by two pods at once
