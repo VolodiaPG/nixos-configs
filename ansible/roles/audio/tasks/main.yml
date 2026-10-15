@@ -164,17 +164,14 @@
         mode: "0644"
       notify: "reload udev rules"
 
-    # --- HDMI surround profiles (see defaults/main.yml) ------------------
-    - name: "HDMI audio | don't cap HDMI PCMs to the ELD (static_hdmi_pcm)"
-      ansible.builtin.template:
-        src: modprobe-hdmi-audio.conf.j2
-        dest: "{{ audio_hdmi_modprobe_conf_path }}"
-        owner: root
-        group: root
-        mode: "0644"
-      # No handler: the option is read when the module loads, at boot.
-      # Reloading snd_hda_codec_hdmi, or restarting PipeWire to re-probe,
-      # would cut any playback in progress.
+    # --- HDMI surround profiles: removed --------------------------------
+    # static_hdmi_pcm=1 exposed 5.1/7.1 profiles on stereo-only HDMI sinks;
+    # picking one there dropped the centre channel and made dialogue sound
+    # distant. Delete the drop-in from hosts that still have it.
+    - name: "HDMI audio | remove static_hdmi_pcm modprobe drop-in"
+      ansible.builtin.file:
+        path: /etc/modprobe.d/hdmi-audio.conf
+        state: absent
 
     # --- AirPlay firewall ports (pairs with raop-discover) ----------------
     - name: "Firewall | open AirPlay/mDNS UDP ports"
