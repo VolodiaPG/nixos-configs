@@ -103,7 +103,7 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {
-      "rev": "f3061339b8eaf9fda873600bc425b8d2d8502533",
+      "rev": "48b9ebc4322c7dd9b8f99f38b2372901079bd67f",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
     },
     "nvim-treesitter-textobjects": {
@@ -167,7 +167,7 @@
       "src": "https://github.com/christoomey/vim-tmux-navigator"
     },
     "vimtex": {
-      "rev": "bbfa1501287b65e8803d5cc1007db2c2351c4453",
+      "rev": "77df16780a8a4b418c651f3a4300d59bc2dd3603",
       "src": "https://github.com/lervag/vimtex"
     },
     "which-key.nvim": {
