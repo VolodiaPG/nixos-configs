@@ -20,4 +20,4 @@ spec:
               "tailscale.com/parent-resource": "ingress-proxies"
       ports:
         - protocol: TCP
-          port: 80
+          port: 8082
