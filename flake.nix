@@ -97,7 +97,7 @@
       "https://cache.numtide.com?priority=20"
       # "https://cache.flakehub.com?priority=20"
       "https://cache.nixos-cuda.org?priority=10"
-      "https://attic.xuyh0120.win/lantian"
+      #"https://attic.xuyh0120.win/lantian"
       "https://install.determinate.systems"
     ];
     extra-trusted-public-keys = [
@@ -107,7 +107,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       # "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+      #"lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       "determinate.systems:2f5mBvfSEjPpdnsbvY+JnsrWvSAUVM+HxFpYr0WXB44="
     ];
   };
