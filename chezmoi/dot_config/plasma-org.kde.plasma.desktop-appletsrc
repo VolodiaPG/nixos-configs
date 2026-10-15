@@ -7,6 +7,7 @@ RightButton;NoModifier=org.kde.contextmenu
 
 [Containments][1]
 ItemGeometries-1920x1080=
+ItemGeometries-2580x1080=
 ItemGeometries-2867x1200=
 ItemGeometries-3440x1440=
 ItemGeometriesHorizontal=
@@ -54,6 +55,9 @@ plugin=org.kde.plasma.pager
 [Containments][170][Applets][173]
 immutability=1
 plugin=org.kde.plasma.icontasks
+
+[Containments][170][Applets][173][Configuration][General]
+launchers=applications:systemsettings.desktop,applications:org.dnf.AppCenter.desktop,preferred://filemanager,preferred://browser,applications:pavucontrol-qt.desktop
 
 [Containments][170][Applets][174]
 immutability=1
@@ -137,6 +141,10 @@ plugin=org.kde.plasma.brightness
 immutability=1
 plugin=org.kde.plasma.battery
 
+[Containments][170][Applets][175][Applets][194]
+immutability=1
+plugin=org.kde.plasma.mediacontroller
+
 [Containments][170][Applets][175][General]
 extraItems=org.kde.plasma.vault,org.kde.kdeconnect,org.kde.plasma.volume,org.kde.plasma.keyboardindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.printmanager,org.kde.plasma.cameraindicator,org.kde.plasma.networkmanagement,org.kde.plasma.notifications,org.kde.plasma.clipboard,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.manage-inputmethod,org.kde.plasma.bluetooth,org.kde.kscreen,org.kde.plasma.weather,org.kde.plasma.brightness,org.kde.plasma.devicenotifier
 knownItems=org.kde.plasma.vault,org.kde.kdeconnect,org.kde.plasma.volume,org.kde.plasma.keyboardindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.printmanager,org.kde.plasma.cameraindicator,org.kde.plasma.networkmanagement,org.kde.plasma.notifications,org.kde.plasma.clipboard,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.manage-inputmethod,org.kde.plasma.bluetooth,org.kde.kscreen,org.kde.plasma.weather,org.kde.plasma.brightness,org.kde.plasma.devicenotifier
@@ -146,7 +154,7 @@ immutability=1
 plugin=org.kde.plasma.digitalclock
 
 [Containments][170][Applets][190][Configuration]
-popupHeight=400
+popupHeight=451
 popupWidth=560
 
 [Containments][170][Applets][191]
