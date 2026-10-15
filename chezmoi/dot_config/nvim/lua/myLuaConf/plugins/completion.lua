@@ -1,7 +1,7 @@
 -- Completion configuration using blink.cmp
 return {
   {
-    'luasnip',
+    'LuaSnip',
     on_plugin = { 'blink.cmp' },
     after = function(_)
       local luasnip = require('luasnip').config.setup {}

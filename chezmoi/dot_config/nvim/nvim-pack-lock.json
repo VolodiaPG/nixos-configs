@@ -9,7 +9,7 @@
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
     "bash-language-server": {
-      "rev": "14fc2da2610dad02ac6453c3bb5beb9a5e01185a",
+      "rev": "2ef44ee6abc0fbf3a2d551c1ee17eb30efa0011e",
       "src": "https://github.com/bash-lsp/bash-language-server"
     },
     "blink.cmp": {
@@ -33,7 +33,7 @@
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "851a051e2bd2caba97e23314c68d69f1b1cf5d19",
+      "rev": "fd780920613e541cbdfac41bf711583ed49f9249",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "harpoon": {
@@ -67,7 +67,7 @@
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "lze": {
-      "rev": "5e7f95df603250ab21c13ec47c9ee39c66d1292a",
+      "rev": "c0f881bab1091bab827d2b966fe1dbdfa32809ad",
       "src": "https://github.com/BirdeeHub/lze"
     },
     "lzextras": {
@@ -99,11 +99,11 @@
       "src": "https://github.com/kylechui/nvim-surround"
     },
     "nvim-treesitter": {
-      "rev": "e289100ff98969e118c702199d88b764ce9e7fdf",
+      "rev": "ca581c3436fc2b236847f5b739ebc263739e5ca6",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {
-      "rev": "48b9ebc4322c7dd9b8f99f38b2372901079bd67f",
+      "rev": "8decd73460d26ef0a0befb745d022dd1fc2c38b8",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
     },
     "nvim-treesitter-textobjects": {
@@ -115,11 +115,11 @@
       "src": "https://github.com/JoosepAlviste/nvim-ts-context-commentstring"
     },
     "nvim-web-devicons": {
-      "rev": "58447c1fca354bbf184425e4a8d01deecbd6f3c4",
+      "rev": "ec309a0eaff6ea967e58c275996155ab5c16938d",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
     "opencode.nvim": {
-      "rev": "06770e2e3618b82703e3e7af1f2d5dc67bde0002",
+      "rev": "4d3580a0ebb060cfdd41fa93784a046706a728cf",
       "src": "https://github.com/nickjvandyke/opencode.nvim"
     },
     "plenary.nvim": {
@@ -167,7 +167,7 @@
       "src": "https://github.com/christoomey/vim-tmux-navigator"
     },
     "vimtex": {
-      "rev": "77df16780a8a4b418c651f3a4300d59bc2dd3603",
+      "rev": "98615cefc441aaa5721c144ecfeacddcdf78816d",
       "src": "https://github.com/lervag/vimtex"
     },
     "which-key.nvim": {
