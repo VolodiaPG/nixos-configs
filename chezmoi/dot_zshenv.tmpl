@@ -23,7 +23,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_BIN_HOME="$HOME/.local/bin"
 
-export EDITOR="vim"
+export EDITOR="nvim"
 
 # ── lazygit ──────────────────────────────────────────────────────────────
 # catppuccin-theme.nix set this so lazygit reads our config *and* the theme
@@ -32,7 +32,8 @@ export EDITOR="vim"
 #
 # NOTE (carried-forward gap, PLAN.MD phase 6): nothing owns the theme.yml
 # symlink yet. Until something seeds it, lazygit errors out on a fresh host.
-export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
+# export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml,$XDG_CONFIG_HOME/lazygit/theme.yml"
+export LG_CONFIG_FILE="$XDG_CONFIG_HOME/lazygit/config.yml"
 
 # ── catppuccin assets ────────────────────────────────────────────────────
 # These two came from the upstream catppuccin Home Manager module
