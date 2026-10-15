@@ -7,8 +7,9 @@ vo=gpu-next
 input-ipc-server=/tmp/mpvsocket
 hwdec=auto-copy
 
-ao=alsa
-#ao=pipewire
+# ao=alsa
+# ao=pipewire
+ao=pulse
 
 # SVP's bundled mpv has no ao=pipewire, so it plays through pipewire-pulse.
 # mpv's default pulse-latency-hacks=yes derives the delay from the stream's
@@ -22,7 +23,7 @@ pulse-latency-hacks=no
 hwdec=auto-safe
 {{- end }}
 
-audio-channels=auto
+#audio-channels=auto
 
 hdr-compute-peak=no
 
