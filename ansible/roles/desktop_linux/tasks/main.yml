@@ -22,5 +22,8 @@
     - name: "i2c | include i2c/ddcutil tasks"
       ansible.builtin.include_tasks: i2c.yml
 
+    - name: "Web devices | include WebHID/WebUSB udev tasks"
+      ansible.builtin.include_tasks: webdevices.yml
+
     - name: "Firewall | include firewalld tasks"
       ansible.builtin.include_tasks: firewall.yml

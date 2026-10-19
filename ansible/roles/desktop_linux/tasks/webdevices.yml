@@ -1,0 +1,32 @@
+---
+# WebHID / WebUSB access for browsers (Brave flatpak, Chromium, ...).
+#
+# The Brave flatpak already has `devices=all`, so the sandbox is not what
+# blocks it: the host device nodes are. Chromium-based browsers open
+# /dev/hidraw* (WebHID) and /dev/bus/usb/BBB/DDD (WebUSB) directly, and
+# systemd's 70-uaccess.rules only tags a curated list of devices (security
+# keys, some gamepads...). Everything else stays root:root 0600/0664, so
+# e.g. the ZMK keyboard (ZMK Studio) and the Qudelix DAC web app could not
+# be opened while the Keychron worked only because 60-openrgb.rules happens
+# to tag it.
+#
+# Tag every hidraw node and USB device node with `uaccess`, so logind
+# grants an ACL to the user on the active local seat only (not a group, not
+# remote sessions). The browser still asks for per-site permission before
+# a page can talk to a device. Must sort before 73-seat-late.rules, which
+# is where the uaccess tag is turned into an ACL.
+
+- name: "Web devices | udev rule granting uaccess to hidraw and USB devices"
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/70-browser-device-access.rules
+    content: |
+      # Ansible managed — roles/desktop_linux/tasks/webdevices.yml
+      # WebHID: raw HID nodes
+      SUBSYSTEM=="hidraw", TAG+="uaccess"
+      # WebUSB: raw USB device nodes (not interfaces)
+      SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", TAG+="uaccess"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload udev rules
