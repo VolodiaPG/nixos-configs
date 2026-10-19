@@ -64,3 +64,9 @@ map kitty_mod+minus change_font_size all -2.0
 map kitty_mod+right move_tab_forward
 map kitty_mod+t new_tab_with_cwd
 map kitty_mod+up move_window_forward
+
+# Ctrl+Backspace -> delete previous word (bash/zsh)
+map ctrl+backspace send_text all \x17
+
+# Alt+Backspace -> delete previous word (also common)
+map alt+backspace send_text all \x1b\x7f
