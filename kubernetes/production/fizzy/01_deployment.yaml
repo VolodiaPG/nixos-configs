@@ -26,10 +26,10 @@ spec:
               mountPath: /rails/storage
           resources:
             requests:
-              memory: 600Mi
+              memory: 200Mi
               cpu: 400m
             limits:
-              memory: 900Mi
+              memory: 700Mi
               cpu: 1000m
           env:
             - name: BASE_URL
@@ -44,19 +44,21 @@ spec:
               value: bot.volodia@gmail.com
             # Fewer glibc malloc arenas: less memory fragmentation
             - name: MALLOC_ARENA_MAX
-              value: "1"
+              value: "2"
             # 1 forked workers: low memory and decouples processes
             - name: WEB_CONCURRENCY
-              value: "1"
+              value: "2"
+            - name: RAILS_ENV
+              value: production
             # Threads are enough for 1-5 users and cheap
             - name: RAILS_MAX_THREADS
-              value: "5"
+              value: "2"
             # Run Solid Queue supervisor inside Puma: no separate jobs process
             - name: SOLID_QUEUE_IN_PUMA
-              value: "true"
+              value: "false"
             # Single job-processing thread/process
             - name: JOB_CONCURRENCY
-              value: "1"
+              value: "2"
             # Enables faster Ruby with JIT
             - name: RUBY_YJIT_ENABLE
               value: "1"

@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fussionrss-data
+  namespace: development
+  labels:
+    app: fusionrss
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /data/fusionrss
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - home-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fusionrss-data
+  namespace: development
+  labels:
+    app: fusionrss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fusionrss
+  namespace: development
+  labels:
+    app: fusionrss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fusionrss
+  template:
+    metadata:
+      labels:
+        app: fusionrss
+    spec:
+      containers:
+        - name: fusionrss
+          image: ghcr.io/0x2e/fusion:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: 10Mi
+              cpu: 10m
+            limits:
+              memory: 50Mi
+              cpu: 500m
+          env:
+            - name: FUSION_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fusionrss-env
+                  key: fusion_password
+
+            # OIDC Configuration (optional, enables SSO login when issuer is set)
+            # OIDC provider URL (e.g., https://auth.example.com/realms/main)
+            - name: FUSION_OIDC_ISSUER
+              value: "https://keycloak.goblin-alewife.ts.net/realms/master"
+
+            # OAuth2 client ID and secret from your OIDC provider
+            - name: FUSION_OIDC_CLIENT_ID
+              value: "fusionrss"
+
+            - name: FUSION_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: fusionrss-env
+                  key: fusion_oidc_client_secret
+
+            # Callback URL (required when OIDC issuer is configured)
+            - name: FUSION_OIDC_REDIRECT_URI
+              value: "http://home-server:30002/api/oidc/callback"
+
+          volumeMounts:
+            - name: fusionrss-data
+              mountPath: /data
+      volumes:
+        - name: fusionrss-data
+          persistentVolumeClaim:
+            claimName: fusionrss-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fusionrss-service
+  namespace: development
+spec:
+  selector:
+    app: fusionrss
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 80
+      nodePort: 30002
+  type: NodePort

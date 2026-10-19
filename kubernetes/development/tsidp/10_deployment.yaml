@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: idp-data
+  namespace: development
+  labels:
+    app: idp
+spec:
+  capacity:
+    storage: 200Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /data/tsidp
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - home-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: idp
+  name: idp-data
+  namespace: development
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 200Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: idp
+  namespace: development
+  labels:
+    app: idp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: idp
+  template:
+    metadata:
+      labels:
+        app: idp
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: idp
+          image: ghcr.io/tailscale/tsidp:latest
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 1000m
+              memory: 200Mi
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: tsidp-data
+              mountPath: /data
+          env:
+            - name: TS_HOSTNAME
+              value: idp
+            - name: TAILSCALE_USE_WIP_CODE
+              value: "1"
+            - name: TS_STATE_DIR
+              value: /data
+            - name: TS_HOSTNAME
+              value: idp
+            - name: TSIDP_ENABLE_STS
+              value: "1"
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tsidp-env
+                  key: ts_authkey # Is an oauth token
+            - name: TS_ADVERTISE_TAGS
+              value: "tag:tsidp"
+
+      volumes:
+        - name: tsidp-data
+          persistentVolumeClaim:
+            claimName: idp-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: idp
+  namespace: development
+  labels:
+    app: idp
+  annotations:
+    tailscale.com/tailnet-fqdn: "idp.goblin-alewife.ts.net"
+    tailscale.com/proxy-group: "egress-proxies"
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - port: 443
+      protocol: TCP
+      name: https

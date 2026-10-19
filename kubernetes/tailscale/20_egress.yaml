@@ -1,0 +1,21 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: egress-proxies
+spec:
+  type: egress
+  replicas: 1
+  tags:
+    - tag:k8s
+---
+# Need to change the coredns config to use the new nameserver
+apiVersion: tailscale.com/v1alpha1
+kind: DNSConfig
+metadata:
+  name: ts-dns
+spec:
+  nameserver:
+    image:
+      repo: tailscale/k8s-nameserver
+      tag: unstable
