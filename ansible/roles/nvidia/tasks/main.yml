@@ -5,9 +5,11 @@
 # from configurations/nixos/msi/configuration.nix: the nouveau/iTCO_wdt
 # blacklist and the nvidia-frequency clock-ramp workaround.
 #
+# nvidia-container-toolkit IS ported (see "Container toolkit" below).
+#
 # NOT ported (from modules/nixos/nvidia.nix): cudaSupport/CUDA nixpkgs
-# variant, virtualisation.docker CDI settings, nvidia-container-toolkit,
-# hardware.graphics extraPackages (vaapi/vdpau/mesa -- those are Nobara/
+# variant, virtualisation.docker CDI settings (docker >= 28 enables CDI by
+# default), hardware.graphics extraPackages (vaapi/vdpau/mesa -- those are Nobara/
 # Fedora graphics-stack defaults, not msi deltas). CUDA in particular was
 # grepped for across the whole Nix tree before dropping it: the only two
 # consumers found were
@@ -87,3 +89,30 @@
         enabled: true
         state: started
         daemon_reload: "{{ _nvidia_frequency_unit.changed }}"
+
+    # --- nvidia-container-toolkit (CDI) -------------------------------------
+    # Not in Fedora/Nobara repos; installed from NVIDIA's own repo. The RPM
+    # ships nvidia-cdi-refresh.{path,service}, the equivalent of NixOS's
+    # nvidia-container-toolkit-cdi-generator: it regenerates
+    # /var/run/cdi/nvidia.yaml on boot and on driver change.
+    # Usage: docker run --device=nvidia.com/gpu=all ...
+    - name: "Container toolkit | NVIDIA repo"
+      ansible.builtin.yum_repository:
+        name: nvidia-container-toolkit
+        description: NVIDIA Container Toolkit
+        baseurl: "{{ nvidia_container_toolkit_repo_baseurl }}"
+        gpgcheck: true
+        gpgkey: "{{ nvidia_container_toolkit_repo_gpgkey }}"
+        repo_gpgcheck: false
+        enabled: true
+
+    - name: "Container toolkit | install nvidia-container-toolkit"
+      ansible.builtin.dnf:
+        name: nvidia-container-toolkit
+        state: present
+
+    - name: "Container toolkit | enable CDI spec refresh"
+      ansible.builtin.systemd_service:
+        name: nvidia-cdi-refresh.path
+        enabled: true
+        state: started

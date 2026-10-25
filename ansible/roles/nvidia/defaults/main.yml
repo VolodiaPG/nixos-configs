@@ -6,8 +6,8 @@
 # 4.5). Nobara's NVIDIA edition ships the proprietary driver already, so
 # this role installs no driver -- only the msi-specific remainder:
 # nouveau/iTCO_wdt blacklisting and the nvidia-frequency clock-ramp
-# workaround. modules/nixos/nvidia.nix's CUDA/docker-CDI/nvidia-container-
-# toolkit content is intentionally NOT ported -- see the role's tasks/
+# workaround. modules/nixos/nvidia.nix's CUDA/docker-CDI content is
+# intentionally NOT ported (nvidia-container-toolkit is) -- see the role's tasks/
 # main.yml header and the report for the grep that confirmed nothing on
 # msi still needs CUDA.
 
@@ -36,3 +36,7 @@ nvidia_lock_memory_clock: "5001,10501"
 nvidia_lock_graphics_clock: "210,3105"
 nvidia_frequency_unit_path: "/etc/systemd/system/nvidia-frequency.service"
 nvidia_smi_bin: "/usr/bin/nvidia-smi"
+
+# --- nvidia-container-toolkit ---------------------------------------
+nvidia_container_toolkit_repo_baseurl: "https://nvidia.github.io/libnvidia-container/stable/rpm/$basearch"
+nvidia_container_toolkit_repo_gpgkey: "https://nvidia.github.io/libnvidia-container/gpgkey"
