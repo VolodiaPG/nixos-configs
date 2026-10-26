@@ -58,6 +58,7 @@ in
         "/data/syncthing"
         "/data/immich"
         "/home/${me.username}/Documents"
+        "/data/backups"
       ];
       user = me.hetzner-user;
       passwordFile = config.age.secrets.hetzner-token.path;
