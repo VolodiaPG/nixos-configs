@@ -1,0 +1,53 @@
+# Daily logical dump to the host; /data/backups is included in the restic backup.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: freshrss-database-dump
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  schedule: "0 0 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+          restartPolicy: OnFailure
+          containers:
+            - name: dump
+              image: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
+              command:
+                - sh
+                - -ec
+                - |
+                  pg_dump --format=custom --file=/backup/freshrss-$(date +%F).dump
+                  find /backup -name 'freshrss-*.dump' -mtime +7 -delete
+              env:
+                - name: PGHOST
+                  value: freshrss-database-rw
+                - name: PGDATABASE
+                  value: freshrss
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: freshrss-database-app
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: freshrss-database-app
+                      key: password
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: freshrss-backup

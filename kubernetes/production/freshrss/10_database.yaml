@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: freshrss-database
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  instances: 1
+
+  storage:
+    size: 1Gi
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
+
+  resources:
+    requests:
+      memory: 50Mi
+      cpu: 20m
+    limits:
+      memory: 100Mi
+      cpu: 500m
+
+  bootstrap:
+    initdb:
+      database: freshrss
+      owner: freshrss

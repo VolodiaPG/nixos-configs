@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: idp-data
-  namespace: development
+  namespace: production
   labels:
     app: idp
 spec:
@@ -31,7 +31,7 @@ metadata:
   labels:
     app: idp
   name: idp-data
-  namespace: development
+  namespace: production
 spec:
   accessModes:
     - ReadWriteOnce
@@ -44,7 +44,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: idp
-  namespace: development
+  namespace: production
   labels:
     app: idp
 spec:
@@ -106,7 +106,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: idp
-  namespace: development
+  namespace: production
   labels:
     app: idp
   annotations:
@@ -119,3 +119,27 @@ spec:
     - port: 443
       protocol: TCP
       name: https
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: idp
+  namespace: production
+  labels:
+    app: idp
+  annotations:
+    description: "Allow access to the tailnet"
+spec:
+  podSelector:
+    matchLabels:
+      app: idp
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 100.64.0.0/10
+      ports:
+        - protocol: TCP
+          port: 443

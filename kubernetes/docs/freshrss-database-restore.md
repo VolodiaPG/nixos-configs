@@ -84,15 +84,15 @@ first start and afterwards uses the password saved in `data/config.php` on the
 1. Compare the secret with `config.php`:
 
    ```sh
-   kubectl -n development get secret freshrss-database-app -o jsonpath='{.data.password}' | base64 -d; echo
-   kubectl -n development exec deploy/freshrss -- grep -n "'password'" /var/www/FreshRSS/data/config.php
+   kubectl get secret freshrss-database-app -o jsonpath='{.data.password}' | base64 -d; echo
+   kubectl exec deploy/freshrss -- grep -n "'password'" /var/www/FreshRSS/data/config.php
    ```
 
 2. If they differ, update `config.php` and restart:
 
    ```sh
-   kubectl -n development exec -it deploy/freshrss -- sed -i "s/'password' => '[^']*'/'password' => 'NEW_PASSWORD'/" /var/www/FreshRSS/data/config.php
-   kubectl -n development rollout restart deploy/freshrss
+   kubectl exec -it deploy/freshrss -- sed -i "s/'password' => '[^']*'/'password' => 'NEW_PASSWORD'/" /var/www/FreshRSS/data/config.php
+   kubectl rollout restart deploy/freshrss
    ```
 
    If they match, check the role exists in Postgres:

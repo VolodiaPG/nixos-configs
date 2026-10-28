@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freshrss
+  namespace: production
+  labels:
+    app: freshrss
+    oidc: keycloak
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freshrss
+  template:
+    metadata:
+      labels:
+        app: freshrss
+        oidc: keycloak
+    spec:
+      containers:
+        - name: freshrss
+          image: freshrss/freshrss:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: 180Mi
+              cpu: 10m
+            limits:
+              memory: 400Mi
+              cpu: 1000m
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/FreshRSS/data
+              subPath: data
+            - name: data
+              mountPath: /var/www/FreshRSS/extensions
+              subPath: extensions
+          envFrom:
+            - configMapRef:
+                name: freshrss
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: freshrss-database-app
+                  key: username
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: freshrss-database-app
+                  key: password
+
+            # Automatic install on first start (ignored once data/config.php exists).
+            # Authentication is delegated to the OIDC provider via HTTP auth.
+            - name: FRESHRSS_INSTALL
+              value: >-
+                --api-enabled
+                --base-url https://rss.goblin-alewife.ts.net
+                --db-type pgsql
+                --db-host freshrss-database-rw:5432
+                --db-base freshrss
+                --db-user $(DB_USER)
+                --db-password $(DB_PASSWORD)
+                --auth-type http_auth
+                --default-user admin
+                --language en
+
+            # Must match the preferred_username of the initial OIDC user
+            - name: FRESHRSS_USER
+              value: >-
+                --user admin
+                --language en
+
+            # OIDC Configuration (handled by Apache mod_auth_openidc)
+            - name: OIDC_ENABLED
+              value: "1"
+
+            - name: OIDC_PROVIDER_METADATA_URL
+              value: "https://keycloak.goblin-alewife.ts.net/realms/master/.well-known/openid-configuration"
+
+            - name: OIDC_CLIENT_ID
+              value: "freshrss"
+
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: freshrss-env
+                  key: oidc_client_secret
+
+            - name: OIDC_CLIENT_CRYPTO_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: freshrss-env
+                  key: oidc_crypto_key
+
+            # preferred_username can exceed FreshRSS' 38-char username limit
+            # (e.g. user@github.idp.goblin-alewife.ts.net), so use the sub UUID.
+            - name: OIDC_REMOTE_USER_CLAIM
+              value: "sub"
+
+            - name: OIDC_SCOPES
+              value: "openid profile"
+
+            - name: OIDC_X_FORWARDED_HEADERS
+              value: "X-Forwarded-Host X-Forwarded-Port X-Forwarded-Proto"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: freshrss-data

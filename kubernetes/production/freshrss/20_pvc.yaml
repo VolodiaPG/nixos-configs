@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: freshrss-data
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  claimRef:
+    namespace: production
+    name: freshrss-data
+  hostPath:
+    path: /data/freshrss
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freshrss-data
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Static volume on the host disk covered by restic (/data/backups).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: freshrss-backup
+  labels:
+    app: freshrss
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  claimRef:
+    namespace: production
+    name: freshrss-backup
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - home-server
+  local:
+    path: /data/backups/freshrss
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freshrss-backup
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  volumeName: freshrss-backup
+  resources:
+    requests:
+      storage: 5Gi
