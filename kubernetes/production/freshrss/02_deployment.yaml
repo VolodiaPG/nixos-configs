@@ -86,6 +86,9 @@ spec:
                 --auth-type http_auth
                 --default-user admin
                 --language en
+            # TODO: Change to the following to avoid leaking secrets in the describe command
+            # kubectl -n production create secret generic freshrss-install \
+            #  --from-literal=install="--api-enabled --base-url https://rss.goblin-alewife.ts.net --db-type pgsql --db-host freshrss-database-rw:5432 --db-base freshrss --db-user freshrss --db-password '<pw>' --auth-type http_auth --default-user admin --language en"
 
             # Must match the preferred_username of the initial OIDC user
             - name: FRESHRSS_USER
