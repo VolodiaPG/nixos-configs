@@ -14,20 +14,3 @@ spec:
       targetPort: 80
       port: 80
   type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: freshrss-test
-  namespace: production
-  labels:
-    app: freshrss
-spec:
-  selector:
-    app: freshrss
-  ports:
-    - protocol: TCP
-      targetPort: 80
-      port: 80
-      nodePort: 30005
-  type: NodePort
