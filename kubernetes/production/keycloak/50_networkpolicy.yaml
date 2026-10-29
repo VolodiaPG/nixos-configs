@@ -186,3 +186,63 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backup-egress-to-keycloak-database
+  namespace: production
+  labels:
+    app: keycloak-backup
+  annotations:
+    description: "Allow backup to connect to the DB, and DNS"
+spec:
+  podSelector:
+    matchLabels:
+      app: keycloak-backup
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak-database-ingress-from-backup
+  namespace: production
+  labels:
+    app: keycloak-backup
+  annotations:
+    description: "Allow ingress from cron backup pods to the DB"
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: keycloak-database
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: keycloak-backup
+      ports:
+        - protocol: TCP
+          port: 5432

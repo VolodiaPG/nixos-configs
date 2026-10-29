@@ -13,13 +13,20 @@ spec:
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 86400
       template:
+        metadata:
+          labels:
+            app: keycloak-backup
         spec:
+          automountServiceAccountToken: false
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
             fsGroup: 1001
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
             - name: dump
               image: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie@sha256:39add80f5b1e573e2f6b641c66fd1a2f8dede67ca0330e870285bc1078551390
@@ -28,7 +35,10 @@ spec:
                 - sh
                 - -ec
                 - |
-                  pg_dump --format=custom --file=/backup/keycloak-$(date +%F).dump
+                  # Fresh pods are refused until the NetworkPolicy controller syncs their IP.
+                  until pg_isready -q; do sleep 5; done
+                  pg_dump --format=custom --file=/backup/keycloak.tmp.dump
+                  mv /backup/keycloak.tmp.dump /backup/keycloak-$(date +%F).dump
                   find /backup -name 'keycloak-*.dump' -mtime +7 -delete
               env:
                 - name: PGHOST

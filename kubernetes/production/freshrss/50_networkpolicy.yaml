@@ -235,33 +235,68 @@ spec:
             matchLabels:
               "tailscale.com/parent-resource": "egress-proxies"
 ---
-# apiVersion: networking.k8s.io/v1
-# kind: NetworkPolicy
-# metadata:
-#   name: freshrss-to-keycloak
-#   namespace: production
-#   labels:
-#     app: freshrss
-#   annotations:
-#     description: "Allow to contact keycloak for auth. Is orchestrated with Tailscale but packets flow direct between pods"
-# spec:
-#   podSelector:
-#     matchLabels:
-#       app: freshrss
-#   policyTypes:
-#     - Egress
-#   egress:
-#     - to:
-#         - ipBlock:
-#             cidr: 100.64.0.0/10 # Tailnet
-#         - podSelector:
-#             matchLabels:
-#               app: keycloak
-#
-#       ports:
-#         - protocol: TCP
-#           port: 443
-# ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backup-egress-to-freshrss-database
+  namespace: production
+  labels:
+    app: freshrss-backup
+  annotations:
+    description: "Allow for backup to connect to the DB"
+spec:
+  podSelector:
+    matchLabels:
+      app: freshrss-backup
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: freshrss-database-ingress-from-backup
+  namespace: production
+  labels:
+    app: freshrss-backup
+  annotations:
+    description: "Allow ingress from cron backup pods to the DB"
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: freshrss-database
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: freshrss-backup
+
+      ports:
+        - protocol: TCP
+          port: 5432
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
