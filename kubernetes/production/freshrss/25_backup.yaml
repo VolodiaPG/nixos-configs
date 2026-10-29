@@ -22,7 +22,8 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: dump
-              image: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
+              image: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie@sha256:39add80f5b1e573e2f6b641c66fd1a2f8dede67ca0330e870285bc1078551390
+              imagePullPolicy: IfNotPresent
               command:
                 - sh
                 - -ec
