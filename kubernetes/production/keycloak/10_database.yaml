@@ -1,0 +1,26 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keycloak-database
+  namespace: production
+spec:
+  instances: 1
+
+  storage:
+    size: 1Gi
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie@sha256:39add80f5b1e573e2f6b641c66fd1a2f8dede67ca0330e870285bc1078551390
+  imagePullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      memory: 50Mi
+      cpu: 20m
+    limits:
+      memory: 100Mi
+      cpu: 500m
+
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak

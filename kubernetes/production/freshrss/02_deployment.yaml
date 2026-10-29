@@ -39,6 +39,23 @@ spec:
             - name: data
               mountPath: /var/www/FreshRSS/extensions
               subPath: extensions
+          startupProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 5
+            failureThreshold: 30 # up to 150s for first-run install/migrations
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 30
+            failureThreshold: 3
           envFrom:
             - configMapRef:
                 name: freshrss

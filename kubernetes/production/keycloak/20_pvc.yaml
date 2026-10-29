@@ -1,0 +1,43 @@
+# Static volume on the host disk covered by restic (/data/backups).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: keycloak-backup
+  labels:
+    app: keycloak
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  claimRef:
+    namespace: production
+    name: keycloak-backup
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - home-server
+  local:
+    path: /data/backups/keycloak
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-backup
+  namespace: production
+  labels:
+    app: keycloak
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  volumeName: keycloak-backup
+  resources:
+    requests:
+      storage: 5Gi
