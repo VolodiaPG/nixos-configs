@@ -38,6 +38,7 @@ done
 {{- end }}
 # chezmoi/dot_local/bin (PLAN.MD task 4.1) wins over everything.
 [[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" $path)
+[[ -d "/usr/local/bin" ]] && path=("/usr/local/bin" $path)
 unset _dir
 export PATH
 
