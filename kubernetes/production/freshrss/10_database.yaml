@@ -16,11 +16,11 @@ spec:
 
   resources:
     requests:
-      memory: 50Mi
+      memory: 150Mi
       cpu: 20m
     limits:
-      memory: 100Mi
-      cpu: 500m
+      memory: 512Mi
+      cpu: 1000m
 
   bootstrap:
     initdb:
