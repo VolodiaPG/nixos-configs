@@ -1,28 +1,30 @@
-# Allow communication coming to keycloak, and from other keycloak databases
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: keycloak-database-intra
+  name: keycloak-app
   namespace: production
   labels:
     app: keycloak
+  annotations:
+    description: "keycloak pod: ingress from tailnet proxy, egress to the database (DNS, kube-apiserver come from netpol/* labels)"
 spec:
   podSelector:
     matchLabels:
-      cnpg.io/cluster: keycloak-database
+      app: keycloak
   policyTypes:
     - Ingress
     - Egress
   ingress:
     - from:
-        - podSelector:
+        - namespaceSelector:
             matchLabels:
-              cnpg.io/cluster: keycloak-database
+              name: tailscale-operator
+          podSelector:
+            matchLabels:
+              tailscale.com/parent-resource: ingress-proxies
       ports:
         - protocol: TCP
-          port: 5432
-        - protocol: TCP
-          port: 8000
+          port: 8080
   egress:
     - to:
         - podSelector:
@@ -31,27 +33,29 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
-        - protocol: TCP
-          port: 8000
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: keycloak-database-from-operator
+  name: keycloak-database
   namespace: production
-  annotations:
-    description: "Allow communication from the grand operator in its cnpg namespace"
   labels:
     app: keycloak
+  annotations:
+    description: "CNPG pods: ingress from peers, operator, keycloak, backup; egress to peers (DNS, kube-apiserver come from netpol/* labels)"
 spec:
   podSelector:
     matchLabels:
       cnpg.io/cluster: keycloak-database
   policyTypes:
     - Ingress
+    - Egress
   ingress:
-    - from:
-        - namespaceSelector:
+    - from: # peers
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+        - namespaceSelector: # operator
             matchLabels:
               kubernetes.io/metadata.name: cnpg-system
           podSelector:
@@ -62,83 +66,16 @@ spec:
           port: 5432
         - protocol: TCP
           port: 8000
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: keycloak-database-from-keycloak
-  namespace: production
-  annotations:
-    description: "Allow keycloak to communicate with the database"
-  labels:
-    app: keycloak
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: keycloak-database
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
+    - from: # clients
         - podSelector:
             matchLabels:
               app: keycloak
+        - podSelector:
+            matchLabels:
+              app: keycloak-backup
       ports:
         - protocol: TCP
           port: 5432
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: keycloak-database-egress
-  namespace: production
-  annotations:
-    description: "allow keycloak to query the kube api server and DNS"
-  labels:
-    app: keycloak
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: keycloak-database
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
-    - to:
-        - ipBlock:
-            cidr: 192.168.1.31/32 # kube-apiserver endpoint: kubectl get ep kubernetes
-      ports:
-        - protocol: TCP
-          port: 443
-        - protocol: TCP
-          port: 6443
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: keycloak-to-database
-  namespace: production
-  labels:
-    app: keycloak
-  annotations:
-    description: "Keycloak side: egress to the database + DNS"
-spec:
-  podSelector:
-    matchLabels:
-      app: keycloak
-  policyTypes:
-    - Egress
   egress:
     - to:
         - podSelector:
@@ -147,55 +84,18 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
         - protocol: TCP
-          port: 53
+          port: 8000
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: tailscale-ingress-to-keycloak
-  namespace: production
-  labels:
-    app: keycloak
-  annotations:
-    description: "Allow request from the tailnet to the pod"
-spec:
-  podSelector:
-    matchLabels:
-      app: keycloak
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              name: "tailscale-operator"
-          podSelector:
-            matchLabels:
-              "tailscale.com/parent-resource": "ingress-proxies"
-      ports:
-        - protocol: TCP
-          port: 8080
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: backup-egress-to-keycloak-database
+  name: keycloak-backup
   namespace: production
   labels:
     app: keycloak-backup
   annotations:
-    description: "Allow backup to connect to the DB, and DNS"
+    description: "backup pods: egress to the database (DNS comes from netpol/allow-dns)"
 spec:
   podSelector:
     matchLabels:
@@ -207,42 +107,6 @@ spec:
         - podSelector:
             matchLabels:
               cnpg.io/cluster: keycloak-database
-      ports:
-        - protocol: TCP
-          port: 5432
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: keycloak-database-ingress-from-backup
-  namespace: production
-  labels:
-    app: keycloak-backup
-  annotations:
-    description: "Allow ingress from cron backup pods to the DB"
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: keycloak-database
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: keycloak-backup
       ports:
         - protocol: TCP
           port: 5432

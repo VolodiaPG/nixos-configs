@@ -20,6 +20,7 @@ spec:
         metadata:
           labels:
             app: keycloak-backup
+            netpol/allow-dns: "true"
         spec:
           automountServiceAccountToken: false
           securityContext:
