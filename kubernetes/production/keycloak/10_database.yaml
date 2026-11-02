@@ -19,11 +19,14 @@ spec:
 
   resources:
     requests:
-      memory: 150Mi
-      cpu: 20m
+      memory: 256Mi
+      cpu: 100m
     limits:
-      memory: 512Mi
-      cpu: 1000m
+      memory: 256Mi
+
+  postgresql:
+    parameters:
+      shared_buffers: "64MB"
 
   bootstrap:
     initdb:
