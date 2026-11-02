@@ -76,16 +76,6 @@ spec:
           volumeMounts:
             - name: tsidp-data
               mountPath: /data
-          command: ["/tsidp-server"]
-          args:
-            - "-dir"
-            - "/data"
-            - "-hostname"
-            - "idp"
-            - "-enable-sts"
-            - "-log"
-            - "debug"
-            - "-debug-all-requests"
           env:
             - name: TAILSCALE_USE_WIP_CODE
               value: "1"
@@ -96,6 +86,12 @@ spec:
                   key: ts_authkey # Is an oauth token
             - name: TS_ADVERTISE_TAGS
               value: "tag:tsidp"
+            - name: TS_ENABLE_STS
+              value: "1"
+            - name: TS_HOSTNAME
+              value: "idp"
+            - name: TS_STATE_DIR
+              value: "/data"
 
       volumes:
         - name: tsidp-data
@@ -143,3 +139,27 @@ spec:
       ports:
         - protocol: TCP
           port: 443
+    # Control plane + DERP (443), STUN (3478), direct WireGuard (41641).
+    # Without these the node drops off control and ephemeral cleanup removes it.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: UDP
+          port: 3478
+        - protocol: UDP
+          port: 41641
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
