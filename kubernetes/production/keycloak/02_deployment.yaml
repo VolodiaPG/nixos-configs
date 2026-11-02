@@ -1,17 +1,14 @@
 apiVersion: apps/v1
-# Use a stateful setup to ensure that for a rolling update Pods are restarted with a rolling strategy one-by-one.
-# This prevents losing in-memory information stored redundantly in two Pods.
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: keycloak
   labels:
     app: keycloak
 spec:
-  serviceName: keycloak-discovery
-  # Run with one replica to save resources, or with two replicas to allow for rolling updates for configuration changes
+  # Run with one replica to save resources. State lives in the database, no volumes needed.
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: keycloak
@@ -25,8 +22,10 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.8.1
-          args: ["start"]
+          image: quay.io/keycloak/keycloak:26.8.1@sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332
+          imagePullPolicy: IfNotPresent
+          args:
+            - "start"
           startupProbe:
             httpGet:
               path: /
