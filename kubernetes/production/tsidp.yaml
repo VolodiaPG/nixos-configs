@@ -57,6 +57,7 @@ spec:
       labels:
         app: idp
     spec:
+      automountServiceAccountToken: false
       securityContext:
         runAsUser: 1001
         runAsGroup: 1001
