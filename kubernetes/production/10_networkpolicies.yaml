@@ -11,3 +11,101 @@ spec:
     - Ingress
     - Egress
   podSelector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: production
+  annotations:
+    description: "Opt-in by pod label netpol/allow-dns=true: egress to kube-dns"
+spec:
+  podSelector:
+    matchLabels:
+      netpol/allow-dns: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-tailscale-egress
+  namespace: production
+  annotations:
+    description: "Opt-in by pod label netpol/allow-tailscale-egress=true: egress to tailscale egress proxies"
+spec:
+  podSelector:
+    matchLabels:
+      netpol/allow-tailscale-egress: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: tailscale-operator
+          podSelector:
+            matchLabels:
+              tailscale.com/parent-resource: egress-proxies
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-kube-apiserver
+  namespace: production
+  annotations:
+    description: "Opt-in by pod label netpol/allow-kube-apiserver=true: egress to kube-apiserver"
+spec:
+  podSelector:
+    matchLabels:
+      netpol/allow-kube-apiserver: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.31/32 # kube-apiserver endpoint: kubectl get ep kubernetes
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 6443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-www-egress
+  namespace: production
+  annotations:
+    description: "Opt-in by pod label netpol/allow-www-egress=true: egress to public internet on 443"
+spec:
+  podSelector:
+    matchLabels:
+      netpol/allow-www-egress: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8 # Enterprise / Custom
+              - 172.16.0.0/12 # Enterprise / Custom
+              - 192.168.0.0/16 # local network
+              - 100.64.0.0/10 # Tailnet
+      ports:
+        - protocol: TCP
+          port: 443

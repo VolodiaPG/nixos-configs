@@ -1,87 +1,61 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: freshrss-database-intra
+  name: freshrss-app
   namespace: production
   labels:
     app: freshrss
   annotations:
-    description: Allow communication coming to freshrss, and from other freshrss databases
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: freshrss-database
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              cnpg.io/cluster: freshrss-database
-      ports:
-        - protocol: TCP
-          port: 5432
-        - protocol: TCP
-          port: 8000
-  egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              cnpg.io/cluster: freshrss-database
-      ports:
-        - protocol: TCP
-          port: 5432
-        - protocol: TCP
-          port: 8000
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-egress-dns
-  namespace: production
-  annotations:
-    description: "allow freshrss DNS"
-  labels:
-    app: freshrss
+    description: "freshrss pod: ingress from tailnet proxy, egress to the database (DNS, tailscale, WWW come from netpol/* labels)"
 spec:
   podSelector:
     matchLabels:
       app: freshrss
   policyTypes:
+    - Ingress
     - Egress
-  egress:
-    - to:
+  ingress:
+    - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: kube-system
+              name: tailscale-operator
           podSelector:
             matchLabels:
-              k8s-app: kube-dns
+              tailscale.com/parent-resource: ingress-proxies
       ports:
-        - protocol: UDP
-          port: 53
         - protocol: TCP
-          port: 53
+          port: 80
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+      ports:
+        - protocol: TCP
+          port: 5432
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: freshrss-database-from-operator
+  name: freshrss-database
   namespace: production
-  annotations:
-    description: "Allow communication from the grand operator in its cnpg namespace"
   labels:
     app: freshrss
+  annotations:
+    description: "CNPG pods: ingress from peers, operator, freshrss, backup; egress to peers (DNS, kube-apiserver come from netpol/* labels)"
 spec:
   podSelector:
     matchLabels:
       cnpg.io/cluster: freshrss-database
   policyTypes:
     - Ingress
+    - Egress
   ingress:
-    - from:
-        - namespaceSelector:
+    - from: # peers
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+        - namespaceSelector: # operator
             matchLabels:
               kubernetes.io/metadata.name: cnpg-system
           podSelector:
@@ -92,83 +66,16 @@ spec:
           port: 5432
         - protocol: TCP
           port: 8000
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-database-from-freshrss
-  namespace: production
-  annotations:
-    description: "Allow freshrss to communicate with the database"
-  labels:
-    app: freshrss
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: freshrss-database
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
+    - from: # clients
         - podSelector:
             matchLabels:
               app: freshrss
+        - podSelector:
+            matchLabels:
+              app: freshrss-backup
       ports:
         - protocol: TCP
           port: 5432
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-database-egress
-  namespace: production
-  annotations:
-    description: "allow freshrss to query the kube api server and DNS"
-  labels:
-    app: freshrss
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: freshrss-database
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
-    - to:
-        - ipBlock:
-            cidr: 192.168.1.31/32 # kube-apiserver endpoint: kubectl get ep kubernetes
-      ports:
-        - protocol: TCP
-          port: 443
-        - protocol: TCP
-          port: 6443
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-to-database
-  namespace: production
-  labels:
-    app: freshrss
-  annotations:
-    description: "freshrss side: egress to the database + DNS"
-spec:
-  podSelector:
-    matchLabels:
-      app: freshrss
-  policyTypes:
-    - Egress
   egress:
     - to:
         - podSelector:
@@ -177,73 +84,18 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: tailscale-ingress-to-freshrss
-  namespace: production
-  labels:
-    app: freshrss
-  annotations:
-    description: "Allow tailnet ingress to 80"
-spec:
-  podSelector:
-    matchLabels:
-      app: freshrss
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              name: "tailscale-operator"
-          podSelector:
-            matchLabels:
-              "tailscale.com/parent-resource": "ingress-proxies"
-      ports:
         - protocol: TCP
-          port: 80
+          port: 8000
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: tailscale-and-egress-to-keycloak
-  namespace: production
-  labels:
-    app: freshrss
-  annotations:
-    description: "Allow oidc: keycloak to talk to keycloak and egress to the tailscale proxy"
-spec:
-  podSelector:
-    matchLabels:
-      oidc: keycloak
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: keycloak
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: "tailscale-operator"
-          podSelector:
-            matchLabels:
-              "tailscale.com/parent-resource": "egress-proxies"
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: backup-egress-to-freshrss-database
+  name: freshrss-backup
   namespace: production
   labels:
     app: freshrss-backup
   annotations:
-    description: "Allow for backup to connect to the DB"
+    description: "backup pods: egress to the database (DNS comes from netpol/allow-dns)"
 spec:
   podSelector:
     matchLabels:
@@ -255,72 +107,6 @@ spec:
         - podSelector:
             matchLabels:
               cnpg.io/cluster: freshrss-database
-
       ports:
         - protocol: TCP
           port: 5432
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-database-ingress-from-backup
-  namespace: production
-  labels:
-    app: freshrss-backup
-  annotations:
-    description: "Allow ingress from cron backup pods to the DB"
-spec:
-  podSelector:
-    matchLabels:
-      cnpg.io/cluster: freshrss-database
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: freshrss-backup
-
-      ports:
-        - protocol: TCP
-          port: 5432
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: freshrss-network-policy
-  namespace: production
-  labels:
-    app: freshrss
-  annotations:
-    description: "Allows the pod to query the WWW"
-spec:
-  podSelector:
-    matchLabels:
-      app: freshrss
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - ipBlock:
-            cidr: 0.0.0.0/0
-            except:
-              - 10.0.0.0/8 # Enterprise / Custom
-              - 172.16.0.0/12 # Enterprise / Custom
-              - 192.168.0.0/16 # local network
-              - 100.64.0.0/10 # Tailnet
-      ports:
-        - protocol: TCP
-          port: 443

@@ -5,7 +5,6 @@ metadata:
   namespace: production
   labels:
     app: freshrss
-    oidc: keycloak
 spec:
   strategy:
     type: Recreate
@@ -17,7 +16,9 @@ spec:
     metadata:
       labels:
         app: freshrss
-        oidc: keycloak
+        netpol/allow-dns: "true"
+        netpol/allow-tailscale-egress: "true"
+        netpol/allow-www-egress: "true"
     spec:
       automountServiceAccountToken: false
       containers:

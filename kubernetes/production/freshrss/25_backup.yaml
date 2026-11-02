@@ -20,6 +20,7 @@ spec:
         metadata:
           labels:
             app: freshrss-backup
+            netpol/allow-dns: "true"
         spec:
           automountServiceAccountToken: false
           restartPolicy: Never

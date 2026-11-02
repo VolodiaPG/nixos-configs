@@ -6,7 +6,6 @@ metadata:
   name: keycloak
   labels:
     app: keycloak
-    oidc: keycloak
 spec:
   serviceName: keycloak-discovery
   # Run with one replica to save resources, or with two replicas to allow for rolling updates for configuration changes
@@ -20,7 +19,6 @@ spec:
     metadata:
       labels:
         app: keycloak
-        oidc: keycloak
     spec:
       containers:
         - name: keycloak
