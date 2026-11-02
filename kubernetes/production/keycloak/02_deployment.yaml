@@ -26,22 +26,6 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - "start"
-          startupProbe:
-            httpGet:
-              path: /
-              port: 80
-            periodSeconds: 5
-            failureThreshold: 30 # up to 150s for first-run install/migrations
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 80
-            periodSeconds: 30
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: "admin"
