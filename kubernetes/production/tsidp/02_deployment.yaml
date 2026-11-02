@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idp
+  namespace: production
+  labels:
+    app: idp
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: idp
+  template:
+    metadata:
+      labels:
+        app: idp
+        netpol/allow-dns: "true"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: idp
+          image: ghcr.io/tailscale/tsidp:v0.0.17@sha256:7a30d56cb1a33fd72ea44b12ab3659b5c7a8a3afe3cf4ada76a700f19b96185b
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 1000m
+              memory: 200Mi
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: tsidp-data
+              mountPath: /data
+          env:
+            - name: TAILSCALE_USE_WIP_CODE
+              value: "1"
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tsidp-env
+                  key: ts_authkey # Is an oauth token
+            - name: TS_ADVERTISE_TAGS
+              value: "tag:tsidp"
+            - name: TS_ENABLE_STS
+              value: "1"
+            - name: TS_HOSTNAME
+              value: "idp"
+            - name: TS_STATE_DIR
+              value: "/data"
+
+      volumes:
+        - name: tsidp-data
+          persistentVolumeClaim:
+            claimName: idp-data

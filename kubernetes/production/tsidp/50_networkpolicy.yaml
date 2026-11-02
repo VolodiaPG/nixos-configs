@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: idp
+  namespace: production
+  labels:
+    app: idp
+  annotations:
+    description: "idp pod: egress to the tailnet and tailscale control plane/DERP/STUN/WireGuard (DNS comes from netpol/allow-dns)"
+spec:
+  podSelector:
+    matchLabels:
+      app: idp
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 100.64.0.0/10
+      ports:
+        - protocol: TCP
+          port: 443
+    # Control plane + DERP (443), STUN (3478), direct WireGuard (41641).
+    # Without these the node drops off control and ephemeral cleanup removes it.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: UDP
+          port: 3478
+        - protocol: UDP
+          port: 41641
