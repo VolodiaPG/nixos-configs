@@ -11,6 +11,12 @@ alias ll='ls -l'
 alias n='nvim'
 alias k='kubectl'
 
+{{ if eq .chezmoi.os "darwin" -}}
+alias appmem='ps -axo rss=,pcpu=,comm= | awk '\''{m=$1/1024; c=$2; $1=$2=""; sub(/^ +/,""); n=$0; if (match(n,/[^\/]+\.app/)) n=substr(n,RSTART,RLENGTH); else sub(/.*\//,"",n); sm[n]+=m; sc[n]+=c} END{for(k in sm) printf "%8.0f MB %6.1f%% %s\n", sm[k], sc[k], k}'\'' | sort -rn | head -20'
+{{- else -}}
+alias appmem='ps -eo rss=,pcpu=,comm= | awk '\''{m=$1/1024; c=$2; $1=$2=""; sub(/^ +/,""); n=$0; sm[n]+=m; sc[n]+=c} END{for(k in sm) printf "%8.0f MB %6.1f%% %s\n", sm[k], sc[k], k}'\'' | sort -rn | head -20'
+{{- end }}
+
 # NOT PORTED: `oc` and `opencode-agents`. opencode is dropped in PLAN.MD §0;
 # chezmoi/dot_config/opencode/ was deleted in commit bec7e34, so both aliases
 # would point at a program that is no longer installed and a config file that

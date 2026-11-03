@@ -18,14 +18,10 @@
       "args": [],
       "projects": [
         {
-          "paths": [
-            "/home/volodia/Documents/nixos-configs"
-          ]
+          "paths": ["/home/volodia/Documents/nixos-configs"]
         },
         {
-          "paths": [
-            "/home/volodia/Documents/sre"
-          ]
+          "paths": ["/home/volodia/Documents/sre"]
         }
       ]
     },
@@ -37,14 +33,24 @@
   ],
   "cli_default_open_behavior": "existing_window",
   "format_on_save": "on",
+  "lsp": {
+    "nixd": {
+      "settings": {
+        "nixd": {
+          "nixpkgs": { "expr": "import <nixpkgs> { }" },
+          "formatting": { "command": ["nixfmt"] }
+        }
+      }
+    }
+  },
   "languages": {
     "Nix": {
       "language_servers": ["nixd", "!nil"],
       "formatter": {
         "external": {
-          "command": "nixfmt",
-        },
-      },
+          "command": "nixfmt"
+        }
+      }
     },
     "Elixir": {
       "language_servers": [
@@ -53,8 +59,8 @@
         "dexter",
         "!next-ls",
         "!lexical",
-        "...",
-      ],
+        "..."
+      ]
     },
     "EEx": {
       "language_servers": [
@@ -63,8 +69,8 @@
         "dexter",
         "!next-ls",
         "!lexical",
-        "...",
-      ],
+        "..."
+      ]
     },
     "HEEx": {
       "language_servers": [
@@ -73,42 +79,42 @@
         "dexter",
         "!next-ls",
         "!lexical",
-        "...",
-      ],
-    },
+        "..."
+      ]
+    }
   },
   "redact_private_values": true,
   "edit_predictions": {
     "ollama": {
-      "api_url": "http://localhost:11434",
-    },
+      "api_url": "http://localhost:11434"
+    }
   },
   "agent": {
     "inline_assistant_model": {
       "provider": "opencode",
       "model": "go/minimax-m2.7",
-      "enable_thinking": false,
+      "enable_thinking": false
     },
     "default_model": {
       "provider": "lmstudio",
       "model": "google/gemma-4-12b",
-      "enable_thinking": false,
+      "enable_thinking": false
     },
     "favorite_models": [],
-    "model_parameters": [],
+    "model_parameters": []
   },
   "language_models": {
     "opencode": {
       "show_free_models": true,
-      "show_go_models": true,
-    },
+      "show_go_models": true
+    }
   },
   "proxy": "",
   "ui_font_family": "Inter",
   "buffer_font_family": "Comic Code Ligatures",
   "icon_theme": "Material Icon Theme",
   "terminal": {
-    "font_family": "Comic Code Ligatures",
+    "font_family": "Comic Code Ligatures"
   },
   "vim_mode": true,
   "ui_font_size": 14.0,
@@ -116,7 +122,7 @@
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
-    "dark": "Catppuccin Mocha",
+    "dark": "Catppuccin Mocha"
   },
-  "load_direnv": "shell_hook",
+  "load_direnv": "shell_hook"
 }
