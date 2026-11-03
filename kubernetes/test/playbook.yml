@@ -1,0 +1,70 @@
+- name: Install k3s
+  ansible.builtin.import_playbook: k3s.orchestration.site
+
+- name: Cluster addons
+  hosts: server
+  become: true
+  vars:
+    cilium_bin: /usr/local/bin/cilium
+    cli_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
+    local_kubeconfig: ./kubeconfig
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    PATH: "/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  tasks:
+    - name: Install cilium CLI
+      ansible.builtin.unarchive:
+        src: "https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-{{ cli_arch }}.tar.gz"
+        dest: /usr/local/bin
+        remote_src: true
+        creates: "{{ cilium_bin }}"
+
+    - name: Install cilium
+      ansible.builtin.command: cilium install --wait
+      args:
+        creates: /etc/rancher/k3s/.cilium-installed
+      register: cilium_install
+
+    - name: Mark cilium installed
+      ansible.builtin.file:
+        path: /etc/rancher/k3s/.cilium-installed
+        state: touch
+        mode: "0644"
+      when: cilium_install is changed
+
+    - name: Wait for node Ready
+      ansible.builtin.command: k3s kubectl wait --for=condition=Ready node --all --timeout=180s
+      changed_when: false
+
+    - name: Create argocd namespace
+      ansible.builtin.shell: k3s kubectl create namespace argocd --dry-run=client -o yaml | k3s kubectl apply -f -
+      register: argocd_ns
+      changed_when: "'created' in argocd_ns.stdout"
+
+    - name: Install argocd
+      ansible.builtin.command: >
+        k3s kubectl apply -n argocd --server-side --force-conflicts
+        -f https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version | default('stable') }}/manifests/install.yaml
+      register: argocd_apply
+      changed_when: "'serverside-applied' in argocd_apply.stdout and 'unchanged' not in argocd_apply.stdout"
+
+    - name: Wait for argocd server
+      ansible.builtin.command: k3s kubectl -n argocd rollout status deploy/argocd-server --timeout=300s
+      changed_when: false
+
+    - name: Download a local copy of kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ local_kubeconfig }}"
+        flat: true
+      register: fetched_kubeconfig
+
+    - name: Update ip in downloaded kubeconfig
+      delegate_to: localhost
+      become: false
+      ansible.builtin.lineinfile:
+        path: "{{ fetched_kubeconfig.dest }}"
+        regexp: '^(\s*server: https://)127\.0\.0\.1(:6443)$'
+        line: \g<1>{{ ansible_facts["default_ipv4"]["address"] }}\g<2>
+        backrefs: true
+        validate: kubectl --kubeconfig %s get --raw /readyz --request-timeout=5s
