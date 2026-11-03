@@ -8,9 +8,9 @@ terraform {
 resource "multipass_instance" "k3s" {
   name   = "k3s-test"
   cpus   = 2
-  memory = "2GiB"
+  memory = "4GiB"
   disk   = "15GiB"
-  image  = "24.04"
+  image  = "26.04"
 
   cloudinit_file = local_file.cloud_init.filename
 }
@@ -39,6 +39,7 @@ resource "local_file" "inventory" {
             - servicelb
           flannel-backend: none
           disable-network-policy: true
+          disable-kube-proxy: true
   EOT
 }
 
