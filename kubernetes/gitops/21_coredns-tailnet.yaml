@@ -1,14 +1,30 @@
 ---
-apiVersion: v1
-kind: ConfigMap
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: coredns-custom
-  namespace: kube-system
-data:
-  # .server adds an new server block
-  ts.net.server: |
-    ts.net:53 {
-      errors
-      cache 30
-      forward . 10.43.83.16
-    }
+  name: tailscale-coredns-stub
+  namespace: tailscale-operator
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      serviceAccountName: tailscale-coredns-stub # needs get on dnsconfigs, patch on configmaps in kube-system
+      restartPolicy: OnFailure
+      containers:
+        - name: apply
+          image: bitnami/kubectl:sha256-ad8b84a54c7acf20651230f8a6e04be417474cf6e720d9e374e6af48e196904a
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+            - "-c"
+          args:
+            - |
+              until IP=$(kubectl get dnsconfig ts-dns -o jsonpath='{.status.nameserver.ip}') && [ -n "$IP" ]; do sleep 5; done
+              kubectl -n kube-system create configmap coredns-custom \
+                --from-literal=tailscale.server="ts.net:53 {
+                  errors
+                  cache 30
+                  forward . $IP
+              }" --dry-run=client -o yaml | kubectl apply -f -
