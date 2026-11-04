@@ -12,3 +12,9 @@ spec:
     path: kubernetes/gitops/40_production
     repoURL: https://github.com/volodiapg/nixos-configs.git
     targetRevision: ansible
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
