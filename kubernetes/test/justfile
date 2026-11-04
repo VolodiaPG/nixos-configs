@@ -9,5 +9,11 @@ init:
 playbook:
     ansible-playbook -i inventory.yml playbook.yml
 
+stop:
+    multipass stop $(terraform output --raw multipass)
+
+start:
+    multipass start $(terraform output --raw multipass)
+
 destroy:
     terraform destroy

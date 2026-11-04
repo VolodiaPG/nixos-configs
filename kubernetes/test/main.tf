@@ -25,21 +25,6 @@ resource "local_file" "inventory" {
             ${multipass_instance.k3s.ipv4}:
         agent:
           hosts: {}
-      vars:
-        ansible_user: ubuntu
-        ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-        ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-        k3s_version: v1.37.1+k3s1
-        token: test-cluster-token
-        api_endpoint: ${multipass_instance.k3s.ipv4}
-        kubeconfig: ./kubeconfig
-        server_config_yaml: |
-          disable:
-            - traefik
-            - servicelb
-          flannel-backend: none
-          disable-network-policy: true
-          disable-kube-proxy: true
   EOT
 }
 
@@ -54,4 +39,8 @@ resource "local_file" "cloud_init" {
 
 output "ip" {
   value = multipass_instance.k3s.ipv4
+}
+
+output "multipass" {
+  value = multipass_instance.k3s.name
 }

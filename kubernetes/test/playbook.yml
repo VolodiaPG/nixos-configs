@@ -5,92 +5,11 @@
   hosts: server
   become: true
   vars:
-    cilium_bin: /usr/local/bin/cilium
-    cilium_cli_version: "0.20.2"
-    cilium_version: "1.20.4"
-    cli_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
     local_kubeconfig: ./kubeconfig
-    ztunnel_namespaces:
-      - argocd
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     PATH: "/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
   tasks:
-    - name: Install cilium CLI
-      ansible.builtin.unarchive:
-        src: "https://github.com/cilium/cilium-cli/releases/download/v{{ cilium_cli_version }}/cilium-linux-{{ cli_arch }}.tar.gz"
-        dest: /usr/local/bin
-        remote_src: true
-        creates: "{{ cilium_bin }}"
-
-    - name: Check ztunnel secrets
-      ansible.builtin.command: k3s kubectl -n kube-system get secret cilium-ztunnel-secrets
-      register: ztunnel_secret
-      changed_when: false
-      failed_when: false
-
-    - name: Generate ztunnel secrets
-      ansible.builtin.shell: |
-        set -e
-        d=$(mktemp -d)
-        trap 'rm -rf "$d"' EXIT
-        cd "$d"
-        cat > bootstrap.conf <<'EOF'
-        [ req ]
-        distinguished_name = req_distinguished_name
-        x509_extensions = v3_ca
-        prompt = no
-        [ req_distinguished_name ]
-        O = cluster.local
-        [ v3_ca ]
-        subjectKeyIdentifier = hash
-        authorityKeyIdentifier = keyid:always,issuer
-        basicConstraints = CA:FALSE
-        keyUsage = digitalSignature, keyEncipherment
-        extendedKeyUsage = serverAuth, clientAuth
-        subjectAltName = @alt_names
-        [ alt_names ]
-        DNS.1 = localhost
-        EOF
-        cat > ca.conf <<'EOF'
-        [ req ]
-        distinguished_name = req_distinguished_name
-        x509_extensions = v3_ca
-        prompt = no
-        [ req_distinguished_name ]
-        O = cluster.local
-        [ v3_ca ]
-        subjectKeyIdentifier = hash
-        authorityKeyIdentifier = keyid:always,issuer
-        basicConstraints = critical, CA:true
-        keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-        EOF
-        for n in bootstrap ca; do
-          openssl genrsa -out $n-private.key 2048
-          openssl req -x509 -new -nodes -key $n-private.key -sha256 -days 3650 -config $n.conf -out $n-root.crt
-        done
-        k3s kubectl --namespace kube-system create secret generic cilium-ztunnel-secrets \
-          --from-file=bootstrap-private.key --from-file=bootstrap-root.crt \
-          --from-file=ca-private.key --from-file=ca-root.crt
-      when: ztunnel_secret.rc != 0
-
-    - name: Install cilium
-      ansible.builtin.command: cilium install --version {{ cilium_version }} --wait --set encryption.enabled=true --set encryption.type=ztunnel
-      args:
-        creates: /etc/rancher/k3s/.cilium-installed
-      register: cilium_install
-
-    - name: Mark cilium installed
-      ansible.builtin.file:
-        path: /etc/rancher/k3s/.cilium-installed
-        state: touch
-        mode: "0644"
-      when: cilium_install is changed
-
-    - name: Wait for node Ready
-      ansible.builtin.command: k3s kubectl wait --for=condition=Ready node --all --timeout=180s
-      changed_when: false
-
     - name: Create argocd namespace
       ansible.builtin.shell: k3s kubectl create namespace argocd --dry-run=client -o yaml | k3s kubectl apply -f -
       register: argocd_ns
@@ -106,12 +25,6 @@
     - name: Wait for argocd server
       ansible.builtin.command: k3s kubectl -n argocd rollout status deploy/argocd-server --timeout=300s
       changed_when: false
-
-    - name: Enroll namespaces in ztunnel mTLS
-      ansible.builtin.command: k3s kubectl label namespace {{ item }} io.cilium/mtls-enabled=true --overwrite
-      loop: "{{ ztunnel_namespaces }}"
-      register: ztunnel_label
-      changed_when: "'not labeled' not in ztunnel_label.stdout"
 
     - name: Download a local copy of kubeconfig
       ansible.builtin.fetch:

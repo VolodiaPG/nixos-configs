@@ -1,0 +1,74 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: production
+  namespace: argocd
+spec:
+  description: Production
+  # Allowed sources. Empty list = nothing allowed.
+  sourceRepos:
+    - https://github.com/volodiapg/nixos-configs.git
+    - https://pkgs.tailscale.com/helmcharts
+    - https://charts.bitwarden.com/
+  # Allowed targets. Empty list = nothing allowed.
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: production
+    - server: https://kubernetes.default.svc
+      namespace: tailscale-operator
+    - server: https://kubernetes.default.svc
+      namespace: bitwarden
+  # Cluster-scoped kinds: empty/omitted = all denied.
+  clusterResourceWhitelist:
+    # Namespace management
+    - group: ""
+      kind: Namespace
+
+    # RBAC management
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+
+    # CRD management for operators
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+
+    # Admission control
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+
+    # Storage
+    - group: storage.k8s.io
+      kind: StorageClass
+    - group: ""
+      kind: PersistentVolume
+
+    # Networking
+    - group: networking.k8s.io
+      kind: IngressClass
+
+    # cert-manager
+    - group: cert-manager.io
+      kind: ClusterIssuer
+
+    # Scheduling
+    - group: scheduling.k8s.io
+      kind: PriorityClass
+
+    # Node management
+    - group: ""
+      kind: Node
+  # Forbid app-level namespace creation via the project
+  orphanedResources:
+    warn: true
+  # Block syncs outside windows (optional)
+  # syncWindows:
+  #   - kind: deny
+  #     schedule: "0 22 * * 5"
+  #     duration: 48h
+  #     applications:
+  #       - "*"

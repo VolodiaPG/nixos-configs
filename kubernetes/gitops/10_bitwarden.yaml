@@ -1,0 +1,28 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bitwarden-sm-operator
+  namespace: argocd
+spec:
+  project: production
+  sources:
+    - repoURL: https://charts.bitwarden.com/
+      chart: sm-operator
+      targetRevision: 2.0.3
+      helm:
+        releaseName: bitwarden-sm
+        valueFiles:
+          - $values/kubernetes/gitops/values/bitwarden-sm-operator.yaml
+    - repoURL: https://github.com/volodiapg/nixos-configs.git # repo with the Application yaml
+      targetRevision: ansible
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bitwarden
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

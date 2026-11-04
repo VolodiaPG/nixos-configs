@@ -5,7 +5,7 @@ metadata:
   name: tailscale-operator
   namespace: argocd
 spec:
-  project: tailscale-operator
+  project: production
   source:
     repoURL: https://pkgs.tailscale.com/helmcharts
     chart: tailscale-operator
