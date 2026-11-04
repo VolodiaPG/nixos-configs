@@ -43,7 +43,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  generateExisting: true
+  # generateExisting: true
   rules:
     - name: coredns-custom-ts-net
       match:
@@ -85,7 +85,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  generateExisting: true
+  # generateExisting: true
   rules:
     - name: netpol-allow-kube-apiserver
       match:
@@ -117,5 +117,11 @@ spec:
             policyTypes:
               - Egress
             egress:
-              - to: "{{ apiserver.addresses[].{ipBlock: {cidr: join('/', [ip, '32'])}} }}"
-                ports: "{{ apiserver.ports[].{protocol: protocol, port: port} }}"
+              - to:
+                  - ipBlock:
+                      cidr: "{{ apiserver.addresses[0].ip }}/32"
+                ports:
+                  - protocol: TCP
+                    port: 6443
+                  - protocol: TCP
+                    port: 443

@@ -18,7 +18,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              name: tailscale-operator
+              kubernetes.io/metadata.name: tailscale-operator
           podSelector:
             matchLabels:
               tailscale.com/parent-resource: ingress-proxies
