@@ -11,6 +11,7 @@ spec:
     - https://github.com/volodiapg/nixos-configs.git
     - https://pkgs.tailscale.com/helmcharts
     - https://charts.bitwarden.com/
+    - https://cloudnative-pg.github.io/charts
   # Allowed targets. Empty list = nothing allowed.
   destinations:
     - server: https://kubernetes.default.svc
@@ -19,6 +20,8 @@ spec:
       namespace: tailscale-operator
     - server: https://kubernetes.default.svc
       namespace: bitwarden
+    - server: https://kubernetes.default.svc
+      namespace: cnpg-system
   # Cluster-scoped kinds: empty/omitted = all denied.
   clusterResourceWhitelist:
     # Namespace management
