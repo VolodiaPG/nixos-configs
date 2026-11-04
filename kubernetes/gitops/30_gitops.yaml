@@ -9,6 +9,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
+    directory:
+      recurse: true
     path: kubernetes/gitops/40_production
     repoURL: https://github.com/volodiapg/nixos-configs.git
     targetRevision: ansible
