@@ -9,3 +9,51 @@ data:
   TZ: "Europe/Paris"
   # Refresh feeds every 20 minutes
   CRON_MIN: "3,23,43"
+
+  # Must match the preferred_username of the initial OIDC user
+  FRESHRSS_USER: >-
+    --user admin
+    --language en
+
+  # OIDC Configuration (handled by Apache mod_auth_openidc).
+  # OIDC_CLIENT_SECRET and OIDC_CLIENT_CRYPTO_KEY come from the freshrss-env secret.
+  OIDC_ENABLED: "1"
+  OIDC_PROVIDER_METADATA_URL: "https://keycloak.goblin-alewife.ts.net/realms/master/.well-known/openid-configuration"
+  OIDC_CLIENT_ID: "freshrss"
+  # preferred_username can exceed FreshRSS' 38-char username limit
+  # (e.g. user@github.idp.goblin-alewife.ts.net), so use the sub UUID.
+  OIDC_REMOTE_USER_CLAIM: "sub"
+  OIDC_SCOPES: "openid profile"
+  OIDC_X_FORWARDED_HEADERS: "X-Forwarded-Host X-Forwarded-Port X-Forwarded-Proto"
+---
+# Mounted read-only as data/config.php. FreshRSS merges it over config.default.php,
+# so only the values that differ from the defaults are listed.
+# Secrets come from the pod environment, so the file holds none.
+# Changes made in the FreshRSS admin UI cannot be saved: edit this file instead.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freshrss-config
+  namespace: production
+  labels:
+    app: freshrss
+data:
+  config.php: |
+    <?php
+    return [
+      'salt' => getenv('FRESHRSS_SALT'),
+      'db' => [
+        'type' => 'pgsql',
+        'host' => 'freshrss-database-rw:5432',
+        'user' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
+        'base' => 'freshrss',
+        'prefix' => 'freshrss_',
+      ],
+      'default_user' => 'admin',
+      'base_url' => 'https://rss.goblin-alewife.ts.net',
+      'language' => 'en',
+      // Authentication is delegated to the OIDC provider via HTTP auth.
+      'auth_type' => 'http_auth',
+      'api_enabled' => true,
+    ];
