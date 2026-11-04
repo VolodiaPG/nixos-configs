@@ -1,0 +1,112 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: freshrss-app
+  namespace: production
+  labels:
+    app: freshrss
+  annotations:
+    description: "freshrss pod: ingress from tailnet proxy, egress to the database (DNS, tailscale, WWW come from netpol/* labels)"
+spec:
+  podSelector:
+    matchLabels:
+      app: freshrss
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: tailscale-operator
+          podSelector:
+            matchLabels:
+              tailscale.com/parent-resource: ingress-proxies
+      ports:
+        - protocol: TCP
+          port: 80
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: freshrss-database
+  namespace: production
+  labels:
+    app: freshrss
+  annotations:
+    description: "CNPG pods: ingress from peers, operator, freshrss, backup; egress to peers (DNS, kube-apiserver come from netpol/* labels)"
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: freshrss-database
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: # peers
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+        - namespaceSelector: # operator
+            matchLabels:
+              kubernetes.io/metadata.name: cnpg-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: cloudnative-pg
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 8000
+    - from: # clients
+        - podSelector:
+            matchLabels:
+              app: freshrss
+        - podSelector:
+            matchLabels:
+              app: freshrss-backup
+      ports:
+        - protocol: TCP
+          port: 5432
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: freshrss-backup
+  namespace: production
+  labels:
+    app: freshrss-backup
+  annotations:
+    description: "backup pods: egress to the database (DNS comes from netpol/allow-dns)"
+spec:
+  podSelector:
+    matchLabels:
+      app: freshrss-backup
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: freshrss-database
+      ports:
+        - protocol: TCP
+          port: 5432

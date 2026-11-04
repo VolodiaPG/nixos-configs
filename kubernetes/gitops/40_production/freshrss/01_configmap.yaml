@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freshrss
+  namespace: production
+  labels:
+    app: freshrss
+data:
+  TZ: "Europe/Paris"
+  # Refresh feeds every 20 minutes
+  CRON_MIN: "3,23,43"
