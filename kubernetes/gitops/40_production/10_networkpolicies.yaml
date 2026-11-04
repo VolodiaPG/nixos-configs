@@ -64,29 +64,6 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-kube-apiserver
-  namespace: production
-  annotations:
-    description: "Opt-in by pod label netpol/allow-kube-apiserver=true: egress to kube-apiserver"
-spec:
-  podSelector:
-    matchLabels:
-      netpol/allow-kube-apiserver: "true"
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - ipBlock:
-            cidr: 192.168.0.0/16
-      ports:
-        - protocol: TCP
-          port: 6443
-        - protocol: TCP
-          port: 443
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
   name: allow-www-egress
   namespace: production
   annotations:

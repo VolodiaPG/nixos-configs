@@ -12,6 +12,7 @@ spec:
     - https://pkgs.tailscale.com/helmcharts
     - https://charts.bitwarden.com/
     - https://cloudnative-pg.github.io/charts
+    - https://kyverno.github.io/kyverno/
   # Allowed targets. Empty list = nothing allowed.
   destinations:
     - server: https://kubernetes.default.svc
@@ -22,6 +23,8 @@ spec:
       namespace: bitwarden
     - server: https://kubernetes.default.svc
       namespace: cnpg-system
+    - server: https://kubernetes.default.svc
+      namespace: kyverno
   # Cluster-scoped kinds: empty/omitted = all denied.
   clusterResourceWhitelist:
     # Namespace management
@@ -43,6 +46,10 @@ spec:
       kind: ValidatingWebhookConfiguration
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
+
+    # Kyverno policies
+    - group: kyverno.io
+      kind: ClusterPolicy
 
     # Storage
     - group: storage.k8s.io
