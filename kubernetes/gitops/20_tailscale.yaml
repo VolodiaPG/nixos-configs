@@ -28,9 +28,6 @@ metadata:
   namespace: tailscale-operator
   labels:
     app: tailscale
-    app.kubernetes.io/part-of: sm-operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: sm-operator
 spec:
   organizationId: "49d1baa4-2d05-44af-b41b-b3d301759bbe"
   secretName: operator-oauth
