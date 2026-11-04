@@ -57,3 +57,22 @@ if command -v claude >/dev/null 2>&1 && command -v uvx >/dev/null 2>&1; then
 else
   echo "claude-agent-tools: claude or uvx not on PATH, skipping freecad MCP" >&2
 fi
+
+# Global trigger for the simple-english plugin (enabled via settings.json).
+# ~/.claude/CLAUDE.md is also written by rtk and codegraph, so chezmoi cannot
+# own it: keep a marked block, replaced in place on every run.
+md="$HOME/.claude/CLAUDE.md"
+touch "$md"
+tmp=$(mktemp)
+# awk also drops trailing blank lines so re-runs do not accumulate them.
+awk '/<!-- SIMPLE_ENGLISH_START -->/{skip=1} !skip{if ($0=="") b++; else {for(;b>0;b--) print ""; print}} /<!-- SIMPLE_ENGLISH_END -->/{skip=0}' "$md" > "$tmp"
+cat >> "$tmp" <<'BLOCK'
+
+<!-- SIMPLE_ENGLISH_START -->
+## Plain user-facing text
+
+Before you write prose for a human reader, invoke the `simple-english:simple-english` skill. This covers the final answer, docs, README files, code comments, commit and PR text, and error messages. Never rewrite code, identifiers, commands, or paths. Explicit user instructions on tone or format win.
+<!-- SIMPLE_ENGLISH_END -->
+BLOCK
+cat "$tmp" > "$md"
+rm -f "$tmp"
