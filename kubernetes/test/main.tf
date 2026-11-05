@@ -7,8 +7,8 @@ terraform {
 
 resource "multipass_instance" "k3s" {
   name   = "k3s-test"
-  cpus   = 2
-  memory = "4GiB"
+  cpus   = 4
+  memory = "6GiB"
   disk   = "15GiB"
   image  = "26.04"
 
