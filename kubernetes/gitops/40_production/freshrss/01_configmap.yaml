@@ -18,7 +18,7 @@ data:
   # OIDC Configuration (handled by Apache mod_auth_openidc).
   # OIDC_CLIENT_SECRET and OIDC_CLIENT_CRYPTO_KEY come from the freshrss-env secret.
   OIDC_ENABLED: "1"
-  OIDC_PROVIDER_METADATA_URL: "https://keycloak.goblin-alewife.ts.net/realms/master/.well-known/openid-configuration"
+  OIDC_PROVIDER_METADATA_URL: "https://keycloak.goblin-alewife.ts.net/realms/home/.well-known/openid-configuration"
   OIDC_CLIENT_ID: "freshrss"
   # preferred_username can exceed FreshRSS' 38-char username limit
   # (e.g. user@github.idp.goblin-alewife.ts.net), so use the sub UUID.

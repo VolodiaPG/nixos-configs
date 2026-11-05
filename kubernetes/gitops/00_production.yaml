@@ -13,6 +13,7 @@ spec:
     - https://charts.bitwarden.com/
     - https://cloudnative-pg.github.io/charts
     - https://kyverno.github.io/kyverno/
+    - https://epam.github.io/edp-helm-charts/stable
   # Allowed targets. Empty list = nothing allowed.
   destinations:
     - server: https://kubernetes.default.svc

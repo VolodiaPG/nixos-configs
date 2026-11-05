@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  namespace: production
+  labels:
+    app: keycloak
+  annotations:
+    # Allow direct access within the cluster
+    tailscale.com/experimental-forward-cluster-traffic-via-ingress: "true"
+    tailscale.com/proxy-group: ingress-proxies
+    tailscale.com/tags: tag:k8s
+spec:
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        - test-keycloak
+  defaultBackend:
+    service:
+      name: keycloak-clusterip
+      port:
+        number: 8080

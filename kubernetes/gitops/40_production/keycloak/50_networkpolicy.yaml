@@ -1,0 +1,119 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak-app
+  namespace: production
+  labels:
+    app: keycloak
+  annotations:
+    description: "keycloak pod: ingress from tailnet proxy, egress to the database (DNS, kube-apiserver come from netpol/* labels)"
+spec:
+  podSelector:
+    matchLabels:
+      app: keycloak
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: tailscale-operator
+          podSelector:
+            matchLabels:
+              tailscale.com/parent-resource: ingress-proxies
+      ports:
+        - protocol: TCP
+          port: 8080
+    - from:
+        - podSelector:
+            matchLabels:
+              app: keycloak-operator
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak-database
+  namespace: production
+  labels:
+    app: keycloak
+  annotations:
+    description: "CNPG pods: ingress from peers, operator, keycloak, backup; egress to peers (DNS, kube-apiserver come from netpol/* labels)"
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: keycloak-database
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: # peers
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+        - namespaceSelector: # operator
+            matchLabels:
+              kubernetes.io/metadata.name: cnpg-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: cloudnative-pg
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 8000
+    - from: # clients
+        - podSelector:
+            matchLabels:
+              app: keycloak
+        - podSelector:
+            matchLabels:
+              app: keycloak-backup
+      ports:
+        - protocol: TCP
+          port: 5432
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: keycloak-backup
+  namespace: production
+  labels:
+    app: keycloak-backup
+  annotations:
+    description: "backup pods: egress to the database (DNS comes from netpol/allow-dns)"
+spec:
+  podSelector:
+    matchLabels:
+      app: keycloak-backup
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: keycloak-database
+      ports:
+        - protocol: TCP
+          port: 5432

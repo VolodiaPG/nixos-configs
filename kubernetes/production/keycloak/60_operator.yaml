@@ -1,0 +1,11 @@
+# Connects keycloak-operator to this Keycloak, using the admin from keycloak-admin.
+apiVersion: v1.edp.epam.com/v1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: production
+  labels:
+    app: keycloak
+spec:
+  url: http://keycloak-clusterip:8080
+  secret: keycloak-admin

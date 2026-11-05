@@ -1,0 +1,21 @@
+# Registers freshrss in the Keycloak "home" realm.
+# The client secret is the same value FreshRSS reads from freshrss-env.
+apiVersion: v1.edp.epam.com/v1
+kind: KeycloakClient
+metadata:
+  name: freshrss
+  namespace: production
+  labels:
+    app: freshrss
+spec:
+  clientId: freshrss # must match OIDC_CLIENT_ID in the freshrss ConfigMap
+  public: false
+  secret: $freshrss-env:oidc_client_secret
+  webUrl: https://test-rss.goblin-alewife.ts.net
+  redirectUris:
+    - https://test-rss.goblin-alewife.ts.net/i/oidc/
+  defaultClientScopes:
+    - profile
+  realmRef:
+    name: home
+    kind: KeycloakRealm

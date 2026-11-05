@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak-operator
+  namespace: argocd
+spec:
+  project: production
+  source:
+    repoURL: https://epam.github.io/edp-helm-charts/stable
+    chart: keycloak-operator
+    targetRevision: 1.36.0
+    helm:
+      releaseName: keycloak-operator
+      valuesObject:
+        # Webhooks need cert-manager, which this cluster does not run.
+        enableWebhooks: false
+        # Reconcile only Keycloak resources in the production namespace.
+        clusterReconciliationEnabled: false
+        podLabels:
+          app: keycloak-operator
+          netpol/allow-dns: "true"
+          netpol/allow-kube-apiserver: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true # Operator CRDs can exceed the client-side apply annotation limit

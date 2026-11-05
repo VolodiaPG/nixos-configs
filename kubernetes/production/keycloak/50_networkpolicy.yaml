@@ -25,6 +25,13 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+    - from:
+        - podSelector:
+            matchLabels:
+              app: keycloak-operator
+      ports:
+        - protocol: TCP
+          port: 8080
   egress:
     - to:
         - podSelector:

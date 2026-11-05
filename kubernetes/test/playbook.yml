@@ -26,6 +26,13 @@
       ansible.builtin.command: k3s kubectl -n argocd rollout status deploy/argocd-server --timeout=300s
       changed_when: false
 
+    - name: Apply root application
+      ansible.builtin.command: k3s kubectl apply -n argocd -f -
+      args:
+        stdin: "{{ lookup('ansible.builtin.file', playbook_dir ~ '/../bootstrap/root.yaml') }}"
+      register: root_apply
+      changed_when: "'unchanged' not in root_apply.stdout"
+
     - name: Download a local copy of kubeconfig
       ansible.builtin.fetch:
         src: /etc/rancher/k3s/k3s.yaml
