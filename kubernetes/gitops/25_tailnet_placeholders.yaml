@@ -6,7 +6,7 @@ metadata:
   labels:
     app: keycloak
   annotations:
-    tailscale.com/tailnet-fqdn: "keycloak.goblin-alewife.ts.net"
+    tailscale.com/tailnet-fqdn: "test-keycloak.goblin-alewife.ts.net"
     tailscale.com/proxy-group: "egress-proxies"
 spec:
   type: ExternalName
