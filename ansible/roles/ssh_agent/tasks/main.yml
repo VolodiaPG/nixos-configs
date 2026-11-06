@@ -1,60 +1,28 @@
 ---
-# ssh_agent: GUI sessions -> Bitwarden desktop SSH agent. See
-# defaults/main.yml for what each OS needs.
+# ssh_agent: retire the Bitwarden SSH agent setup. See defaults/main.yml.
 
-# --global writes /etc/systemd/user/<unit> -> /dev/null for every user, so
-# it needs no running user manager. An agent already running keeps going
-# until the next login.
-- name: ssh_agent | Linux | mask OpenSSH's user ssh-agent
+# Earlier versions masked these units. Unmask them so Plasma can start
+# the OpenSSH agent again.
+- name: ssh_agent | Linux | unmask OpenSSH's user ssh-agent
   when: ansible_system == 'Linux'
   become: true
   ansible.builtin.systemd_service:
     name: "{{ item }}"
     scope: global
-    masked: true
+    masked: false
   loop: "{{ ssh_agent_linux_units }}"
 
-- name: ssh_agent | macOS only
+- name: ssh_agent | macOS | retire old LaunchAgents
   when: ansible_system == 'Darwin'
   block:
-    # --- retire the standalone ssh-agent this role used to run ----------
-    - name: ssh_agent | check for the old ssh-agent job
-      ansible.builtin.stat:
-        path: "{{ ssh_agent_old_plist_path }}"
-      register: _ssh_agent_old
-
-    - name: ssh_agent | stop the old ssh-agent job
-      ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ ssh_agent_old_label }}"
-      when: _ssh_agent_old.stat.exists
+    - name: ssh_agent | stop the old jobs
+      ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ item }}"
+      loop: "{{ ssh_agent_old_labels }}"
       changed_when: true
       failed_when: false
 
-    - name: ssh_agent | remove the old ssh-agent plist
+    - name: ssh_agent | remove the old plists
       ansible.builtin.file:
-        path: "{{ ssh_agent_old_plist_path }}"
+        path: "{{ home_dir }}/Library/LaunchAgents/{{ item }}.plist"
         state: absent
-
-    # --- publish the Bitwarden socket to launchd ------------------------
-    - name: ssh_agent | write LaunchAgent plist
-      ansible.builtin.template:
-        src: ssh-auth-sock.plist.j2
-        dest: "{{ ssh_agent_plist_path }}"
-        mode: "0644"
-      notify: Unload ssh-auth-sock LaunchAgent
-
-    - name: ssh_agent | apply pending unload
-      ansible.builtin.meta: flush_handlers
-
-    - name: ssh_agent | check whether the job is loaded
-      ansible.builtin.command: "launchctl print gui/{{ ansible_user_uid }}/{{ ssh_agent_label }}"
-      register: _ssh_agent_loaded
-      changed_when: false
-      failed_when: false
-      check_mode: false
-
-    # Loading runs it (RunAtLoad), so SSH_AUTH_SOCK is set from now on,
-    # not only after the next login.
-    - name: ssh_agent | load the job
-      ansible.builtin.command: "launchctl bootstrap gui/{{ ansible_user_uid }} {{ ssh_agent_plist_path }}"
-      when: _ssh_agent_loaded.rc != 0
-      changed_when: true
+      loop: "{{ ssh_agent_old_labels }}"

@@ -2,30 +2,14 @@
 # Defaults for the ssh_agent role. Do not duplicate anything from
 # group_vars/all/main.yml here.
 #
-# SSH keys come from the Bitwarden desktop app's agent: the `bitwarden` cask
-# (.dmg build) on macOS, the com.bitwarden.desktop Flatpak on Linux. Shells
-# get SSH_AUTH_SOCK from chezmoi's ~/.zshenv.
-#
-# macOS: apps launched from Finder/Dock inherit launchd's environment
-# instead, which points at Apple's own ssh-agent. This role runs
-# `launchctl setenv` at every login so those apps use Bitwarden too.
-#
-# Linux: chezmoi's ~/.config/plasma-workspace/env/ssh-agent.sh points the
-# Plasma session at Bitwarden. This role masks OpenSSH's systemd user agent,
-# which Plasma otherwise starts at every login (plasma-workspace ships
-# plasma-core.target.d/ssh-agent.conf with Wants=ssh-agent.service). Left
-# running, it is a second, keyless agent that anything still holding
-# $XDG_RUNTIME_DIR/ssh-agent.socket would talk to.
+# SSH keys now live in ~/.ssh. Shells get an agent from keychain
+# (chezmoi's 40-tools.zsh). This role only removes what the Bitwarden
+# setup left behind.
 ssh_agent_linux_units:
   - ssh-agent.service
   - ssh-agent.socket
 
-# macOS only.
-ssh_agent_socket: "{{ home_dir }}/.bitwarden-ssh-agent.sock"
-ssh_agent_label: com.ansible.ssh-auth-sock
-ssh_agent_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ ssh_agent_label }}.plist"
-
-# The job this role used to install: a standalone /usr/bin/ssh-agent,
-# replaced by Bitwarden's. Removed on every run until it is gone.
-ssh_agent_old_label: com.ansible.ssh-agent
-ssh_agent_old_plist_path: "{{ home_dir }}/Library/LaunchAgents/{{ ssh_agent_old_label }}.plist"
+# macOS only. Labels of the LaunchAgents that earlier versions installed.
+ssh_agent_old_labels:
+  - com.ansible.ssh-agent
+  - com.ansible.ssh-auth-sock

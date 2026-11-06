@@ -1,7 +1,0 @@
----
-# Re-run the job so a changed socket path takes effect without a re-login.
-# bootout fails harmlessly when the job was not loaded yet (first run).
-- name: Unload ssh-auth-sock LaunchAgent
-  ansible.builtin.command: "launchctl bootout gui/{{ ansible_user_uid }}/{{ ssh_agent_label }}"
-  changed_when: true
-  failed_when: false

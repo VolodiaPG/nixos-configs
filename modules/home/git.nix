@@ -23,7 +23,7 @@ in
       };
       signing = {
         format = "ssh";
-        key = flake.config.me.signingKey;
+        key = "~/.ssh/id_ed25519.pub";
         signByDefault = true;
       };
     };

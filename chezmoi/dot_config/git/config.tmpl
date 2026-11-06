@@ -3,7 +3,8 @@
 
      Layout mirrors the Home-Manager-generated ~/.config/git/config
      byte-for-byte (sections alphabetical, tab-indented values) except for:
-       * user.email / user.signingKey  -> chezmoi data
+       * user.email                    -> chezmoi data
+       * user.signingKey -> ~/.ssh/id_ed25519.pub (git expands ~)
        * [gpg "ssh"].program           -> dropped (HM hardcoded a
          /nix/store/...-openssh/bin/ssh-keygen path; git's built-in default
          for gpg.ssh.program is `ssh-keygen` from $PATH, which is what we
@@ -41,4 +42,4 @@
 [user]
 	email = {{ .email | quote }}
 	name = {{ .name | quote }}
-	signingKey = {{ .signing_key | quote }}
+	signingKey = "~/.ssh/id_ed25519.pub"

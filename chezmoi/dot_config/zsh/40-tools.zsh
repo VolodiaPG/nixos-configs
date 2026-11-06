@@ -25,8 +25,7 @@ fi
 }
 
 # keychain: reuse one ssh-agent across shells and hold id_ed25519 unlocked.
-# On Linux this is what exports SSH_AUTH_SOCK; on macOS ~/.zshenv has already
-# pointed it at the per-user temp dir and keychain adopts that socket.
+# It exports SSH_AUTH_SOCK, and adopts the agent the OS already started.
 if (( $+commands[keychain] )); then
   eval "$(SHELL=zsh keychain --eval --quiet id_ed25519)"
 fi
