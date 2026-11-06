@@ -6,7 +6,7 @@ metadata:
   labels:
     app: test-freshrss
   annotations:
-    tailscale.com/parent-resource: ingress-proxies
+    tailscale.com/proxy-group: ingress-proxies
     tailscale.com/tags: tag:k8s
 spec:
   ingressClassName: tailscale
