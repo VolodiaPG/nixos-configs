@@ -1,0 +1,30 @@
+# Lets users of the Keycloak "home" realm sign in with the tailnet IdP (tsidp).
+# Keycloak reaches idp.goblin-alewife.ts.net through the "idp" egress Service.
+# The client id and secret come from the tsidp-client secret (Bitwarden).
+apiVersion: v1.edp.epam.com/v1
+kind: KeycloakRealmIdentityProvider
+metadata:
+  name: tsidp
+  namespace: production
+  labels:
+    app: keycloak
+spec:
+  realmRef:
+    name: home
+    kind: KeycloakRealm
+  alias: tsidp
+  providerId: oidc
+  enabled: true
+  config:
+    issuer: https://idp.goblin-alewife.ts.net
+    authorizationUrl: https://idp.goblin-alewife.ts.net/authorize
+    tokenUrl: https://idp.goblin-alewife.ts.net/token
+    userInfoUrl: https://idp.goblin-alewife.ts.net/userinfo
+    jwksUrl: https://idp.goblin-alewife.ts.net/.well-known/jwks.json
+    useJwksUrl: "true"
+    validateSignature: "true"
+    clientAuthMethod: client_secret_post
+    clientId: $tsidp-client:client_id
+    clientSecret: $tsidp-client:client_secret
+    defaultScope: openid profile email
+    syncMode: IMPORT
