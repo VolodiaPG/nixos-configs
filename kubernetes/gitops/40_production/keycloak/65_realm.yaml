@@ -1,0 +1,12 @@
+apiVersion: v1.edp.epam.com/v1
+kind: KeycloakRealm
+metadata:
+  name: home
+  namespace: production
+  labels:
+    app: keycloak
+spec:
+  realmName: home
+  keycloakRef:
+    name: keycloak
+    kind: Keycloak
