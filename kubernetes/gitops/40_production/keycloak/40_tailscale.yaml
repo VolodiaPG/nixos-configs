@@ -8,7 +8,7 @@ metadata:
   annotations:
     # Allow direct access within the cluster
     tailscale.com/experimental-forward-cluster-traffic-via-ingress: "true"
-    tailscale.com/proxy-group: ingress-proxies
+    tailscale.com/parent-resource: ingress-proxies
     tailscale.com/tags: tag:k8s
 spec:
   ingressClassName: tailscale
