@@ -9,7 +9,7 @@ resource "multipass_instance" "k3s" {
   name   = "k3s-test"
   cpus   = 4
   memory = "6GiB"
-  disk   = "15GiB"
+  disk   = "25GiB"
   image  = "26.04"
 
   cloudinit_file = local_file.cloud_init.filename
